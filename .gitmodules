@@ -1,6 +1,0 @@
-[submodule "lib/xpsdk"]
-	path = lib/xpsdk
-	url = https://github.com/mauer/xpsdk
-[submodule "lib/xpenv"]
-	path = lib/xpenv
-	url = https://github.com/mauer/xpenv
