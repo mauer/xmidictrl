@@ -19,6 +19,9 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
+// Standard
+#include <thread>
+
 // X-Plane SDK Utils
 #include "PluginLogger.h"
 
@@ -86,7 +89,7 @@ bool Device::openConnections() {
         m_midiIn->ignoreTypes(false, false, false);
         m_midiIn->setCallback(&Device::midiCallback, this);
 
-        LOG_INFO << "DEVICE :: Port " << m_settings.portIn << " openend for device " << m_settings.name << LOG_END
+        LOG_INFO << "DEVICE :: Port " << m_settings.portIn << " opened for device " << m_settings.name << LOG_END
 
     } catch (const RtMidiError& error) {
         LOG_ERROR << "DEVICE :: Could not open port " << m_settings.portIn << " for device " << m_settings.name << LOG_END
@@ -99,7 +102,7 @@ bool Device::openConnections() {
     try {
         m_midiOut->openPort(m_settings.portOut);
         
-        LOG_INFO << "DEVICE :: Port " << m_settings.portOut << " openend for device " << m_settings.name << LOG_END
+        LOG_INFO << "DEVICE :: Port " << m_settings.portOut << " opened for device " << m_settings.name << LOG_END
 
     } catch (const RtMidiError &error) {
         LOG_ERROR << "DEVICE :: Could not open port " << m_settings.portIn << " for device " << m_settings.name << LOG_END
@@ -155,7 +158,7 @@ void Device::processMessage(double deltatime, std::vector<unsigned char>* messag
         midiEvent.controlChange = static_cast< int >(message->at(1));
         midiEvent.velocity      = static_cast< int >(message->at(2));
 
-        LOG_DEBUG << "DEVICE :: Inbound message for device " << m_settings.name << " ::  Status = " << midiEvent.status 
+        LOG_DEBUG << "DEVICE :: Inbound message for device " << m_settings.name << " on Thread " << std::this_thread::get_id() << " ::  Status = " << midiEvent.status 
                   << ", CC = " << midiEvent.controlChange << ", Velocity = " << midiEvent.velocity << LOG_END
 
         // check midi status
@@ -204,7 +207,7 @@ void Device::processMessage(double deltatime, std::vector<unsigned char>* messag
 
             // push to event handler
             if (addEvent)
-                Plugin::Instance().addMidiEvent(midiEvent);
+                Plugin::Instance().addMidiEvent(std::make_shared<MidiEvent>(midiEvent));
 
         } catch (std::out_of_range const&) {
             LOG_WARN << "DEVICE :: No mapping found for CC" << midiEvent.controlChange << LOG_END

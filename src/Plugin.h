@@ -34,7 +34,7 @@
 // XMidiCtrl
 #include "Device.h"
 #include "EventHandler.h"
-#include "XMidiCtrlMenu.h"
+#include "Menu.h"
 #include "Settings.h"
 
 
@@ -55,7 +55,7 @@ public:
 
     void reloadSettings();
 
-    void addMidiEvent(const MidiEvent midiEvent);
+    void addMidiEvent(std::shared_ptr<MidiEvent> midiEvent);
 
     void showAboutDialog();
 

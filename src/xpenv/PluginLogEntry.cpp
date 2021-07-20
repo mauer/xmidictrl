@@ -21,7 +21,7 @@
 // Standard
 #include <chrono>
 
-// X-Plane SDK Utils
+// X-Plane Environment
 #include "PluginLogEntry.h"
 #include "PluginLogger.h"
 
@@ -149,6 +149,15 @@ PluginLogEntry& PluginLogEntry::operator<<(char c) {
  */
 PluginLogEntry& PluginLogEntry::operator<<(const std::string& s) {
     m_stream << s;
+    return *this;
+}
+
+
+/**
+ * Log a thread id
+ */
+PluginLogEntry& PluginLogEntry::operator<<(const std::thread::id& id) {
+    m_stream << id;
     return *this;
 }
 

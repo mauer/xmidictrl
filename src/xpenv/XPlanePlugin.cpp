@@ -21,7 +21,7 @@
 // X-Plane SDK
 #include "XPLMUtilities.h"
 
-// X-Plane SDK Utils
+// X-Plane Environment
 #include "PluginLogger.h"
 #include "PluginLogEntry.h"
 #include "XPlanePlugin.h"
@@ -40,8 +40,25 @@ XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
     m_name    = name;
     m_version = version;
 
+    // create environment (link to X-Plane)
+    m_environment = std::make_shared<Environment>();
+
     // initialize the plugin
     initialise();
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the X-Plane Environment
+ */
+std::shared_ptr<Environment> XPlanePlugin::environment() {
+    return m_environment;
 }
 
 

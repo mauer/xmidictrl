@@ -42,7 +42,7 @@ using namespace XMidiCtrl;
  * Constructor
  */
 Plugin::Plugin()
-    : XPlanePlugin(XMIDICTRL_NAME, XMIDICTRL_VERSION) {
+    : XPlanePlugin(XMIDICTRL_NAME, XMIDICTRL_VERSION), m_eventHandler(this->environment()) {
     // initialise
     m_flightLoopId = nullptr;
 }
@@ -157,7 +157,7 @@ void Plugin::disablePlugin() {
  * Reload the settings
  */
 void Plugin::reloadSettings() {
-    LOG_INFO << "PLUGIN :: Releas settings" << LOG_END
+    LOG_INFO << "PLUGIN :: Reload settings" << LOG_END
 
     // reload settings for current aircraft
     m_settings.reloadSettingsForAircraft();
@@ -170,7 +170,7 @@ void Plugin::reloadSettings() {
 /**
  * Add a midi event to the queue
  */
-void Plugin::addMidiEvent(const MidiEvent midiEvent) {
+void Plugin::addMidiEvent(std::shared_ptr<MidiEvent> midiEvent) {
     m_eventHandler.addMidiEvent(midiEvent);
 }
 
@@ -258,6 +258,8 @@ void Plugin::closeMidiConnections() {
             device.second->closeConnections();    
         }
     }
+
+    m_midiDevices.clear();
 }    
 
 

@@ -22,11 +22,14 @@
 #define XPLANEPLUGIN_H_
 
 // Standard
+#include <memory>
 #include <string>
-#include <string_view>
 
 // X-Plane SDK 
 #include "XPLMPlugin.h"
+
+// X-Plane Environment
+#include "Environment.h"
 
 
 namespace XPEnv {
@@ -40,6 +43,7 @@ public:
 
     virtual void showAboutDialog() = 0;
 
+    std::shared_ptr<Environment> environment();
 private:
     void initialise();
 
@@ -50,6 +54,8 @@ private:
 
     char m_pluginPath[512];
     char m_xplanePath[512];
+
+    std::shared_ptr<Environment> m_environment;
 };
 
 } // XPEnv

@@ -24,6 +24,7 @@
 // Standard
 #include <sstream>
 #include <string>
+#include <thread>
 
 
 namespace XPEnv {
@@ -65,6 +66,7 @@ public:
     PluginLogEntry& operator<<(double d);
     PluginLogEntry& operator<<(char c);
     PluginLogEntry& operator<<(const std::string& s);
+	PluginLogEntry& operator<<(const std::thread::id& id);
 
 	PluginLogEntry& operator<<(PluginLogEntry& (*f)(PluginLogEntry&));
 

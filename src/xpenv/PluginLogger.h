@@ -25,7 +25,7 @@
 #include <fstream>
 #include <string_view>
 
-// X-Plane SDK Utils
+// X-Plane Environment
 #include "PluginLogEntry.h"
 
 // Macros for logging

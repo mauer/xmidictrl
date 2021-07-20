@@ -24,45 +24,52 @@
 
 // Standard
 #include <map>
-#include <vector>
+#include <memory>
+#include <queue>
 
 // X-Plane SDK
 #include "XPLMDataAccess.h"
 #include "XPLMUtilities.h"
 
+// X-Plane Environment
+#include "Environment.h"
+
 // XMidiCtrl
 #include "Global.h"
+
+using namespace XPEnv;
 
 
 namespace XMidiCtrl {
 
-
 class EventHandler {
 public:
-    EventHandler();
+    EventHandler(std::shared_ptr<Environment> environment);
     ~EventHandler();
    
-    void addMidiEvent(const MidiEvent midiEvent);
+    void addMidiEvent(std::shared_ptr<MidiEvent> midiEvent);
     void processEvents();
 
 private:
-    void executeCommand(const MidiEvent& midiEvent);
-    void executeCommandOnce(const MidiEvent& midiEvent);
-    void performSliderEvent(const MidiEvent& midiEvent);
-    void performEncoderEvent(const MidiEvent& midiEvent);
-    void changeDataRef(const MidiEvent& midiEvent);
+    void executeCommand(std::shared_ptr<MidiEvent> midiEvent);
+    void executeCommandOnce(std::shared_ptr<MidiEvent> midiEvent);
+    void performSliderEvent(std::shared_ptr<MidiEvent> midiEvent);
+    void performEncoderEvent(std::shared_ptr<MidiEvent> midiEvent);
+    void performInternalEvent(std::shared_ptr<MidiEvent> midiEvent);
 
-    void changeIntegerDataRef(const DataDetails& dataDetails, const MidiEvent& midiEvent);
-    void changeFloatDataRef(const DataDetails& dataDetails, const MidiEvent& midiEvent);
-    void changeDoubleDataRef(const DataDetails& dataDetails, const MidiEvent& midiEvent);
+    void changeDataRef(std::shared_ptr<MidiEvent> midiEvent);
 
-    XPLMCommandRef getCommandRef(const std::string command);
+    void changeIntegerDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
+    void changeFloatDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
+    void changeDoubleDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
+
     DataDetails getDataDetails(const std::string name);
 
-    std::vector<MidiEvent> m_eventList;
-    
-    std::map<std::string, XPLMCommandRef> m_commandCache;
+    std::queue<std::shared_ptr<MidiEvent>> m_eventList;
+
     std::map<std::string, DataDetails> m_dataCache;
+
+    std::shared_ptr<Environment> m_environment;
 };
 
 }

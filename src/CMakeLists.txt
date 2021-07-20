@@ -21,15 +21,17 @@ add_subdirectory(xpenv)
 set(XMIDICTRL_SRC Device.cpp
                   EventHandler.cpp 
                   main.cpp
+                  Menu.cpp
                   Plugin.cpp
                   Settings.cpp
-                  XMidiCtrlMenu.cpp)
+                  )
 
 set(XMIDICTRL_HDR Device.h
                   EventHandler.h
+                  Menu.h
                   Plugin.h
                   Settings.h
-                  XMidiCtrlMenu.h)
+                  )
 
 # add library
 add_library(${PROJECT_NAME} SHARED ${XMIDICTRL_SRC} ${XMIDICTRL_HDR})

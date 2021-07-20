@@ -22,7 +22,7 @@
 #include <chrono>
 #include <time.h>
 
-// X-Plane SDK Utils
+// X-Plane Environment
 #include "PluginLogger.h"
 
 
@@ -85,7 +85,7 @@ void PluginLogger::postData(const PluginLogData logData) {
         return;
 
     // format datetime stamp
-    std::string dateTimeStr(20, '\0');
+    std::string dateTimeStr(19, '\0');
     struct tm time;
     localtime_s(&time, &logData.time);
     std::strftime(&dateTimeStr[0], dateTimeStr.size(), "%Y-%m-%d %H:%M:%S", &time);
