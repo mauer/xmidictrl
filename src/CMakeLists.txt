@@ -6,7 +6,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 add_definitions(-DXPLM303=1 -DXPLM302=1 -DXPLM301=1 -DXPLM300=1 -DXPLM210=1 -DXPLM200=1)
 
 include_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/CHeaders/XPLM")
-link_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Win")
+
+if (WIN32)
+    link_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Win")
+elseif (APPLE)
+    link_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac")
+endif()
 
 # RtMidi
 find_package( PkgConfig REQUIRED )

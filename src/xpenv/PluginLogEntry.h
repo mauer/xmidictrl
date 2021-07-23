@@ -58,7 +58,7 @@ public:
 	static PluginLogEntry& Warn(PluginLogEntry& logEntry);
 	static PluginLogEntry& Info(PluginLogEntry& logEntry);
 	static PluginLogEntry& Debug(PluginLogEntry& logEntry);
-	static PluginLogEntry& endl(PluginLogEntry& logEntry);	
+	static PluginLogEntry& endl(PluginLogEntry& logEntry);
 
     PluginLogEntry& operator<<(int32_t i);
     PluginLogEntry& operator<<(int16_t i);

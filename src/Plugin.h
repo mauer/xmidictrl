@@ -19,8 +19,8 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 
-#ifndef XMIDICTRL_H_
-#define XMIDICTRL_H_
+#ifndef PLUGIN_H_
+#define PLUGIN_H_
 
 // Standard
 #include <map>
@@ -50,14 +50,14 @@ public:
     static float callbackFlightLoop(float elapsedMe, float elapsedSim, int counter, void * refcon);
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
-    void enablePlugin();
-    void disablePlugin();
+    void enablePlugin() override;
+    void disablePlugin() override;
 
     void reloadSettings();
 
     void addMidiEvent(std::shared_ptr<MidiEvent> midiEvent);
 
-    void showAboutDialog();
+    void showAboutDialog() override;
 
     void probeMidiPorts();
 
@@ -77,4 +77,4 @@ private:
 
 } // XMidiCtrl
 
-#endif // XMIDICTRL_H_
+#endif // PLUGIN_H_
