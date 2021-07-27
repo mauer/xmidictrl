@@ -4,3 +4,6 @@
 [submodule "lib/xpsdk"]
 	path = lib/xpsdk
 	url = https://github.com/mauer/xpsdk
+[submodule "lib/lvgl"]
+	path = lib/lvgl
+	url = https://github.com/lvgl/lvgl
