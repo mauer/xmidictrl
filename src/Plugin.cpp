@@ -179,6 +179,7 @@ void Plugin::addMidiEvent(std::shared_ptr<MidiEvent> midiEvent) {
  * Show the about dialog
  */
 void Plugin::showAboutDialog() {
+    m_ui.createWindow("About XMidiCtrl", 300, 100);
 }
 
 

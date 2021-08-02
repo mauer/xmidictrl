@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
+//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 

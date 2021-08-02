@@ -18,6 +18,7 @@ find_package( PkgConfig REQUIRED )
 pkg_check_modules(RTMIDI REQUIRED rtmidi)
 
 include_directories(${RTMIDI_INCLUDEDIR})
+include_directories("${PROJECT_SOURCE_DIR}/lib/")
 
 # include sub modules
 add_subdirectory(xpenv)

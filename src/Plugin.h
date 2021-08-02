@@ -29,6 +29,7 @@
 #include "XPLMProcessing.h"
 
 // X-Plane SDK Utils
+#include "UserInterface.h"
 #include "XPlanePlugin.h"
 
 // XMidiCtrl
@@ -71,6 +72,7 @@ private:
     XMidiCtrlMenu m_pluginMenu;
     EventHandler m_eventHandler;  
     Settings m_settings;
+    UserInterface m_ui;
 
     std::map<std::string, std::shared_ptr<Device>> m_midiDevices;
 };

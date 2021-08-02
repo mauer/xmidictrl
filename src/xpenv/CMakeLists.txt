@@ -2,14 +2,16 @@ set(XPENV_SRC ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
               ${CMAKE_CURRENT_LIST_DIR}/DataRefs.cpp
               ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogEntry.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.cpp 
+              ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/UserInterface.cpp
               ${CMAKE_CURRENT_LIST_DIR}/XPlanePlugin.cpp)
 
 set(XPENV_HDR ${CMAKE_CURRENT_LIST_DIR}/Commands.h
               ${CMAKE_CURRENT_LIST_DIR}/DataRefs.h
               ${CMAKE_CURRENT_LIST_DIR}/Environment.h
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogEntry.h
-              ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.h 
+              ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.h
+              ${CMAKE_CURRENT_LIST_DIR}/UserInterface.h
               ${CMAKE_CURRENT_LIST_DIR}/XPlanePlugin.h)
 
 add_library(xpenv STATIC ${XPENV_SRC} ${XPENV_HDR})

@@ -39,7 +39,7 @@ void XMidiCtrlMenu::createMenu() {
     XPLMAppendMenuItem(m_menu_id, "MIDI Watcher", (void *)1, 1);
     XPLMAppendMenuItem(m_menu_id, "Reload Settings", (void *)"reload_settings", 1);
     XPLMAppendMenuSeparator(m_menu_id);
-    XPLMAppendMenuItem(m_menu_id, "About XMidiCtrl", (void *)1, 1);
+    XPLMAppendMenuItem(m_menu_id, "About XMidiCtrl", (void *)"about_dialog", 1);
 }
 
 
@@ -52,5 +52,9 @@ void XMidiCtrlMenu::deleteMenu() {
 void XMidiCtrlMenu::MenuHandler(void* in_menu_ref, void* in_item_ref) {
     if (!strcmp((const char*) in_item_ref, "reload_settings")) {
         Plugin::Instance().reloadSettings();
+    }
+
+    if (!strcmp((const char*) in_item_ref, "about_dialog")) {
+        Plugin::Instance().showAboutDialog();
     }
 }

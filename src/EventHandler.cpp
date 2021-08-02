@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
+//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -235,7 +236,7 @@ void EventHandler::changeDataRef(std::shared_ptr<MidiEvent> midiEvent) {
             break;
 
         default:
-            LOG_ERROR << "EVENTHANDLER :: Unkown data type " << data.type << LOG_END
+            LOG_ERROR << "EVENTHANDLER :: Unknown data type " << data.type << LOG_END
     }
 }
 
