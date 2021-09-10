@@ -18,9 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
-#ifndef SETTINGS_H_
-#define SETTINGS_H_
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 // Standard
 #include <string>
@@ -30,31 +29,28 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "Global.h"
-
-
-// Keys for config file
-#define XMIDICTRL_CFG_COMMAND_UP        "command_up"
-#define XMIDICTRL_CFG_COMMAND_DOWN      "command_down"
-#define XMIDICTRL_CFG_COMMAND_UP_FAST   "command_up_fast"
-#define XMIDICTRL_CFG_COMMAND_DOWN_FAST "command_down_fast"
-#define XMIDICTRL_CFG_DEVICE            "device"
-#define XMIDICTRL_CFG_NAME              "name"
-#define XMIDICTRL_CFG_CC                "CC"
-#define XMIDICTRL_CFG_PORTIN            "portIn"
-#define XMIDICTRL_CFG_PORTOUT           "portOut"
-
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-
-const char* const CFG_KEY_COMMAND      = "command";
-const char* const CFG_KEY_COMMAND_PULL = "command_pull";
-const char* const CFG_KEY_COMMAND_PUSH = "command_push";
-const char* const CFG_KEY_DATAREF      = "dataref";
-const char* const CFG_KEY_TYPE         = "type";
-const char* const CFG_KEY_VALUE_ON     = "value_on";
-const char* const CFG_KEY_VALUE_OFF    = "value_off";
+// Keys for the config file
+const char* const CFG_KEY_CC                = "CC";
+const char* const CFG_KEY_COMMAND           = "command";
+const char* const CFG_KEY_COMMAND_DOWN      = "command_down";
+const char* const CFG_KEY_COMMAND_DOWN_FAST = "command_down_fast";
+const char* const CFG_KEY_COMMAND_PULL      = "command_pull";
+const char* const CFG_KEY_COMMAND_PUSH      = "command_push";
+const char* const CFG_KEY_COMMAND_UP        = "command_up";
+const char* const CFG_KEY_COMMAND_UP_FAST   = "command_up_fast";
+const char* const CFG_KEY_DATAREF           = "dataref";
+const char* const CFG_KEY_DEVICE            = "device";
+const char* const CFG_KEY_NAME              = "name";
+const char* const CFG_KEY_PORT_IN           = "port_in";
+const char* const CFG_KEY_PORT_OUT          = "port_out";
+const char* const CFG_KEY_TYPE              = "type";
+const char* const CFG_KEY_VALUE_ON          = "value_on";
+const char* const CFG_KEY_VALUE_OFF         = "value_off";
+const char* const CFG_KEY_VERSION           = "version";
 
 class Settings {
 public:
@@ -82,6 +78,6 @@ private:
     toml::value m_generalConfig;
 };
 
-}
+} // Namespace XMidiCtrl
 
-#endif // SETTINGS_H_
+#endif // SETTINGS_H

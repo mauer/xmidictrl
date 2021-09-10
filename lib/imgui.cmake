@@ -1,7 +1,8 @@
 #---------------------------------------------------------------------------------------------------------------------
-#   MIT License
+#   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
+#   Copyright (c) 2021 Marco Auer <marco@marcoauer.de>
 #
-#   Copyright (c) 2021 Marco Auer
+#   MIT License
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 #   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,35 +19,33 @@
 #   IN THE SOFTWARE.
 #---------------------------------------------------------------------------------------------------------------------
 
-# Set required CMake version
-cmake_minimum_required(VERSION 3.19)
+# Static library for Dear ImGui
+message("-- Configuring build scripts for Dear ImGui")
 
-# Set project details
-project(XMidiCtrl VERSION 0.03 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+# Find OpenGL
+include(FindOpenGL)
 
-message("-----------------------------------------------")
-message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
-message("-----------------------------------------------")
+# Add sources
+set(IMGUI_SRC ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_demo.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_draw.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_tables.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_widgets.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/imgui/misc/cpp/imgui_stdlib.cpp)
 
-# Create config file with project name and version numbers
-message("-- Creating config file")
-configure_file(
-        "${PROJECT_SOURCE_DIR}/Config.h.in"
-        "${PROJECT_BINARY_DIR}/Config.h"
-)
+# Set global variable with include directory
+set(IMGUI_INCLUDEDIR ${CMAKE_CURRENT_LIST_DIR}/imgui PARENT_SCOPE)
 
-add_definitions("-include ${PROJECT_BINARY_DIR}/Config.h")
-include_directories(${PROJECT_BINARY_DIR})
+# Build static library
+add_library(imgui STATIC ${IMGUI_SRC})
 
-# use highest optimization level
-if (NOT MSVC)
-    add_compile_options(-O3)
-endif()
+# Add custom config file
+message("---- Set config file to ${CMAKE_CURRENT_LIST_DIR}/imgui_config.h")
+target_compile_definitions(imgui PRIVATE -DIMGUI_USER_CONFIG="${CMAKE_CURRENT_LIST_DIR}/imgui_config.h")
 
-# set compiler options
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+# Link required libraries
+target_link_libraries(imgui PUBLIC OpenGL::GL)
 
-# Add subdirectories
-add_subdirectory(lib)
-add_subdirectory(src)
+# Include directories to target
+target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
+target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui/misc/cpp)

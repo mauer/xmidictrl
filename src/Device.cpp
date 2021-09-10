@@ -18,9 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
 // Standard
 #include <thread>
+#include <utility>
 
 // X-Plane SDK Utils
 #include "PluginLogger.h"
@@ -29,12 +29,10 @@
 #include "Device.h"
 #include "Plugin.h"
 
-
-using namespace XMidiCtrl;
-
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESCTRUCTOR
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -42,7 +40,7 @@ using namespace XMidiCtrl;
  */
 Device::Device(DeviceSettings settings) {
     // set the device settings
-    m_settings = settings;
+    m_settings = std::move(settings);
     
     try {
         // create midi classes
@@ -159,7 +157,7 @@ void Device::processMessage(double deltatime, std::vector<unsigned char>* messag
         midiEvent.velocity      = static_cast< int >(message->at(2));
 
         LOG_DEBUG << "DEVICE :: Inbound message for device " << m_settings.name << " on Thread " << std::this_thread::get_id() << " ::  Status = " << midiEvent.status 
-                  << ", CC = " << midiEvent.controlChange << ", Velocity = " << midiEvent.velocity << LOG_END
+        << ", CC = " << midiEvent.controlChange << ", Velocity = " << midiEvent.velocity << LOG_END
 
         // check midi status
         if (midiEvent.status != XMIDICTRL_STATUS_CC) {
@@ -178,27 +176,27 @@ void Device::processMessage(double deltatime, std::vector<unsigned char>* messag
                         saveEventDateTime(midiEvent.controlChange);
                         break;
 
-                    case 0: {
-                        double seconds = retrieveEventDateTime(midiEvent.controlChange);
+                        case 0: {
+                            double seconds = retrieveEventDateTime(midiEvent.controlChange);
 
-                        if (seconds > -0.5f) {
-                            if (seconds < 1) 
-                                midiEvent.mapping.command = midiEvent.mapping.commandPush;
-                             else 
-                                midiEvent.mapping.command = midiEvent.mapping.commandPull;
+                            if (seconds > -0.5f) {
+                                if (seconds < 1)
+                                    midiEvent.mapping.command = midiEvent.mapping.commandPush;
+                                else
+                                    midiEvent.mapping.command = midiEvent.mapping.commandPull;
 
-                            addEvent = true;
+                                addEvent = true;
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
-
-                    default:
-                        LOG_WARN << "DEVICE :: Invalid midi status " << midiEvent.status << LOG_END
-                        break;
+                        default:
+                            LOG_WARN << "DEVICE :: Invalid midi status " << midiEvent.status << LOG_END
+                            break;
                 }
             
-            // for dataref changes, we will only process the event with key pressed (velocity == 127)
+                // for dataref changes, we will only process the event with key pressed (velocity == 127)
             } else if (midiEvent.mapping.type == MappingType::DataRef) {
                 if (midiEvent.velocity == 127) 
                     addEvent = true;
@@ -219,7 +217,7 @@ void Device::processMessage(double deltatime, std::vector<unsigned char>* messag
 /**
  * Return the name of the midi device
  */ 
-const std::string_view Device::name() {
+std::string_view Device::name() const {
     return m_settings.name;
 }
 
@@ -241,7 +239,7 @@ void Device::saveEventDateTime(int controlChange) {
 /**
  * Retrieve a stored event date time stamp and calculate duration between push and release
  */
-const double Device::retrieveEventDateTime(int controlChange) {
+double Device::retrieveEventDateTime(int controlChange) {
     try {
         time_point prevTime = m_eventStorage.at(controlChange);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - prevTime;
@@ -257,3 +255,5 @@ const double Device::retrieveEventDateTime(int controlChange) {
 
     return -1;
 }
+
+} // Namespace XMidiCtrl

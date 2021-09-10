@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
-//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -19,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMIDICTRL_USERINTERFACE_H
-#define XMIDICTRL_USERINTERFACE_H
+#ifndef USERINTERFACE_H
+#define USERINTERFACE_H
 
 // Standard
 #include <atomic>
@@ -37,7 +36,7 @@ namespace XPEnv {
         UserInterface();
         ~UserInterface();
 
-        void createWindow(const std::string& title, const int width, const int height);
+        void createWindow(const std::string& title, int width, int height);
 
     private:
         void initialise();
@@ -56,6 +55,6 @@ namespace XPEnv {
         int m_height;
     };
 
-} // XPEnv
+} // Namespace XPEnv
 
-#endif //XMIDICTRL_USERINTERFACE_H
+#endif // Namespace USERINTERFACE_H

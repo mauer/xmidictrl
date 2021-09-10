@@ -1,7 +1,8 @@
 #---------------------------------------------------------------------------------------------------------------------
-#   MIT License
+#   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
+#   Copyright (c) 2021 Marco Auer <marco@marcoauer.de>
 #
-#   Copyright (c) 2021 Marco Auer
+#   MIT License
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 #   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,35 +19,30 @@
 #   IN THE SOFTWARE.
 #---------------------------------------------------------------------------------------------------------------------
 
-# Set required CMake version
-cmake_minimum_required(VERSION 3.19)
+# Build X-Plane SDK as interface library
+message("-- Configuring build scripts for X-Plane SDK")
 
-# Set project details
-project(XMidiCtrl VERSION 0.03 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+add_library(xpsdk INTERFACE)
 
-message("-----------------------------------------------")
-message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
-message("-----------------------------------------------")
+# Set X-Plane SDK Version
+target_compile_definitions(xpsdk INTERFACE -DXPLM303=1 -DXPLM302=1 -DXPLM301=1 -DXPLM300=1 -DXPLM210=1 -DXPLM200=1)
 
-# Create config file with project name and version numbers
-message("-- Creating config file")
-configure_file(
-        "${PROJECT_SOURCE_DIR}/Config.h.in"
-        "${PROJECT_BINARY_DIR}/Config.h"
-)
-
-add_definitions("-include ${PROJECT_BINARY_DIR}/Config.h")
-include_directories(${PROJECT_BINARY_DIR})
-
-# use highest optimization level
-if (NOT MSVC)
-    add_compile_options(-O3)
+# Set Operating System
+if (WIN32)
+    message("---- Set Operating System to IBM")
+    target_compile_definitions(xpsdk INTERFACE -DIBM=1)
+elseif (APPLE)
+    message("---- Set Operating System to APPLE")
+    target_compile_definitions(xpsdk INTERFACE -DAPL=1)
+elseif (UNIX)
+    message("---- Set Operating System to Linux")
+    target_compile_definitions(xpsdk INTERFACE -DLIN=1)
 endif()
 
-# set compiler options
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+# Link required libraries
+target_link_libraries(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/Libraries/Win/XPLM_64.lib)
 
-# Add subdirectories
-add_subdirectory(lib)
-add_subdirectory(src)
+# Include directories to target
+target_include_directories(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/CHeaders/Widgets)
+target_include_directories(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/CHeaders/Wrappers)
+target_include_directories(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/CHeaders/XPLM)

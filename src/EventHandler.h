@@ -1,27 +1,25 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
-//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
-//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
 //   to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 //
-//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
+//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
 //   the Software.
 //
-//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 //   THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-//   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+//   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
-#ifndef EVENTHANDLER_H_
-#define EVENTHANDLER_H_
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H
 
 // Standard
 #include <map>
@@ -37,18 +35,18 @@
 
 // XMidiCtrl
 #include "Global.h"
+#include "Types.h"
 
 using namespace XPEnv;
-
 
 namespace XMidiCtrl {
 
 class EventHandler {
 public:
-    EventHandler(std::shared_ptr<Environment> environment);
+    explicit EventHandler(std::shared_ptr<Environment> environment);
     ~EventHandler();
    
-    void addMidiEvent(std::shared_ptr<MidiEvent> midiEvent);
+    void addMidiEvent(const std::shared_ptr<MidiEvent>& midiEvent);
     void processEvents();
 
 private:
@@ -60,11 +58,11 @@ private:
 
     void changeDataRef(std::shared_ptr<MidiEvent> midiEvent);
 
-    void changeIntegerDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
-    void changeFloatDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
-    void changeDoubleDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent);
+    void changeIntegerDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
+    void changeFloatDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
+    void changeDoubleDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
 
-    DataDetails getDataDetails(const std::string name);
+    DataDetails getDataDetails(const std::string& name);
 
     std::queue<std::shared_ptr<MidiEvent>> m_eventList;
 
@@ -73,6 +71,6 @@ private:
     std::shared_ptr<Environment> m_environment;
 };
 
-}
+} // Namespace XMidiCtrl
 
-#endif // EVENTHANDLER_H_
+#endif // EVENTHANDLER_H

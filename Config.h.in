@@ -18,31 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENVIRONMENT_H
-#define ENVIRONMENT_H
+#define XMIDICTRL_NAME "@PROJECT_NAME@"
+#define XMIDICTRL_DESCRIPTION "@PROJECT_DESCRIPTION@"
 
-// Standard
-#include <memory>
-
-// X-Plane Environment
-#include "Commands.h"
-#include "DataRefs.h"
-
-namespace XPEnv {
-
-class Environment {
-public:
-	Environment();
-    ~Environment();
-
-    std::shared_ptr<Commands> commands();
-    std::shared_ptr<DataRefs> dataRefs();
-    
-private:
-    std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<DataRefs> m_dataRefs;
-};
-
-} // Namespace XPEnv
-
-#endif // ENVIRONMENT_H
+#define XMIDICTRL_VERSION_MAJOR @XMidiCtrl_VERSION_MAJOR@
+#define XMIDICTRL_VERSION_MINOR @XMidiCtrl_VERSION_MINOR@
+#define XMIDICTRL_VERSION_STR "@XMidiCtrl_VERSION_MAJOR@.@XMidiCtrl_VERSION_MINOR@"

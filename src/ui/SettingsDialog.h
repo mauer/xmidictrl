@@ -18,31 +18,24 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENVIRONMENT_H
-#define ENVIRONMENT_H
-
-// Standard
-#include <memory>
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
 // X-Plane Environment
-#include "Commands.h"
-#include "DataRefs.h"
+#include "ImGuiWindow.h"
 
-namespace XPEnv {
 
-class Environment {
+namespace XMidiCtrl {
+
+class SettingsDialog : public XPEnv::ImGuiWindow {
 public:
-	Environment();
-    ~Environment();
+    SettingsDialog();
+    ~SettingsDialog() override;
 
-    std::shared_ptr<Commands> commands();
-    std::shared_ptr<DataRefs> dataRefs();
-    
-private:
-    std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<DataRefs> m_dataRefs;
+protected:
+    void createWidgets() override;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
-#endif // ENVIRONMENT_H
+#endif // SETTINGSDIALOG_H

@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef GLOBAL_H_
-#define GLOBAL_H_
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 // Standard
 #include <map>
@@ -27,18 +27,6 @@
 
 // X-Plane SDK
 #include "XPLMDataAccess.h"
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   DEFINES
-//---------------------------------------------------------------------------------------------------------------------
-
-// Plugin name and version
-#define XMIDICTRL_NAME  "XMidiCtrl"
-#define XMIDICTRL_VERSION "0.01"
-
-// Interval of flight loop
-#define XMIDICTRL_FLIGHTLOOP_INTERVAL -1.0
 
 // Name of the config file
 #define XMIDICTRL_CONFIG_FILENAME "xmidictrl.cfg"
@@ -59,25 +47,6 @@
 
 namespace XMidiCtrl {
 
-
-//---------------------------------------------------------------------------------------------------------------------
-//   ENUMERATIONS
-//---------------------------------------------------------------------------------------------------------------------
-
-// Midi mapping types
-enum class MappingType {
-    None,
-    Command,
-    DataRef,
-    Slider,
-    PushAndPull,
-    Encoder,
-    Internal
-};
-
-
-
-
 //---------------------------------------------------------------------------------------------------------------------
 //   STRUCTS
 //---------------------------------------------------------------------------------------------------------------------
@@ -88,50 +57,6 @@ struct DataDetails {
     XPLMDataTypeID type;
 };
 
+} // Namespace XMidiCtrl
 
-// Midi mapping
-struct MidiMapping {
-    int controlChange;
-    MappingType type;
-
-    std::string command;
-
-    std::string commandPush;
-    std::string commandPull;
-
-    std::string commandUp;
-    std::string commandDown;
-
-    std::string commandUpFast;  
-    std::string commandDownFast;
-
-    std::string dataRef;
-    std::string valueOn;
-    std::string valueOff;
-};
-
-
-// Single midi event
-struct MidiEvent {
-    int status;
-    int controlChange;
-    int velocity;
-
-    MidiMapping mapping;
-};
-
-
-// Midi device settings
-struct DeviceSettings {
-    std::string name;
-
-    int portIn;
-    int portOut;
-
-    std::map<int, MidiMapping> mapping;
-
-};
-
-}
-
-#endif // GLOBAL_H_
+#endif // GLOBAL_H

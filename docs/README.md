@@ -1,5 +1,5 @@
 # MIDI Controller plugin for X-Plane
-XMidiCtrl is an X-Plane plugin to use midi controllers within the flight simulator
+XMidiCtrl is an X-Plane 11plugin to use midi controllers within the flight simulator
 
 The following devices are currently supported:
 

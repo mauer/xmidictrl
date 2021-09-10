@@ -1,59 +1,65 @@
-# set compiler options
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+#---------------------------------------------------------------------------------------------------------------------
+#   MIT License
+#
+#   Copyright (c) 2021 Marco Auer
+#
+#   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+#   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+#   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+#   to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+#   the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+#   THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+#   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+#   IN THE SOFTWARE.
+#---------------------------------------------------------------------------------------------------------------------
 
-# X-Plane SDK
-add_definitions(-DXPLM303=1 -DXPLM302=1 -DXPLM301=1 -DXPLM300=1 -DXPLM210=1 -DXPLM200=1)
-
-include_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/CHeaders/XPLM")
-
-if (WIN32)
-    link_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Win")
-elseif (APPLE)
-    link_directories("${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac")
-endif()
+message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 # RtMidi
-find_package( PkgConfig REQUIRED )
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(RTMIDI REQUIRED rtmidi)
 
 include_directories(${RTMIDI_INCLUDEDIR})
-include_directories("${PROJECT_SOURCE_DIR}/lib/")
+include_directories(${IMGUI_INCLUDEDIR})
 
-# include sub modules
-add_subdirectory(xpenv)
+# Build shared library
+add_library(${PROJECT_NAME} SHARED)
+
+# Include sub directories
+include(${CMAKE_CURRENT_LIST_DIR}/xpenv/CmakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
+
+message("---- Directory: src")
 
 # Source and header files
 set(XMIDICTRL_SRC Device.cpp
-                  EventHandler.cpp 
+                  EventHandler.cpp
                   main.cpp
                   Menu.cpp
                   Plugin.cpp
-                  Settings.cpp
-                  )
+                  Settings.cpp)
 
-set(XMIDICTRL_HDR Device.h
-                  EventHandler.h
-                  Menu.h
-                  Plugin.h
-                  Settings.h
-                  )
-
-# add library
-add_library(${PROJECT_NAME} SHARED ${XMIDICTRL_SRC} ${XMIDICTRL_HDR})
+target_sources(${PROJECT_NAME} PRIVATE ${XMIDICTRL_SRC})
 
 # link required dependencies
 if (WIN32)
-    add_definitions(-DIBM=1)
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static -static-libgcc -static-libstdc++ toml11 ${RTMIDI_STATIC_LIBRARIES} winmm xpenv XPLM_64.lib)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -static -static-libgcc -static-libstdc++ toml11 ${RTMIDI_STATIC_LIBRARIES} winmm xpsdk imgui)
 elseif (APPLE)
-    add_definitions(-DAPL=1)
     target_link_libraries(${PROJECT_NAME} "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
 elseif (UNIX)
-    add_definitions(-DLIN=1)
-endif()
+endif ()
 
-# set output properties
+# Set output properties for X-Plane standards
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "XMidiCtrl")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".xpl")
+
+# Installation on test system
+if(WIN32)
+    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "X:/X-Plane 11/Resources/plugins/${PROJECT_NAME}/win_x64/"            )
+endif(WIN32)

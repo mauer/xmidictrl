@@ -18,74 +18,100 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane SDK
-#include "XPLMUtilities.h"
+#ifndef TYPES_H
+#define TYPES_H
 
-// X-Plane Environment
-#include "PluginLogger.h"
-#include "PluginLogEntry.h"
-#include "XPlanePlugin.h"
+// Standard
+#include <map>
+#include <string>
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
+//   CONSTANTS
 //---------------------------------------------------------------------------------------------------------------------
 
-/**
- * Constructor
- */
-XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
-    m_name    = name;
-    m_version = version;
-
-    m_pluginId = -1;
-
-    // create environment (link to X-Plane)
-    m_environment = std::make_shared<Environment>();
-
-    // initialize the plugin
-    initialise();
-}
+// Interval of flight loop
+#define XMIDICTRL_FLIGHTLOOP_INTERVAL (-1.0)
 
 
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
 
-/**
- * Return the X-Plane Environment
- */
-std::shared_ptr<Environment> XPlanePlugin::environment() {
-    return m_environment;
-}
+// Midi mapping types
+enum class MappingType {
+    None,
+    Command,
+    DataRef,
+    Slider,
+    PushAndPull,
+    Encoder,
+    Internal
+};
 
 
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
+//   TYPES
 //---------------------------------------------------------------------------------------------------------------------
 
-/** 
- * Initialise the plugin
- */
-void XPlanePlugin::initialise() {
-    // get plugin id
-    m_pluginId = XPLMGetMyID();
+// List off connected midi devices
+class Device;
+typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
 
-    // get plugin path
-    XPLMGetPluginInfo(m_pluginId, NULL, m_pluginPath, NULL, NULL);
 
-    // get X-Plane path
-    XPLMGetSystemPath(m_xplanePath);
 
-    // initialize logger
-    PluginLogger::Instance().initialise(m_xplanePath, m_name);
-    
-    LOG_INFO << "Plugin " << m_name << " " << m_version << " loaded successfully" << LOG_END
-}
 
-} // Namespace XPEnv
+//---------------------------------------------------------------------------------------------------------------------
+//   STRUCTURES
+//---------------------------------------------------------------------------------------------------------------------
+
+// Midi mapping
+struct MidiMapping {
+    int controlChange;
+    MappingType type;
+
+    std::string command;
+
+    std::string commandPush;
+    std::string commandPull;
+
+    std::string commandUp;
+    std::string commandDown;
+
+    std::string commandUpFast;
+    std::string commandDownFast;
+
+    std::string dataRef;
+    std::string valueOn;
+    std::string valueOff;
+};
+
+
+// Midi device settings
+struct DeviceSettings {
+    std::string name;
+
+    int portIn;
+    int portOut;
+
+    std::map<int, MidiMapping> mapping;
+};
+
+
+// Single midi event
+struct MidiEvent {
+    int status;
+    int controlChange;
+    int velocity;
+
+    MidiMapping mapping;
+};
+
+} // Namespace XMidiCtrl
+
+#endif // TYPES_H

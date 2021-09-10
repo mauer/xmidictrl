@@ -18,31 +18,52 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENVIRONMENT_H
-#define ENVIRONMENT_H
-
 // Standard
-#include <memory>
+#include <string>
 
-// X-Plane Environment
-#include "Commands.h"
-#include "DataRefs.h"
+// XMidiCtrl
+#include "Config.h"
+#include "SettingsDialog.h"
 
-namespace XPEnv {
+using namespace XPEnv;
 
-class Environment {
-public:
-	Environment();
-    ~Environment();
+namespace XMidiCtrl {
 
-    std::shared_ptr<Commands> commands();
-    std::shared_ptr<DataRefs> dataRefs();
-    
-private:
-    std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<DataRefs> m_dataRefs;
-};
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
-} // Namespace XPEnv
+/**
+ * Constructor
+ */
+SettingsDialog::SettingsDialog() :
+ImGuiWindow(700, 350)
+{
+    setTitle(std::string(XMIDICTRL_NAME) + " Settings");
+}
 
-#endif // ENVIRONMENT_H
+
+/**
+ * Destructor
+ */
+SettingsDialog::~SettingsDialog() = default;
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create widgets
+ */
+void SettingsDialog::createWidgets() {
+    if (ImGui::Button("Save"))
+        hide();
+
+    if (ImGui::Button("Cancel"))
+        hide();
+}
+
+} // Namespace XMidiCtrl

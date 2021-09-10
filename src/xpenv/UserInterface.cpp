@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
-//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,11 +20,7 @@
 
 #include "UserInterface.h"
 
-// Standard
-#include <vector>
-
-using namespace XPEnv;
-
+namespace XPEnv {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -48,9 +43,7 @@ UserInterface::UserInterface() {
 /**
  * Destructor
  */
-UserInterface::~UserInterface() {
-
-}
+UserInterface::~UserInterface() = default;
 
 
 
@@ -65,7 +58,7 @@ UserInterface::~UserInterface() {
  * @param width Initial width of the window
  * @param height Initial height of the window
  */
-void UserInterface::createWindow(const std::string &title, const int width, const int height) {
+void UserInterface::createWindow(const std::string &title, int width, int height) {
     XPLMWindowID window;
 
     // get screen boundaries
@@ -151,3 +144,5 @@ bool UserInterface::onMouseWheel(XPLMWindowID id, int x, int y, int wheel, int c
  */
 void UserInterface::initialise() {
 }
+
+} // Namespace XPEnv

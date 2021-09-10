@@ -1,29 +1,38 @@
+#---------------------------------------------------------------------------------------------------------------------
+#   Copyright (c) 2021 Marco Auer <marco@marcoauer.de>
+#
+#   MIT License
+#
+#   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+#   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+#   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+#   to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+#   the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+#   THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+#   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+#   IN THE SOFTWARE.
+#---------------------------------------------------------------------------------------------------------------------
+
+message("---- Directory: src/xpenv")
+
+# Set sources
 set(XPENV_SRC ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
               ${CMAKE_CURRENT_LIST_DIR}/DataRefs.cpp
               ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/ImGuiWindow.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/XPlaneWindow.cpp
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogEntry.cpp
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.cpp
               ${CMAKE_CURRENT_LIST_DIR}/UserInterface.cpp
               ${CMAKE_CURRENT_LIST_DIR}/XPlanePlugin.cpp)
 
-set(XPENV_HDR ${CMAKE_CURRENT_LIST_DIR}/Commands.h
-              ${CMAKE_CURRENT_LIST_DIR}/DataRefs.h
-              ${CMAKE_CURRENT_LIST_DIR}/Environment.h
-              ${CMAKE_CURRENT_LIST_DIR}/PluginLogEntry.h
-              ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.h
-              ${CMAKE_CURRENT_LIST_DIR}/UserInterface.h
-              ${CMAKE_CURRENT_LIST_DIR}/XPlanePlugin.h)
+# Add sources to target
+target_sources(${PROJECT_NAME} PRIVATE ${XPENV_SRC})
 
-add_library(xpenv STATIC ${XPENV_SRC} ${XPENV_HDR})
-
-target_include_directories(xpenv INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
-if (WIN32)
-    add_definitions(-DIBM=1)
-    target_link_libraries(xpenv ${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Win/XPLM_64.lib)
-elseif (APPLE)
-    add_definitions(-DAPL=1)
-    target_link_libraries(xpenv "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
-elseif (UNIX)
-    add_definitions(-DLIN=1)
-endif()
+# Include current directory
+include_directories(${CMAKE_CURRENT_LIST_DIR})

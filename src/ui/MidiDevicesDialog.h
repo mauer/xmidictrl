@@ -18,31 +18,30 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENVIRONMENT_H
-#define ENVIRONMENT_H
+#ifndef MIDIDEVICESDIALOG_H
+#define MIDIDEVICESDIALOG_H
 
-// Standard
-#include <memory>
+// RtMidi
+#include "RtMidi.h"
 
 // X-Plane Environment
-#include "Commands.h"
-#include "DataRefs.h"
+#include "ImGuiWindow.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
-class Environment {
+class MidiDevicesDialog : public XPEnv::ImGuiWindow {
 public:
-	Environment();
-    ~Environment();
+    MidiDevicesDialog();
+    ~MidiDevicesDialog() override;
 
-    std::shared_ptr<Commands> commands();
-    std::shared_ptr<DataRefs> dataRefs();
-    
+protected:
+    void createWidgets() override;
+
 private:
-    std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<DataRefs> m_dataRefs;
+    std::unique_ptr<RtMidiIn>  m_midiIn;
+    std::unique_ptr<RtMidiOut> m_midiOut;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
-#endif // ENVIRONMENT_H
+#endif // MIDIDEVICESDIALOG_H

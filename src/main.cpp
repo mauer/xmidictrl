@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
-//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,12 +23,11 @@
 #include "XPLMPlugin.h"
 
 // XMidiCtrl
+#include "Config.h"
 #include "Plugin.h"
-//#include "Global.h"
-
 
 #ifndef XPLM300
-	#error This is made to be compiled against the XPLM300 SDK
+	#error This is made to be compiled against the X-Plane SDK Version 300
 #endif
 
 
@@ -37,9 +35,9 @@
  *  The XPluginStart function is called by X-Plane right after the plugin's DLL is loaded.
  */
 PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
-    strcpy(outName, "XMidiCtrl");
-    strcpy(outSig,  "XMidiCtrl");
-    strcpy(outDesc, "Midi Controller for X-Plane");
+    strcpy(outName, XMIDICTRL_NAME);
+    strcpy(outSig,  XMIDICTRL_NAME);
+    strcpy(outDesc, XMIDICTRL_DESCRIPTION);
 
     XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 
@@ -81,11 +79,14 @@ PLUGIN_API void XPluginDisable(void) {
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void* inParam) { 
     switch(inMsg) {
         case XPLM_MSG_PLANE_LOADED:
-            XMidiCtrl::Plugin::Instance().reloadSettings();
+            XMidiCtrl::Plugin::Instance().reloadAircraftSettings();
             break;
 
         case XPLM_MSG_PLANE_UNLOADED:
-            XMidiCtrl::Plugin::Instance().reloadSettings();
+            XMidiCtrl::Plugin::Instance().reloadAircraftSettings();
+            break;
+
+        default:
             break;
     }
 }

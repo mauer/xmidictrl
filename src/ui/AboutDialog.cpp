@@ -18,15 +18,16 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane SDK
-#include "XPLMUtilities.h"
+// Standard
+#include <string>
 
-// X-Plane Environment
-#include "PluginLogger.h"
-#include "PluginLogEntry.h"
-#include "XPlanePlugin.h"
+// XMidiCtrl
+#include "AboutDialog.h"
+#include "Config.h"
 
-namespace XPEnv {
+using namespace XPEnv;
+
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -35,57 +36,53 @@ namespace XPEnv {
 /**
  * Constructor
  */
-XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
-    m_name    = name;
-    m_version = version;
-
-    m_pluginId = -1;
-
-    // create environment (link to X-Plane)
-    m_environment = std::make_shared<Environment>();
-
-    // initialize the plugin
-    initialise();
+AboutDialog::AboutDialog() :
+ImGuiWindow(700, 350)
+{
+    setTitle("About " + std::string(XMIDICTRL_NAME) + " " + std::string(XMIDICTRL_VERSION_STR));
 }
+
+
+/**
+ * Destructor
+ */
+AboutDialog::~AboutDialog() = default;
 
 
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the X-Plane Environment
+ * Create widgets
  */
-std::shared_ptr<Environment> XPlanePlugin::environment() {
-    return m_environment;
+void AboutDialog::createWidgets() {
+    ImGui::NewLine();
+    ImGui::TextUnformatted(XMIDICTRL_NAME " - " XMIDICTRL_DESCRIPTION);
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Version " XMIDICTRL_VERSION_STR);
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Copyright (c) 2021 by Marco Auer");
+    ImGui::NewLine();
+    ImGui::TextUnformatted(XMIDICTRL_NAME " has been released under the MIT License and is therefore free to use without");
+    ImGui::TextUnformatted("any restrictions or limitations. This software is provided without warranty of any kind.");
+    ImGui::NewLine();
+    ImGui::TextUnformatted(XMIDICTRL_NAME " uses the following libraries:");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("RtMidi from Gary P. Scavone (https://github.com/thestk/rtmidi)");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("TOML for Modern C++ from Toru Niina (https:://github.com/ToruNiina/toml11)");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("Dear ImGui from Omar Cornut (https:://github.com/ocornut/imgui)");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("The X-Plane SDK from Laminar Research");
+    ImGui::NewLine();
+
+    ImGui::Spacing();
+    if (ImGui::Button("Close"))
+        hide();
 }
 
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
-//---------------------------------------------------------------------------------------------------------------------
-
-/** 
- * Initialise the plugin
- */
-void XPlanePlugin::initialise() {
-    // get plugin id
-    m_pluginId = XPLMGetMyID();
-
-    // get plugin path
-    XPLMGetPluginInfo(m_pluginId, NULL, m_pluginPath, NULL, NULL);
-
-    // get X-Plane path
-    XPLMGetSystemPath(m_xplanePath);
-
-    // initialize logger
-    PluginLogger::Instance().initialise(m_xplanePath, m_name);
-    
-    LOG_INFO << "Plugin " << m_name << " " << m_version << " loaded successfully" << LOG_END
-}
-
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

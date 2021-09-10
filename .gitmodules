@@ -4,9 +4,9 @@
 [submodule "lib/xpsdk"]
 	path = lib/xpsdk
 	url = https://github.com/mauer/xpsdk
-[submodule "lib/xsb_public"]
-	path = lib/xsb_public
-	url = https://github.com/mauer/xsb_public
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "lib/xsb_public"]
+	path = lib/xsb_public
+	url = https://github.com/xsquawkbox/xsb_public

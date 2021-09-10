@@ -18,29 +18,34 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MENU_H_
-#define MENU_H_
+#ifndef MENU_H
+#define MENU_H
 
 // X-Plane SDK
-#include "XPLMUtilities.h"
 #include "XPLMMenus.h"
 
-class XMidiCtrlMenu {
+namespace XMidiCtrl {
+
+const char* const MENUITEM_SEARCH_MIDI_DEVICES = "SEARCH_MIDI_DEVICES";
+const char* const MENUITEM_SETTINGS_DIALOG     = "SETTINGS_DIALOG";
+const char* const MENUITEM_RELOAD_SETTINGS     = "RELOAD_SETTINGS";
+const char* const MENUITEM_ABOUT_DIALOG        = "ABOUT_DIALOG";
+
+class Menu {
 public:
-    XMidiCtrlMenu();
+    Menu();
+    ~Menu();
 
     void createMenu();
     void deleteMenu();
 
 private:
-    static void MenuHandler(void* in_menu_ref, void* in_item_ref);
+    static void menuHandler(void* in_menu_ref, void* in_item_ref);
 
-    //std::optional<Menu> midictrl_menu;
-    //std::optional<MenuItem> about_item;
-
-    //std::optional<MenuItem> reload_plugins_on_modification_item;
-    int m_menu_container;
-    XPLMMenuID m_menu_id;
+    int m_menuContainer;
+    XPLMMenuID m_menuId;
 };
 
-#endif // MENU_H_
+} // Namespace XMidiCtrl
+
+#endif // MENU_H

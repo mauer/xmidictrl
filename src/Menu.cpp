@@ -18,43 +18,94 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+// Standard
+#include <string>
+
+// X-Plane Environment
+#include "PluginLogger.h"
 
 // XMidiCtrl
-#include "Plugin.h"
+#include "Config.h"
 #include "Menu.h"
+#include "Plugin.h"
 
+namespace XMidiCtrl {
 
-using namespace XMidiCtrl;
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
-
-XMidiCtrlMenu::XMidiCtrlMenu() {
-    m_menu_container = 0;
+/**
+ * Constructor
+ */
+Menu::Menu() {
+    m_menuContainer = 0;
+    m_menuId = nullptr;
 }
 
 
-void XMidiCtrlMenu::createMenu() {
-    m_menu_container = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "XMidiCtrl", 0, 0);
-    m_menu_id = XPLMCreateMenu("XMidiCtrl", XPLMFindPluginsMenu(), m_menu_container, MenuHandler, this);
-    
-    XPLMAppendMenuItem(m_menu_id, "MIDI Watcher", (void *)1, 1);
-    XPLMAppendMenuItem(m_menu_id, "Reload Settings", (void *)"reload_settings", 1);
-    XPLMAppendMenuSeparator(m_menu_id);
-    XPLMAppendMenuItem(m_menu_id, "About XMidiCtrl", (void *)"about_dialog", 1);
+/**
+ * Destructor
+ */
+Menu::~Menu() {
+    deleteMenu();
 }
 
 
-void XMidiCtrlMenu::deleteMenu() {
-	XPLMDestroyMenu(m_menu_id);
-    XPLMRemoveMenuItem(XPLMFindPluginsMenu(), m_menu_container);
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create plugin menu
+ */
+void Menu::createMenu() {
+    m_menuContainer = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, 0, 0);
+    m_menuId = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menuContainer, menuHandler, this);
+
+    XPLMAppendMenuItem(m_menuId, "Search for MIDI Devices", (void*) MENUITEM_SEARCH_MIDI_DEVICES, 0);
+    XPLMAppendMenuSeparator(m_menuId);
+    XPLMAppendMenuItem(m_menuId, "Settings", (void*) MENUITEM_SETTINGS_DIALOG, 0);
+    XPLMAppendMenuItem(m_menuId, "Reload Settings", (void*) MENUITEM_RELOAD_SETTINGS, 0);
+    XPLMAppendMenuSeparator(m_menuId);
+    XPLMAppendMenuItem(m_menuId, std::string("About " + std::string(XMIDICTRL_NAME)).c_str(),
+                       (void*) MENUITEM_ABOUT_DIALOG, 0);
 }
 
 
-void XMidiCtrlMenu::MenuHandler(void* in_menu_ref, void* in_item_ref) {
-    if (!strcmp((const char*) in_item_ref, "reload_settings")) {
-        Plugin::Instance().reloadSettings();
+/**
+ * Delete the menu items
+ */
+void Menu::deleteMenu() {
+    m_menuContainer = 0;
+    m_menuId = nullptr;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Event handler
+ */
+void Menu::menuHandler(void* in_menu_ref, void* in_item_ref) {
+    if (!strcmp((const char*) in_item_ref, MENUITEM_SEARCH_MIDI_DEVICES)) {
+        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_SEARCH_MIDI_DEVICES" << LOG_END
+        Plugin::Instance().showMidiDevicesDialog();
     }
-
-    if (!strcmp((const char*) in_item_ref, "about_dialog")) {
+    else if (!strcmp((const char*) in_item_ref, MENUITEM_RELOAD_SETTINGS)) {
+        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_RELOAD_SETTINGS" << LOG_END
+        Plugin::Instance().reloadAircraftSettings();
+    }
+    else if (!strcmp((const char*) in_item_ref, MENUITEM_ABOUT_DIALOG)) {
+        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_ABOUT_DIALOG" << LOG_END
         Plugin::Instance().showAboutDialog();
     }
 }
+
+} // Namespace XMidiCtrl

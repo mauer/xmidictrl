@@ -18,6 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+// Standard
+#include <filesystem>
 
 // X-Plane SDK
 #include "XPLMPlanes.h"
@@ -28,27 +30,24 @@
 
 // XMidiCtrl
 #include "Settings.h"
+#include "Global.h"
 
-
-using namespace XMidiCtrl;
-
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESCTRUCTOR
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Constructor
  */
-Settings::Settings() {
-}
+Settings::Settings() = default;
 
 
 /**
  * Destructor
  */
-Settings::~Settings() {
-}
+Settings::~Settings() = default;
 
 
 
@@ -70,6 +69,12 @@ void Settings::reloadSettingsForAircraft() {
     std::string fileName = getAircraftConfigFileName();
 
     if (!fileName.empty()) {
+        if (!std::filesystem::exists(fileName))
+        {
+            LOG_INFO << "SETTINGS :: Config file for aircraft not found" << LOG_END
+            return;
+        }
+
         try {
             // load settings
             m_aircraftConfig = toml::parse(fileName);
@@ -102,7 +107,7 @@ std::vector<DeviceSettings> Settings::deviceList() {
 
     try {
         // get all devices
-        auto devices = toml::find<std::vector<toml::table>>(m_aircraftConfig, XMIDICTRL_CFG_DEVICE);
+        auto devices = toml::find<std::vector<toml::table>>(m_aircraftConfig, CFG_KEY_DEVICE);
 
         LOG_DEBUG << "SETTINGS :: " << devices.size() << " Devices found in config" << LOG_END
         
@@ -112,9 +117,9 @@ std::vector<DeviceSettings> Settings::deviceList() {
 
             try {
                 // general settings
-                deviceSettings.name    = devices[i][XMIDICTRL_CFG_NAME].as_string();
-                deviceSettings.portIn  = static_cast<int>( devices[i][XMIDICTRL_CFG_PORTIN].as_integer() );
-                deviceSettings.portOut = static_cast<int>( devices[i][XMIDICTRL_CFG_PORTOUT].as_integer() );
+                deviceSettings.name    = devices[i][CFG_KEY_NAME].as_string();
+                deviceSettings.portIn  = static_cast<int>( devices[i][CFG_KEY_PORT_IN].as_integer() );
+                deviceSettings.portOut = static_cast<int>( devices[i][CFG_KEY_PORT_OUT].as_integer() );
 
                 LOG_DEBUG << "SETTINGS :: Device (" << i << ") :: Name     = " << deviceSettings.name << LOG_END
                 LOG_DEBUG << "SETTINGS :: Device (" << i << ") :: Port In  = " << deviceSettings.portIn << LOG_END
@@ -149,7 +154,7 @@ std::vector<DeviceSettings> Settings::deviceList() {
  * Get the config filename for the currently loaded aircraft
  */
 std::string Settings::getAircraftConfigFileName() {
-    std::string fileName = "";
+    std::string fileName;
     
     char aircraftFileName[256];
     char aircraftPath[512];
@@ -188,8 +193,8 @@ std::map<int, MidiMapping> Settings::mappingForDevice(toml::array settings) {
         mapping = {};
 
         try {
-            if (settings[i].contains(XMIDICTRL_CFG_CC))
-                mapping.controlChange = static_cast<int>( settings[i][XMIDICTRL_CFG_CC].as_integer() );
+            if (settings[i].contains(CFG_KEY_CC))
+                mapping.controlChange = static_cast<int>( settings[i][CFG_KEY_CC].as_integer() );
 
             if (settings[i].contains(CFG_KEY_TYPE))
                 typeStr = settings[i][CFG_KEY_TYPE].as_string();
@@ -208,36 +213,36 @@ std::map<int, MidiMapping> Settings::mappingForDevice(toml::array settings) {
                     
                     break;
 
-                case MappingType::DataRef:
-                    if (!readSettingsForDataRef(&mapping, &settings[i]))
-                        continue;
+                    case MappingType::DataRef:
+                        if (!readSettingsForDataRef(&mapping, &settings[i]))
+                            continue;
 
-                    break;
+                        break;
 
-                case MappingType::Slider:
-                    if (!readSettingsForSlider(&mapping, &settings[i]))
-                        continue;
+                        case MappingType::Slider:
+                            if (!readSettingsForSlider(&mapping, &settings[i]))
+                                continue;
 
-                    break;
+                            break;
 
-                case MappingType::PushAndPull:
-                    if (!readSettingsForPushAndPull(&mapping, &settings[i]))
-                        continue;
+                            case MappingType::PushAndPull:
+                                if (!readSettingsForPushAndPull(&mapping, &settings[i]))
+                                    continue;
                     
-                    break;
+                                break;
 
-                case MappingType::Encoder:
-                    if (!readSettingsForEncoder(&mapping, &settings[i]))
-                        continue;
+                                case MappingType::Encoder:
+                                    if (!readSettingsForEncoder(&mapping, &settings[i]))
+                                        continue;
 
-                    break;
+                                    break;
 
-                case MappingType::Internal:
-                    break;
+                                    case MappingType::Internal:
+                                        break;
 
-                case MappingType::None:
-                    LOG_WARN << "SETTINGS :: Invalid mapping type" << LOG_END
-                    continue;
+                                    case MappingType::None:
+                                        LOG_WARN << "SETTINGS :: Invalid mapping type" << LOG_END
+                                        continue;
             }
 
             mappingList.emplace(mapping.controlChange, mapping);
@@ -352,13 +357,13 @@ bool Settings::readSettingsForSlider(MidiMapping* mapping, toml::value* settings
 
     // read the four commands
     try {
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_UP))
-            mapping->commandUp = settings->at(XMIDICTRL_CFG_COMMAND_UP).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_UP))
+            mapping->commandUp = settings->at(CFG_KEY_COMMAND_UP).as_string();
 
         LOG_DEBUG << "SETTINGS :: Command Up   = " << mapping->commandUp << LOG_END
 
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_DOWN))
-            mapping->commandDown = settings->at(XMIDICTRL_CFG_COMMAND_DOWN).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_DOWN))
+            mapping->commandDown = settings->at(CFG_KEY_COMMAND_DOWN).as_string();
 
         LOG_DEBUG << "SETTINGS :: Command Down = " << mapping->commandDown << LOG_END
 
@@ -416,26 +421,26 @@ bool Settings::readSettingsForEncoder(MidiMapping* mapping, toml::value* setting
 
     // read the four commands
     try {
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_UP))
-            mapping->commandUp = settings->at(XMIDICTRL_CFG_COMMAND_UP).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_UP))
+            mapping->commandUp = settings->at(CFG_KEY_COMMAND_UP).as_string();
 
         LOG_DEBUG << "SETTINGS :: Command Up   = " << mapping->commandUp << LOG_END
 
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_DOWN))
-            mapping->commandDown = settings->at(XMIDICTRL_CFG_COMMAND_DOWN).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_DOWN))
+            mapping->commandDown = settings->at(CFG_KEY_COMMAND_DOWN).as_string();
 
         LOG_DEBUG << "SETTINGS :: Command Down = " << mapping->commandDown << LOG_END
 
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_UP_FAST)) {
-            mapping->commandUpFast = settings->at(XMIDICTRL_CFG_COMMAND_UP_FAST).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_UP_FAST)) {
+            mapping->commandUpFast = settings->at(CFG_KEY_COMMAND_UP_FAST).as_string();
 
             LOG_DEBUG << "SETTINGS :: Command Up (fast)   = " << mapping->commandUpFast << LOG_END
         } else {
             mapping->commandUpFast = mapping->commandUp;
         }
         
-        if (settings->contains(XMIDICTRL_CFG_COMMAND_DOWN_FAST)) {
-            mapping->commandDownFast = settings->at(XMIDICTRL_CFG_COMMAND_DOWN_FAST).as_string();
+        if (settings->contains(CFG_KEY_COMMAND_DOWN_FAST)) {
+            mapping->commandDownFast = settings->at(CFG_KEY_COMMAND_DOWN_FAST).as_string();
 
             LOG_DEBUG << "SETTINGS :: Command Down (fast) = " << mapping->commandDownFast << LOG_END
         } else {
@@ -443,7 +448,7 @@ bool Settings::readSettingsForEncoder(MidiMapping* mapping, toml::value* setting
         }
 
         if ((!mapping->commandUp.empty()) && (!mapping->commandUpFast.empty()) &&
-            (!mapping->commandDown.empty()) && (!mapping->commandDownFast.empty()))
+        (!mapping->commandDown.empty()) && (!mapping->commandDownFast.empty()))
             result = true;
 
     } catch (toml::type_error& error) {
@@ -453,3 +458,5 @@ bool Settings::readSettingsForEncoder(MidiMapping* mapping, toml::value* setting
 
     return result;
 }
+
+} // Namespace XMidiCtrl

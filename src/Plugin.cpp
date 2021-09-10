@@ -18,33 +18,37 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-
 // Standard
 #include <string>
-#include <string_view>
+#include <utility>
 
-// X-Plane SDK Utils
+// X-Plane Environment
 #include "PluginLogger.h"
 
 // XMidiCtrl
-#include "Global.h"
+#include "Config.h"
 #include "Plugin.h"
+#include "ui/AboutDialog.h"
+#include "ui/MidiDevicesDialog.h"
 
-
-using namespace XMidiCtrl;
-
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESCTRUCTOR
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Constructor
  */
 Plugin::Plugin()
-    : XPlanePlugin(XMIDICTRL_NAME, XMIDICTRL_VERSION), m_eventHandler(this->environment()) {
-    // initialise
+: XPlanePlugin(XMIDICTRL_NAME, XMIDICTRL_VERSION_STR),
+m_eventHandler(this->environment()) {
+    LOG_METHOD_START
+
+    // initialize
     m_flightLoopId = nullptr;
+
+    LOG_METHOD_END
 }
 
 
@@ -52,11 +56,15 @@ Plugin::Plugin()
  * Destructor
  */
 Plugin::~Plugin() {
+    LOG_METHOD_START
+
     m_flightLoopId = nullptr;
 
-    // close and destroy all midi devices
+    // close and destroy all midi connections and devices
     closeMidiConnections();
     destroyDeviceList();
+
+    LOG_METHOD_END
 }
 
 
@@ -71,7 +79,6 @@ Plugin::~Plugin() {
  */
 Plugin& Plugin::Instance() {
     static Plugin plugin;
-
     return plugin;
 }
 
@@ -79,15 +86,16 @@ Plugin& Plugin::Instance() {
 /**
  * Callback for the flight loop
  */
-float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter, void * refcon) {
-    Plugin* midiCtrl = nullptr;
-    
+float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter, void* refcon) {
+    LOG_METHOD_START
+
     // call instance method
     if (refcon != nullptr) {
-        midiCtrl = static_cast< Plugin* >(refcon);
+        auto midiCtrl = static_cast< Plugin* >(refcon);
         midiCtrl->processFlightLoop(elapsedMe, elapsedSim, counter);
     }
 
+    LOG_METHOD_END
     return XMIDICTRL_FLIGHTLOOP_INTERVAL;
 }
 
@@ -96,7 +104,7 @@ float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter,
  * Process the flight loop
  */
 void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
-    // process messages
+    // process midi events
     m_eventHandler.processEvents();
 }
 
@@ -105,26 +113,30 @@ void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
  * Enable the plugin
  */
 void Plugin::enablePlugin() {
+    LOG_METHOD_START
     LOG_INFO << "PLUGIN :: Enable plugin" << LOG_END
 
     // create all required menu entries
-    m_pluginMenu.createMenu();
-
-    // probe for available midi ports
-    //probeMidiPorts();
+    m_menu.createMenu();
 
     // initialise configured midi devices
     initialiseDevices();
 
     // register flight loop
-    XPLMCreateFlightLoop_t params = {sizeof(XPLMCreateFlightLoop_t), xplm_FlightLoop_Phase_BeforeFlightModel, callbackFlightLoop, this };
+    XPLMCreateFlightLoop_t params = { sizeof(XPLMCreateFlightLoop_t),
+                                      xplm_FlightLoop_Phase_BeforeFlightModel,
+                                      callbackFlightLoop, this };
     m_flightLoopId = XPLMCreateFlightLoop(&params);
 
     if (m_flightLoopId != nullptr) {
         LOG_INFO << "PLUGIN :: Flight loop successfully registered" << LOG_END
 
         XPLMScheduleFlightLoop(m_flightLoopId, XMIDICTRL_FLIGHTLOOP_INTERVAL, true);
+    } else {
+        LOG_ERROR << "PLUGIN :: Could not create flight loop" << LOG_END
     }
+
+    LOG_METHOD_END
 }
 
 
@@ -132,15 +144,17 @@ void Plugin::enablePlugin() {
  * Disable the plugin
  */
 void Plugin::disablePlugin() {
+    LOG_METHOD_START
+
     // delete the menu entries
-    m_pluginMenu.deleteMenu();
+    m_menu.deleteMenu();
 
     // destroy the flight loop
     if (m_flightLoopId != nullptr) {
         XPLMDestroyFlightLoop(m_flightLoopId);
         m_flightLoopId = nullptr;
 
-        LOG_INFO <<"PLUGIN :: Flight loop destroyed" << LOG_END
+        LOG_INFO << "PLUGIN :: Flight loop destroyed" << LOG_END
     }
 
     // close midi connections
@@ -150,13 +164,15 @@ void Plugin::disablePlugin() {
     destroyDeviceList();
 
     LOG_INFO << "PLUGIN :: Disabled plugin" << LOG_END
+    LOG_METHOD_END
 }
 
 
 /**
  * Reload the settings
  */
-void Plugin::reloadSettings() {
+void Plugin::reloadAircraftSettings() {
+    LOG_METHOD_START
     LOG_INFO << "PLUGIN :: Reload settings" << LOG_END
 
     // reload settings for current aircraft
@@ -164,14 +180,33 @@ void Plugin::reloadSettings() {
 
     // initialise configured midi devices
     initialiseDevices();
+
+    LOG_METHOD_END
 }
 
 
 /**
  * Add a midi event to the queue
  */
-void Plugin::addMidiEvent(std::shared_ptr<MidiEvent> midiEvent) {
+void Plugin::addMidiEvent(const std::shared_ptr<MidiEvent>& midiEvent) {
+    LOG_METHOD_START
+
     m_eventHandler.addMidiEvent(midiEvent);
+
+    LOG_METHOD_END
+}
+
+
+/**
+ * Search for available midi devices
+ */
+void Plugin::showMidiDevicesDialog() {
+    LOG_METHOD_START
+
+    auto dialog = new MidiDevicesDialog();
+    dialog->show();
+
+    LOG_METHOD_END
 }
 
 
@@ -179,40 +214,12 @@ void Plugin::addMidiEvent(std::shared_ptr<MidiEvent> midiEvent) {
  * Show the about dialog
  */
 void Plugin::showAboutDialog() {
-    m_ui.createWindow("About XMidiCtrl", 300, 100);
-}
+    LOG_METHOD_START
 
+    auto dialog = new AboutDialog();
+    dialog->show();
 
-/**
- * Probe for available midi devices
- */
-void Plugin::probeMidiPorts() {
-    RtMidiIn* midiIn = 0;
-
-    // Construct midi event listener
-    try {
-        midiIn = new RtMidiIn();
-    }
-    catch ( RtMidiError& midiError) {
-        LOG_ERROR << midiError.what() << LOG_END
-    }
-
-    // Check input ports
-    unsigned int portCount = midiIn->getPortCount(); 
-    std::string portName;
-
-    //pluginLog << "No of Ports found: " << portCount << std::endl;
-
-    for (unsigned int i = 0; i < portCount; i++) {
-        try {
-            portName = midiIn->getPortName(i);
-
-            //pluginLog << "Port: " << portName << std::endl;
-        }
-        catch ( RtMidiError& midiError) {
-            LOG_ERROR << midiError.what() << LOG_END
-        }
-    }
+    LOG_METHOD_END
 }
 
 
@@ -226,6 +233,7 @@ void Plugin::probeMidiPorts() {
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
+    LOG_METHOD_START
     LOG_INFO << "PLUGIN :: Initialise MIDI devices" << LOG_END
 
     std::vector<DeviceSettings> deviceList;
@@ -245,6 +253,8 @@ void Plugin::initialiseDevices() {
         // open inbound and outbound port
         midiDevice->openConnections();
     }
+
+    LOG_METHOD_END
 }
 
 
@@ -252,6 +262,7 @@ void Plugin::initialiseDevices() {
  * Close all open midi connections
  */
 void Plugin::closeMidiConnections() {
+    LOG_METHOD_START
     LOG_INFO << "PLUGIN :: Close MIDI connections" << LOG_END
 
     for (auto const& device : m_midiDevices) {
@@ -261,6 +272,8 @@ void Plugin::closeMidiConnections() {
     }
 
     m_midiDevices.clear();
+
+    LOG_METHOD_END
 }    
 
 
@@ -268,13 +281,12 @@ void Plugin::closeMidiConnections() {
  * Destroy device list
  */
 void Plugin::destroyDeviceList() {
-    LOG_DEBUG << "PLUGIN :: Destroy MIDI device list" << LOG_END
-
-    //for (auto device : m_midiDevices) {
-    //    delete device.second;
-    //    device.second = nullptr;
-    //}
+    LOG_METHOD_START
+    LOG_INFO << "PLUGIN :: Destroy MIDI device list" << LOG_END
 
     m_midiDevices.clear();
+
+    LOG_METHOD_END
 }
 
+} // Namespace XMidiCtrl

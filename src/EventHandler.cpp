@@ -1,24 +1,22 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   MIT License
 //
-//   XMidiCtrl - A MIDI Controller plugin for X-Plane 11
 //   Copyright (c) 2021 Marco Auer
 //
-//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
 //   to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 //
-//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
+//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
 //   the Software.
 //
-//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 //   THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
-//   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+//   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
-
 
 // Standard
 #include <mutex>
@@ -32,9 +30,7 @@
 // XMidiCtrl
 #include "EventHandler.h"
 
-
-using namespace XMidiCtrl;
-
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -51,8 +47,7 @@ EventHandler::EventHandler(std::shared_ptr<Environment> environment) {
 /**
  * Destructor
  */
-EventHandler::~EventHandler() {
-}
+EventHandler::~EventHandler() = default;
 
 
 
@@ -64,9 +59,9 @@ EventHandler::~EventHandler() {
 /**
  * Add a midi event
  */
-void EventHandler::addMidiEvent(std::shared_ptr<MidiEvent> midiEvent) {
+void EventHandler::addMidiEvent(const std::shared_ptr<MidiEvent>& midiEvent) {
     LOG_DEBUG << "EVENTHANDLER :: Adding midiEvent on Thread " << std::this_thread::get_id() << " :: Status = " << midiEvent->status 
-              << ", CC = " << midiEvent->controlChange << ", Velocity = " << midiEvent->velocity << LOG_END
+    << ", CC = " << midiEvent->controlChange << ", Velocity = " << midiEvent->velocity << LOG_END
     
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
@@ -101,35 +96,35 @@ void EventHandler::processEvents() {
 
                 break;
 
-            case MappingType::DataRef:
-                LOG_DEBUG << "EVENTHANDLER :: Process DataRef event on Thread " << std::this_thread::get_id() << LOG_END
-                changeDataRef(midiEvent);
+                case MappingType::DataRef:
+                    LOG_DEBUG << "EVENTHANDLER :: Process DataRef event on Thread " << std::this_thread::get_id() << LOG_END
+                    changeDataRef(midiEvent);
 
-                break;
+                    break;
 
-            case MappingType::Slider:
-                LOG_DEBUG << "EVENTHANDLER :: Process Slider event on Thread " << std::this_thread::get_id() << LOG_END
-                performSliderEvent(midiEvent);
+                    case MappingType::Slider:
+                        LOG_DEBUG << "EVENTHANDLER :: Process Slider event on Thread " << std::this_thread::get_id() << LOG_END
+                        performSliderEvent(midiEvent);
 
-                break;
+                        break;
 
-            case MappingType::PushAndPull:
-                LOG_DEBUG << "EVENTHANDLER :: Process Push and Pull event on Thread " << std::this_thread::get_id() << LOG_END
-                executeCommandOnce(midiEvent);
+                        case MappingType::PushAndPull:
+                            LOG_DEBUG << "EVENTHANDLER :: Process Push and Pull event on Thread " << std::this_thread::get_id() << LOG_END
+                            executeCommandOnce(midiEvent);
 
-                break;        
+                            break;
 
-            case MappingType::Encoder:
-                LOG_DEBUG << "EVENTHANDLER :: Process Enconder event on Thread " << std::this_thread::get_id() << LOG_END
-                performEncoderEvent(midiEvent);
+                            case MappingType::Encoder:
+                                LOG_DEBUG << "EVENTHANDLER :: Process Enconder event on Thread " << std::this_thread::get_id() << LOG_END
+                                performEncoderEvent(midiEvent);
 
-                break;
+                                break;
 
-            case MappingType::Internal:
-                LOG_DEBUG << "EVENTHANDLER :: Process Internal event on Thread " << std::this_thread::get_id() << LOG_END
-                performInternalEvent(midiEvent);
+                                case MappingType::Internal:
+                                    LOG_DEBUG << "EVENTHANDLER :: Process Internal event on Thread " << std::this_thread::get_id() << LOG_END
+                                    performInternalEvent(midiEvent);
 
-                break;
+                                    break;
         }
 
         // delete entry from list
@@ -148,13 +143,13 @@ void EventHandler::executeCommand(std::shared_ptr<MidiEvent> midiEvent) {
             m_environment->commands()->begin(midiEvent->mapping.command);
             break;
 
-        case 0:
-            LOG_DEBUG << "Execute end command " << midiEvent->mapping.command << LOG_END
-            m_environment->commands()->end(midiEvent->mapping.command);
-            break;
+            case 0:
+                LOG_DEBUG << "Execute end command " << midiEvent->mapping.command << LOG_END
+                m_environment->commands()->end(midiEvent->mapping.command);
+                break;
 
-        default:
-            LOG_ERROR << "Invalid Midi status " << midiEvent->status << LOG_END
+                default:
+                    LOG_ERROR << "Invalid Midi status " << midiEvent->status << LOG_END
     }
 }
 
@@ -219,24 +214,24 @@ void EventHandler::changeDataRef(std::shared_ptr<MidiEvent> midiEvent) {
 
             break;
 
-        case xplmType_Float:
-            LOG_DEBUG << "EVENTHANDLER :: Change float dataref" << LOG_END
-            changeFloatDataRef(data, midiEvent);
+            case xplmType_Float:
+                LOG_DEBUG << "EVENTHANDLER :: Change float dataref" << LOG_END
+                changeFloatDataRef(data, midiEvent);
 
-            break;
+                break;
 
-        case xplmType_Double:
-            LOG_DEBUG << "EVENTHANDLER :: Change double dataref" << LOG_END
+                case xplmType_Double:
+                    LOG_DEBUG << "EVENTHANDLER :: Change double dataref" << LOG_END
 
-            break;
+                    break;
 
-        case xplmType_Unknown:
-            LOG_ERROR << "EVENTHANDLER :: Could not determine type of dataref " << midiEvent->mapping.dataRef << LOG_END
+                case xplmType_Unknown:
+                    LOG_ERROR << "EVENTHANDLER :: Could not determine type of dataref " << midiEvent->mapping.dataRef << LOG_END
 
-            break;
+                    break;
 
-        default:
-            LOG_ERROR << "EVENTHANDLER :: Unknown data type " << data.type << LOG_END
+                default:
+                    LOG_ERROR << "EVENTHANDLER :: Unknown data type " << data.type << LOG_END
     }
 }
 
@@ -244,7 +239,7 @@ void EventHandler::changeDataRef(std::shared_ptr<MidiEvent> midiEvent) {
 /**
  * Change a integer dataref
  */
-void EventHandler::changeIntegerDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent) {
+void EventHandler::changeIntegerDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent) {
     int value = XPLMGetDatai(dataDetails.dataRef);
 
     if (value == std::stoi(midiEvent->mapping.valueOn)) {
@@ -260,7 +255,7 @@ void EventHandler::changeIntegerDataRef(const DataDetails& dataDetails, std::sha
 /**
  * Change an float dataref
  */
-void EventHandler::changeFloatDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent) {
+void EventHandler::changeFloatDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent) {
     float value = XPLMGetDataf(dataDetails.dataRef);
 
     if (value == std::stof(midiEvent->mapping.valueOn)) {
@@ -276,7 +271,7 @@ void EventHandler::changeFloatDataRef(const DataDetails& dataDetails, std::share
 /**
  * Change a double dataref
  */
-void EventHandler::changeDoubleDataRef(const DataDetails& dataDetails, std::shared_ptr<MidiEvent> midiEvent) {
+void EventHandler::changeDoubleDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent) {
     double value = XPLMGetDatad(dataDetails.dataRef);
 
     if (value == std::stod(midiEvent->mapping.valueOn)) {
@@ -292,8 +287,8 @@ void EventHandler::changeDoubleDataRef(const DataDetails& dataDetails, std::shar
 /**
  * Get details for X-Plane data
  */
-DataDetails EventHandler::getDataDetails(const std::string name) {
-    DataDetails data;
+DataDetails EventHandler::getDataDetails(const std::string& name) {
+    DataDetails data{};
 
     // check the cache first
     try {
@@ -314,3 +309,5 @@ DataDetails EventHandler::getDataDetails(const std::string name) {
 
     return data;
 }
+
+} // Namespace XMidiCtrl
