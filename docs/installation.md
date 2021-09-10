@@ -13,7 +13,8 @@ The installation of XMidiCtrl includes several directories:
 XMidiCtrl
 |- win_x64       --> plugin binary for Microsoft Windows
 |- examples      --> example configurations for various aircraft
+|- templates     --> template configurations for MIDI devices
 |- profiles      --> active configurations
-´´´
+```
 
-You can place the configuration file for an aircraft directly in the aircraft directory of the in profiles directory of the plugin
+You can place the configuration file for an aircraft directly in the aircraft directory of the in profiles directory of the plugin.

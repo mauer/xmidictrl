@@ -1,6 +1,7 @@
 <!-- docs/_sidebar.md -->
 
-* [Home](/)
-* [Installation](installation.md)
-* [Configuration](configuration.md)
+* [About XMidiCtrl](/)
+* **Getting started**
+  * [Installation](installation.md)
+  * [Configuration](configuration.md)
 
