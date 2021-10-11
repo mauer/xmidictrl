@@ -24,12 +24,10 @@
 // X-Plane SDK
 #include "XPLMMenus.h"
 
-namespace XMidiCtrl {
+// XMidiCtrl
+#include "Types.h"
 
-const char* const MENUITEM_SEARCH_MIDI_DEVICES = "SEARCH_MIDI_DEVICES";
-const char* const MENUITEM_SETTINGS_DIALOG     = "SETTINGS_DIALOG";
-const char* const MENUITEM_RELOAD_SETTINGS     = "RELOAD_SETTINGS";
-const char* const MENUITEM_ABOUT_DIALOG        = "ABOUT_DIALOG";
+namespace XMidiCtrl {
 
 class Menu {
 public:

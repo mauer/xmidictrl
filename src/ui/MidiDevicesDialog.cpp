@@ -58,7 +58,10 @@ MidiDevicesDialog::~MidiDevicesDialog() = default;
  * Create widgets
  */
 void MidiDevicesDialog::createWidgets() {
-    ImGui::Text("Inbound Ports");
+    //ImGui::PushFont
+
+    ImGui::Text("INBOUND PORTS");
+    ImGui::Separator();
     ImGui::NewLine();
 
     try {
@@ -91,7 +94,8 @@ void MidiDevicesDialog::createWidgets() {
     ImGui::NewLine();
     ImGui::NewLine();
 
-    ImGui::Text("Outbound Ports");
+    ImGui::Text("OUTBOUND PORTS");
+    ImGui::Separator();
     ImGui::NewLine();
 
     try {
@@ -119,12 +123,6 @@ void MidiDevicesDialog::createWidgets() {
         ImGui::Text("Error: ");
         ImGui::TextWrapped("%s", midiError.getMessage().c_str());
     }
-
-    ImGui::NewLine();
-    ImGui::SetCursorPosX(150);
-
-    if (ImGui::Button("Close"))
-        hide();
 }
 
 } // Namespace XMidiCtrl

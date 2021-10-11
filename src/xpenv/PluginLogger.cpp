@@ -79,19 +79,23 @@ void PluginLogger::initialise(std::string_view path, std::string_view pluginName
 /**
  * Post a log entry
  */
-void PluginLogger::postData(const PluginLogData logData) {
+void PluginLogger::postData(const PluginLogData& logData) {
     if (!m_stream.is_open())
         return;
 
     // format datetime stamp
-    std::string dateTimeStr(19, '\0');
-    struct tm time;
-    localtime_s(&time, &logData.time);
-    std::strftime(&dateTimeStr[0], dateTimeStr.size(), "%Y-%m-%d %H:%M:%S", &time);
+    //std::string dateTimeStr(21, '\0');
+    char dateTimeStr[32];
+    time_t t = time(nullptr);
+    struct tm *tm = localtime(&t);
+    //localtime_s(&time, &logData.time);
+    std::strftime(&dateTimeStr[0], sizeof(dateTimeStr), "%Y-%m-%d %H:%M:%S", tm);
+    //std::strftime(&dateTimeStr[0], sizeof(dateTimeStr.size(), "%Y-%m-%d %H:%M:%S", &time);
   
     switch (logData.level) {
         case LogLevel::Error:
             m_stream << dateTimeStr << "   " << "[ERROR]" << "   " << logData.text << std::endl;
+            m_errors.push_back(std::string(dateTimeStr) + "   " + logData.text);
             break;
 
         case LogLevel::Warn:

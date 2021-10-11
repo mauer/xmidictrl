@@ -37,7 +37,9 @@ Commands::Commands() = default;
 /**
  * Destructor
  */
-Commands::~Commands() = default;
+Commands::~Commands() {
+    m_commandCache.clear();
+}
 
 
 
@@ -49,10 +51,10 @@ Commands::~Commands() = default;
 /**
  * Begin a X-Plane command
  */
-void Commands::begin(const std::string& command) {
+void Commands::begin(std::string_view command) {
     XPLMCommandRef cmdRef = getCommandRef(command);
 
-    if (cmdRef != nullptr)
+    if (cmdRef)
         XPLMCommandBegin(cmdRef);
 }
 
@@ -60,10 +62,10 @@ void Commands::begin(const std::string& command) {
 /**
  * End a X-Plane command
  */
-void Commands::end(const std::string& command) {
+void Commands::end(std::string_view command) {
     XPLMCommandRef cmdRef = getCommandRef(command);
 
-    if (cmdRef != nullptr)
+    if (cmdRef)
         XPLMCommandEnd(cmdRef);
 }
 
@@ -71,10 +73,10 @@ void Commands::end(const std::string& command) {
 /**
  * Execute a X-Plane command
  */
-void Commands::execute(const std::string& command) {
+void Commands::execute(std::string_view command) {
     XPLMCommandRef cmdRef = getCommandRef(command);
 
-    if (cmdRef != nullptr)
+    if (cmdRef)
         XPLMCommandOnce(cmdRef);
 }
 
@@ -88,19 +90,19 @@ void Commands::execute(const std::string& command) {
 /**
  * Get the command ref for a command string
  */
-XPLMCommandRef Commands::getCommandRef(const std::string& command) {
+XPLMCommandRef Commands::getCommandRef(std::string_view command) {
     XPLMCommandRef cmdRef = nullptr;
 
     // check the cache first
     try {
         cmdRef = m_commandCache.at(command);
     } catch (std::out_of_range const&) {
-        cmdRef = XPLMFindCommand(command.c_str());
+        cmdRef = XPLMFindCommand(command.data());
         m_commandCache.emplace(command, cmdRef);
     }
 
     if (cmdRef == nullptr)
-        LOG_ERROR << "Command '" << command << "' not found" << LOG_END
+        LOG_ERROR << "COMMANDS :: Command '" << command.data() << "' not found" << LOG_END
 
         return cmdRef;
 }

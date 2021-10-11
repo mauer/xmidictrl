@@ -26,7 +26,7 @@
 
 // X-Plane Environment
 #include "Commands.h"
-#include "DataRefs.h"
+#include "Datarefs.h"
 
 namespace XPEnv {
 
@@ -35,12 +35,14 @@ public:
 	Environment();
     ~Environment();
 
+    typedef std::shared_ptr<Environment> ptr;
+
     std::shared_ptr<Commands> commands();
-    std::shared_ptr<DataRefs> dataRefs();
+    std::shared_ptr<Datarefs> datarefs();
     
 private:
     std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<DataRefs> m_dataRefs;
+    std::shared_ptr<Datarefs> m_datarefs;
 };
 
 } // Namespace XPEnv

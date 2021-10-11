@@ -24,6 +24,7 @@
 // Standard
 #include <fstream>
 #include <string_view>
+#include <vector>
 
 // X-Plane Environment
 #include "PluginLogEntry.h"
@@ -34,10 +35,7 @@
 #define LOG_INFO  (XPEnv::PluginLogEntry() << XPEnv::PluginLogEntry::Info)
 #define LOG_DEBUG (XPEnv::PluginLogEntry() << XPEnv::PluginLogEntry::Debug)
 
-#define LOG_END XPEnv::PluginLogEntry::endl;
-
-#define LOG_METHOD_START LOG_DEBUG << "START_METHOD" << " :: " << __PRETTY_FUNCTION__ << LOG_END
-#define LOG_METHOD_END   LOG_DEBUG << "END_METHOD"   << " :: " << __PRETTY_FUNCTION__ << LOG_END
+#define LOG_END XPEnv::PluginLogEntry::Endl;
 
 namespace XPEnv {
 
@@ -53,12 +51,14 @@ public:
 	static PluginLogger& Instance();
 
 	void initialise(std::string_view path, std::string_view pluginName);
-	void postData(const PluginLogData logData);
+	void postData(const PluginLogData& logData);
 
 private:
 	LogLevel m_logLevel;
 
 	std::ofstream m_stream;
+
+	std::vector<std::string> m_errors;
 };
 
 } // Namespace XPEnv

@@ -23,7 +23,7 @@
 
 // Standard
 #include <map>
-#include <string>
+#include <string_view>
 
 // X-Plane SDK
 #include "XPLMUtilities.h"
@@ -35,15 +35,15 @@ public:
 	Commands();
     ~Commands();
 
-    void begin(const std::string& command);
-    void end(const std::string& command);
+    void begin(std::string_view command);
+    void end(std::string_view command);
     
-    void execute(const std::string& command);
+    void execute(std::string_view command);
 
 private:
-    XPLMCommandRef getCommandRef(const std::string& command);
+    XPLMCommandRef getCommandRef(std::string_view command);
 
-    std::map<std::string, XPLMCommandRef> m_commandCache;
+    std::map<std::string_view, XPLMCommandRef> m_commandCache;
 };
 
 } // Namespace XPEnv

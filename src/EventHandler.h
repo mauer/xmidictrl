@@ -34,8 +34,8 @@
 #include "Environment.h"
 
 // XMidiCtrl
+#include "MappedEvent.h"
 #include "Global.h"
-#include "Types.h"
 
 using namespace XPEnv;
 
@@ -43,31 +43,14 @@ namespace XMidiCtrl {
 
 class EventHandler {
 public:
-    explicit EventHandler(std::shared_ptr<Environment> environment);
+    explicit EventHandler(Environment::ptr environment);
     ~EventHandler();
    
-    void addMidiEvent(const std::shared_ptr<MidiEvent>& midiEvent);
+    void addMappedEvent(const MappedEvent::ptr& mappedEvent);
     void processEvents();
 
 private:
-    void executeCommand(std::shared_ptr<MidiEvent> midiEvent);
-    void executeCommandOnce(std::shared_ptr<MidiEvent> midiEvent);
-    void performSliderEvent(std::shared_ptr<MidiEvent> midiEvent);
-    void performEncoderEvent(std::shared_ptr<MidiEvent> midiEvent);
-    void performInternalEvent(std::shared_ptr<MidiEvent> midiEvent);
-
-    void changeDataRef(std::shared_ptr<MidiEvent> midiEvent);
-
-    void changeIntegerDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
-    void changeFloatDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
-    void changeDoubleDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent);
-
-    DataDetails getDataDetails(const std::string& name);
-
-    std::queue<std::shared_ptr<MidiEvent>> m_eventList;
-
-    std::map<std::string, DataDetails> m_dataCache;
-
+    std::queue<MappedEvent::ptr> m_eventList;
     std::shared_ptr<Environment> m_environment;
 };
 

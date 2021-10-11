@@ -1,0 +1,69 @@
+//---------------------------------------------------------------------------------------------------------------------
+//   MIT License
+//
+//   Copyright (c) 2021 Marco Auer
+//
+//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+//   to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of 
+//   the Software.
+//
+//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+//   THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+//   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//   IN THE SOFTWARE.
+//---------------------------------------------------------------------------------------------------------------------
+
+#ifndef PROFILE_H
+#define PROFILE_H
+
+// Standard
+#include <memory>
+#include <string>
+#include <vector>
+
+// toml11
+#include <toml.hpp>
+
+// X-Plane Environment
+#include "Config.h"
+
+// XMidiCtrl
+#include "DeviceList.h"
+#include "Types.h"
+
+namespace XMidiCtrl {
+
+class Profile : public XPEnv::Config {
+public:
+    Profile();
+    ~Profile();
+
+    bool load();
+
+    //std::vector<DeviceSettings> deviceList();
+
+    void createMidiDevices(const DeviceList::ptr& deviceList);
+
+private:
+    std::string determineProfileFileName();
+
+    //std::map<int, MidiMapping> mappingForDevice(int deviceNo, toml::array settings);
+    void createMappingForDevice(int deviceNo, toml::array settings, const std::shared_ptr<Device>& device);
+    
+    static MappingType translateMapTypeStr(std::string_view typeStr);
+
+    Mapping::ptr readSettingsForCommand(int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForDataref(int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForSlider(int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForPushAndPull(int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForEncoder(int controlChange, toml::value* settings);
+};
+
+} // Namespace XMidiCtrl
+
+#endif // PROFILE_H

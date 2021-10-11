@@ -22,13 +22,14 @@ message("---- Directory: src/xpenv")
 
 # Set sources
 set(XPENV_SRC ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/DataRefs.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/Config.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Datarefs.cpp
               ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
+              ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
               ${CMAKE_CURRENT_LIST_DIR}/ImGuiWindow.cpp
               ${CMAKE_CURRENT_LIST_DIR}/XPlaneWindow.cpp
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogEntry.cpp
               ${CMAKE_CURRENT_LIST_DIR}/PluginLogger.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/UserInterface.cpp
               ${CMAKE_CURRENT_LIST_DIR}/XPlanePlugin.cpp)
 
 # Add sources to target

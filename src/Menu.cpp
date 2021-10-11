@@ -62,13 +62,15 @@ Menu::~Menu() {
  * Create plugin menu
  */
 void Menu::createMenu() {
-    m_menuContainer = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, 0, 0);
+    m_menuContainer = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, nullptr, 0);
     m_menuId = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menuContainer, menuHandler, this);
 
     XPLMAppendMenuItem(m_menuId, "Search for MIDI Devices", (void*) MENUITEM_SEARCH_MIDI_DEVICES, 0);
     XPLMAppendMenuSeparator(m_menuId);
+    XPLMAppendMenuItem(m_menuId, "Show Aircraft Profile", (void*) MENUITEM_SHOW_AIRCRAFT_PROFILE, 0);
+    XPLMAppendMenuItem(m_menuId, "Reload Aircraft Profile", (void*) MENUITEM_RELOAD_AIRCRAFT_PROFILE, 0);
+    XPLMAppendMenuSeparator(m_menuId);
     XPLMAppendMenuItem(m_menuId, "Settings", (void*) MENUITEM_SETTINGS_DIALOG, 0);
-    XPLMAppendMenuItem(m_menuId, "Reload Settings", (void*) MENUITEM_RELOAD_SETTINGS, 0);
     XPLMAppendMenuSeparator(m_menuId);
     XPLMAppendMenuItem(m_menuId, std::string("About " + std::string(XMIDICTRL_NAME)).c_str(),
                        (void*) MENUITEM_ABOUT_DIALOG, 0);
@@ -95,15 +97,19 @@ void Menu::deleteMenu() {
  */
 void Menu::menuHandler(void* in_menu_ref, void* in_item_ref) {
     if (!strcmp((const char*) in_item_ref, MENUITEM_SEARCH_MIDI_DEVICES)) {
-        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_SEARCH_MIDI_DEVICES" << LOG_END
+        LOG_INFO << "MENU :: Menu Handler -> MENUITEM_SEARCH_MIDI_DEVICES" << LOG_END
         Plugin::Instance().showMidiDevicesDialog();
     }
-    else if (!strcmp((const char*) in_item_ref, MENUITEM_RELOAD_SETTINGS)) {
-        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_RELOAD_SETTINGS" << LOG_END
-        Plugin::Instance().reloadAircraftSettings();
+    else if (!strcmp((const char*) in_item_ref, MENUITEM_RELOAD_AIRCRAFT_PROFILE)) {
+        LOG_INFO << "MENU :: Menu Handler -> MENUITEM_RELOAD_AIRCRAFT_PROFILE" << LOG_END
+        Plugin::Instance().loadAircraftProfile();
+    }
+    else if (!strcmp((const char*) in_item_ref, MENUITEM_SETTINGS_DIALOG)) {
+        LOG_INFO << "MENU :: Menu Handler -> MENUITEM_SETTINGS_DIALOG" << LOG_END
+        Plugin::Instance().showSettingsDialog();
     }
     else if (!strcmp((const char*) in_item_ref, MENUITEM_ABOUT_DIALOG)) {
-        LOG_DEBUG << "MENU :: Menu Handler -> MENUITEM_ABOUT_DIALOG" << LOG_END
+        LOG_INFO << "MENU :: Menu Handler -> MENUITEM_ABOUT_DIALOG" << LOG_END
         Plugin::Instance().showAboutDialog();
     }
 }

@@ -84,7 +84,7 @@ PluginLogEntry& PluginLogEntry::Debug(PluginLogEntry& logEntry) {
 /**
  * Log the end of a message
  */
-PluginLogEntry& PluginLogEntry::endl(PluginLogEntry& logEntry) {
+PluginLogEntry& PluginLogEntry::Endl(PluginLogEntry& logEntry) {
     PluginLogData logData;
     logData.time  = std::time(nullptr);
     logData.level = logEntry.m_logLevel;
@@ -111,6 +111,15 @@ PluginLogEntry& PluginLogEntry::operator<<(int16_t i) {
  * Log an int32 value
  */
 PluginLogEntry& PluginLogEntry::operator<<(int32_t i) {
+    m_stream << i;
+    return *this;
+}
+
+
+/**
+ * Log an unsigned int value
+ */
+PluginLogEntry& PluginLogEntry::operator<<(unsigned int i) {
     m_stream << i;
     return *this;
 }
@@ -146,7 +155,7 @@ PluginLogEntry& PluginLogEntry::operator<<(char c) {
 /**
  * Log a string value
  */
-PluginLogEntry& PluginLogEntry::operator<<(const std::string& s) {
+PluginLogEntry& PluginLogEntry::operator<<(std::string_view s) {
     m_stream << s;
     return *this;
 }

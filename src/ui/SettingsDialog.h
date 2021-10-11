@@ -24,7 +24,6 @@
 // X-Plane Environment
 #include "ImGuiWindow.h"
 
-
 namespace XMidiCtrl {
 
 class SettingsDialog : public XPEnv::ImGuiWindow {

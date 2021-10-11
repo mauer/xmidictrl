@@ -32,12 +32,18 @@ add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
 include(${CMAKE_CURRENT_LIST_DIR}/xpenv/CmakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/mapping/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/midi/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
 
 message("---- Directory: src")
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+
 # Source and header files
-set(XMIDICTRL_SRC Device.cpp
+set(XMIDICTRL_SRC Profile.cpp
+                  Device.cpp
+                  DeviceList.cpp
                   EventHandler.cpp
                   main.cpp
                   Menu.cpp

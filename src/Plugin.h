@@ -28,13 +28,13 @@
 #include "XPLMProcessing.h"
 
 // X-Plane Environment
-#include "UserInterface.h"
 #include "XPlanePlugin.h"
 
 // XMidiCtrl
-#include "Device.h"
+#include "DeviceList.h"
 #include "EventHandler.h"
 #include "Menu.h"
+#include "Profile.h"
 #include "Settings.h"
 #include "Types.h"
 
@@ -52,14 +52,18 @@ public:
     void enablePlugin() override;
     void disablePlugin() override;
 
-    void reloadAircraftSettings();
+    void loadAircraftProfile();
+    void clearAircraftProfile();
 
-    void addMidiEvent(const std::shared_ptr<MidiEvent>& midiEvent);
+    void addMappedEvent(MappedEvent::ptr mappedEvent);
 
     void showMidiDevicesDialog();
-    void showAboutDialog() override;
+    void showSettingsDialog();
+    void showAboutDialog();
 
 private:
+    std::shared_ptr<XPlaneWindow> createWindow(std::string_view windowId) override;
+
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
     void initialiseDevices();
@@ -69,10 +73,11 @@ private:
     Menu m_menu;
     EventHandler m_eventHandler;  
     Settings m_settings;
-    UserInterface m_ui;
+    Profile m_profile;
 
+private:
     XPLMFlightLoopID m_flightLoopId;
-    MidiDeviceList m_midiDevices;
+    DeviceList::ptr m_devices;
 };
 
 } // Namespace XMidiCtrl

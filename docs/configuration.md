@@ -6,13 +6,13 @@ to read and offers comments in the configuration.
 ## TOML Syntax
 TOML is using a very simple key/value pair syntax. To set the version number in the config file you just have to type:
 
-```shell
+```
 version = "1.0"
 ```
 
 Comments are easily included by putting a hash symbol before the text:
 
-```shell
+```
 # This is the title of my configuration
 title = "My XMidiCtrl configuration for a Cessna 172"
 

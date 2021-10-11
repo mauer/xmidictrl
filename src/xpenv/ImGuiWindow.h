@@ -48,6 +48,7 @@
 #include "imgui.h"
 
 // X-Plane Environment
+#include "ImGuiFontAtlas.h"
 #include "XPlaneWindow.h"
 
 namespace XPEnv {
@@ -73,6 +74,10 @@ protected:
     virtual void createWidgets() = 0;
 
 private:
+    const float IMGUI_FONT_SIZE = 18.0f;
+
+    static std::shared_ptr<ImGuiFontAtlas> m_imGuiFontAtlas;
+
     GLuint m_fontTextureId{};
     ImGuiContext *imGuiContext{};
     int mLeft{}, mTop{}, mRight{}, mBottom{};

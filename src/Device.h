@@ -25,6 +25,8 @@
 #include <chrono>
 #include <map>
 #include <memory>
+#include <string>
+#include <string_view>
 
 // X-Plane SDK
 #include "XPLMUtilities.h"
@@ -34,6 +36,7 @@
 
 // XMidiCtrl
 #include "Global.h"
+#include "mapping/MappingList.h"
 #include "Types.h"
 
 namespace XMidiCtrl {
@@ -44,12 +47,16 @@ using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
 class Device {
 public:
-    explicit Device(DeviceSettings settings);
+    Device(std::string_view name, unsigned int portIn, unsigned int portOut);
     ~Device();
 
     // no copying or copy assignments are allowed
     Device(Device const &) = delete;
     Device &operator=(Device const &) = delete;
+
+    typedef std::shared_ptr<Device> ptr;
+
+    void addMapping(std::shared_ptr<Mapping> mapping);
 
     bool openConnections();
     void closeConnections();
@@ -57,13 +64,17 @@ public:
     static void midiCallback(double deltatime, std::vector<unsigned char>* message, void* userdata);
     void processMessage(double deltatime, std::vector<unsigned char>* message);
     
-    std::string_view name() const;
+    [[nodiscard]] std::string_view name() const;
 
 private:
     void saveEventDateTime(int controlChange);
     double retrieveEventDateTime(int controlChange);
 
-    DeviceSettings m_settings;
+    std::string m_name;
+    unsigned int m_portIn;
+    unsigned int m_portOut;
+
+    MappingList m_mappings;
 
     std::unique_ptr<RtMidiIn>  m_midiIn;
     std::unique_ptr<RtMidiOut> m_midiOut;

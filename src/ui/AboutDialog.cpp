@@ -37,7 +37,7 @@ namespace XMidiCtrl {
  * Constructor
  */
 AboutDialog::AboutDialog() :
-ImGuiWindow(700, 350)
+ImGuiWindow(700, 380)
 {
     setTitle("About " + std::string(XMIDICTRL_NAME) + " " + std::string(XMIDICTRL_VERSION_STR));
 }
@@ -64,10 +64,14 @@ void AboutDialog::createWidgets() {
     ImGui::NewLine();
     ImGui::TextUnformatted("Version " XMIDICTRL_VERSION_STR);
     ImGui::NewLine();
+    ImGui::Separator();
+    ImGui::NewLine();
     ImGui::TextUnformatted("Copyright (c) 2021 by Marco Auer");
     ImGui::NewLine();
     ImGui::TextUnformatted(XMIDICTRL_NAME " has been released under the MIT License and is therefore free to use without");
     ImGui::TextUnformatted("any restrictions or limitations. This software is provided without warranty of any kind.");
+    ImGui::NewLine();
+    ImGui::Separator();
     ImGui::NewLine();
     ImGui::TextUnformatted(XMIDICTRL_NAME " uses the following libraries:");
     ImGui::Bullet();
@@ -78,11 +82,6 @@ void AboutDialog::createWidgets() {
     ImGui::TextUnformatted("Dear ImGui from Omar Cornut (https:://github.com/ocornut/imgui)");
     ImGui::Bullet();
     ImGui::TextUnformatted("The X-Plane SDK from Laminar Research");
-    ImGui::NewLine();
-
-    ImGui::Spacing();
-    if (ImGui::Button("Close"))
-        hide();
 }
 
 } // Namespace XMidiCtrl

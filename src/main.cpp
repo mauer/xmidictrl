@@ -79,11 +79,11 @@ PLUGIN_API void XPluginDisable(void) {
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void* inParam) { 
     switch(inMsg) {
         case XPLM_MSG_PLANE_LOADED:
-            XMidiCtrl::Plugin::Instance().reloadAircraftSettings();
+            XMidiCtrl::Plugin::Instance().loadAircraftProfile();
             break;
 
         case XPLM_MSG_PLANE_UNLOADED:
-            XMidiCtrl::Plugin::Instance().reloadAircraftSettings();
+            XMidiCtrl::Plugin::Instance().clearAircraftProfile();
             break;
 
         default:

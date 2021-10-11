@@ -32,25 +32,56 @@ namespace XMidiCtrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 // Interval of flight loop
-#define XMIDICTRL_FLIGHTLOOP_INTERVAL (-1.0)
+const int FLIGHTLOOP_INTERVAL (-1.0);
+
+
+// Name of the aircraft profile file
+const char* const FILENAME_PROFILE  = "xmidictrl.toml";
+
+
+// Name of the general settings file
+const char* const FILENAME_SETTINGS = "xmidictrl_settings.toml";
+
+
+// Menu items
+const char* const MENUITEM_ABOUT_DIALOG            = "ABOUT_DIALOG";
+const char* const MENUITEM_RELOAD_AIRCRAFT_PROFILE = "RELOAD_AIRCRAFT_PROFILE";
+const char* const MENUITEM_SEARCH_MIDI_DEVICES     = "SEARCH_MIDI_DEVICES";
+const char* const MENUITEM_SETTINGS_DIALOG         = "SETTINGS_DIALOG";
+const char* const MENUITEM_SHOW_AIRCRAFT_PROFILE   = "SHOW_AIRCRAFT_PROFILE";
+
+
+// Keys for the config files
+const char* const CFG_KEY_CC                = "CC";
+const char* const CFG_KEY_COMMAND           = "command";
+const char* const CFG_KEY_COMMAND_BOTTOM    = "command_bottom";
+const char* const CFG_KEY_COMMAND_DOWN      = "command_down";
+const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
+const char* const CFG_KEY_COMMAND_FAST_UP   = "command_fast_up";
+const char* const CFG_KEY_COMMAND_PULL      = "command_pull";
+const char* const CFG_KEY_COMMAND_PUSH      = "command_push";
+const char* const CFG_KEY_COMMAND_TOP       = "command_top";
+const char* const CFG_KEY_COMMAND_UP        = "command_up";
+const char* const CFG_KEY_DATAREF           = "dataref";
+const char* const CFG_KEY_DEVICE            = "device";
+const char* const CFG_KEY_NAME              = "name";
+const char* const CFG_KEY_PORT_IN           = "port_in";
+const char* const CFG_KEY_PORT_OUT          = "port_out";
+const char* const CFG_KEY_TYPE              = "type";
+const char* const CFG_KEY_VALUE_ON          = "value_on";
+const char* const CFG_KEY_VALUE_OFF         = "value_off";
+const char* const CFG_KEY_VERSION           = "version";
+
+
+// Windows Types
+const char* const WINDOW_ABOUT             = "WINDOW_ABOUT";
+const char* const WINDOW_DEVICES           = "WINDOW_DEVICES";
+const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
 
 
 
 
-//---------------------------------------------------------------------------------------------------------------------
-//   ENUMERATIONS
-//---------------------------------------------------------------------------------------------------------------------
 
-// Midi mapping types
-enum class MappingType {
-    None,
-    Command,
-    DataRef,
-    Slider,
-    PushAndPull,
-    Encoder,
-    Internal
-};
 
 
 
@@ -59,9 +90,10 @@ enum class MappingType {
 //   TYPES
 //---------------------------------------------------------------------------------------------------------------------
 
+// TODO Delete
 // List off connected midi devices
-class Device;
-typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
+//class Device;
+//typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
 
 
 
@@ -70,47 +102,50 @@ typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
 //   STRUCTURES
 //---------------------------------------------------------------------------------------------------------------------
 
+// TODO Delete
 // Midi mapping
-struct MidiMapping {
-    int controlChange;
-    MappingType type;
-
-    std::string command;
-
-    std::string commandPush;
-    std::string commandPull;
-
-    std::string commandUp;
-    std::string commandDown;
-
-    std::string commandUpFast;
-    std::string commandDownFast;
-
-    std::string dataRef;
-    std::string valueOn;
-    std::string valueOff;
-};
+//struct MidiMapping {
+//    int controlChange;
+//    MappingType type;
+//
+//    std::string command;
+//
+//    std::string commandPush;
+//    std::string commandPull;
+//
+//    std::string commandUp;
+//    std::string commandDown;
+//
+//    std::string commandUpFast;
+//    std::string commandDownFast;
+//
+//    std::string dataRef;
+//    std::string valueOn;
+//    std::string valueOff;
+//};
 
 
 // Midi device settings
-struct DeviceSettings {
-    std::string name;
-
-    int portIn;
-    int portOut;
-
-    std::map<int, MidiMapping> mapping;
-};
+//struct DeviceSettings {
+//    std::string name;
+//
+//    int portIn;
+//    int portOut;
+//
+//    std::map<int, MidiMapping> mapping;
+//};
 
 
 // Single midi event
-struct MidiEvent {
-    int status;
-    int controlChange;
-    int velocity;
+// TODO
+//class Mapping;
+//struct MidiEvent {
+//    int status;
+//    int controlChange;
+//    int velocity;
 
-    MidiMapping mapping;
-};
+//    std::shared_ptr<Mapping> mapping;
+//};
 
 } // Namespace XMidiCtrl
 

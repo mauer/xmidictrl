@@ -28,9 +28,6 @@
 // X-Plane SDK
 #include "XPLMDataAccess.h"
 
-// Name of the config file
-#define XMIDICTRL_CONFIG_FILENAME "xmidictrl.cfg"
-
 // Mapping Types as strings
 #define XMIDICTRL_MAPTYPE_COMMAND     "cmd"
 #define XMIDICTRL_MAPTYPE_SLIDER      "sld"

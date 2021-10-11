@@ -41,11 +41,19 @@ XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
 
     m_pluginId = -1;
 
-    // create environment (link to X-Plane)
+    // create environment (link to X-Plane data)
     m_environment = std::make_shared<Environment>();
 
     // initialize the plugin
     initialise();
+}
+
+
+/**
+ * Destructor
+ */
+XPlanePlugin::~XPlanePlugin() {
+    m_windows.clear();
 }
 
 
@@ -56,9 +64,26 @@ XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Show a window in X-Plane
+ */
+void XPlanePlugin::showWindow(std::string_view windowId) {
+    std::shared_ptr<XPlaneWindow> window;
+
+    window = findWindow(windowId);
+    if (!window) {
+        window = createWindow(windowId);
+        addWindow(windowId, window);
+    }
+
+    if (window)
+        window->show();
+}
+
+
+/**
  * Return the X-Plane Environment
  */
-std::shared_ptr<Environment> XPlanePlugin::environment() {
+Environment::ptr XPlanePlugin::environment() {
     return m_environment;
 }
 
@@ -69,7 +94,7 @@ std::shared_ptr<Environment> XPlanePlugin::environment() {
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
-/** 
+/**
  * Initialise the plugin
  */
 void XPlanePlugin::initialise() {
@@ -77,15 +102,36 @@ void XPlanePlugin::initialise() {
     m_pluginId = XPLMGetMyID();
 
     // get plugin path
-    XPLMGetPluginInfo(m_pluginId, NULL, m_pluginPath, NULL, NULL);
+    XPLMGetPluginInfo(m_pluginId, nullptr, m_pluginPath, nullptr, nullptr);
 
     // get X-Plane path
     XPLMGetSystemPath(m_xplanePath);
 
     // initialize logger
     PluginLogger::Instance().initialise(m_xplanePath, m_name);
-    
+
     LOG_INFO << "Plugin " << m_name << " " << m_version << " loaded successfully" << LOG_END
+}
+
+
+/**
+ * Look for the given window id in the window list
+ */
+std::shared_ptr<XPlaneWindow> XPlanePlugin::findWindow(std::string_view windowId) {
+    try {
+        auto window = m_windows.at(windowId);
+        return window;
+    } catch (std::out_of_range&) {
+        return nullptr;
+    }
+}
+
+
+/**
+ * Add the given window to the window list
+ */
+void XPlanePlugin::addWindow(std::string_view windowId, std::shared_ptr<XPlaneWindow> window) {
+    m_windows.emplace(windowId, window);
 }
 
 } // Namespace XPEnv

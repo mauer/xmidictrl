@@ -22,30 +22,42 @@
 #define XPLANEPLUGIN_H
 
 // Standard
+#include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 
 // X-Plane SDK 
 #include "XPLMPlugin.h"
 
 // X-Plane Environment
 #include "Environment.h"
+#include "ImGuiFontAtlas.h"
+#include "XPlaneWindow.h"
 
 namespace XPEnv {
 
 class XPlanePlugin {
 public:
     XPlanePlugin(std::string_view name, std::string_view version);
+    ~XPlanePlugin();
 
     virtual void enablePlugin() = 0;
     virtual void disablePlugin() = 0;
 
-    virtual void showAboutDialog() = 0;
+    void showWindow(std::string_view windowId);
 
-    std::shared_ptr<Environment> environment();
+    Environment::ptr environment();
+
 private:
     void initialise();
 
+    virtual std::shared_ptr<XPlaneWindow> createWindow(std::string_view windowId) = 0;
+    std::shared_ptr<XPlaneWindow> findWindow(std::string_view windowId);
+    void addWindow(std::string_view windowId, std::shared_ptr<XPlaneWindow> window);
+
+
+    // members for the plugin
     XPLMPluginID m_pluginId;
 
     std::string m_name;
@@ -54,7 +66,8 @@ private:
     char m_pluginPath[512]{};
     char m_xplanePath[512]{};
 
-    std::shared_ptr<Environment> m_environment;
+    std::map<std::string_view, std::shared_ptr<XPlaneWindow>> m_windows;
+    Environment::ptr m_environment;
 };
 
 } // Namespace XPEnv

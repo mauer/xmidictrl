@@ -28,14 +28,14 @@ message("-----------------------------------------------")
 message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
 message("-----------------------------------------------")
 
-# Create config file with project name and version numbers
-message("-- Creating config file")
+# Create version file with project name and version numbers
+message("-- Creating version file")
 configure_file(
-        "${PROJECT_SOURCE_DIR}/Config.h.in"
-        "${PROJECT_BINARY_DIR}/Config.h"
+        "${PROJECT_SOURCE_DIR}/Version.h.in"
+        "${PROJECT_BINARY_DIR}/Version.h"
 )
 
-add_definitions("-include ${PROJECT_BINARY_DIR}/Config.h")
+add_definitions("-include ${PROJECT_BINARY_DIR}/Version.h")
 include_directories(${PROJECT_BINARY_DIR})
 
 # use highest optimization level

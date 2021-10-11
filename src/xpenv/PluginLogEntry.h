@@ -54,14 +54,15 @@ public:
 	static PluginLogEntry& Warn(PluginLogEntry& logEntry);
 	static PluginLogEntry& Info(PluginLogEntry& logEntry);
 	static PluginLogEntry& Debug(PluginLogEntry& logEntry);
-	static PluginLogEntry& endl(PluginLogEntry& logEntry);
+	static PluginLogEntry& Endl(PluginLogEntry& logEntry);
 
     PluginLogEntry& operator<<(int32_t i);
     PluginLogEntry& operator<<(int16_t i);
+    PluginLogEntry& operator<<(unsigned int i);
 	PluginLogEntry& operator<<(size_t s);
     PluginLogEntry& operator<<(double d);
     PluginLogEntry& operator<<(char c);
-    PluginLogEntry& operator<<(const std::string& s);
+    PluginLogEntry& operator<<(std::string_view s);
 	PluginLogEntry& operator<<(const std::thread::id& id);
 
 	PluginLogEntry& operator<<(PluginLogEntry& (*f)(PluginLogEntry&));

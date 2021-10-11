@@ -37,21 +37,41 @@
 #include <XPLMGraphics.h>
 
 // X-Plane Environment
+#include "PluginLogger.h"
 #include "ImGuiWindow.h"
 
 namespace XPEnv {
+
+std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
 
 /**
  * Constructor
  */
 ImGuiWindow::ImGuiWindow(int width, int height, int decoration) :
-XPlaneWindow(width, height, decoration)
+    XPlaneWindow(width, height, decoration)
 {
-    // create and set context for ImGui
-    imGuiContext = ImGui::CreateContext();
+    // font atlas for Dear ImGui
+    if (!m_imGuiFontAtlas) {
+        m_imGuiFontAtlas = std::make_shared<ImGuiFontAtlas>();
+        if (!m_imGuiFontAtlas->AddFontFromFileTTF("./Resources/fonts/DejaVuSans.ttf", IMGUI_FONT_SIZE))
+        //if (!m_imGuiFontAtlas->AddFontFromFileTTF("./Resources/fonts/SVBasicManual.ttf", IMGUI_FONT_SIZE))
+            LOG_ERROR << "ImGuiWindow :: Could not load font" << LOG_END
+        else
+            LOG_INFO << "ImGuiWindow :: Font loaded" << LOG_END
+    }
+
+    // check if a font atlas was supplied
+    if (m_imGuiFontAtlas) {
+        m_imGuiFontAtlas->bindTexture();
+        imGuiContext =  ImGui::CreateContext(m_imGuiFontAtlas->getAtlas());
+    } else
+        imGuiContext = ImGui::CreateContext();
+
+    // set context for ImGui
     ImGui::SetCurrentContext(imGuiContext);
 
-    auto &style = ImGui::GetStyle();
+    // disable window rounding since the frame gets rendered by X-Plane
+    auto& style = ImGui::GetStyle();
     style.WindowRounding = 0;
 
     // Disable ImGui ini-file
@@ -85,20 +105,25 @@ XPlaneWindow(width, height, decoration)
     io.KeyMap[ImGuiKey_Y] = XPLM_VK_Y;
     io.KeyMap[ImGuiKey_Z] = XPLM_VK_Z;
 
-    uint8_t *pixels;
-    int fontTexWidth, fontTexHeight;
-    io.Fonts->GetTexDataAsAlpha8(&pixels, &fontTexWidth, &fontTexHeight);
+    // bind our font
+    if (m_imGuiFontAtlas) {
+        m_fontTextureId = static_cast<GLuint>(reinterpret_cast<intptr_t>(io.Fonts->TexID));
+    } else {
+        uint8_t *pixels;
+        int fontTexWidth, fontTexHeight;
+        io.Fonts->GetTexDataAsAlpha8(&pixels, &fontTexWidth, &fontTexHeight);
 
-    int textureId;
-    XPLMGenerateTextureNumbers(&textureId, 1);
-    m_fontTextureId = (GLuint) textureId;
+        int textureId;
+        XPLMGenerateTextureNumbers(&textureId, 1);
+        m_fontTextureId = (GLuint) textureId;
 
-    XPLMBindTexture2d(m_fontTextureId, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, fontTexWidth, fontTexHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
-    io.Fonts->TexID = (void *)(intptr_t)(m_fontTextureId);
+        XPLMBindTexture2d(m_fontTextureId, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, fontTexWidth, fontTexHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
+        io.Fonts->TexID = (void *) (intptr_t) (m_fontTextureId);
+    }
 }
 
 void ImGuiWindow::setBuildCallback(BuildCallback cb) {
@@ -351,6 +376,8 @@ void ImGuiWindow::translateToImguiSpace(int inX, int inY, float& outX, float& ou
 ImGuiWindow::~ImGuiWindow() {
     ImGui::DestroyContext(imGuiContext);
     glDeleteTextures(1, &m_fontTextureId);
+
+    m_imGuiFontAtlas.reset();
 }
 
 } // Namespace XPEnv

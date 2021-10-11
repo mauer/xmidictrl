@@ -51,9 +51,6 @@ XPLMDataRef XPlaneWindow::m_projectionMatrixRef = nullptr;
 
 /**
  * Constructor
- * @param width Width of the window
- * @param height Height of the window
- * @param decoration Display style
  */
 XPlaneWindow::XPlaneWindow(int width, int height, int decoration) :
         m_windowID(nullptr),
@@ -96,7 +93,6 @@ XPlaneWindow::~XPlaneWindow() {
 
 /**
  * Return the window ID
- * @return Window ID in X-Plane
  */
 XPLMWindowID XPlaneWindow::windowID() {
     return m_windowID;
@@ -123,7 +119,6 @@ void XPlaneWindow::hide() {
 
 /**
  * Set the title of the window
- * @param title Title to be displayed
  */
 void XPlaneWindow::setTitle(const std::string& title) {
     if (m_windowID != nullptr)
@@ -133,7 +128,6 @@ void XPlaneWindow::setTitle(const std::string& title) {
 
 /**
  * Return if the window is visible
- * @return Visibility of the window
  */
 bool XPlaneWindow::isVisible() const {
     if (m_windowID != nullptr)

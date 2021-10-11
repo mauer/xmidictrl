@@ -7,6 +7,8 @@ CHANGELOG
 
 Breaking Changes:
 + Changed parameter names portOut and portIn to port_out and port_in. Please update your config files
++ Changed extension of profiles from cfg to toml (e.g. xmidictrl.toml)
++ Changed parameter names command_up_fast and command_down_fast to command_fast_up and command_fast_down (for Encoders)
 
 -----------------------------------------------------------------------------------------------------------------------
   VERSION 0.02

@@ -32,7 +32,7 @@ namespace XPEnv {
  */
 Environment::Environment() {
     m_commands = std::make_shared<Commands>();
-    m_dataRefs = std::make_shared<DataRefs>();
+    m_datarefs = std::make_shared<Datarefs>();
 }
 
 
@@ -59,15 +59,8 @@ std::shared_ptr<Commands> Environment::commands() {
 /**
  * Return the dataref object
  */
-std::shared_ptr<DataRefs> Environment::dataRefs() {
-    return m_dataRefs;
+std::shared_ptr<Datarefs> Environment::datarefs() {
+    return m_datarefs;
 }
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
-//---------------------------------------------------------------------------------------------------------------------
 
 } // Namespace XPEnv

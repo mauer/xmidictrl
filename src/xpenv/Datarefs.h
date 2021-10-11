@@ -18,43 +18,44 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef USERINTERFACE_H
-#define USERINTERFACE_H
+#ifndef DATAREFS_H
+#define DATAREFS_H
 
 // Standard
-#include <atomic>
-#include <string>
-#include <vector>
+#include <map>
+#include <memory>
 
 // X-Plane SDK
-#include "XPLMDisplay.h"
+#include "XPLMDataAccess.h"
 
 namespace XPEnv {
 
-    class UserInterface {
-    public:
-        UserInterface();
-        ~UserInterface();
+struct Data {
+    XPLMDataRef dataRef;
+    XPLMDataTypeID type;
+    bool writeable;
+};
 
-        void createWindow(const std::string& title, int width, int height);
+class Datarefs {
+public:
+	Datarefs();
+    ~Datarefs();
 
-    private:
-        void initialise();
+    bool toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff);
 
-        void onDraw(XPLMWindowID id);
-        bool onClick(XPLMWindowID id, int x, int y, XPLMMouseStatus status);
-        bool onRightClick(XPLMWindowID id, int x, int y, XPLMMouseStatus status);
+    bool read(std::string_view name, int& value);
+    bool write(std::string_view name, int value);
 
-        XPLMCursorStatus onCursor(XPLMWindowID id, int x, int y);
+private:
+    std::shared_ptr<Data> retrieveData(std::string_view name);
 
-        bool onMouseWheel(XPLMWindowID id, int x, int y, int wheel, int clicks);
+    void toggleInteger(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
+    void toggleFloat(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
+    void toggleDouble(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
 
-        std::vector<uint32_t> m_buffer;
-
-        int m_width;
-        int m_height;
-    };
+    std::map<std::string_view, std::shared_ptr<Data>> m_dataCache;
+};
 
 } // Namespace XPEnv
 
-#endif // Namespace USERINTERFACE_H
+#endif // DATAREFS_H

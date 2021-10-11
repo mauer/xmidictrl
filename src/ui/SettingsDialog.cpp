@@ -59,6 +59,10 @@ SettingsDialog::~SettingsDialog() = default;
  * Create widgets
  */
 void SettingsDialog::createWidgets() {
+    const char* logLevelItems[] = { "Debug", "Info", "Warning", "Error" };
+    int currentLogLevel = 0;
+    ImGui::Combo("Logging Level", &currentLogLevel, logLevelItems, IM_ARRAYSIZE(logLevelItems));
+
     if (ImGui::Button("Save"))
         hide();
 
