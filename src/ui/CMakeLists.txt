@@ -21,9 +21,14 @@
 message("---- Directory: src/ui")
 
 # Add sources
-set(UI_SRC ${CMAKE_CURRENT_LIST_DIR}/AboutDialog.cpp
-           ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.cpp
-           ${CMAKE_CURRENT_LIST_DIR}/MidiDevicesDialog.cpp)
+set(UI_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/AboutDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MidiDevicesDialog.cpp
+        )
 
 # Add sources to target
 target_sources(${PROJECT_NAME} PRIVATE ${UI_SRC})
+
+# Add directory to includes
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})

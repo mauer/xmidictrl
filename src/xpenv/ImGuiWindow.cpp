@@ -37,7 +37,7 @@
 #include <XPLMGraphics.h>
 
 // X-Plane Environment
-#include "PluginLogger.h"
+#include "utils/Logger.h"
 #include "ImGuiWindow.h"
 
 namespace XPEnv {

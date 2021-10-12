@@ -18,30 +18,49 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
 // Standard
-#include <string>
+#include <fstream>
 #include <string_view>
+#include <vector>
 
-// toml11
-#include <toml.hpp>
+// XMidiCtrl
+#include "LogEntry.h"
 
-namespace XPEnv {
+// Macros for logging
+#define LOG_ERROR (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Error)
+#define LOG_WARN  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Info)
+#define LOG_INFO  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Info)
+#define LOG_DEBUG (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Debug)
 
-class Config {
+#define LOG_END XMidiCtrl::LogEntry::Endl;
+
+namespace XMidiCtrl {
+
+class Logger {
 public:
-    Config();
-    ~Config();
+	Logger();
+	~Logger();
 
-    bool load(std::string_view fileName);
-    void clear();
+	// Object cannot be copied, because of the stream
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
 
-protected:
-    toml::value m_config;
+	static Logger& Instance();
+
+	void initialise(std::string_view path, std::string_view pluginName);
+	void postData(const PluginLogData& logData);
+
+private:
+	LogLevel m_logLevel;
+
+	std::ofstream m_stream;
+
+	std::vector<std::string> m_errors;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
-#endif // CONFIG_H
+#endif // LOGGER_H

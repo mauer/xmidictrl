@@ -73,6 +73,15 @@ const char* const CFG_KEY_VALUE_OFF         = "value_off";
 const char* const CFG_KEY_VERSION           = "version";
 
 
+// Mapping Types as strings
+const char* const CFG_MAPTYPE_COMMAND     = "cmd";
+const char* const CFG_MAPTYPE_SLIDER      = "sld";
+const char* const CFG_MAPTYPE_PUSHANDPULL = "pnp";
+const char* const CFG_MAPTYPE_ENCODER     = "enc";
+const char* const CFG_MAPTYPE_DATAREF     = "drf";
+const char* const CFG_MAPTYPE_INTERNAL    = "int";
+
+
 // Windows Types
 const char* const WINDOW_ABOUT             = "WINDOW_ABOUT";
 const char* const WINDOW_DEVICES           = "WINDOW_DEVICES";

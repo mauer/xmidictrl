@@ -25,16 +25,7 @@
 #include <map>
 #include <string>
 
-// X-Plane SDK
-#include "XPLMDataAccess.h"
-
-// Mapping Types as strings
-#define XMIDICTRL_MAPTYPE_COMMAND     "cmd"
-#define XMIDICTRL_MAPTYPE_SLIDER      "sld"
-#define XMIDICTRL_MAPTYPE_PUSHANDPULL "pnp"
-#define XMIDICTRL_MAPTYPE_ENCODER     "enc"
-#define XMIDICTRL_MAPTYPE_DATAREF     "drf"
-#define XMIDICTRL_MAPTYPE_INTERNAL    "int"
+/*
 
 // Midi Stats
 #define XMIDICTRL_STATUS_NOTE_BEGIN 154
@@ -55,5 +46,5 @@ struct DataDetails {
 };
 
 } // Namespace XMidiCtrl
-
+*/
 #endif // GLOBAL_H

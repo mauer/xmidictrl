@@ -18,11 +18,12 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
+// Standard
+#include <filesystem>
 
 // XMidiCtrl
-#include "MappingCommand.h"
+#include "Config.h"
+#include "Logger.h"
 
 namespace XMidiCtrl {
 
@@ -33,8 +34,15 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingCommand::MappingCommand(int cc)
-        : Mapping(cc) {}
+Config::Config() {
+    clear();
+}
+
+
+/**
+ * Destructor
+ */
+Config::~Config() = default;
 
 
 
@@ -44,66 +52,48 @@ MappingCommand::MappingCommand(int cc)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the mapping type
+ * Load config from a file
  */
-MappingType MappingCommand::type() {
-    return MappingType::Command;
-};
+bool Config::load(std::string_view fileName) {
+    clear();
 
-
-/**
- * Set the command
- */
-void MappingCommand::setCommand(std::string_view command) {
-    m_command = command;
-    LOG_DEBUG << "MappingCommand::setCommand :: command = '" << command.data() << "'" << LOG_END
-}
-
-
-/**
- * Return the command
- */
-std::string_view MappingCommand::command() const {
-    return m_command;
-}
-
-
-/**
- * Check the mapping
- */
-bool MappingCommand::check() {
-    if (!Mapping::check())
+    // check file name
+    if (fileName.empty()) {
+        LOG_ERROR << "CONFIG :: Cannot load config file, because the given filename is empty" << LOG_END
         return false;
-
-    if (m_command.empty())
-        return false;
-    else
-        return true;
-}
-
-
-/**
- * Execute the action in X-Plane
- */
-void MappingCommand::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingCommand :: Execute command '" << m_command.data() << "'" << LOG_END
-
-    switch (midiEvent->velocity()) {
-        case 127:
-            LOG_DEBUG << "Execute begin command '" << m_command.data() << "'" << LOG_END
-            environment->commands()->begin(m_command);
-            break;
-
-        case 0:
-            LOG_DEBUG << "Execute end command' " << m_command.data() << "'" << LOG_END
-            environment->commands()->end(m_command);
-            break;
-
-        default:
-            LOG_ERROR << "Invalid Midi status '" << midiEvent->status() << "'" << LOG_END
     }
 
-    //environment->commands()->execute(m_command);
+    // check if file exists
+    if (!std::filesystem::exists(fileName))
+    {
+        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' not found" << LOG_END
+        return false;
+    }
+
+    try {
+        // load config
+        m_config = toml::parse(fileName);
+        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' loaded successfully" << LOG_END
+    } catch (const toml::syntax_error& error) {
+        LOG_ERROR << "CONFIG :: Error parsing config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+        return false;
+
+    } catch (const std::runtime_error& error) {
+        LOG_ERROR << "PROFILE :: Error opening config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+        return false;
+    }
+
+    return true;
 }
 
-} // Namespace XMidiCtrl
+
+/**
+ * Clear the config
+ */
+void Config::clear() {
+    m_config = toml::value();
+}
+
+} // XMidiCtrl

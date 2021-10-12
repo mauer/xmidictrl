@@ -24,7 +24,7 @@
 
 // X-Plane Environment
 #include "Datarefs.h"
-#include "PluginLogger.h"
+#include "utils/Logger.h"
 
 namespace XPEnv {
 

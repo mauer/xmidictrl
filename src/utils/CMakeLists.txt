@@ -18,18 +18,16 @@
 #   IN THE SOFTWARE.
 #---------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/midi")
+message("---- Directory: src/utils")
 
-# Add sources
-set(MIDI_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/Device.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/DeviceList.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MappedEvent.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MidiEvent.cpp
+# Set sources
+set(UTILS_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/LogEntry.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Logger.cpp
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${MIDI_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${UTILS_SRC})
 
-# Add directory to includes
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+# Include current directory
+include_directories(${CMAKE_CURRENT_LIST_DIR})

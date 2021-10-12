@@ -19,7 +19,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // X-Plane Environment
-#include "PluginLogger.h"
+#include "utils/Logger.h"
 
 // XMidiCtrl
 #include "MappingSlider.h"

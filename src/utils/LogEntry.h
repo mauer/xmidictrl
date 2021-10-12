@@ -18,58 +18,61 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
+#ifndef LOGENTRY_H
+#define LOGENTRY_H
 
-// XMidiCtrl
-#include "Mapping.h"
+// Standard
+#include <sstream>
+#include <string>
+#include <thread>
 
 namespace XMidiCtrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
+// Forward declarations
+class Logger;
 
-/**
- * Constructor
- */
-Mapping::Mapping(int controlChange) {
-    m_controlChange = controlChange;
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Return the mapping type
- */
-MappingType Mapping::type() {
-    return MappingType::None;
+// Enumerations
+enum class LogLevel {
+	Error = 0,
+	Warn  = 1,
+	Info  = 2,
+	Debug = 3
 };
 
+// Structs
+struct PluginLogData {
+	LogLevel    level;
+	time_t      time;
+	std::string text;
+};
 
-/**
- * Return the control change number
- */
-const int Mapping::controlChange() const {
-    return m_controlChange;
-}
+class LogEntry {
+public:
+	LogEntry();
 
+	static LogEntry& Error(LogEntry& logEntry);
+	static LogEntry& Warn(LogEntry& logEntry);
+	static LogEntry& Info(LogEntry& logEntry);
+	static LogEntry& Debug(LogEntry& logEntry);
+	static LogEntry& Endl(LogEntry& logEntry);
 
-/**
- * Check the mapping
- */
-bool Mapping::check() {
-    LOG_DEBUG << "MAPPING :: Check controlChange = '" << m_controlChange << "'" << LOG_END
+    LogEntry& operator<<(int32_t i);
+    LogEntry& operator<<(int16_t i);
+    LogEntry& operator<<(unsigned int i);
+	LogEntry& operator<<(size_t s);
+    LogEntry& operator<<(double d);
+    LogEntry& operator<<(char c);
+    LogEntry& operator<<(std::string_view s);
+	LogEntry& operator<<(const std::thread::id& id);
 
-    if (m_controlChange >= 0)
-        return true;
-    else
-        return false;
-}
+	LogEntry& operator<<(LogEntry& (*f)(LogEntry&));
+
+private:
+	LogLevel m_logLevel;
+
+	std::ostringstream m_stream;
+};
 
 } // Namespace XMidiCtrl
+
+#endif // LOGENTRY_H

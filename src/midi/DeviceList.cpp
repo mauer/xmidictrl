@@ -18,14 +18,13 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Standard
-#include <filesystem>
-
 // X-Plane Environment
-#include "Config.h"
-#include "PluginLogger.h"
+#include "utils/Logger.h"
 
-namespace XPEnv {
+// XMidiCtrl
+#include "DeviceList.h"
+
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -34,15 +33,15 @@ namespace XPEnv {
 /**
  * Constructor
  */
-Config::Config() {
-    clear();
-}
+DeviceList::DeviceList() = default;
 
 
 /**
  * Destructor
  */
-Config::~Config() = default;
+DeviceList::~DeviceList() {
+    m_list.clear();
+}
 
 
 
@@ -52,48 +51,57 @@ Config::~Config() = default;
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Load config from a file
+ * Create a new midi device
  */
-bool Config::load(std::string_view fileName) {
-    clear();
+Device::ptr DeviceList::createDevice(std::string_view name, unsigned int portIn, unsigned int portOut) {
+    Device::ptr device = std::make_shared<Device>(name, portIn, portOut);
+    m_list.push_back(device);
 
-    // check file name
-    if (fileName.empty()) {
-        LOG_ERROR << "CONFIG :: Cannot load config file, because the given filename is empty" << LOG_END
-        return false;
-    }
-
-    // check if file exists
-    if (!std::filesystem::exists(fileName))
-    {
-        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' not found" << LOG_END
-        return false;
-    }
-
-    try {
-        // load config
-        m_config = toml::parse(fileName);
-        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' loaded successfully" << LOG_END
-    } catch (const toml::syntax_error& error) {
-        LOG_ERROR << "CONFIG :: Error parsing config file '" << fileName.data() << "'" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
-        return false;
-
-    } catch (const std::runtime_error& error) {
-        LOG_ERROR << "PROFILE :: Error opening config file '" << fileName.data() << "'" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
-        return false;
-    }
-
-    return true;
+    return device;
 }
 
 
 /**
- * Clear the config
+ * Open all midi connections
  */
-void Config::clear() {
-    m_config = toml::value();
+void DeviceList::openConnections() {
+    LOG_INFO << "DEVICELIST :: Open MIDI connections" << LOG_END
+
+    for (auto const &device: m_list) {
+        if (device != nullptr) {
+            device->openConnections();
+        }
+    }
 }
 
-} // XPEnv
+
+/**
+ * Close all midi connections
+ */
+void DeviceList::closeConnections() {
+    LOG_INFO << "DEVICELIST :: Close MIDI connections" << LOG_END
+
+    for (auto const &device: m_list) {
+        if (device != nullptr) {
+            device->closeConnections();
+        }
+    }
+}
+
+
+/**
+ * Clear the device list
+ */
+void DeviceList::clear() {
+    m_list.clear();
+}
+
+
+/**
+ * Return the number of devices
+ */
+unsigned int DeviceList::size() {
+    return m_list.size();
+}
+
+} // Namespace XMidiCtrl

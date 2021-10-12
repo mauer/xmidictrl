@@ -18,58 +18,29 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
+#ifndef CONFIG_H
+#define CONFIG_H
 
-// XMidiCtrl
-#include "Mapping.h"
+// Standard
+#include <string_view>
+
+// toml11
+#include <toml.hpp>
 
 namespace XMidiCtrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
+class Config {
+public:
+    Config();
+    ~Config();
 
-/**
- * Constructor
- */
-Mapping::Mapping(int controlChange) {
-    m_controlChange = controlChange;
-}
+    bool load(std::string_view fileName);
+    void clear();
 
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Return the mapping type
- */
-MappingType Mapping::type() {
-    return MappingType::None;
+protected:
+    toml::value m_config;
 };
 
-
-/**
- * Return the control change number
- */
-const int Mapping::controlChange() const {
-    return m_controlChange;
-}
-
-
-/**
- * Check the mapping
- */
-bool Mapping::check() {
-    LOG_DEBUG << "MAPPING :: Check controlChange = '" << m_controlChange << "'" << LOG_END
-
-    if (m_controlChange >= 0)
-        return true;
-    else
-        return false;
-}
-
 } // Namespace XMidiCtrl
+
+#endif // CONFIG_H

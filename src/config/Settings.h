@@ -18,52 +18,30 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PROFILE_H
-#define PROFILE_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 // Standard
-#include <memory>
 #include <string>
 #include <vector>
 
 // toml11
 #include <toml.hpp>
 
-// X-Plane Environment
-#include "Config.h"
-
 // XMidiCtrl
-#include "DeviceList.h"
 #include "Types.h"
 
 namespace XMidiCtrl {
 
-class Profile : public XPEnv::Config {
+class Settings {
 public:
-    Profile();
-    ~Profile();
-
-    bool load();
-
-    //std::vector<DeviceSettings> deviceList();
-
-    void createMidiDevices(const DeviceList::ptr& deviceList);
+    Settings();
+    ~Settings();
 
 private:
-    std::string determineProfileFileName();
-
-    //std::map<int, MidiMapping> mappingForDevice(int deviceNo, toml::array settings);
-    void createMappingForDevice(int deviceNo, toml::array settings, const std::shared_ptr<Device>& device);
-    
-    static MappingType translateMapTypeStr(std::string_view typeStr);
-
-    Mapping::ptr readSettingsForCommand(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForDataref(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForSlider(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForPushAndPull(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForEncoder(int controlChange, toml::value* settings);
+    toml::value m_generalConfig;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // PROFILE_H
+#endif // SETTINGS_H

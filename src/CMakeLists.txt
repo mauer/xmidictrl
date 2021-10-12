@@ -31,26 +31,26 @@ include_directories(${IMGUI_INCLUDEDIR})
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/xpenv/CmakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/xpenv/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/mapping/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/config/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/midi/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
 
 message("---- Directory: src")
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
-
 # Source and header files
-set(XMIDICTRL_SRC Profile.cpp
-                  Device.cpp
-                  DeviceList.cpp
-                  EventHandler.cpp
-                  main.cpp
-                  Menu.cpp
-                  Plugin.cpp
-                  Settings.cpp)
+set(XMIDICTRL_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/EventHandler.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        )
 
 target_sources(${PROJECT_NAME} PRIVATE ${XMIDICTRL_SRC})
+
+# include current directory
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # link required dependencies
 if (WIN32)
@@ -64,8 +64,3 @@ endif ()
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".xpl")
-
-# Installation on test system
-if(WIN32)
-    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "X:/X-Plane 11/Resources/plugins/${PROJECT_NAME}/win_x64/"            )
-endif(WIN32)

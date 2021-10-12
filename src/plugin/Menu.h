@@ -18,58 +18,32 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
+#ifndef MENU_H
+#define MENU_H
+
+// X-Plane SDK
+#include "XPLMMenus.h"
 
 // XMidiCtrl
-#include "Mapping.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
+class Menu {
+public:
+    Menu();
+    ~Menu();
 
-/**
- * Constructor
- */
-Mapping::Mapping(int controlChange) {
-    m_controlChange = controlChange;
-}
+    void createMenu();
+    void deleteMenu();
 
+private:
+    static void menuHandler(void* in_menu_ref, void* in_item_ref);
 
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Return the mapping type
- */
-MappingType Mapping::type() {
-    return MappingType::None;
+    int m_menuContainer;
+    XPLMMenuID m_menuId;
 };
 
-
-/**
- * Return the control change number
- */
-const int Mapping::controlChange() const {
-    return m_controlChange;
-}
-
-
-/**
- * Check the mapping
- */
-bool Mapping::check() {
-    LOG_DEBUG << "MAPPING :: Check controlChange = '" << m_controlChange << "'" << LOG_END
-
-    if (m_controlChange >= 0)
-        return true;
-    else
-        return false;
-}
-
 } // Namespace XMidiCtrl
+
+#endif // MENU_H

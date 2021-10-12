@@ -25,7 +25,7 @@
 #include <utility>
 
 // X-Plane SDK Utils
-#include "PluginLogger.h"
+#include "utils/Logger.h"
 
 // XMidiCtrl
 #include "EventHandler.h"

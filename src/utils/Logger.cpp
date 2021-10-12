@@ -18,11 +18,12 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "PluginLogger.h"
+// Standard
+#include <chrono>
+#include <ctime>
 
 // XMidiCtrl
-#include "DeviceList.h"
+#include "Logger.h"
 
 namespace XMidiCtrl {
 
@@ -33,14 +34,17 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-DeviceList::DeviceList() = default;
+Logger::Logger() {
+    m_logLevel = LogLevel::Error;
+}
 
 
 /**
  * Destructor
  */
-DeviceList::~DeviceList() {
-    m_list.clear();
+Logger::~Logger() {
+    if (m_stream.is_open())
+        m_stream.close();
 }
 
 
@@ -51,57 +55,58 @@ DeviceList::~DeviceList() {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Create a new midi device
+ * Create and return the logger instance
  */
-Device::ptr DeviceList::createDevice(std::string_view name, unsigned int portIn, unsigned int portOut) {
-    Device::ptr device = std::make_shared<Device>(name, portIn, portOut);
-    m_list.push_back(device);
-
-    return device;
+Logger& Logger::Instance() {
+    static Logger logger;
+    return logger;
 }
 
 
 /**
- * Open all midi connections
+ * Initialise the logger
  */
-void DeviceList::openConnections() {
-    LOG_INFO << "DEVICELIST :: Open MIDI connections" << LOG_END
+void Logger::initialise(std::string_view path, std::string_view pluginName) {
+    if (!path.empty() && !pluginName.empty()) {
+        std::string fileName = std::string(path) + std::string(pluginName) + "_log.txt";
 
-    for (auto const &device: m_list) {
-        if (device != nullptr) {
-            device->openConnections();
-        }
+        m_stream.open(fileName, std::ios_base::out | std::ios_base::trunc);
     }
 }
 
 
 /**
- * Close all midi connections
+ * Post a log entry
  */
-void DeviceList::closeConnections() {
-    LOG_INFO << "DEVICELIST :: Close MIDI connections" << LOG_END
+void Logger::postData(const PluginLogData& logData) {
+    if (!m_stream.is_open())
+        return;
 
-    for (auto const &device: m_list) {
-        if (device != nullptr) {
-            device->closeConnections();
-        }
+    // format datetime stamp
+    char dateTimeStr[32];
+    time_t t = time(nullptr);
+    struct tm *tm = localtime(&t);
+
+    std::strftime(&dateTimeStr[0], sizeof(dateTimeStr), "%Y-%m-%d %H:%M:%S", tm);
+
+    switch (logData.level) {
+        case LogLevel::Error:
+            m_stream << dateTimeStr << "   " << "[ERROR]" << "   " << logData.text << std::endl;
+            m_errors.push_back(std::string(dateTimeStr) + "   " + logData.text);
+            break;
+
+        case LogLevel::Warn:
+            m_stream << dateTimeStr << "   " << "[WARM]" << "    " << logData.text << std::endl;
+            break;
+
+        case LogLevel::Info:
+            m_stream << dateTimeStr << "   " << "[INFO]" << "    " << logData.text << std::endl;
+            break;
+
+        case LogLevel::Debug:
+            m_stream << dateTimeStr << "   " << "[DEBUG]" << "   " << logData.text << std::endl;
+            break;
     }
-}
-
-
-/**
- * Clear the device list
- */
-void DeviceList::clear() {
-    m_list.clear();
-}
-
-
-/**
- * Return the number of devices
- */
-unsigned int DeviceList::size() {
-    return m_list.size();
 }
 
 } // Namespace XMidiCtrl

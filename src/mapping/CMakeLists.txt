@@ -21,14 +21,16 @@
 message("---- Directory: src/mapping")
 
 # Add sources
-set(MAPPING_SRC ${CMAKE_CURRENT_LIST_DIR}/Mapping.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingCommand.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingDataref.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingEncoder.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingInternal.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingList.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingPushAndPull.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/MappingSlider.cpp)
+set(MAPPING_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/Mapping.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingCommand.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingDataref.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingEncoder.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingInternal.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingList.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingPushAndPull.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MappingSlider.cpp
+        )
 
 # Add sources to target
 target_sources(${PROJECT_NAME} PRIVATE ${MAPPING_SRC})

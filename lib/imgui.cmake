@@ -26,12 +26,14 @@ message("-- Configuring build scripts for Dear ImGui")
 include(FindOpenGL)
 
 # Add sources
-set(IMGUI_SRC ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_demo.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_draw.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_tables.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_widgets.cpp
-              ${CMAKE_CURRENT_LIST_DIR}/imgui/misc/cpp/imgui_stdlib.cpp)
+set(IMGUI_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_demo.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_draw.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_tables.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui_widgets.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui/misc/cpp/imgui_stdlib.cpp
+        )
 
 # Set global variable with include directory
 set(IMGUI_INCLUDEDIR ${CMAKE_CURRENT_LIST_DIR}/imgui PARENT_SCOPE)

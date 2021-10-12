@@ -22,8 +22,8 @@
 #include "XPLMUtilities.h"
 
 // X-Plane Environment
-#include "PluginLogger.h"
-#include "PluginLogEntry.h"
+#include "utils/Logger.h"
+#include "utils/LogEntry.h"
 #include "XPlanePlugin.h"
 
 namespace XPEnv {
@@ -108,7 +108,7 @@ void XPlanePlugin::initialise() {
     XPLMGetSystemPath(m_xplanePath);
 
     // initialize logger
-    PluginLogger::Instance().initialise(m_xplanePath, m_name);
+    XMidiCtrl::Logger::Instance().initialise(m_xplanePath, m_name);
 
     LOG_INFO << "Plugin " << m_name << " " << m_version << " loaded successfully" << LOG_END
 }

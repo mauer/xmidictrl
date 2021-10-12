@@ -20,7 +20,7 @@
 
 // X-Plane Environment
 #include "Commands.h"
-#include "PluginLogger.h"
+#include "Logger.h"
 
 namespace XPEnv {
 

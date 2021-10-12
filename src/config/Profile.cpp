@@ -24,18 +24,16 @@
 // X-Plane SDK
 #include "XPLMPlanes.h"
 
-// X-Plane SDK Utils
-#include "PluginLogger.h"
-
 // XMidiCtrl
-#include "mapping/Mapping.h"
-#include "mapping/MappingCommand.h"
-#include "mapping/MappingDataref.h"
-#include "mapping/MappingEncoder.h"
-#include "mapping/MappingPushAndPull.h"
-#include "mapping/MappingSlider.h"
+#include "Mapping.h"
+#include "MappingCommand.h"
+#include "MappingDataref.h"
+#include "MappingEncoder.h"
+#include "MappingPushAndPull.h"
+#include "MappingSlider.h"
+#include "Logger.h"
 #include "Profile.h"
-#include "Global.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
@@ -68,7 +66,7 @@ bool Profile::load() {
     LOG_INFO << "PROFILE :: Load aircraft profile" << LOG_END
 
     // load profile for current aircraft
-    return XPEnv::Config::load(determineProfileFileName());
+    return Config::load(determineProfileFileName());
 }
 
 
@@ -141,68 +139,6 @@ void Profile::createMidiDevices(const DeviceList::ptr& deviceList) {
         LOG_WARN << error.what() << LOG_END
     }
 }
-
-
-/**
- * Create a list of all configured midi devices the their mapping
-
-std::vector<DeviceSettings> Profile::deviceList() {
-    std::vector<DeviceSettings> deviceList;
-
-    // only continue if the file contains some settings
-    if (m_config.type() == toml::value_t::empty)
-        return deviceList;
-
-    try {
-        // get all devices
-        auto devices = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
-
-        LOG_INFO << "PROFILE :: " << devices.size() << " Devices found in profile" << LOG_END
-
-        // parse every device
-        for (int i = 0; i < static_cast<int>(devices.size()); i++) {
-            DeviceSettings deviceSettings = {};
-            toml::value device = devices[i];
-
-            try {
-                // name
-                if (device.contains(CFG_KEY_NAME))
-                    deviceSettings.name = device[CFG_KEY_NAME].as_string();
-                else
-                    LOG_WARN << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_NAME << "' is missing" << LOG_END
-
-                // port in
-                if (device.contains(CFG_KEY_PORT_IN))
-                    deviceSettings.portIn = static_cast<int>( device[CFG_KEY_PORT_IN].as_integer() );
-                else
-                    LOG_ERROR << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_IN << "' is missing" << LOG_END
-
-                // port out
-                if (device.contains(CFG_KEY_PORT_OUT))
-                    deviceSettings.portOut = static_cast<int>( device[CFG_KEY_PORT_OUT].as_integer() );
-                else
-                    LOG_ERROR << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_OUT << "' is missing" << LOG_END
-
-                // parse note mappings
-                deviceSettings.mapping = mappingForDevice(i, device["mapping"].as_array());
-
-            } catch (const std::out_of_range& error) {
-                LOG_ERROR << "PROFILE :: Error reading config for midi device (" << i << ")" << LOG_END
-                LOG_ERROR << error.what() << LOG_END
-            }  catch (toml::type_error& error) {
-                LOG_ERROR << "PROFILE :: Error reading config for midi device (" << i << ")" << LOG_END
-                LOG_ERROR << error.what() << LOG_END
-            }
-
-            deviceList.push_back(deviceSettings);
-        }
-    } catch (std::out_of_range& error) {
-        LOG_WARN << "PROFILE :: No midi devices found in config" << LOG_END
-        LOG_WARN << error.what() << LOG_END
-    }
-
-    return deviceList;
-} */
 
 
 
@@ -319,100 +255,22 @@ void Profile::createMappingForDevice(int deviceNo, toml::array settings, const s
 
 
 /**
- * Create a list with all mappings for the current midi device
-
-std::map<int, MidiMapping> Profile::mappingForDevice(int deviceNo, toml::array settings) {
-    std::map<int, MidiMapping> mappingList;
-
-    LOG_INFO << "PROFILE :: " << settings.size() << " Mappings found" << LOG_END
-
-    // parse each mapping entry
-    for (int i = 0; i < static_cast<int>(settings.size()); i++) {
-        MidiMapping mapping = {};
-        bool success = false;
-
-        LOG_INFO << "PROFILE :: Reading mapping " << i << LOG_END
-
-        try {
-            if (settings[i].contains(CFG_KEY_CC)) {
-                mapping.controlChange = static_cast<int>( settings[i][CFG_KEY_CC].as_integer());
-                LOG_INFO << "PROFILE :: Mapping (" << i << ") :: CC = " << mapping.controlChange << LOG_END
-            } else
-                LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_CC << "' is missing" << LOG_END
-
-
-            if (settings[i].contains(CFG_KEY_TYPE)) {
-                std::string typeStr = settings[i][CFG_KEY_TYPE].as_string();
-                LOG_INFO << "PROFILE :: Mapping (" << i << ") :: Type = " << typeStr << LOG_END
-
-                // get the mapping type
-                mapping.type = translateMapTypeStr(typeStr);
-            } else
-                LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_TYPE << "' is missing" << LOG_END
-
-            // depending on the mapping type, we have to read some additional settings
-            switch (mapping.type) {
-                case MappingType::Command:
-                    success = readSettingsForCommand(&mapping, &settings[i]);
-                    break;
-
-                case MappingType::DataRef:
-                    success = readSettingsForDataRef(&mapping, &settings[i]);
-                    break;
-
-                case MappingType::Slider:
-                    success = readSettingsForSlider(&mapping, &settings[i]);
-                    break;
-
-                case MappingType::PushAndPull:
-                    success = readSettingsForPushAndPull(&mapping, &settings[i]);
-                    break;
-
-                case MappingType::Encoder:
-                    success = readSettingsForEncoder(&mapping, &settings[i]);
-                    break;
-
-                case MappingType::Internal:
-                    break;
-
-                case MappingType::None:
-                    LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Invalid mapping type" << LOG_END
-                    break;
-            }
-
-            if (success)
-                mappingList.emplace(mapping.controlChange, mapping);
-            else {
-                LOG_ERROR << "PROFILE :: Error reading mapping " << i << " for midi device " << deviceNo << LOG_END
-            }
-
-        } catch (toml::type_error& error) {
-            LOG_ERROR << "PROFILE :: Error reading mapping " << i << " for midi device " << deviceNo << LOG_END
-            LOG_ERROR << error.what() << LOG_END
-        }
-    }
-
-    return mappingList;
-} */
-
-
-/**
  * Translate a type string to an enum value
  */
 MappingType Profile::translateMapTypeStr(std::string_view typeStr) {
     MappingType mapType = MappingType::None;
 
-    if (typeStr == XMIDICTRL_MAPTYPE_COMMAND)
+    if (typeStr == CFG_MAPTYPE_COMMAND)
         mapType = MappingType::Command;
-    else if (typeStr == XMIDICTRL_MAPTYPE_SLIDER)
+    else if (typeStr == CFG_MAPTYPE_SLIDER)
         mapType = MappingType::Slider;
-    else if (typeStr == XMIDICTRL_MAPTYPE_DATAREF)
+    else if (typeStr == CFG_MAPTYPE_DATAREF)
         mapType = MappingType::Dataref;
-    else if (typeStr == XMIDICTRL_MAPTYPE_PUSHANDPULL)
+    else if (typeStr == CFG_MAPTYPE_PUSHANDPULL)
         mapType = MappingType::PushAndPull;
-    else if (typeStr == XMIDICTRL_MAPTYPE_ENCODER)
+    else if (typeStr == CFG_MAPTYPE_ENCODER)
         mapType = MappingType::Encoder;
-    else if (typeStr == XMIDICTRL_MAPTYPE_INTERNAL)
+    else if (typeStr == CFG_MAPTYPE_INTERNAL)
         mapType = MappingType::Internal;
 
     return mapType;
