@@ -18,11 +18,10 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
-#include "MappingSlider.h"
+#include "MessageWindow.h"
+
+#include <utility>
 
 namespace XMidiCtrl {
 
@@ -33,80 +32,40 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingSlider::MappingSlider(int cc)
-        : Mapping(cc) {}
+MessageWindow::MessageWindow(MessageList::ptr messages)
+        : XPlaneWindow(400, 580, true) {
+    m_messages = std::move(messages);
+}
+
+
+/**
+ * Destructor
+ */
+MessageWindow::~MessageWindow() = default;
 
 
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
 
-/**
- * Return the mapping type
- */
-MappingType MappingSlider::type() {
-    return MappingType::Slider;
-};
+void MessageWindow::onDraw() {
+    // Mandatory: set the OpenGL state before drawing
+    XPLMSetGraphicsState(
+            0 /* no fog */,
+            0 /* 0 texture units */,
+            0 /* no lighting */,
+            0 /* no alpha testing */,
+            1 /* do alpha blend */,
+            1 /* do depth testing */,
+            0 /* no depth writing */
+    );
 
-
-/**
- * Set the up command
- */
-void MappingSlider::setCommandUp(std::string_view commandUp) {
-    m_commandUp = commandUp;
-}
-
-
-/**
- * Return the up command
- */
-std::string_view MappingSlider::commandUp() const {
-    return m_commandUp;
-}
-
-
-/**
- * Set the down command
- */
-void MappingSlider::setCommandDown(std::string_view commandDown) {
-    m_commandDown = commandDown;
-}
-
-
-/**
- * Return the down command
- */
-std::string_view MappingSlider::commandDown() const {
-    return m_commandDown;
-}
-
-
-/**
- * Check the mapping
- */
-bool MappingSlider::check() {
-    if (!Mapping::check())
-        return false;
-
-    if (m_commandUp.empty() && m_commandDown.empty())
-        return false;
-    else
-        return true;
-}
-
-
-/**
- * Execute the action in X-Plane
- */
-void MappingSlider::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingSlider::execute" << LOG_END
-
-    if (midiEvent->velocity() <= 10)
-        environment->commands()->execute(m_commandDown);
-    else if (midiEvent->velocity() >= 117)
-        environment->commands()->execute(m_commandUp);
+    // draw a translucent box
+    int left, top, right, bottom;
+    XPLMGetWindowGeometry(windowID(), &left, &top, &right, &bottom);
+    XPLMDrawTranslucentDarkBox(left, top, right, bottom);
 }
 
 } // Namespace XMidiCtrl

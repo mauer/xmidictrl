@@ -18,39 +18,30 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef MESSAGEWINDOW_H
+#define MESSAGEWINDOW_H
 
 // Standard
-#include <string>
-#include <string_view>
+#include <memory>
 
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "MessageList.h"
+#include "XPlaneWindow.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
+class MessageWindow : public XPlaneWindow {
 public:
-    explicit MappingSlider(int cc);
+    MessageWindow(MessageList::ptr messages);
+    ~MessageWindow() override;
 
-    MappingType type() override;
+protected:
+    void onDraw() override;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
-
-private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    MessageList::ptr m_messages;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // MESSAGEWINDOW_H

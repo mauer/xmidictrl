@@ -32,7 +32,7 @@ add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
 include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/xpenv/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/environment/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/mapping/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/config/CMakeLists.txt)
@@ -43,7 +43,6 @@ message("---- Directory: src")
 
 # Source and header files
 set(XMIDICTRL_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/EventHandler.cpp
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
         )
 

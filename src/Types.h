@@ -54,13 +54,11 @@ const char* const MENUITEM_SHOW_AIRCRAFT_PROFILE   = "SHOW_AIRCRAFT_PROFILE";
 // Keys for the config files
 const char* const CFG_KEY_CC                = "CC";
 const char* const CFG_KEY_COMMAND           = "command";
-const char* const CFG_KEY_COMMAND_BOTTOM    = "command_bottom";
 const char* const CFG_KEY_COMMAND_DOWN      = "command_down";
 const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
 const char* const CFG_KEY_COMMAND_FAST_UP   = "command_fast_up";
 const char* const CFG_KEY_COMMAND_PULL      = "command_pull";
 const char* const CFG_KEY_COMMAND_PUSH      = "command_push";
-const char* const CFG_KEY_COMMAND_TOP       = "command_top";
 const char* const CFG_KEY_COMMAND_UP        = "command_up";
 const char* const CFG_KEY_DATAREF           = "dataref";
 const char* const CFG_KEY_DEVICE            = "device";
@@ -105,6 +103,16 @@ const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
 //typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
 
 
+//---------------------------------------------------------------------------------------------------------------------
+//   ENUMERATIONS
+//---------------------------------------------------------------------------------------------------------------------
+
+enum class WindowType {
+    AboutDialog,
+    MessageWindow,
+    MidiDevicesDialog,
+    SettingsDialog,
+};
 
 
 //---------------------------------------------------------------------------------------------------------------------

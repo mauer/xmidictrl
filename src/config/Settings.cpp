@@ -46,5 +46,11 @@ Settings::~Settings() = default;
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Show screen messages
+ */
+bool Settings::showScreenMessages() {
+    return true;
+}
 
 } // Namespace XMidiCtrl

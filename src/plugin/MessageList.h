@@ -18,39 +18,52 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef MESSAGELIST_H
+#define MESSAGELIST_H
 
 // Standard
+#include <memory>
 #include <string>
-#include <string_view>
+#include <vector>
 
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "Logger.h"
+#include "Settings.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
+// Screen Message Types
+enum class MessageType {
+    Info,
+    Error
+};
+
+// Screen Message
+struct Message {
+    MessageType type;
+    std::string text;
+
+    typedef std::shared_ptr<Message> ptr;
+};
+
+class MessageList {
 public:
-    explicit MappingSlider(int cc);
+    explicit MessageList(Settings::ptr settings);
+    ~MessageList();
 
-    MappingType type() override;
+    typedef std::shared_ptr<MessageList> ptr;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
+    void addMessage(MessageType type, std::string_view text);
 
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void clear();
+    unsigned int size();
 
 private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    std::vector<Message::ptr> m_list;
+
+    Settings::ptr m_settings;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // MESSAGELIST_H

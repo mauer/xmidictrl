@@ -22,13 +22,13 @@
 #define SETTINGS_H
 
 // Standard
-#include <string>
-#include <vector>
+#include <memory>
 
 // toml11
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "Settings.h"
 #include "Types.h"
 
 namespace XMidiCtrl {
@@ -37,6 +37,10 @@ class Settings {
 public:
     Settings();
     ~Settings();
+
+    typedef std::shared_ptr<Settings> ptr;
+
+    bool showScreenMessages();
 
 private:
     toml::value m_generalConfig;

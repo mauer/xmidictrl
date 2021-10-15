@@ -18,39 +18,33 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
 
 // Standard
-#include <string>
-#include <string_view>
+#include <memory>
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+// X-Plane Environment
+#include "Commands.h"
+#include "Datarefs.h"
 
-namespace XMidiCtrl {
+namespace XPEnv {
 
-class MappingSlider : public Mapping {
+class Environment {
 public:
-    explicit MappingSlider(int cc);
+	Environment();
+    ~Environment();
 
-    MappingType type() override;
+    typedef std::shared_ptr<Environment> ptr;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
-
+    std::shared_ptr<Commands> commands();
+    std::shared_ptr<Datarefs> datarefs();
+    
 private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    std::shared_ptr<Commands> m_commands;
+    std::shared_ptr<Datarefs> m_datarefs;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace XPEnv
 
-#endif // MAPPINGCOMMAND_H
+#endif // ENVIRONMENT_H

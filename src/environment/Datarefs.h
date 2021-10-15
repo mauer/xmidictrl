@@ -18,39 +18,44 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef DATAREFS_H
+#define DATAREFS_H
 
 // Standard
-#include <string>
-#include <string_view>
+#include <map>
+#include <memory>
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+// X-Plane SDK
+#include "XPLMDataAccess.h"
 
-namespace XMidiCtrl {
+namespace XPEnv {
 
-class MappingSlider : public Mapping {
-public:
-    explicit MappingSlider(int cc);
-
-    MappingType type() override;
-
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
-
-private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+struct Data {
+    XPLMDataRef dataRef;
+    XPLMDataTypeID type;
+    bool writeable;
 };
 
-} // Namespace XMidiCtrl
+class Datarefs {
+public:
+	Datarefs();
+    ~Datarefs();
 
-#endif // MAPPINGCOMMAND_H
+    bool toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff);
+
+    bool read(std::string_view name, int& value);
+    bool write(std::string_view name, int value);
+
+private:
+    std::shared_ptr<Data> retrieveData(std::string_view name);
+
+    void toggleInteger(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
+    void toggleFloat(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
+    void toggleDouble(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
+
+    std::map<std::string_view, std::shared_ptr<Data>> m_dataCache;
+};
+
+} // Namespace XPEnv
+
+#endif // DATAREFS_H

@@ -22,15 +22,18 @@
 #include <string>
 #include <utility>
 
-// X-Plane Environment
-#include "utils/Logger.h"
+// X-Plane SDK
+#include "XPLMPlugin.h"
 
 // XMidiCtrl
 #include "Config.h"
+#include "Logger.h"
 #include "Plugin.h"
 #include "ui/AboutDialog.h"
+#include "ui/MessageWindow.h"
 #include "ui/MidiDevicesDialog.h"
 #include "ui/SettingsDialog.h"
+#include "Version.h"
 
 namespace XMidiCtrl {
 
@@ -41,14 +44,26 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Plugin::Plugin()
-        : XPlanePlugin(XMIDICTRL_NAME, XMIDICTRL_VERSION_STR),
-          m_eventHandler(this->environment()) {
-    // initialize
+Plugin::Plugin() {
+    m_pluginId     = XPLMGetMyID();
     m_flightLoopId = nullptr;
+
+    // create the environment, which holds all data
+    m_environment = std::make_shared<Environment>();
+
+    // read the general settings first
+    m_settings = std::make_shared<Settings>();
+
+    // create the event handler, which process all midi events
+    m_eventHandler = std::make_shared<EventHandler>(m_environment);
 
     // create device list
     m_devices = std::make_shared<DeviceList>();
+
+    // create a list for all message to be displayed on the screen
+    m_messages = std::make_shared<MessageList>(m_settings);
+
+    LOG_INFO << "Plugin " << XMIDICTRL_NAME << " " << XMIDICTRL_VERSION_STR << " loaded successfully" << LOG_END
 }
 
 
@@ -57,6 +72,7 @@ Plugin::Plugin()
  */
 Plugin::~Plugin() {
     m_flightLoopId = nullptr;
+    m_windows.clear();
 
     // close and destroy all midi connections and devices
     closeMidiConnections();
@@ -73,7 +89,7 @@ Plugin::~Plugin() {
 /**
  * Create and return the plugin instance
  */
-Plugin &Plugin::Instance() {
+Plugin& Plugin::Instance() {
     static Plugin plugin;
     return plugin;
 }
@@ -98,7 +114,10 @@ float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter,
  */
 void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
     // process midi events
-    m_eventHandler.processEvents();
+    m_eventHandler->processEvents();
+
+    // display messages
+    showMessages();
 }
 
 
@@ -182,8 +201,26 @@ void Plugin::clearAircraftProfile() {
 /**
  * Add a mapped event to the queue
  */
-void Plugin::addMappedEvent(MappedEvent::ptr mappedEvent) {
-    m_eventHandler.addMappedEvent(mappedEvent);
+void Plugin::addMappedEvent(const MappedEvent::ptr& mappedEvent) {
+    m_eventHandler->addMappedEvent(mappedEvent);
+}
+
+
+/**
+ * Show an info message on the screen
+ */
+void Plugin::raiseInfoMessage(std::string_view text) {
+    LOG_INFO << text << LOG_END
+    m_messages->addMessage(MessageType::Info, text);
+}
+
+
+/**
+ * Show an error message on the screen
+ */
+void Plugin::raiseErrorMessage(std::string_view text) {
+    LOG_ERROR << text << LOG_END
+    m_messages->addMessage(MessageType::Error, text);
 }
 
 
@@ -191,7 +228,7 @@ void Plugin::addMappedEvent(MappedEvent::ptr mappedEvent) {
  * Search for available midi devices
  */
 void Plugin::showMidiDevicesDialog() {
-    showWindow(WINDOW_DEVICES);
+    createWindow(WindowType::MidiDevicesDialog);
 }
 
 
@@ -199,14 +236,14 @@ void Plugin::showMidiDevicesDialog() {
  * Show general settings dialog
  */
 void Plugin::showSettingsDialog() {
-    showWindow(WINDOW_SETTINGS);
+    createWindow(WindowType::SettingsDialog);
 }
 
 /**
  * Show the about dialog
  */
 void Plugin::showAboutDialog() {
-    showWindow(WINDOW_ABOUT);
+    createWindow(WindowType::AboutDialog);
 }
 
 
@@ -217,49 +254,16 @@ void Plugin::showAboutDialog() {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Create and returns windows
- */
-std::shared_ptr<XPlaneWindow> Plugin::createWindow(std::string_view windowId) {
-    std::shared_ptr<XPlaneWindow> window;
-
-    if (windowId == WINDOW_ABOUT)
-        window = std::make_shared<AboutDialog>();
-    else if (windowId == WINDOW_DEVICES)
-        window = std::make_shared<MidiDevicesDialog>();
-    else if (windowId == WINDOW_SETTINGS)
-        window = std::make_shared<SettingsDialog>();
-
-    return window;
-}
-
-
-/**
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
     LOG_INFO << "PLUGIN :: Initialise MIDI devices" << LOG_END
-
-    //std::vector<DeviceSettings> deviceList;
-    //std::shared_ptr<Device> midiDevice;
 
     // close open connections and clear device list
     closeMidiConnections();
 
     m_profile.createMidiDevices(m_devices);
 
-    /*
-    deviceList = m_profile.deviceList();
-
-    for (const auto &deviceSettings: deviceList) {
-        // create midi device
-        midiDevice = std::make_shared<Device>(deviceSettings);
-
-        m_midiDevices.emplace(midiDevice->name(), midiDevice);
-
-        // open inbound and outbound port
-        midiDevice->openConnections();
-    }
-    */
     if (m_devices->size() > 0)
         m_devices->openConnections();
 }
@@ -280,6 +284,58 @@ void Plugin::destroyDeviceList() {
     LOG_INFO << "PLUGIN :: Destroy MIDI device list" << LOG_END
 
     m_devices->clear();
+}
+
+
+/**
+ * Display messages in the message queue
+ */
+void Plugin::showMessages() {
+    if (m_messages->size() > 0)
+        showMessageWindow();
+}
+
+
+/**
+ * Show the global message window
+ */
+void Plugin::showMessageWindow() {
+
+}
+
+
+/**
+ * Create and returns windows
+ */
+void Plugin::createWindow(WindowType windowType) {
+    // check if the window is already created
+    try {
+        m_windows.at(windowType);
+    } catch (std::out_of_range&) {
+    }
+
+    // looks like we have to create it
+    XPlaneWindow::ptr window;
+    switch (windowType) {
+        case WindowType::AboutDialog:
+            window = std::make_shared<AboutDialog>();
+            break;
+
+        case WindowType::MessageWindow:
+            window = std::make_shared<MessageWindow>(m_messages);
+            break;
+
+        case WindowType::MidiDevicesDialog:
+            window = std::make_shared<MidiDevicesDialog>();
+            break;
+
+        case WindowType::SettingsDialog:
+            window = std::make_shared<SettingsDialog>();
+            break;
+    }
+
+    if (window)
+        m_windows.emplace(windowType, window);
 }
 
 } // Namespace XMidiCtrl

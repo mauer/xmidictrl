@@ -18,10 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// XMidiCtrl
-#include "MappingPushAndPull.h"
+// X-Plane Environment
+#include "Commands.h"
+#include "Logger.h"
 
-namespace XMidiCtrl {
+namespace XPEnv {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -30,9 +31,14 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingPushAndPull::MappingPushAndPull(int cc)
-        : Mapping(cc) {
-    m_commandType = CommandType::Push;
+Commands::Commands() = default;
+
+
+/**
+ * Destructor
+ */
+Commands::~Commands() {
+    m_commandCache.clear();
 }
 
 
@@ -43,81 +49,62 @@ MappingPushAndPull::MappingPushAndPull(int cc)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the mapping type
+ * Begin a X-Plane command
  */
-MappingType MappingPushAndPull::type() {
-    return MappingType::PushAndPull;
-};
+void Commands::begin(std::string_view command) {
+    XPLMCommandRef cmdRef = findCommandRef(command);
 
-
-/**
- * Set the push command
- */
-void MappingPushAndPull::setCommandPush(std::string_view commandPush) {
-    m_commandPush = commandPush;
+    if (cmdRef)
+        XPLMCommandBegin(cmdRef);
 }
 
 
 /**
- * Return the push command
+ * End a X-Plane command
  */
-std::string_view MappingPushAndPull::commandPush() const {
-    return m_commandPush;
+void Commands::end(std::string_view command) {
+    XPLMCommandRef cmdRef = findCommandRef(command);
+
+    if (cmdRef)
+        XPLMCommandEnd(cmdRef);
 }
 
 
 /**
- * Set the pull command
+ * Execute a X-Plane command
  */
-void MappingPushAndPull::setCommandPull(std::string_view commandPull) {
-    m_commandPull = commandPull;
+void Commands::execute(std::string_view command) {
+    XPLMCommandRef cmdRef = findCommandRef(command);
+
+    if (cmdRef)
+        XPLMCommandOnce(cmdRef);
 }
 
 
-/**
- * Return the pull command
- */
-std::string_view MappingPushAndPull::commandPull() const {
-    return m_commandPull;
-}
 
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Set the command type
+ * Get the command ref for a command string
  */
-void MappingPushAndPull::setCommandType(const CommandType commandType) {
-    m_commandType = commandType;
-}
+XPLMCommandRef Commands::findCommandRef(std::string_view command) {
+    XPLMCommandRef cmdRef = nullptr;
 
-
-/**
- * Check the mapping
- */
-bool MappingPushAndPull::check() {
-    if (!Mapping::check())
-        return false;
-
-    if (m_commandPush.empty() && m_commandPull.empty())
-        return false;
-    else
-        return true;
-}
-
-
-/**
- * Execute the action in X-Plane
- */
-void MappingPushAndPull::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
-    switch (m_commandType) {
-        case CommandType::Push:
-            environment->commands()->execute(m_commandPush);
-            break;
-
-        case CommandType::Pull:
-            environment->commands()->execute(m_commandPull);
-            break;
+    // check the cache first
+    try {
+        cmdRef = m_commandCache.at(command);
+    } catch (std::out_of_range const&) {
+        cmdRef = XPLMFindCommand(command.data());
+        m_commandCache.emplace(command, cmdRef);
     }
 
+    if (cmdRef == nullptr)
+        LOG_ERROR << "COMMANDS :: Command '" << command.data() << "' not found" << LOG_END
+
+        return cmdRef;
 }
 
-} // Namespace XMidiCtrl
+} // Namespace XPEnv

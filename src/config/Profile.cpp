@@ -351,17 +351,17 @@ Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* sett
 
     // read the four commands
     try {
-        if (settings->contains(CFG_KEY_COMMAND_TOP)) {
-            mapping->setCommandTop(settings->at(CFG_KEY_COMMAND_TOP).as_string().str);
-            LOG_INFO << "PROFILE :: Command Top = " << mapping->commandTop() << LOG_END
+        if (settings->contains(CFG_KEY_COMMAND_UP)) {
+            mapping->setCommandUp(settings->at(CFG_KEY_COMMAND_UP).as_string().str);
+            LOG_INFO << "PROFILE :: Command Up = " << mapping->commandUp() << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_TOP << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_UP << "' not found for CC " << controlChange << LOG_END
 
-        if (settings->contains(CFG_KEY_COMMAND_BOTTOM)) {
-            mapping->setCommandBottom(settings->at(CFG_KEY_COMMAND_BOTTOM).as_string().str);
-            LOG_INFO << "PROFILE :: Command Bottom = " << mapping->commandBottom() << LOG_END
+        if (settings->contains(CFG_KEY_COMMAND_DOWN)) {
+            mapping->setCommandDown(settings->at(CFG_KEY_COMMAND_DOWN).as_string().str);
+            LOG_INFO << "PROFILE :: Command Down = " << mapping->commandDown() << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_BOTTOM << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_DOWN << "' not found for CC " << controlChange << LOG_END
 
     } catch (toml::type_error& error) {
         LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END

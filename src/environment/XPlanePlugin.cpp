@@ -18,10 +18,15 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// XMidiCtrl
-#include "MappingPushAndPull.h"
+// X-Plane SDK
+#include "XPLMUtilities.h"
 
-namespace XMidiCtrl {
+// X-Plane Environment
+#include "utils/Logger.h"
+#include "utils/LogEntry.h"
+#include "XPlanePlugin.h"
+
+namespace XPEnv {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -30,10 +35,19 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingPushAndPull::MappingPushAndPull(int cc)
-        : Mapping(cc) {
-    m_commandType = CommandType::Push;
+XPlanePlugin::XPlanePlugin(std::string_view name, std::string_view version) {
+    // create environment (link to X-Plane data)
+    m_environment = std::make_shared<Environment>();
+
+    // initialize the plugin
+    initialise();
 }
+
+
+/**
+ * Destructor
+ */
+XPlanePlugin::~XPlanePlugin() = default;
 
 
 
@@ -43,81 +57,35 @@ MappingPushAndPull::MappingPushAndPull(int cc)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the mapping type
+ * Return the X-Plane Environment
  */
-MappingType MappingPushAndPull::type() {
-    return MappingType::PushAndPull;
-};
-
-
-/**
- * Set the push command
- */
-void MappingPushAndPull::setCommandPush(std::string_view commandPush) {
-    m_commandPush = commandPush;
+Environment::ptr XPlanePlugin::environment() {
+    return m_environment;
 }
 
 
-/**
- * Return the push command
- */
-std::string_view MappingPushAndPull::commandPush() const {
-    return m_commandPush;
-}
 
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Set the pull command
+ * Initialise the plugin
  */
-void MappingPushAndPull::setCommandPull(std::string_view commandPull) {
-    m_commandPull = commandPull;
-}
+void XPlanePlugin::initialise() {
 
 
-/**
- * Return the pull command
- */
-std::string_view MappingPushAndPull::commandPull() const {
-    return m_commandPull;
-}
+    // get plugin path
+    //XPLMGetPluginInfo(m_pluginId, nullptr, m_pluginPath, nullptr, nullptr);
 
+    // get X-Plane path
+    //XPLMGetSystemPath(m_xplanePath);
 
-/**
- * Set the command type
- */
-void MappingPushAndPull::setCommandType(const CommandType commandType) {
-    m_commandType = commandType;
-}
+    // initialize logger
+    //XMidiCtrl::Logger::Instance().initialise(m_xplanePath, m_name);
 
-
-/**
- * Check the mapping
- */
-bool MappingPushAndPull::check() {
-    if (!Mapping::check())
-        return false;
-
-    if (m_commandPush.empty() && m_commandPull.empty())
-        return false;
-    else
-        return true;
-}
-
-
-/**
- * Execute the action in X-Plane
- */
-void MappingPushAndPull::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
-    switch (m_commandType) {
-        case CommandType::Push:
-            environment->commands()->execute(m_commandPush);
-            break;
-
-        case CommandType::Pull:
-            environment->commands()->execute(m_commandPull);
-            break;
-    }
 
 }
 
-} // Namespace XMidiCtrl
+} // Namespace XPEnv

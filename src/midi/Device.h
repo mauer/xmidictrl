@@ -28,15 +28,11 @@
 #include <string>
 #include <string_view>
 
-// X-Plane SDK
-#include "XPLMUtilities.h"
-
 // RtMidi
 #include "RtMidi.h"
 
 // XMidiCtrl
-#include "Global.h"
-#include "mapping/MappingList.h"
+#include "MappingList.h"
 #include "Types.h"
 
 namespace XMidiCtrl {

@@ -18,39 +18,49 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+// X-Plane Environment
+#include "Environment.h"
 
-// Standard
-#include <string>
-#include <string_view>
+namespace XPEnv {
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
-namespace XMidiCtrl {
+/**
+ * Constructor
+ */
+Environment::Environment() {
+    m_commands = std::make_shared<Commands>();
+    m_datarefs = std::make_shared<Datarefs>();
+}
 
-class MappingSlider : public Mapping {
-public:
-    explicit MappingSlider(int cc);
 
-    MappingType type() override;
+/**
+ * Destructor
+ */
+Environment::~Environment() = default;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
 
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
 
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
 
-private:
-    std::string m_commandUp;
-    std::string m_commandDown;
-};
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
 
-} // Namespace XMidiCtrl
+/**
+ * Return the commands object
+ */
+std::shared_ptr<Commands> Environment::commands() {
+    return m_commands;
+}
 
-#endif // MAPPINGCOMMAND_H
+
+/**
+ * Return the dataref object
+ */
+std::shared_ptr<Datarefs> Environment::datarefs() {
+    return m_datarefs;
+}
+
+} // Namespace XPEnv

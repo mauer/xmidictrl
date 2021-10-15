@@ -18,39 +18,34 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
 // Standard
-#include <string>
+#include <map>
 #include <string_view>
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+// X-Plane SDK
+#include "XPLMUtilities.h"
 
-namespace XMidiCtrl {
+namespace XPEnv {
 
-class MappingSlider : public Mapping {
+class Commands {
 public:
-    explicit MappingSlider(int cc);
+	Commands();
+    ~Commands();
 
-    MappingType type() override;
-
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void begin(std::string_view command);
+    void end(std::string_view command);
+    
+    void execute(std::string_view command);
 
 private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    XPLMCommandRef findCommandRef(std::string_view command);
+
+    std::map<std::string_view, XPLMCommandRef> m_commandCache;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace XPEnv
 
-#endif // MAPPINGCOMMAND_H
+#endif // COMMANDS_H

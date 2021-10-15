@@ -27,20 +27,20 @@
 // X-Plane SDK
 #include "XPLMProcessing.h"
 
-// X-Plane Environment
-#include "XPlanePlugin.h"
-
 // XMidiCtrl
 #include "DeviceList.h"
 #include "EventHandler.h"
+#include "Environment.h"
 #include "Menu.h"
+#include "MessageList.h"
 #include "Profile.h"
 #include "Settings.h"
 #include "Types.h"
+#include "XPlaneWindow.h"
 
 namespace XMidiCtrl {
 
-class Plugin : public XPEnv::XPlanePlugin {
+class Plugin {
 public:
     Plugin();
     ~Plugin();
@@ -49,35 +49,49 @@ public:
 
     static float callbackFlightLoop(float elapsedMe, float elapsedSim, int counter, void* refcon);
 
-    void enablePlugin() override;
-    void disablePlugin() override;
+    void enablePlugin();
+    void disablePlugin();
 
     void loadAircraftProfile();
     void clearAircraftProfile();
 
-    void addMappedEvent(MappedEvent::ptr mappedEvent);
+    void addMappedEvent(const MappedEvent::ptr& mappedEvent);
+
+    void raiseInfoMessage(std::string_view text);
+    void raiseErrorMessage(std::string_view text);
 
     void showMidiDevicesDialog();
     void showSettingsDialog();
     void showAboutDialog();
 
 private:
-    std::shared_ptr<XPlaneWindow> createWindow(std::string_view windowId) override;
-
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
     void initialiseDevices();
-    void closeMidiConnections();
+    void closeMidiConnections(); // should be all moved to devicelist
     void destroyDeviceList();
-   
+
+    void showMessages();
+    void showMessageWindow();
+
+    void createWindow(WindowType windowType);
+
+    XPLMPluginID m_pluginId;
+    XPLMFlightLoopID m_flightLoopId;
+
+    Environment::ptr m_environment;
+    EventHandler::ptr m_eventHandler;
+
     Menu m_menu;
-    EventHandler m_eventHandler;  
-    Settings m_settings;
+
     Profile m_profile;
 
-private:
-    XPLMFlightLoopID m_flightLoopId;
     DeviceList::ptr m_devices;
+    MessageList::ptr m_messages;
+    Settings::ptr m_settings;
+
+    // list of all plugin windows
+    std::map<WindowType, XPlaneWindow::ptr> m_windows;
 };
 
 } // Namespace XMidiCtrl

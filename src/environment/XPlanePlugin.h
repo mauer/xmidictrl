@@ -18,39 +18,43 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef XPLANEPLUGIN_H
+#define XPLANEPLUGIN_H
 
 // Standard
+#include <map>
+#include <memory>
 #include <string>
 #include <string_view>
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+// X-Plane SDK 
+#include "XPLMPlugin.h"
 
-namespace XMidiCtrl {
+// X-Plane Environment
+#include "Environment.h"
+#include "ImGuiFontAtlas.h"
+#include "XPlaneWindow.h"
 
-class MappingSlider : public Mapping {
+namespace XPEnv {
+
+using namespace XMidiCtrl;
+
+class XPlanePlugin {
 public:
-    explicit MappingSlider(int cc);
+    XPlanePlugin(std::string_view name, std::string_view version);
+    ~XPlanePlugin();
 
-    MappingType type() override;
-
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    Environment::ptr environment();
 
 private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    void initialise();
+
+    char m_pluginPath[512]{};
+    char m_xplanePath[512]{};
+
+    Environment::ptr m_environment;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace XPEnv
 
-#endif // MAPPINGCOMMAND_H
+#endif // XPLANEPLUGIN_H

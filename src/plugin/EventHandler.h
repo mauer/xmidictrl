@@ -18,39 +18,39 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H
 
 // Standard
-#include <string>
-#include <string_view>
+#include <map>
+#include <memory>
+#include <queue>
+
+// X-Plane SDK
+//#include "XPLMDataAccess.h"
+//#include "XPLMUtilities.h"
 
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "MappedEvent.h"
+#include "Environment.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
+class EventHandler {
 public:
-    explicit MappingSlider(int cc);
+    explicit EventHandler(Environment::ptr environment);
+    ~EventHandler();
 
-    MappingType type() override;
+    typedef std::shared_ptr<EventHandler> ptr;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void addMappedEvent(const MappedEvent::ptr& mappedEvent);
+    void processEvents();
 
 private:
-    std::string m_commandUp;
-    std::string m_commandDown;
+    std::queue<MappedEvent::ptr> m_eventList;
+    std::shared_ptr<Environment> m_environment;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // EVENTHANDLER_H

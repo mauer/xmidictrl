@@ -18,18 +18,17 @@
 #   IN THE SOFTWARE.
 #---------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/plugin")
+message("---- Directory: src/environment")
 
-# Add sources
-set(PLUGIN_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/EventHandler.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Menu.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MessageList.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Plugin.cpp
+# Set sources
+set(ENV_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Datarefs.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${PLUGIN_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${ENV_SRC})
 
-# Add directory to includes
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+# Include current directory
+include_directories(${CMAKE_CURRENT_LIST_DIR})

@@ -18,39 +18,66 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
-
-// Standard
-#include <string>
-#include <string_view>
-
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "MessageList.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
-public:
-    explicit MappingSlider(int cc);
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
-    MappingType type() override;
+/**
+ * Constructor
+ */
+MessageList::MessageList(Settings::ptr settings) {
+    m_settings = settings;
+}
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
 
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
+/**
+ * Destructor
+ */
+MessageList::~MessageList() {
+    m_list.clear();
+}
 
-    bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
 
-private:
-    std::string m_commandUp;
-    std::string m_commandDown;
-};
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add a new message to be display
+ */
+void MessageList::addMessage(MessageType type, std::string_view text) {
+    if (!m_settings->showScreenMessages())
+        return;
+
+    Message::ptr message = std::make_shared<Message>();
+
+    message->type = type;
+    message->text = text;
+
+    m_list.push_back(message);
+}
+
+
+/**
+ * Clear the message list
+ */
+void MessageList::clear() {
+    m_list.clear();
+}
+
+
+/**
+ * Return the number of messages
+ */
+unsigned int MessageList::size() {
+    return m_list.size();
+}
 
 } // Namespace XMidiCtrl
-
-#endif // MAPPINGCOMMAND_H
