@@ -32,18 +32,21 @@
 // XMidiCtrl
 #include "Config.h"
 #include "DeviceList.h"
+#include "Environment.h"
 #include "Types.h"
 
 namespace XMidiCtrl {
 
 class Profile : public Config {
 public:
-    Profile();
+    explicit Profile(Environment::ptr environment);
     ~Profile();
+
+    typedef std::shared_ptr<Profile> ptr;
 
     bool load();
 
-    void createMidiDevices(const DeviceList::ptr& deviceList);
+    DeviceList::ptr createMidiDevices();
 
 private:
     std::string determineProfileFileName();
@@ -57,6 +60,8 @@ private:
     Mapping::ptr readSettingsForSlider(int controlChange, toml::value* settings);
     Mapping::ptr readSettingsForPushAndPull(int controlChange, toml::value* settings);
     Mapping::ptr readSettingsForEncoder(int controlChange, toml::value* settings);
+
+    Environment::ptr m_environment;
 };
 
 } // Namespace XMidiCtrl

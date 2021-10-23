@@ -24,6 +24,8 @@
 // XMidiCtrl
 #include "MappingDataref.h"
 
+#include <utility>
+
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingDataref::MappingDataref(int cc)
-        : Mapping(cc) {}
+MappingDataref::MappingDataref(Environment::ptr environment, int controlChange)
+        : Mapping(std::move(environment), controlChange) {}
 
 
 
@@ -116,10 +118,10 @@ bool MappingDataref::check() {
 /**
  * Execute the action in X-Plane
  */
-void MappingDataref::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
+void MappingDataref::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingDataref::execute" << LOG_END
 
-    environment->datarefs()->toggle(m_dataref, m_valueOn, m_valueOff);
+    m_environment->data()->toggle(m_dataref, m_valueOn, m_valueOff);
 }
 
 } // Namespace XMidiCtrl

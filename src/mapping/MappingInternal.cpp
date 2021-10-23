@@ -21,6 +21,8 @@
 // XMidiCtrl
 #include "MappingInternal.h"
 
+#include <utility>
+
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -30,10 +32,9 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingInternal::MappingInternal(int cc, std::string_view command)
-        : Mapping(cc) {
-    m_command = command;
-}
+MappingInternal::MappingInternal(Environment::ptr environment, int controlChange, std::string_view command)
+        : Mapping(std::move(environment), controlChange),
+          m_command(command) {}
 
 
 
@@ -67,7 +68,7 @@ bool MappingInternal::check() {
 /**
  * Execute the action in X-Plane
  */
-void MappingInternal::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
+void MappingInternal::execute(MidiEvent::ptr midiEvent) {
 
 }
 

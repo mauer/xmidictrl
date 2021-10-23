@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 
 class MappingDataref : public Mapping {
 public:
-    explicit MappingDataref(int cc);
+    explicit MappingDataref(Environment::ptr environment, int controlChange);
     ~MappingDataref() override = default;
 
     MappingType type() override;
@@ -48,7 +48,7 @@ public:
     [[nodiscard]] std::string_view valueOff() const;
 
     bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void execute(MidiEvent::ptr midiEvent) override;
 
 private:
     std::string m_dataref;

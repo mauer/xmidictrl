@@ -88,24 +88,15 @@ const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
 
 
 
-
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   TYPES
-//---------------------------------------------------------------------------------------------------------------------
-
-// TODO Delete
-// List off connected midi devices
-//class Device;
-//typedef std::map<std::string, std::shared_ptr<Device>> MidiDeviceList;
-
-
 //---------------------------------------------------------------------------------------------------------------------
 //   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
+
+enum class MessageType {
+    Info,
+    Error
+};
+
 
 enum class WindowType {
     AboutDialog,
@@ -113,56 +104,6 @@ enum class WindowType {
     MidiDevicesDialog,
     SettingsDialog,
 };
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   STRUCTURES
-//---------------------------------------------------------------------------------------------------------------------
-
-// TODO Delete
-// Midi mapping
-//struct MidiMapping {
-//    int controlChange;
-//    MappingType type;
-//
-//    std::string command;
-//
-//    std::string commandPush;
-//    std::string commandPull;
-//
-//    std::string commandUp;
-//    std::string commandDown;
-//
-//    std::string commandUpFast;
-//    std::string commandDownFast;
-//
-//    std::string dataRef;
-//    std::string valueOn;
-//    std::string valueOff;
-//};
-
-
-// Midi device settings
-//struct DeviceSettings {
-//    std::string name;
-//
-//    int portIn;
-//    int portOut;
-//
-//    std::map<int, MidiMapping> mapping;
-//};
-
-
-// Single midi event
-// TODO
-//class Mapping;
-//struct MidiEvent {
-//    int status;
-//    int controlChange;
-//    int velocity;
-
-//    std::shared_ptr<Mapping> mapping;
-//};
 
 } // Namespace XMidiCtrl
 

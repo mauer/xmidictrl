@@ -32,12 +32,13 @@ namespace XMidiCtrl {
 
 class MappingInternal : public Mapping {
 public:
-    explicit MappingInternal(int cc, std::string_view command);
+    explicit MappingInternal(Environment::ptr environment, int controlChange, std::string_view command);
+    ~MappingInternal() override = default;
 
     MappingType type() override;
 
     bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void execute(MidiEvent::ptr midiEvent) override;
 
 private:
     std::string m_command;

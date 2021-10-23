@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 
 class MappingCommand : public Mapping {
 public:
-    explicit MappingCommand(int controlChange);
+    explicit MappingCommand(Environment::ptr environment, int controlChange);
     ~MappingCommand() override = default;
 
     MappingType type() override;
@@ -42,7 +42,7 @@ public:
     [[nodiscard]] std::string_view command() const;
 
     bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void execute(MidiEvent::ptr midiEvent) override;
 
 private:
     std::string m_command;

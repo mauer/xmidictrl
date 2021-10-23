@@ -28,23 +28,10 @@
 
 // XMidiCtrl
 #include "Logger.h"
+#include "Message.h"
 #include "Settings.h"
 
 namespace XMidiCtrl {
-
-// Screen Message Types
-enum class MessageType {
-    Info,
-    Error
-};
-
-// Screen Message
-struct Message {
-    MessageType type;
-    std::string text;
-
-    typedef std::shared_ptr<Message> ptr;
-};
 
 class MessageList {
 public:

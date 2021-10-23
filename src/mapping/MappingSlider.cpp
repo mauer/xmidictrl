@@ -24,6 +24,8 @@
 // XMidiCtrl
 #include "MappingSlider.h"
 
+#include <utility>
+
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingSlider::MappingSlider(int cc)
-        : Mapping(cc) {}
+MappingSlider::MappingSlider(Environment::ptr environment, int controlChange)
+        : Mapping(std::move(environment), controlChange) {}
 
 
 
@@ -100,13 +102,13 @@ bool MappingSlider::check() {
 /**
  * Execute the action in X-Plane
  */
-void MappingSlider::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
+void MappingSlider::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingSlider::execute" << LOG_END
 
     if (midiEvent->velocity() <= 10)
-        environment->commands()->execute(m_commandDown);
+        m_environment->commands()->execute(m_commandDown);
     else if (midiEvent->velocity() >= 117)
-        environment->commands()->execute(m_commandUp);
+        m_environment->commands()->execute(m_commandUp);
 }
 
 } // Namespace XMidiCtrl

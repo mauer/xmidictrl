@@ -22,11 +22,11 @@
 #include <stdexcept>
 #include <string>
 
-// X-Plane Environment
-#include "Datarefs.h"
-#include "utils/Logger.h"
+// XMidiCtrl
+#include "Data.h"
+#include "Logger.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -35,13 +35,13 @@ namespace XPEnv {
 /**
  * Constructor
  */
-Datarefs::Datarefs() = default;
+Data::Data() = default;
 
 
 /**
  * Destructor
  */
-Datarefs::~Datarefs() {
+Data::~Data() {
     m_dataCache.clear();
 }
 
@@ -55,36 +55,36 @@ Datarefs::~Datarefs() {
 /**
  * Toggle a dataref between on and off
  */
-bool Datarefs::toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff) {
-    std::shared_ptr<Data> data = retrieveData(name);
+bool Data::toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff) {
+    DataItem::ptr dataItem = retrieveData(name);
 
-    if (!data->writeable) {
-        LOG_ERROR << "DATAREFS :: Dataref '" << name.data() << "' is not writeable" << LOG_END
+    if (!dataItem->writeable) {
+        LOG_ERROR << "DATA :: Dataref '" << name.data() << "' is not writeable" << LOG_END
         return false;
     }
 
-    switch (data->type) {
+    switch (dataItem->type) {
         case xplmType_Int:
-            LOG_DEBUG << "DATAREFS :: Change integer dataref" << LOG_END
-            toggleInteger(data, valueOn, valueOff);
+            LOG_DEBUG << "DATA :: Change integer dataref" << LOG_END
+            toggleInteger(dataItem, valueOn, valueOff);
             return true;
 
         case xplmType_Float:
-            LOG_DEBUG << "DATAREFS :: Change float dataref" << LOG_END
-            toggleFloat(data, valueOn, valueOff);
+            LOG_DEBUG << "DATA :: Change float dataref" << LOG_END
+            toggleFloat(dataItem, valueOn, valueOff);
             return true;
 
         case xplmType_Double:
-            LOG_DEBUG << "DATAREFS :: Change double dataref" << LOG_END
-            toggleDouble(data, valueOn, valueOff);
+            LOG_DEBUG << "DATA :: Change double dataref" << LOG_END
+            toggleDouble(dataItem, valueOn, valueOff);
             return true;
 
         case xplmType_Unknown:
-            LOG_ERROR << "DATAREFS :: Could not determine type of dataref '" << name.data() << "'" << LOG_END
+            LOG_ERROR << "DATA :: Could not determine type of dataref '" << name.data() << "'" << LOG_END
             return false;
 
         default:
-            LOG_ERROR << "DATAREFS :: Unknown data type '" << data->type << "'" << LOG_END
+            LOG_ERROR << "DATA :: Unknown data type '" << dataItem->type << "'" << LOG_END
             return false;
     }
 }
@@ -93,29 +93,29 @@ bool Datarefs::toggle(std::string_view name, std::string_view valueOn, std::stri
 /**
  * Read an integer dataref
  */
-bool Datarefs::read(std::string_view name, int &value) {
-    std::shared_ptr<Data> data = retrieveData(name);
+bool Data::read(std::string_view name, int &value) {
+    DataItem::ptr dataItem = retrieveData(name);
 
-    if (data->dataRef == nullptr)
+    if (dataItem->dataRef == nullptr)
         return false;
 
-    value = XPLMGetDatai(data->dataRef);
+    value = XPLMGetDatai(dataItem->dataRef);
 
     return true;
 }
 
 
 /**
- * Read an integer dataref
+ * Write an integer dataref
  */
-bool Datarefs::write(std::string_view name, int value) {
-    std::shared_ptr<Data> data = retrieveData(name);
+bool Data::write(std::string_view name, int value) {
+    DataItem::ptr dataItem = retrieveData(name);
 
-    if (data->dataRef == nullptr)
+    if (dataItem->dataRef == nullptr)
         return false;
 
-    if (data->writeable) {
-        XPLMSetDatai(data->dataRef, value);
+    if (dataItem->writeable) {
+        XPLMSetDatai(dataItem->dataRef, value);
         return true;
     } else {
         LOG_ERROR << "DATAREFS :: DataRef '" << name.data() << "' is not writeable" << LOG_END
@@ -133,50 +133,50 @@ bool Datarefs::write(std::string_view name, int value) {
 /**
  * Get the data ref for a dataref string
  */
-std::shared_ptr<Data> Datarefs::retrieveData(std::string_view name) {
-    std::shared_ptr<Data> data = std::make_shared<Data>();
+DataItem::ptr Data::retrieveData(std::string_view name) {
+    DataItem::ptr dataItem = std::make_shared<DataItem>();
 
     // check the cache first
     try {
-        data = m_dataCache.at(name);
+        dataItem = m_dataCache.at(name);
     } catch (std::out_of_range const &) {
-        data->dataRef = XPLMFindDataRef(name.data());
+        dataItem->dataRef = XPLMFindDataRef(name.data());
 
         // get type
-        if (data->dataRef != nullptr)
-            data->type = XPLMGetDataRefTypes(data->dataRef);
+        if (dataItem->dataRef != nullptr)
+            dataItem->type = XPLMGetDataRefTypes(dataItem->dataRef);
         else
-            data->type = xplmType_Unknown;
+            dataItem->type = xplmType_Unknown;
 
         // check if writeable
-        if (data->dataRef != nullptr)
-            data->writeable = XPLMCanWriteDataRef(data->dataRef);
+        if (dataItem->dataRef != nullptr)
+            dataItem->writeable = XPLMCanWriteDataRef(dataItem->dataRef);
 
         // add new dataref to cache
-        if (data->dataRef)
-            m_dataCache.emplace(name, data);
+        if (dataItem->dataRef)
+            m_dataCache.emplace(name, dataItem);
     }
 
-    if (!data->dataRef)
+    if (!dataItem->dataRef)
         LOG_ERROR << "DATAREFS :: DataRef " << name.data() << " not found" << LOG_END
 
-    return data;
+    return dataItem;
 }
 
 
 /**
  * Toggle an integer dataref between on and off
  */
-void Datarefs::toggleInteger(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff) {
+void Data::toggleInteger(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff) {
     // read current value
-    int value = XPLMGetDatai(data->dataRef);
+    int value = XPLMGetDatai(dataItem->dataRef);
 
     if (value == std::stoi(valueOn.data())) {
         //LOG_DEBUG << "EVENTHANDLER :: Set dataref " << data-> << " to value " << midiEvent->mapping.valueOff << LOG_END
-        XPLMSetDatai(data->dataRef, std::stoi(valueOff.data()));
+        XPLMSetDatai(dataItem->dataRef, std::stoi(valueOff.data()));
     } else {
         //LOG_DEBUG << "EVENTHANDLER :: Set dataref " << midiEvent->mapping.dataRef << " to value " << midiEvent->mapping.valueOn << LOG_END
-        XPLMSetDatai(data->dataRef, std::stoi(valueOn.data()));
+        XPLMSetDatai(dataItem->dataRef, std::stoi(valueOn.data()));
     }
 }
 
@@ -184,7 +184,7 @@ void Datarefs::toggleInteger(std::shared_ptr<Data> data, std::string_view valueO
 /**
  * Toggle an integer dataref between on and off
  */
-void Datarefs::toggleFloat(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff) {
+void Data::toggleFloat(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff) {
 
 }
 
@@ -192,8 +192,8 @@ void Datarefs::toggleFloat(std::shared_ptr<Data> data, std::string_view valueOn,
 /**
  * Toggle an integer dataref between on and off
  */
-void Datarefs::toggleDouble(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff) {
+void Data::toggleDouble(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff) {
 
 }
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

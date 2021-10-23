@@ -89,7 +89,7 @@ void EventHandler::processEvents() {
 
         // perform the action related to the mapping
         if (mappedEvent->mapping())
-            mappedEvent->mapping()->execute(m_environment, mappedEvent->midiEvent());
+            mappedEvent->mapping()->execute(mappedEvent->midiEvent());
 
         // delete entry from list
         m_eventList.pop();

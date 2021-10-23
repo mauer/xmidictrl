@@ -25,7 +25,7 @@
 #include <memory>
 
 // XMidiCtrl
-#include "MessageList.h"
+#include "Environment.h"
 #include "XPlaneWindow.h"
 #include "Types.h"
 
@@ -33,13 +33,13 @@ namespace XMidiCtrl {
 
 class MessageWindow : public XPlaneWindow {
 public:
-    MessageWindow(MessageList::ptr messages);
+    MessageWindow(Environment::ptr environment);
     ~MessageWindow() override;
 
 protected:
     void onDraw() override;
 
-    MessageList::ptr m_messages;
+    Environment::ptr m_environment;
 };
 
 } // Namespace XMidiCtrl

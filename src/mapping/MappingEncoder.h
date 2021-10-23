@@ -33,7 +33,8 @@ namespace XMidiCtrl {
 
 class MappingEncoder : public Mapping {
 public:
-    explicit MappingEncoder(int cc);
+    explicit MappingEncoder(Environment::ptr environment, int controlChange);
+    ~MappingEncoder() override = default;
 
     MappingType type() override;
 
@@ -50,7 +51,7 @@ public:
     [[nodiscard]] std::string_view commandFastDown() const;
 
     bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void execute(MidiEvent::ptr midiEvent) override;
 
 private:
     std::string m_commandUp;

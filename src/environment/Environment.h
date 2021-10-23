@@ -24,11 +24,13 @@
 // Standard
 #include <memory>
 
-// X-Plane Environment
+// XMidiCtrl
 #include "Commands.h"
-#include "Datarefs.h"
+#include "Data.h"
+#include "MessageList.h"
+#include "Settings.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 class Environment {
 public:
@@ -37,14 +39,21 @@ public:
 
     typedef std::shared_ptr<Environment> ptr;
 
-    std::shared_ptr<Commands> commands();
-    std::shared_ptr<Datarefs> datarefs();
+    void raiseInfoMessage(std::string_view text);
+    void raiseErrorMessage(std::string_view text);
+
+    MessageList::ptr messages();
+    Commands::ptr commands();
+    Data::ptr data();
     
 private:
-    std::shared_ptr<Commands> m_commands;
-    std::shared_ptr<Datarefs> m_datarefs;
+    Settings::ptr m_settings;
+    MessageList::ptr m_messages;
+
+    Commands::ptr m_commands;
+    Data::ptr m_data;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
 #endif // ENVIRONMENT_H

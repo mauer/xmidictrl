@@ -18,51 +18,43 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGPUSHANDPULL_H
-#define MAPPINGPUSHANDPULL_H
+#ifndef DATA_H
+#define DATA_H
 
 // Standard
+#include <map>
 #include <memory>
-#include <string>
+
+// X-Plane SDK
+#include "XPLMDataAccess.h"
 
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "DataItem.h"
 
 namespace XMidiCtrl {
 
-enum class CommandType {
-    Push,
-    Pull
-};
-
-class MappingPushAndPull : public Mapping {
+class Data {
 public:
-    explicit MappingPushAndPull(Environment::ptr environment, int controlChange);
-    ~MappingPushAndPull() override = default;
+	Data();
+    ~Data();
 
-    MappingType type() override;
+    typedef std::shared_ptr<Data> ptr;
 
-    void setCommandPush(std::string_view commandPush);
-    [[nodiscard]] std::string_view commandPush() const;
+    bool toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff);
 
-    void setCommandPull(std::string_view commandPull);
-    [[nodiscard]] std::string_view commandPull() const;
-
-    void setCommandType(CommandType commandType);
-
-    bool check() override;
-    void execute(MidiEvent::ptr midiEvent) override;
+    bool read(std::string_view name, int& value);
+    bool write(std::string_view name, int value);
 
 private:
-    CommandType m_commandType;
+    DataItem::ptr retrieveData(std::string_view name);
 
-    std::string m_commandPush;
-    std::string m_commandPull;
+    void toggleInteger(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
+    void toggleFloat(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
+    void toggleDouble(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
+
+    std::map<std::string_view, DataItem::ptr> m_dataCache;
 };
-
-typedef std::shared_ptr<MappingPushAndPull> MappingPushAndPull_;
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // DATA_H

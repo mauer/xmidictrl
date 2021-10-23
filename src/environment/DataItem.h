@@ -18,51 +18,25 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGPUSHANDPULL_H
-#define MAPPINGPUSHANDPULL_H
+#ifndef DATAITEM_H
+#define DATAITEM_H
 
 // Standard
 #include <memory>
-#include <string>
 
-// XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+// X-Plane SDK
+#include "XPLMDataAccess.h"
 
 namespace XMidiCtrl {
 
-enum class CommandType {
-    Push,
-    Pull
+struct DataItem {
+    XPLMDataRef dataRef;
+    XPLMDataTypeID type;
+    bool writeable;
+
+    typedef std::shared_ptr<DataItem> ptr;
 };
-
-class MappingPushAndPull : public Mapping {
-public:
-    explicit MappingPushAndPull(Environment::ptr environment, int controlChange);
-    ~MappingPushAndPull() override = default;
-
-    MappingType type() override;
-
-    void setCommandPush(std::string_view commandPush);
-    [[nodiscard]] std::string_view commandPush() const;
-
-    void setCommandPull(std::string_view commandPull);
-    [[nodiscard]] std::string_view commandPull() const;
-
-    void setCommandType(CommandType commandType);
-
-    bool check() override;
-    void execute(MidiEvent::ptr midiEvent) override;
-
-private:
-    CommandType m_commandType;
-
-    std::string m_commandPush;
-    std::string m_commandPull;
-};
-
-typedef std::shared_ptr<MappingPushAndPull> MappingPushAndPull_;
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // DATAITEM_H

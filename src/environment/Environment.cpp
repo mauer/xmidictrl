@@ -18,10 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
+// XMidiCtrl
 #include "Environment.h"
+#include "Logger.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -31,8 +32,17 @@ namespace XPEnv {
  * Constructor
  */
 Environment::Environment() {
+    // read the general settings first
+    m_settings = std::make_shared<Settings>();
+
+    // internal message list
+    m_messages = std::make_shared<MessageList>(m_settings);
+
+    // access to X-Plane commands
     m_commands = std::make_shared<Commands>();
-    m_datarefs = std::make_shared<Datarefs>();
+
+    // access to X-Plane datarefs
+    m_data = std::make_shared<Data>();
 }
 
 
@@ -49,9 +59,35 @@ Environment::~Environment() = default;
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Show an info message on the screen
+ */
+void Environment::raiseInfoMessage(std::string_view text) {
+    LOG_INFO << text << LOG_END
+    m_messages->addMessage(MessageType::Info, text);
+}
+
+
+/**
+ * Show an error message on the screen
+ */
+void Environment::raiseErrorMessage(std::string_view text) {
+    LOG_ERROR << text << LOG_END
+    m_messages->addMessage(MessageType::Error, text);
+}
+
+
+/**
+ * Return the message list
+ */
+MessageList::ptr Environment::messages() {
+    return m_messages;
+}
+
+
+/**
  * Return the commands object
  */
-std::shared_ptr<Commands> Environment::commands() {
+Commands::ptr Environment::commands() {
     return m_commands;
 }
 
@@ -59,8 +95,8 @@ std::shared_ptr<Commands> Environment::commands() {
 /**
  * Return the dataref object
  */
-std::shared_ptr<Datarefs> Environment::datarefs() {
-    return m_datarefs;
+Data::ptr Environment::data() {
+    return m_data;
 }
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

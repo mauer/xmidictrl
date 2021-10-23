@@ -83,7 +83,7 @@ PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void* inPa
             break;
 
         case XPLM_MSG_PLANE_UNLOADED:
-            XMidiCtrl::Plugin::Instance().clearAircraftProfile();
+            XMidiCtrl::Plugin::Instance().unloadAircraftProfile();
             break;
 
         default:

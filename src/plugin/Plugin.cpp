@@ -26,13 +26,13 @@
 #include "XPLMPlugin.h"
 
 // XMidiCtrl
+#include "AboutDialog.h"
 #include "Config.h"
 #include "Logger.h"
+#include "MessageWindow.h"
+#include "MidiDevicesDialog.h"
 #include "Plugin.h"
-#include "ui/AboutDialog.h"
-#include "ui/MessageWindow.h"
-#include "ui/MidiDevicesDialog.h"
-#include "ui/SettingsDialog.h"
+#include "SettingsDialog.h"
 #include "Version.h"
 
 namespace XMidiCtrl {
@@ -47,21 +47,14 @@ namespace XMidiCtrl {
 Plugin::Plugin() {
     m_pluginId     = XPLMGetMyID();
     m_flightLoopId = nullptr;
+    m_profile      = nullptr;
+    m_devices      = nullptr;
 
     // create the environment, which holds all data
     m_environment = std::make_shared<Environment>();
 
-    // read the general settings first
-    m_settings = std::make_shared<Settings>();
-
     // create the event handler, which process all midi events
     m_eventHandler = std::make_shared<EventHandler>(m_environment);
-
-    // create device list
-    m_devices = std::make_shared<DeviceList>();
-
-    // create a list for all message to be displayed on the screen
-    m_messages = std::make_shared<MessageList>(m_settings);
 
     LOG_INFO << "Plugin " << XMIDICTRL_NAME << " " << XMIDICTRL_VERSION_STR << " loaded successfully" << LOG_END
 }
@@ -74,9 +67,8 @@ Plugin::~Plugin() {
     m_flightLoopId = nullptr;
     m_windows.clear();
 
-    // close and destroy all midi connections and devices
+    // close all midi connections
     closeMidiConnections();
-    destroyDeviceList();
 }
 
 
@@ -101,7 +93,7 @@ Plugin& Plugin::Instance() {
 float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter, void *refcon) {
     // call instance method
     if (refcon != nullptr) {
-        auto midiCtrl = static_cast< Plugin * >(refcon);
+        auto midiCtrl = static_cast<Plugin*>(refcon);
         midiCtrl->processFlightLoop(elapsedMe, elapsedSim, counter);
     }
 
@@ -116,7 +108,7 @@ void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
     // process midi events
     m_eventHandler->processEvents();
 
-    // display messages
+    // display screen messages
     showMessages();
 }
 
@@ -125,7 +117,7 @@ void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
  * Enable the plugin
  */
 void Plugin::enablePlugin() {
-    LOG_INFO << "PLUGIN :: Enable plugin" << LOG_END
+    m_environment->raiseInfoMessage("Plugin " + std::string(XMIDICTRL_FULL_NAME) + " enabled");
 
     // create all required menu entries
     m_menu.createMenu();
@@ -140,11 +132,11 @@ void Plugin::enablePlugin() {
     m_flightLoopId = XPLMCreateFlightLoop(&params);
 
     if (m_flightLoopId != nullptr) {
-        LOG_INFO << "PLUGIN :: Flight loop successfully registered" << LOG_END
+        LOG_DEBUG << "Flight loop successfully registered" << LOG_END
 
         XPLMScheduleFlightLoop(m_flightLoopId, FLIGHTLOOP_INTERVAL, true);
     } else
-        LOG_ERROR << "PLUGIN :: Could not create flight loop" << LOG_END
+        m_environment->raiseErrorMessage("Could not create flight loop");
 }
 
 
@@ -160,13 +152,12 @@ void Plugin::disablePlugin() {
         XPLMDestroyFlightLoop(m_flightLoopId);
         m_flightLoopId = nullptr;
 
-        LOG_INFO << "PLUGIN :: Flight loop destroyed" << LOG_END
+        LOG_DEBUG << "Flight loop destroyed" << LOG_END
     }
 
     closeMidiConnections();
-    destroyDeviceList();
 
-    LOG_INFO << "PLUGIN :: Disabled plugin" << LOG_END
+    LOG_INFO << "Plugin disabled" << LOG_END
 }
 
 
@@ -174,27 +165,28 @@ void Plugin::disablePlugin() {
  * Load the profile for the current aircraft
  */
 void Plugin::loadAircraftProfile() {
-    LOG_INFO << "PLUGIN :: Load aircraft profile" << LOG_END
+    LOG_DEBUG << "Start loading aircraft profile" << LOG_END
 
     // reload settings for current aircraft
-    m_profile.load();
+    if (m_profile == nullptr)
+        m_profile = std::make_shared<Profile>(m_environment);
 
+    m_profile->load();
     initialiseDevices();
 }
 
 
 /**
- * Clear aircraft profile
+ * Unload the aircraft profile
  */
-void Plugin::clearAircraftProfile() {
-    LOG_INFO << "PLUGIN :: Clear aircraft profile" << LOG_END
+void Plugin::unloadAircraftProfile() {
+    LOG_DEBUG << "Start to unload the current aircraft profile" << LOG_END
 
     // clear current aircraft settings
-    m_profile.clear();
+    if (m_profile != nullptr)
+        m_profile->clear();
 
-    // close active midi connections
     closeMidiConnections();
-    destroyDeviceList();
 }
 
 
@@ -203,24 +195,6 @@ void Plugin::clearAircraftProfile() {
  */
 void Plugin::addMappedEvent(const MappedEvent::ptr& mappedEvent) {
     m_eventHandler->addMappedEvent(mappedEvent);
-}
-
-
-/**
- * Show an info message on the screen
- */
-void Plugin::raiseInfoMessage(std::string_view text) {
-    LOG_INFO << text << LOG_END
-    m_messages->addMessage(MessageType::Info, text);
-}
-
-
-/**
- * Show an error message on the screen
- */
-void Plugin::raiseErrorMessage(std::string_view text) {
-    LOG_ERROR << text << LOG_END
-    m_messages->addMessage(MessageType::Error, text);
 }
 
 
@@ -257,14 +231,14 @@ void Plugin::showAboutDialog() {
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
-    LOG_INFO << "PLUGIN :: Initialise MIDI devices" << LOG_END
+    m_environment->raiseInfoMessage("Initialise MIDI devices");
 
-    // close open connections and clear device list
     closeMidiConnections();
 
-    m_profile.createMidiDevices(m_devices);
+    if (m_profile != nullptr)
+        m_devices = m_profile->createMidiDevices();
 
-    if (m_devices->size() > 0)
+    if (m_devices != nullptr && m_devices->size() > 0)
         m_devices->openConnections();
 }
 
@@ -273,17 +247,12 @@ void Plugin::initialiseDevices() {
  * Close all open midi connections
  */
 void Plugin::closeMidiConnections() {
+    LOG_DEBUG << "Close all midi connections" << LOG_END
 
-}
-
-
-/**
- * Destroy device list
- */
-void Plugin::destroyDeviceList() {
-    LOG_INFO << "PLUGIN :: Destroy MIDI device list" << LOG_END
-
-    m_devices->clear();
+    if (m_devices != nullptr) {
+        m_devices->closeConnections();
+        m_devices->clear();
+    }
 }
 
 
@@ -291,7 +260,7 @@ void Plugin::destroyDeviceList() {
  * Display messages in the message queue
  */
 void Plugin::showMessages() {
-    if (m_messages->size() > 0)
+    if (m_environment->messages()->size() > 0)
         showMessageWindow();
 }
 
@@ -322,7 +291,7 @@ void Plugin::createWindow(WindowType windowType) {
             break;
 
         case WindowType::MessageWindow:
-            window = std::make_shared<MessageWindow>(m_messages);
+            window = std::make_shared<MessageWindow>(m_environment);
             break;
 
         case WindowType::MidiDevicesDialog:

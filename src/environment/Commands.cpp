@@ -18,11 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
+// XMidiCtrl
 #include "Commands.h"
 #include "Logger.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
@@ -107,4 +107,4 @@ XPLMCommandRef Commands::findCommandRef(std::string_view command) {
         return cmdRef;
 }
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

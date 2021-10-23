@@ -24,15 +24,11 @@
 // Standard
 #include <memory>
 
-// X-Plane Environment
-#include "Environment.h"
-
 // XMidiCtrl
+#include "Environment.h"
 #include "MidiEvent.h"
 
 namespace XMidiCtrl {
-
-using namespace XPEnv;
 
 // Midi mapping types
 enum class MappingType {
@@ -47,19 +43,21 @@ enum class MappingType {
 
 class Mapping {
 public:
-    explicit Mapping(int controlChange);
+    Mapping(Environment::ptr environment, int controlChange);
     virtual ~Mapping() = default;
 
     typedef std::shared_ptr<Mapping> ptr;
 
     virtual MappingType type();
 
-    const int controlChange() const;
+    [[nodiscard]] int controlChange() const;
 
     virtual bool check();
-    virtual void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) = 0;
+    virtual void execute(MidiEvent::ptr midiEvent) = 0;
 
 protected:
+    Environment::ptr m_environment;
+
     int m_controlChange;
 };
 

@@ -33,7 +33,8 @@ namespace XMidiCtrl {
 
 class MappingSlider : public Mapping {
 public:
-    explicit MappingSlider(int cc);
+    explicit MappingSlider(Environment::ptr environment, int controlChange);
+    ~MappingSlider() override = default;
 
     MappingType type() override;
 
@@ -44,7 +45,7 @@ public:
     [[nodiscard]] std::string_view commandDown() const;
 
     bool check() override;
-    void execute(Environment::ptr environment, MidiEvent::ptr midiEvent) override;
+    void execute(MidiEvent::ptr midiEvent) override;
 
 private:
     std::string m_commandUp;

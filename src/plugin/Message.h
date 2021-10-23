@@ -18,44 +18,26 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DATAREFS_H
-#define DATAREFS_H
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 // Standard
-#include <map>
 #include <memory>
+#include <string>
 
-// X-Plane SDK
-#include "XPLMDataAccess.h"
+// XMidiCtrl
+#include "Types.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
-struct Data {
-    XPLMDataRef dataRef;
-    XPLMDataTypeID type;
-    bool writeable;
+// Screen Message
+struct Message {
+    MessageType type;
+    std::string text;
+
+    typedef std::shared_ptr<Message> ptr;
 };
 
-class Datarefs {
-public:
-	Datarefs();
-    ~Datarefs();
+} // Namespace XMidiCtrl
 
-    bool toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff);
-
-    bool read(std::string_view name, int& value);
-    bool write(std::string_view name, int value);
-
-private:
-    std::shared_ptr<Data> retrieveData(std::string_view name);
-
-    void toggleInteger(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
-    void toggleFloat(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
-    void toggleDouble(std::shared_ptr<Data> data, std::string_view valueOn, std::string_view valueOff);
-
-    std::map<std::string_view, std::shared_ptr<Data>> m_dataCache;
-};
-
-} // Namespace XPEnv
-
-#endif // DATAREFS_H
+#endif // MESSAGE_H

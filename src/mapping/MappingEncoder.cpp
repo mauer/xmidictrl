@@ -24,6 +24,8 @@
 // XMidiCtrl
 #include "MappingEncoder.h"
 
+#include <utility>
+
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingEncoder::MappingEncoder(int cc)
-        : Mapping(cc) {}
+MappingEncoder::MappingEncoder(Environment::ptr environment, int controlChange)
+        : Mapping(std::move(environment), controlChange) {}
 
 
 
@@ -138,21 +140,21 @@ bool MappingEncoder::check() {
 /**
  * Execute the action in X-Plane
  */
-void MappingEncoder::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
+void MappingEncoder::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingEncoder::execute" << LOG_END
 
     if (midiEvent->velocity() < 64) {
         // Down
         if (midiEvent->velocity() < 61)
-            environment->commands()->execute(m_commandFastDown);
+            m_environment->commands()->execute(m_commandFastDown);
         else
-            environment->commands()->execute(m_commandDown);
+            m_environment->commands()->execute(m_commandDown);
     } else if (midiEvent->velocity() > 64) {
         // Up
         if (midiEvent->velocity() > 68)
-            environment->commands()->execute(m_commandFastUp);
+            m_environment->commands()->execute(m_commandFastUp);
         else
-            environment->commands()->execute(m_commandUp);
+            m_environment->commands()->execute(m_commandUp);
     }
 }
 

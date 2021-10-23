@@ -53,12 +53,9 @@ public:
     void disablePlugin();
 
     void loadAircraftProfile();
-    void clearAircraftProfile();
+    void unloadAircraftProfile();
 
     void addMappedEvent(const MappedEvent::ptr& mappedEvent);
-
-    void raiseInfoMessage(std::string_view text);
-    void raiseErrorMessage(std::string_view text);
 
     void showMidiDevicesDialog();
     void showSettingsDialog();
@@ -68,8 +65,7 @@ private:
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
     void initialiseDevices();
-    void closeMidiConnections(); // should be all moved to devicelist
-    void destroyDeviceList();
+    void closeMidiConnections();
 
     void showMessages();
     void showMessageWindow();
@@ -82,13 +78,10 @@ private:
     Environment::ptr m_environment;
     EventHandler::ptr m_eventHandler;
 
+    Profile::ptr m_profile;
     Menu m_menu;
 
-    Profile m_profile;
-
     DeviceList::ptr m_devices;
-    MessageList::ptr m_messages;
-    Settings::ptr m_settings;
 
     // list of all plugin windows
     std::map<WindowType, XPlaneWindow::ptr> m_windows;

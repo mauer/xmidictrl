@@ -18,11 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
+#include "Logger.h"
 #include "Mapping.h"
+
+#include <utility>
 
 namespace XMidiCtrl {
 
@@ -33,9 +33,9 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Mapping::Mapping(int controlChange) {
-    m_controlChange = controlChange;
-}
+Mapping::Mapping(Environment::ptr environment, int controlChange)
+        : m_environment(std::move(environment)),
+          m_controlChange(controlChange) {}
 
 
 
@@ -55,7 +55,7 @@ MappingType Mapping::type() {
 /**
  * Return the control change number
  */
-const int Mapping::controlChange() const {
+int Mapping::controlChange() const {
     return m_controlChange;
 }
 

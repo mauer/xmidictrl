@@ -24,6 +24,8 @@
 // XMidiCtrl
 #include "MappingCommand.h"
 
+#include <utility>
+
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingCommand::MappingCommand(int cc)
-        : Mapping(cc) {}
+MappingCommand::MappingCommand(Environment::ptr environment, int controlChange)
+        : Mapping(std::move(environment), controlChange) {}
 
 
 
@@ -85,18 +87,18 @@ bool MappingCommand::check() {
 /**
  * Execute the action in X-Plane
  */
-void MappingCommand::execute(Environment::ptr environment, MidiEvent::ptr midiEvent) {
+void MappingCommand::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingCommand :: Execute command '" << m_command.data() << "'" << LOG_END
 
     switch (midiEvent->velocity()) {
         case 127:
             LOG_DEBUG << "Execute begin command '" << m_command.data() << "'" << LOG_END
-            environment->commands()->begin(m_command);
+            m_environment->commands()->begin(m_command);
             break;
 
         case 0:
             LOG_DEBUG << "Execute end command' " << m_command.data() << "'" << LOG_END
-            environment->commands()->end(m_command);
+            m_environment->commands()->end(m_command);
             break;
 
         default:

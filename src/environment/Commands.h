@@ -23,17 +23,20 @@
 
 // Standard
 #include <map>
+#include <memory>
 #include <string_view>
 
 // X-Plane SDK
 #include "XPLMUtilities.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 class Commands {
 public:
 	Commands();
     ~Commands();
+
+    typedef std::shared_ptr<Commands> ptr;
 
     void begin(std::string_view command);
     void end(std::string_view command);
@@ -46,6 +49,6 @@ private:
     std::map<std::string_view, XPLMCommandRef> m_commandCache;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
 #endif // COMMANDS_H

@@ -20,6 +20,7 @@
 
 // Standard
 #include <filesystem>
+#include <utility>
 
 // X-Plane SDK
 #include "XPLMPlanes.h"
@@ -44,7 +45,9 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Profile::Profile() : Config() {};
+Profile::Profile(Environment::ptr environment)
+        : Config(),
+          m_environment(std::move(environment)) {};
 
 
 /**
@@ -73,13 +76,12 @@ bool Profile::load() {
 /**
  * Create all defined midi devices
  */
-void Profile::createMidiDevices(const DeviceList::ptr& deviceList) {
-    // make sure we start with an empty list
-    deviceList->clear();
+DeviceList::ptr Profile::createMidiDevices() {
+    DeviceList::ptr deviceList = std::make_shared<DeviceList>();
 
     // only continue if the file contains some settings
     if (m_config.type() == toml::value_t::empty)
-        return;
+        return deviceList;
 
     try {
         // get all devices
@@ -138,6 +140,8 @@ void Profile::createMidiDevices(const DeviceList::ptr& deviceList) {
         LOG_WARN << "PROFILE :: No midi devices found in config" << LOG_END
         LOG_WARN << error.what() << LOG_END
     }
+
+    return deviceList;
 }
 
 
@@ -283,7 +287,7 @@ MappingType Profile::translateMapTypeStr(std::string_view typeStr) {
 Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'cmd'" << LOG_END
 
-    std::shared_ptr<MappingCommand> mapping = std::make_shared<MappingCommand>(controlChange);
+    std::shared_ptr<MappingCommand> mapping = std::make_shared<MappingCommand>(m_environment, controlChange);
 
     // read the actual command
     try {
@@ -308,7 +312,7 @@ Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* set
 Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'drf'" << LOG_END
 
-    std::shared_ptr<MappingDataref> mapping = std::make_shared<MappingDataref>(controlChange);
+    std::shared_ptr<MappingDataref> mapping = std::make_shared<MappingDataref>(m_environment, controlChange);
 
     try {
         // read the actual dataref
@@ -347,7 +351,7 @@ Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* set
 Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'sld'" << LOG_END
 
-    std::shared_ptr<MappingSlider> mapping = std::make_shared<MappingSlider>(controlChange);
+    std::shared_ptr<MappingSlider> mapping = std::make_shared<MappingSlider>(m_environment, controlChange);
 
     // read the four commands
     try {
@@ -378,7 +382,7 @@ Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* sett
 Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'pnp'" << LOG_END
 
-    std::shared_ptr<MappingPushAndPull> mapping = std::make_shared<MappingPushAndPull>(controlChange);
+    std::shared_ptr<MappingPushAndPull> mapping = std::make_shared<MappingPushAndPull>(m_environment, controlChange);
 
     // read the two commands for push and pull
     try {
@@ -409,7 +413,7 @@ Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value*
 Mapping::ptr Profile::readSettingsForEncoder(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'enc'" << LOG_END
 
-    std::shared_ptr<MappingEncoder> mapping = std::make_shared<MappingEncoder>(controlChange);
+    std::shared_ptr<MappingEncoder> mapping = std::make_shared<MappingEncoder>(m_environment, controlChange);
 
     // read the four commands
     try {

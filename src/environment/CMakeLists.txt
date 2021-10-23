@@ -23,7 +23,7 @@ message("---- Directory: src/environment")
 # Set sources
 set(ENV_SRC
         ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Datarefs.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Data.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
         )
 
