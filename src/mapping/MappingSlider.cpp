@@ -18,13 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
+#include "Logger.h"
 #include "MappingSlider.h"
-
-#include <utility>
 
 namespace XMidiCtrl {
 
@@ -35,8 +31,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingSlider::MappingSlider(Environment::ptr environment, int controlChange)
-        : Mapping(std::move(environment), controlChange) {}
+MappingSlider::MappingSlider(XPlane::ptr xplane, int controlChange)
+        : Mapping(std::move(xplane), controlChange) {}
 
 
 
@@ -106,9 +102,9 @@ void MappingSlider::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingSlider::execute" << LOG_END
 
     if (midiEvent->velocity() <= 10)
-        m_environment->commands()->execute(m_commandDown);
+        m_xplane->commands()->execute(m_commandDown);
     else if (midiEvent->velocity() >= 117)
-        m_environment->commands()->execute(m_commandUp);
+        m_xplane->commands()->execute(m_commandUp);
 }
 
 } // Namespace XMidiCtrl

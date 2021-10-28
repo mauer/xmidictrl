@@ -18,9 +18,12 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+// X-Plane SDK
+#include "XPLMPlugin.h"
+
 // XMidiCtrl
-#include "Environment.h"
 #include "Logger.h"
+#include "XPlane.h"
 
 namespace XMidiCtrl {
 
@@ -31,12 +34,10 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Environment::Environment() {
-    // read the general settings first
-    m_settings = std::make_shared<Settings>();
-
-    // internal message list
-    m_messages = std::make_shared<MessageList>(m_settings);
+XPlane::XPlane() {
+    m_pluginId = -1;
+    m_pluginPath = "";
+    m_xplanePath = "";
 
     // access to X-Plane commands
     m_commands = std::make_shared<Commands>();
@@ -49,7 +50,7 @@ Environment::Environment() {
 /**
  * Destructor
  */
-Environment::~Environment() = default;
+XPlane::~XPlane() = default;
 
 
 
@@ -59,35 +60,50 @@ Environment::~Environment() = default;
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Show an info message on the screen
+ * Return the plugin ID
  */
-void Environment::raiseInfoMessage(std::string_view text) {
-    LOG_INFO << text << LOG_END
-    m_messages->addMessage(MessageType::Info, text);
+XPLMPluginID XPlane::pluginId() {
+    if (m_pluginId == -1)
+        m_pluginId = XPLMGetMyID();
+
+    return m_pluginId;
 }
 
 
 /**
- * Show an error message on the screen
+ * Return the path of the plugin installation
  */
-void Environment::raiseErrorMessage(std::string_view text) {
-    LOG_ERROR << text << LOG_END
-    m_messages->addMessage(MessageType::Error, text);
+std::string_view XPlane::pluginPath() {
+    if (m_xplanePath.empty()) {
+        char path[512];
+        XPLMGetPluginInfo(pluginId(), nullptr, path, nullptr, nullptr);
+
+        m_pluginPath = std::string(path);
+    }
+
+    return m_pluginPath;
 }
 
 
 /**
- * Return the message list
+ * Return the path of the X-Plane installation
  */
-MessageList::ptr Environment::messages() {
-    return m_messages;
+std::string_view XPlane::xplanePath() {
+    if (m_xplanePath.empty()) {
+        char path[512];
+        XPLMGetSystemPath(path);
+
+        m_xplanePath = std::string(path);
+    }
+
+    return m_xplanePath;
 }
 
 
 /**
  * Return the commands object
  */
-Commands::ptr Environment::commands() {
+Commands::ptr XPlane::commands() {
     return m_commands;
 }
 
@@ -95,7 +111,7 @@ Commands::ptr Environment::commands() {
 /**
  * Return the dataref object
  */
-Data::ptr Environment::data() {
+Data::ptr XPlane::data() {
     return m_data;
 }
 

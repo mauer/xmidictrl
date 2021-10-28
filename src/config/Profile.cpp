@@ -26,13 +26,12 @@
 #include "XPLMPlanes.h"
 
 // XMidiCtrl
-#include "Mapping.h"
+#include "Logger.h"
 #include "MappingCommand.h"
 #include "MappingDataref.h"
 #include "MappingEncoder.h"
 #include "MappingPushAndPull.h"
 #include "MappingSlider.h"
-#include "Logger.h"
 #include "Profile.h"
 #include "Types.h"
 
@@ -45,9 +44,10 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Profile::Profile(Environment::ptr environment)
-        : Config(),
-          m_environment(std::move(environment)) {};
+Profile::Profile(XPlane::ptr xplane)
+        : Config() {
+    m_xplane = std::move(xplane);
+};
 
 
 /**
@@ -128,6 +128,7 @@ DeviceList::ptr Profile::createMidiDevices() {
                 if (device)
                     createMappingForDevice(i, deviceSettings["mapping"].as_array(), device);
 
+
             } catch (const std::out_of_range& error) {
                 LOG_ERROR << "PROFILE :: Error reading config for midi device (" << i << ")" << LOG_END
                 LOG_ERROR << error.what() << LOG_END
@@ -182,8 +183,8 @@ std::string Profile::determineProfileFileName() {
 /**
  * Create the mapping for a device and store it
  */
-void Profile::createMappingForDevice(int deviceNo, toml::array settings, const std::shared_ptr<Device>& device) {
-    LOG_INFO << "PROFILE :: " << settings.size() << " Mapping(s) found" << LOG_END
+void Profile::createMappingForDevice(int deviceNo, toml::array settings, Device::ptr device) {
+    LOG_DEBUG << "PROFILE :: " << settings.size() << " Mapping(s) found" << LOG_END
 
     // parse each mapping entry
     for (int i = 0; i < static_cast<int>(settings.size()); i++) {
@@ -192,18 +193,18 @@ void Profile::createMappingForDevice(int deviceNo, toml::array settings, const s
 
         std::shared_ptr<Mapping> mapping;
 
-        LOG_INFO << "PROFILE :: Reading mapping " << i << LOG_END
+        LOG_DEBUG << "PROFILE :: Reading mapping " << i << LOG_END
 
         try {
             if (settings[i].contains(CFG_KEY_CC)) {
                 cc = static_cast<int>( settings[i][CFG_KEY_CC].as_integer());
-                LOG_INFO << "PROFILE :: Mapping (" << i << ") :: CC = " << cc << LOG_END
+                LOG_DEBUG << "PROFILE :: Mapping (" << i << ") :: CC = " << cc << LOG_END
             } else
                 LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_CC << "' is missing" << LOG_END
 
             if (settings[i].contains(CFG_KEY_TYPE)) {
                 std::string_view typeStr { settings[i][CFG_KEY_TYPE].as_string() };
-                LOG_INFO << "PROFILE :: Mapping (" << i << ") :: Type = " << typeStr << LOG_END
+                LOG_DEBUG << "PROFILE :: Mapping (" << i << ") :: Type = " << typeStr << LOG_END
 
                 // get the mapping type
                 type = translateMapTypeStr(typeStr);
@@ -287,7 +288,7 @@ MappingType Profile::translateMapTypeStr(std::string_view typeStr) {
 Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'cmd'" << LOG_END
 
-    std::shared_ptr<MappingCommand> mapping = std::make_shared<MappingCommand>(m_environment, controlChange);
+    std::shared_ptr<MappingCommand> mapping = std::make_shared<MappingCommand>(m_xplane, controlChange);
 
     // read the actual command
     try {
@@ -312,7 +313,7 @@ Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* set
 Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'drf'" << LOG_END
 
-    std::shared_ptr<MappingDataref> mapping = std::make_shared<MappingDataref>(m_environment, controlChange);
+    std::shared_ptr<MappingDataref> mapping = std::make_shared<MappingDataref>(m_xplane, controlChange);
 
     try {
         // read the actual dataref
@@ -351,7 +352,7 @@ Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* set
 Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'sld'" << LOG_END
 
-    std::shared_ptr<MappingSlider> mapping = std::make_shared<MappingSlider>(m_environment, controlChange);
+    std::shared_ptr<MappingSlider> mapping = std::make_shared<MappingSlider>(m_xplane, controlChange);
 
     // read the four commands
     try {
@@ -382,7 +383,7 @@ Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* sett
 Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'pnp'" << LOG_END
 
-    std::shared_ptr<MappingPushAndPull> mapping = std::make_shared<MappingPushAndPull>(m_environment, controlChange);
+    std::shared_ptr<MappingPushAndPull> mapping = std::make_shared<MappingPushAndPull>(m_xplane, controlChange);
 
     // read the two commands for push and pull
     try {
@@ -413,7 +414,7 @@ Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value*
 Mapping::ptr Profile::readSettingsForEncoder(int controlChange, toml::value* settings) {
     LOG_INFO << "PROFILE :: Read settings for type = 'enc'" << LOG_END
 
-    std::shared_ptr<MappingEncoder> mapping = std::make_shared<MappingEncoder>(m_environment, controlChange);
+    std::shared_ptr<MappingEncoder> mapping = std::make_shared<MappingEncoder>(m_xplane, controlChange);
 
     // read the four commands
     try {

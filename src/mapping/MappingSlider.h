@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 
 class MappingSlider : public Mapping {
 public:
-    explicit MappingSlider(Environment::ptr environment, int controlChange);
+    explicit MappingSlider(XPlane::ptr xplane, int controlChange);
     ~MappingSlider() override = default;
 
     MappingType type() override;

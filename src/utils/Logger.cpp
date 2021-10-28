@@ -22,6 +22,8 @@
 #include <chrono>
 #include <ctime>
 
+#include <XPLMUtilities.h>
+
 // XMidiCtrl
 #include "Logger.h"
 
@@ -36,6 +38,7 @@ namespace XMidiCtrl {
  */
 Logger::Logger() {
     m_logLevel = LogLevel::Error;
+    m_messages = std::make_shared<MessageList>();
 }
 
 
@@ -67,10 +70,15 @@ Logger& Logger::Instance() {
  * Initialise the logger
  */
 void Logger::initialise(std::string_view path, std::string_view pluginName) {
+    XPLMDebugString("Plugin XMidiCtrl 2 ::");
+    XPLMDebugString(pluginName.data());
+    XPLMDebugString(path.data());
+
     if (!path.empty() && !pluginName.empty()) {
         std::string fileName = std::string(path) + std::string(pluginName) + "_log.txt";
 
         m_stream.open(fileName, std::ios_base::out | std::ios_base::trunc);
+        XPLMDebugString("Plugin XMidiCtrl 2 :: Log opened");
     }
 }
 
@@ -82,6 +90,8 @@ void Logger::postData(const PluginLogData& logData) {
     if (!m_stream.is_open())
         return;
 
+    XPLMDebugString("Plugin XMidiCtrl 2 :: Logging goes");
+
     // format datetime stamp
     char dateTimeStr[32];
     time_t t = time(nullptr);
@@ -92,21 +102,31 @@ void Logger::postData(const PluginLogData& logData) {
     switch (logData.level) {
         case LogLevel::Error:
             m_stream << dateTimeStr << "   " << "[ERROR]" << "   " << logData.text << std::endl;
-            m_errors.push_back(std::string(dateTimeStr) + "   " + logData.text);
+            m_messages->addMessage(MessageType::Error, std::string(dateTimeStr) + "   " + logData.text);
             break;
 
         case LogLevel::Warn:
             m_stream << dateTimeStr << "   " << "[WARM]" << "    " << logData.text << std::endl;
+            m_messages->addMessage(MessageType::Warn, std::string(dateTimeStr) + "   " + logData.text);
             break;
 
         case LogLevel::Info:
             m_stream << dateTimeStr << "   " << "[INFO]" << "    " << logData.text << std::endl;
+            m_messages->addMessage(MessageType::Info, std::string(dateTimeStr) + "   " + logData.text);
             break;
 
         case LogLevel::Debug:
             m_stream << dateTimeStr << "   " << "[DEBUG]" << "   " << logData.text << std::endl;
             break;
     }
+}
+
+
+/**
+ * Return the internal message list
+ */
+MessageList::ptr Logger::messages() {
+    return m_messages;
 }
 
 } // Namespace XMidiCtrl

@@ -18,13 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
+#include "Logger.h"
 #include "MappingCommand.h"
-
-#include <utility>
 
 namespace XMidiCtrl {
 
@@ -35,8 +31,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingCommand::MappingCommand(Environment::ptr environment, int controlChange)
-        : Mapping(std::move(environment), controlChange) {}
+MappingCommand::MappingCommand(XPlane::ptr xplane, int controlChange)
+        : Mapping(std::move(xplane), controlChange) {}
 
 
 
@@ -93,12 +89,12 @@ void MappingCommand::execute(MidiEvent::ptr midiEvent) {
     switch (midiEvent->velocity()) {
         case 127:
             LOG_DEBUG << "Execute begin command '" << m_command.data() << "'" << LOG_END
-            m_environment->commands()->begin(m_command);
+            m_xplane->commands()->begin(m_command);
             break;
 
         case 0:
             LOG_DEBUG << "Execute end command' " << m_command.data() << "'" << LOG_END
-            m_environment->commands()->end(m_command);
+            m_xplane->commands()->end(m_command);
             break;
 
         default:

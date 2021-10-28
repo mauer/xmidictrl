@@ -28,6 +28,7 @@
 // XMidiCtrl
 #include "Mapping.h"
 #include "MidiEvent.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
@@ -38,8 +39,10 @@ enum class CommandType {
 
 class MappingPushAndPull : public Mapping {
 public:
-    explicit MappingPushAndPull(Environment::ptr environment, int controlChange);
+    explicit MappingPushAndPull(XPlane::ptr xplane, int controlChange);
     ~MappingPushAndPull() override = default;
+
+    typedef std::shared_ptr<MappingPushAndPull> ptr;
 
     MappingType type() override;
 
@@ -60,8 +63,6 @@ private:
     std::string m_commandPush;
     std::string m_commandPull;
 };
-
-typedef std::shared_ptr<MappingPushAndPull> MappingPushAndPull_;
 
 } // Namespace XMidiCtrl
 

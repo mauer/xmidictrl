@@ -30,9 +30,7 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MessageList::MessageList(Settings::ptr settings) {
-    m_settings = settings;
-}
+MessageList::MessageList() = default;
 
 
 /**
@@ -53,9 +51,6 @@ MessageList::~MessageList() {
  * Add a new message to be display
  */
 void MessageList::addMessage(MessageType type, std::string_view text) {
-    if (!m_settings->showScreenMessages())
-        return;
-
     Message::ptr message = std::make_shared<Message>();
 
     message->type = type;

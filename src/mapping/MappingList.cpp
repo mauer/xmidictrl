@@ -50,7 +50,7 @@ MappingList::~MappingList() {
 /**
  * Add a new mapping
  */
-void MappingList::add(Mapping::ptr mapping) {
+void MappingList::add(const Mapping::ptr& mapping) {
     m_list.emplace(mapping->controlChange(), mapping);
 }
 

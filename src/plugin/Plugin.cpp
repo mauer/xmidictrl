@@ -22,8 +22,7 @@
 #include <string>
 #include <utility>
 
-// X-Plane SDK
-#include "XPLMPlugin.h"
+#include <XPLMUtilities.h>
 
 // XMidiCtrl
 #include "AboutDialog.h"
@@ -45,18 +44,24 @@ namespace XMidiCtrl {
  * Constructor
  */
 Plugin::Plugin() {
-    m_pluginId     = XPLMGetMyID();
     m_flightLoopId = nullptr;
     m_profile      = nullptr;
     m_devices      = nullptr;
 
-    // create the environment, which holds all data
-    m_environment = std::make_shared<Environment>();
+    // create the integration to X-Plane
+    m_xplane = std::make_shared<XPlane>();
+
+    XPLMDebugString("Plugin XMidiCtrl");
+    XPLMDebugString(XMIDICTRL_NAME);
+    XPLMDebugString(m_xplane->xplanePath().data());
+
+    Logger::Instance().initialise(m_xplane->xplanePath(), XMIDICTRL_NAME);
 
     // create the event handler, which process all midi events
-    m_eventHandler = std::make_shared<EventHandler>(m_environment);
+    m_eventHandler = std::make_shared<EventHandler>();
 
-    LOG_INFO << "Plugin " << XMIDICTRL_NAME << " " << XMIDICTRL_VERSION_STR << " loaded successfully" << LOG_END
+    // initialize the logger
+    LOG_INFO << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
 }
 
 
@@ -117,7 +122,7 @@ void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
  * Enable the plugin
  */
 void Plugin::enablePlugin() {
-    m_environment->raiseInfoMessage("Plugin " + std::string(XMIDICTRL_FULL_NAME) + " enabled");
+    LOG_INFO << "Plugin " << XMIDICTRL_FULL_NAME << " enabled" << LOG_END
 
     // create all required menu entries
     m_menu.createMenu();
@@ -136,7 +141,7 @@ void Plugin::enablePlugin() {
 
         XPLMScheduleFlightLoop(m_flightLoopId, FLIGHTLOOP_INTERVAL, true);
     } else
-        m_environment->raiseErrorMessage("Could not create flight loop");
+        LOG_ERROR << "Could not create flight loop" << LOG_END
 }
 
 
@@ -169,7 +174,7 @@ void Plugin::loadAircraftProfile() {
 
     // reload settings for current aircraft
     if (m_profile == nullptr)
-        m_profile = std::make_shared<Profile>(m_environment);
+        m_profile = std::make_shared<Profile>(m_xplane);
 
     m_profile->load();
     initialiseDevices();
@@ -231,7 +236,7 @@ void Plugin::showAboutDialog() {
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
-    m_environment->raiseInfoMessage("Initialise MIDI devices");
+    LOG_INFO << "Initialise MIDI devices" << LOG_END
 
     closeMidiConnections();
 
@@ -260,7 +265,7 @@ void Plugin::closeMidiConnections() {
  * Display messages in the message queue
  */
 void Plugin::showMessages() {
-    if (m_environment->messages()->size() > 0)
+    if (Logger::Instance().messages()->size() > 0)
         showMessageWindow();
 }
 
@@ -291,7 +296,7 @@ void Plugin::createWindow(WindowType windowType) {
             break;
 
         case WindowType::MessageWindow:
-            window = std::make_shared<MessageWindow>(m_environment);
+            window = std::make_shared<MessageWindow>();
             break;
 
         case WindowType::MidiDevicesDialog:

@@ -27,12 +27,13 @@
 // XMidiCtrl
 #include "Mapping.h"
 #include "MidiEvent.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
 class MappingInternal : public Mapping {
 public:
-    explicit MappingInternal(Environment::ptr environment, int controlChange, std::string_view command);
+    explicit MappingInternal(XPlane::ptr xplane, int controlChange, std::string_view command);
     ~MappingInternal() override = default;
 
     MappingType type() override;

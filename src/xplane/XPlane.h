@@ -18,43 +18,43 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XPLANEPLUGIN_H
-#define XPLANEPLUGIN_H
+#ifndef XPLANE_H
+#define XPLANE_H
 
 // Standard
-#include <map>
 #include <memory>
-#include <string>
-#include <string_view>
 
-// X-Plane SDK 
-#include "XPLMPlugin.h"
+// XMidiCtrl
+#include "Commands.h"
+#include "Data.h"
 
-// X-Plane Environment
-#include "Environment.h"
-#include "ImGuiFontAtlas.h"
-#include "XPlaneWindow.h"
+namespace XMidiCtrl {
 
-namespace XPEnv {
-
-using namespace XMidiCtrl;
-
-class XPlanePlugin {
+class XPlane {
 public:
-    XPlanePlugin(std::string_view name, std::string_view version);
-    ~XPlanePlugin();
+    XPlane();
+    ~XPlane();
 
-    Environment::ptr environment();
+    typedef std::shared_ptr<XPlane> ptr;
 
+    XPLMPluginID pluginId();
+
+    std::string_view pluginPath();
+    std::string_view xplanePath();
+
+    Commands::ptr commands();
+    Data::ptr data();
+    
 private:
-    void initialise();
+    XPLMPluginID m_pluginId;
 
-    char m_pluginPath[512]{};
-    char m_xplanePath[512]{};
+    std::string m_xplanePath;
+    std::string m_pluginPath;
 
-    Environment::ptr m_environment;
+    Commands::ptr m_commands;
+    Data::ptr m_data;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
-#endif // XPLANEPLUGIN_H
+#endif // XPLANE_H

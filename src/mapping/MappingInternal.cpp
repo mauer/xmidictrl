@@ -21,8 +21,6 @@
 // XMidiCtrl
 #include "MappingInternal.h"
 
-#include <utility>
-
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -32,8 +30,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingInternal::MappingInternal(Environment::ptr environment, int controlChange, std::string_view command)
-        : Mapping(std::move(environment), controlChange),
+MappingInternal::MappingInternal(XPlane::ptr xplane, int controlChange, std::string_view command)
+        : Mapping(std::move(xplane), controlChange),
           m_command(command) {}
 
 

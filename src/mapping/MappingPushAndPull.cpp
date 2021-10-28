@@ -21,8 +21,6 @@
 // XMidiCtrl
 #include "MappingPushAndPull.h"
 
-#include <utility>
-
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -32,8 +30,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingPushAndPull::MappingPushAndPull(Environment::ptr environment, int controlChange)
-        : Mapping(std::move(environment), controlChange) {
+MappingPushAndPull::MappingPushAndPull(XPlane::ptr xplane, int controlChange)
+        : Mapping(std::move(xplane), controlChange) {
     m_commandType = CommandType::Push;
 }
 
@@ -112,11 +110,11 @@ bool MappingPushAndPull::check() {
 void MappingPushAndPull::execute(MidiEvent::ptr midiEvent) {
     switch (m_commandType) {
         case CommandType::Push:
-            m_environment->commands()->execute(m_commandPush);
+            m_xplane->commands()->execute(m_commandPush);
             break;
 
         case CommandType::Pull:
-            m_environment->commands()->execute(m_commandPull);
+            m_xplane->commands()->execute(m_commandPull);
             break;
     }
 

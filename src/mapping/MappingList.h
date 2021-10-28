@@ -35,7 +35,7 @@ public:
     explicit MappingList();
     ~MappingList();
 
-    void add(Mapping::ptr mapping);
+    void add(const Mapping::ptr& mapping);
 
     Mapping::ptr mappingForControlChange(int controlChange);
 

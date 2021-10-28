@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 
 class MappingDataref : public Mapping {
 public:
-    explicit MappingDataref(Environment::ptr environment, int controlChange);
+    explicit MappingDataref(XPlane::ptr xplane, int controlChange);
     ~MappingDataref() override = default;
 
     MappingType type() override;

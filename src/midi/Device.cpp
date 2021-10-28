@@ -212,7 +212,7 @@ void Device::processMessage(double deltatime, std::vector<unsigned char> *messag
                         double seconds = retrieveEventDateTime(midiEvent->controlChange());
 
                         if (seconds > -0.5f) {
-                            MappingPushAndPull_ mappingPnP = std::static_pointer_cast<MappingPushAndPull>(mapping);
+                            MappingPushAndPull::ptr mappingPnP = std::static_pointer_cast<MappingPushAndPull>(mapping);
 
                             mappingPnP->setCommandType(seconds < 1 ? CommandType::Push : CommandType::Pull);
                             addEvent = true;

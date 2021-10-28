@@ -32,14 +32,15 @@
 // XMidiCtrl
 #include "Config.h"
 #include "DeviceList.h"
-#include "Environment.h"
+#include "Mapping.h"
 #include "Types.h"
+#include "XPlane.h"
 
 namespace XMidiCtrl {
 
 class Profile : public Config {
 public:
-    explicit Profile(Environment::ptr environment);
+    explicit Profile(XPlane::ptr xplane);
     ~Profile();
 
     typedef std::shared_ptr<Profile> ptr;
@@ -51,7 +52,7 @@ public:
 private:
     std::string determineProfileFileName();
 
-    void createMappingForDevice(int deviceNo, toml::array settings, const std::shared_ptr<Device>& device);
+    void createMappingForDevice(int deviceNo, toml::array settings, Device::ptr device);
     
     static MappingType translateMapTypeStr(std::string_view typeStr);
 
@@ -61,7 +62,7 @@ private:
     Mapping::ptr readSettingsForPushAndPull(int controlChange, toml::value* settings);
     Mapping::ptr readSettingsForEncoder(int controlChange, toml::value* settings);
 
-    Environment::ptr m_environment;
+    XPlane::ptr m_xplane;
 };
 
 } // Namespace XMidiCtrl

@@ -30,12 +30,10 @@
 // XMidiCtrl
 #include "DeviceList.h"
 #include "EventHandler.h"
-#include "Environment.h"
 #include "Menu.h"
-#include "MessageList.h"
 #include "Profile.h"
-#include "Settings.h"
 #include "Types.h"
+#include "XPlane.h"
 #include "XPlaneWindow.h"
 
 namespace XMidiCtrl {
@@ -72,15 +70,14 @@ private:
 
     void createWindow(WindowType windowType);
 
-    XPLMPluginID m_pluginId;
     XPLMFlightLoopID m_flightLoopId;
 
-    Environment::ptr m_environment;
     EventHandler::ptr m_eventHandler;
+    XPlane::ptr m_xplane;
 
-    Profile::ptr m_profile;
     Menu m_menu;
 
+    Profile::ptr m_profile;
     DeviceList::ptr m_devices;
 
     // list of all plugin windows

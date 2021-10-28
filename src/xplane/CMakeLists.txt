@@ -18,17 +18,17 @@
 #   IN THE SOFTWARE.
 #---------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/environment")
+message("---- Directory: src/xplane")
 
 # Set sources
-set(ENV_SRC
+set(XPLANE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Data.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Environment.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/XPlane.cpp
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${ENV_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${XPLANE_SRC})
 
 # Include current directory
 include_directories(${CMAKE_CURRENT_LIST_DIR})

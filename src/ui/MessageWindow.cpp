@@ -32,10 +32,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MessageWindow::MessageWindow(Environment::ptr environment)
-        : XPlaneWindow(400, 580, true) {
-    m_environment = std::move(environment);
-}
+MessageWindow::MessageWindow()
+        : XPlaneWindow(400, 580, true) {}
 
 
 /**

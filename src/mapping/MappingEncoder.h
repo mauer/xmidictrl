@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 
 class MappingEncoder : public Mapping {
 public:
-    explicit MappingEncoder(Environment::ptr environment, int controlChange);
+    explicit MappingEncoder(XPlane::ptr xplane, int controlChange);
     ~MappingEncoder() override = default;
 
     MappingType type() override;

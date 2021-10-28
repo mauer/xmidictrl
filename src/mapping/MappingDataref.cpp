@@ -18,13 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
+#include "Logger.h"
 #include "MappingDataref.h"
-
-#include <utility>
 
 namespace XMidiCtrl {
 
@@ -35,8 +31,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingDataref::MappingDataref(Environment::ptr environment, int controlChange)
-        : Mapping(std::move(environment), controlChange) {}
+MappingDataref::MappingDataref(XPlane::ptr xplane, int controlChange)
+        : Mapping(std::move(xplane), controlChange) {}
 
 
 
@@ -121,7 +117,7 @@ bool MappingDataref::check() {
 void MappingDataref::execute(MidiEvent::ptr midiEvent) {
     LOG_DEBUG << "MappingDataref::execute" << LOG_END
 
-    m_environment->data()->toggle(m_dataref, m_valueOn, m_valueOff);
+    m_xplane->data()->toggle(m_dataref, m_valueOn, m_valueOff);
 }
 
 } // Namespace XMidiCtrl

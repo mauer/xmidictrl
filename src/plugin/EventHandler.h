@@ -26,19 +26,14 @@
 #include <memory>
 #include <queue>
 
-// X-Plane SDK
-//#include "XPLMDataAccess.h"
-//#include "XPLMUtilities.h"
-
 // XMidiCtrl
 #include "MappedEvent.h"
-#include "Environment.h"
 
 namespace XMidiCtrl {
 
 class EventHandler {
 public:
-    explicit EventHandler(Environment::ptr environment);
+    explicit EventHandler();
     ~EventHandler();
 
     typedef std::shared_ptr<EventHandler> ptr;
@@ -48,7 +43,6 @@ public:
 
 private:
     std::queue<MappedEvent::ptr> m_eventList;
-    std::shared_ptr<Environment> m_environment;
 };
 
 } // Namespace XMidiCtrl

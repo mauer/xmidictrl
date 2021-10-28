@@ -22,8 +22,6 @@
 #include "Logger.h"
 #include "Mapping.h"
 
-#include <utility>
-
 namespace XMidiCtrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,8 +31,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Mapping::Mapping(Environment::ptr environment, int controlChange)
-        : m_environment(std::move(environment)),
+Mapping::Mapping(XPlane::ptr xplane, int controlChange)
+        : m_xplane(std::move(xplane)),
           m_controlChange(controlChange) {}
 
 

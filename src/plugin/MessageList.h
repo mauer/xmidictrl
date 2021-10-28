@@ -23,19 +23,17 @@
 
 // Standard
 #include <memory>
-#include <string>
+#include <string_view>
 #include <vector>
 
 // XMidiCtrl
-#include "Logger.h"
 #include "Message.h"
-#include "Settings.h"
 
 namespace XMidiCtrl {
 
 class MessageList {
 public:
-    explicit MessageList(Settings::ptr settings);
+    explicit MessageList();
     ~MessageList();
 
     typedef std::shared_ptr<MessageList> ptr;
@@ -47,8 +45,6 @@ public:
 
 private:
     std::vector<Message::ptr> m_list;
-
-    Settings::ptr m_settings;
 };
 
 } // Namespace XMidiCtrl

@@ -38,9 +38,7 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-EventHandler::EventHandler(Environment::ptr environment) {
-    m_environment = std::move(environment);
-}
+EventHandler::EventHandler() = default;
 
 
 /**

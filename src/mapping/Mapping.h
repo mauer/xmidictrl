@@ -25,25 +25,15 @@
 #include <memory>
 
 // XMidiCtrl
-#include "Environment.h"
 #include "MidiEvent.h"
+#include "Types.h"
+#include "XPlane.h"
 
 namespace XMidiCtrl {
 
-// Midi mapping types
-enum class MappingType {
-    None,
-    Command,
-    Dataref,
-    Slider,
-    PushAndPull,
-    Encoder,
-    Internal
-};
-
 class Mapping {
 public:
-    Mapping(Environment::ptr environment, int controlChange);
+    Mapping(XPlane::ptr xplane, int controlChange);
     virtual ~Mapping() = default;
 
     typedef std::shared_ptr<Mapping> ptr;
@@ -56,7 +46,7 @@ public:
     virtual void execute(MidiEvent::ptr midiEvent) = 0;
 
 protected:
-    Environment::ptr m_environment;
+    XPlane::ptr m_xplane;
 
     int m_controlChange;
 };

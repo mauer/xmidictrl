@@ -23,11 +23,12 @@
 
 // Standard
 #include <fstream>
+#include <memory>
 #include <string_view>
-#include <vector>
 
 // XMidiCtrl
 #include "LogEntry.h"
+#include "MessageList.h"
 
 // Macros for logging
 #define LOG_ERROR (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Error)
@@ -53,12 +54,14 @@ public:
 	void initialise(std::string_view path, std::string_view pluginName);
 	void postData(const PluginLogData& logData);
 
+    MessageList::ptr messages();
+
 private:
 	LogLevel m_logLevel;
 
 	std::ofstream m_stream;
 
-	std::vector<std::string> m_errors;
+	MessageList::ptr m_messages;
 };
 
 } // Namespace XMidiCtrl

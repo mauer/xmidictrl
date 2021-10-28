@@ -92,8 +92,21 @@ const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
 //   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
 
+// Midi mapping types
+enum class MappingType {
+    None,
+    Command,
+    Dataref,
+    Slider,
+    PushAndPull,
+    Encoder,
+    Internal
+};
+
+
 enum class MessageType {
     Info,
+    Warn,
     Error
 };
 

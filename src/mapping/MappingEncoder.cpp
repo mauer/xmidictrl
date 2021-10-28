@@ -18,13 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
+#include "Logger.h"
 #include "MappingEncoder.h"
-
-#include <utility>
 
 namespace XMidiCtrl {
 
@@ -35,8 +31,8 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-MappingEncoder::MappingEncoder(Environment::ptr environment, int controlChange)
-        : Mapping(std::move(environment), controlChange) {}
+MappingEncoder::MappingEncoder(XPlane::ptr xplane, int controlChange)
+        : Mapping(std::move(xplane), controlChange) {}
 
 
 
@@ -146,15 +142,15 @@ void MappingEncoder::execute(MidiEvent::ptr midiEvent) {
     if (midiEvent->velocity() < 64) {
         // Down
         if (midiEvent->velocity() < 61)
-            m_environment->commands()->execute(m_commandFastDown);
+            m_xplane->commands()->execute(m_commandFastDown);
         else
-            m_environment->commands()->execute(m_commandDown);
+            m_xplane->commands()->execute(m_commandDown);
     } else if (midiEvent->velocity() > 64) {
         // Up
         if (midiEvent->velocity() > 68)
-            m_environment->commands()->execute(m_commandFastUp);
+            m_xplane->commands()->execute(m_commandFastUp);
         else
-            m_environment->commands()->execute(m_commandUp);
+            m_xplane->commands()->execute(m_commandUp);
     }
 }
 
