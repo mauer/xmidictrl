@@ -45,7 +45,7 @@ endif()
 
 # set compiler options
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-free-nonheap-object")
 
 # Add subdirectories
 add_subdirectory(lib)

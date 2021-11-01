@@ -22,8 +22,6 @@
 #include <chrono>
 #include <ctime>
 
-#include <XPLMUtilities.h>
-
 // XMidiCtrl
 #include "Logger.h"
 
@@ -70,15 +68,10 @@ Logger& Logger::Instance() {
  * Initialise the logger
  */
 void Logger::initialise(std::string_view path, std::string_view pluginName) {
-    XPLMDebugString("Plugin XMidiCtrl 2 ::");
-    XPLMDebugString(pluginName.data());
-    XPLMDebugString(path.data());
-
     if (!path.empty() && !pluginName.empty()) {
         std::string fileName = std::string(path) + std::string(pluginName) + "_log.txt";
 
         m_stream.open(fileName, std::ios_base::out | std::ios_base::trunc);
-        XPLMDebugString("Plugin XMidiCtrl 2 :: Log opened");
     }
 }
 
@@ -89,8 +82,6 @@ void Logger::initialise(std::string_view path, std::string_view pluginName) {
 void Logger::postData(const PluginLogData& logData) {
     if (!m_stream.is_open())
         return;
-
-    XPLMDebugString("Plugin XMidiCtrl 2 :: Logging goes");
 
     // format datetime stamp
     char dateTimeStr[32];

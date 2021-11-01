@@ -7,24 +7,44 @@
 # I included my config files in this directory for your convenience. Those can be applied by using the Behringer 
 # X-Touch configuration software. You have to apply Layer A and B.
 #----------------------------------------------------------------------------------------------------------------------
-title = "Template for the Behringer X-Touch Mini"
-version = "1.0"
+title   = "Template for the Behringer X-Touch Mini"
+version = "0.3"
+
+# How do create a new mapping for a plane?
+#   1. Copy this file into the aircraft directory
+#   2. Modify the mapping
+#   3. Start X-Plane, or if it's already running Choose from the Plugin menu "XMidiCtrl -> Reload Aircraft Profile"
 
 # Possible mapping types:
 #   cmd -> Simple mapping for buttons. It executes the specified X-Plane command when the button is pressed
 #          Example: { CC = 12, type = "cmd", command = "sim/autopilot/heading_sync" }
 #
-#   sld -> Mapping for sliders. Right now only two commands are supported, command_up and command_down. They will be 
+#   drf -> Toggles a given DataRef between two values. This is very useful when no command was provided by the aircraft
+#          developer. You can define a value of the on and off state.
+#          Example: { CC = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" }
+#
+#   enc -> Mapping for an encoder (knob). You can define a command for up (right turn) and down (left turn). In
+#          addition, it's possible to define command for fast up and down, if the knob was turned rather fast. This can
+#          be useful in some aircraft. Normally, defining up and down should be sufficient.
+#          Example: { CC = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
+#          Example: { CC = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
+#
+#   pnp -> Similar to a cmd mapping, but simulates push and push. If the button gets pressed normally, the push command
+#          will be executed. If the button was pressed for a longer time, the pull command will be executed.
+#          Example: { CC = 13, type = "pnp", command_push = "sim/autopilot/altitude_hold", command_pull = "sim/autopilot/altitude_arm" }
+#
+#   sld -> Mapping for sliders. Right now only two commands are supported, command_up and command_down. They will be
 #          triggered depending on the position of the slider (all the way up or down). This behaviour will be 
 #          improved in the future.
 #          Example: { CC = 0, type = "sld", command_up = "sim/engines/carb_heat_off", command_down = "sim/engines/carb_heat_on" }
 
+
 # Behringer X-Touch Mini
 [[device]]
-name = "Behringer X-Touch Mini"
-portIn = 0
-portOut = 0
-mapping = [
+name     = "Behringer X-Touch Mini"
+port_in  = 0
+port_out = 0
+mapping  = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer A
   #--------------------------------------------------------------------------------------------------------------------
@@ -42,7 +62,7 @@ mapping = [
   { CC = 7,  type = "enc", command_up = "", command_down = "" },
   { CC = 8,  type = "enc", command_up = "", command_down = "" },
   
-  # Encorder Buttons
+  # Encoder Buttons
   { CC = 9,  type = "cmd", command = "" },
   { CC = 10, type = "cmd", command = "" },
   { CC = 11, type = "cmd", command = "" },
@@ -89,7 +109,7 @@ mapping = [
   { CC = 57, type = "enc", command_up = "", command_down = "" },
   { CC = 58, type = "enc", command_up = "", command_down = "" },
   
-  # Encorder Buttons
+  # Encoder Buttons
   { CC = 59, type = "cmd", command = "" },
   { CC = 60, type = "cmd", command = "" },
   { CC = 61, type = "cmd", command = "" },

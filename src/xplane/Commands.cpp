@@ -104,7 +104,7 @@ XPLMCommandRef Commands::findCommandRef(std::string_view command) {
     if (cmdRef == nullptr)
         LOG_ERROR << "COMMANDS :: Command '" << command.data() << "' not found" << LOG_END
 
-        return cmdRef;
+    return cmdRef;
 }
 
 } // Namespace XMidiCtrl

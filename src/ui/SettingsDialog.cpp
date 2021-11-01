@@ -37,7 +37,7 @@ namespace XMidiCtrl {
  * Constructor
  */
 SettingsDialog::SettingsDialog() :
-ImGuiWindow(700, 350)
+ImGuiWindow(500, 200)
 {
     setTitle(std::string(XMIDICTRL_NAME) + " Settings");
 }
@@ -60,11 +60,17 @@ SettingsDialog::~SettingsDialog() = default;
  */
 void SettingsDialog::createWidgets() {
     const char* logLevelItems[] = { "Debug", "Info", "Warning", "Error" };
-    int currentLogLevel = 0;
-    ImGui::Combo("Logging Level", &currentLogLevel, logLevelItems, IM_ARRAYSIZE(logLevelItems));
+    ImGui::Text("Logging Level:");
+    ImGui::SameLine();
+    ImGui::Combo("", &m_loggingLevel, logLevelItems, IM_ARRAYSIZE(logLevelItems));
 
-    if (ImGui::Button("Save"))
+    if (ImGui::Button("Save")) {
+
+
         hide();
+    }
+
+    ImGui::SameLine();
 
     if (ImGui::Button("Cancel"))
         hide();

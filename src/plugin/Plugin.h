@@ -32,6 +32,7 @@
 #include "EventHandler.h"
 #include "Menu.h"
 #include "Profile.h"
+#include "Settings.h"
 #include "Types.h"
 #include "XPlane.h"
 #include "XPlaneWindow.h"
@@ -77,6 +78,7 @@ private:
 
     Menu m_menu;
 
+    Settings::ptr m_settings;
     Profile::ptr m_profile;
     DeviceList::ptr m_devices;
 

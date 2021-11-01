@@ -59,28 +59,28 @@ bool Config::load(std::string_view fileName) {
 
     // check file name
     if (fileName.empty()) {
-        LOG_ERROR << "CONFIG :: Cannot load config file, because the given filename is empty" << LOG_END
+        LOG_ERROR << "Cannot load config file, because the given filename is empty" << LOG_END
         return false;
     }
 
     // check if file exists
     if (!std::filesystem::exists(fileName))
     {
-        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' not found" << LOG_END
+        LOG_INFO << "Config file '" << fileName.data() << "' not found" << LOG_END
         return false;
     }
 
     try {
         // load config
         m_config = toml::parse(fileName);
-        LOG_INFO << "CONFIG :: Config file '" << fileName.data() << "' loaded successfully" << LOG_END
+        LOG_INFO << "Config file '" << fileName.data() << "' loaded successfully" << LOG_END
     } catch (const toml::syntax_error& error) {
-        LOG_ERROR << "CONFIG :: Error parsing config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << "Error parsing config file '" << fileName.data() << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
         return false;
 
     } catch (const std::runtime_error& error) {
-        LOG_ERROR << "PROFILE :: Error opening config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << "Error opening config file '" << fileName.data() << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
         return false;
     }

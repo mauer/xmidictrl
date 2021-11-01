@@ -37,7 +37,7 @@ namespace XMidiCtrl {
  * Constructor
  */
 AboutDialog::AboutDialog() :
-ImGuiWindow(700, 380)
+ImGuiWindow(700, 400)
 {
     setTitle("About " + std::string(XMIDICTRL_NAME) + " " + std::string(XMIDICTRL_VERSION_STR));
 }

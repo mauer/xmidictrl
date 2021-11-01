@@ -67,10 +67,10 @@ void Menu::createMenu() {
 
     XPLMAppendMenuItem(m_menuId, "Search for MIDI Devices", (void*) MENUITEM_SEARCH_MIDI_DEVICES, 0);
     XPLMAppendMenuSeparator(m_menuId);
-    XPLMAppendMenuItem(m_menuId, "Show Aircraft Profile", (void*) MENUITEM_SHOW_AIRCRAFT_PROFILE, 0);
+    //XPLMAppendMenuItem(m_menuId, "Show Aircraft Profile", (void*) MENUITEM_SHOW_AIRCRAFT_PROFILE, 0);
     XPLMAppendMenuItem(m_menuId, "Reload Aircraft Profile", (void*) MENUITEM_RELOAD_AIRCRAFT_PROFILE, 0);
-    XPLMAppendMenuSeparator(m_menuId);
-    XPLMAppendMenuItem(m_menuId, "Settings", (void*) MENUITEM_SETTINGS_DIALOG, 0);
+    //XPLMAppendMenuSeparator(m_menuId);
+    //XPLMAppendMenuItem(m_menuId, "Settings", (void*) MENUITEM_SETTINGS_DIALOG, 0);
     XPLMAppendMenuSeparator(m_menuId);
     XPLMAppendMenuItem(m_menuId, std::string("About " + std::string(XMIDICTRL_NAME)).c_str(),
                        (void*) MENUITEM_ABOUT_DIALOG, 0);

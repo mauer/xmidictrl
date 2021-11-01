@@ -21,7 +21,7 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-// X-Plane Environment
+// XMidiCtrl
 #include "ImGuiWindow.h"
 
 namespace XMidiCtrl {
@@ -33,6 +33,9 @@ public:
 
 protected:
     void createWidgets() override;
+
+private:
+    int m_loggingLevel;
 };
 
 } // Namespace XMidiCtrl

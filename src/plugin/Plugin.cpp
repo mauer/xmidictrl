@@ -51,10 +51,6 @@ Plugin::Plugin() {
     // create the integration to X-Plane
     m_xplane = std::make_shared<XPlane>();
 
-    XPLMDebugString("Plugin XMidiCtrl");
-    XPLMDebugString(XMIDICTRL_NAME);
-    XPLMDebugString(m_xplane->xplanePath().data());
-
     Logger::Instance().initialise(m_xplane->xplanePath(), XMIDICTRL_NAME);
 
     // create the event handler, which process all midi events
@@ -282,14 +278,18 @@ void Plugin::showMessageWindow() {
  * Create and returns windows
  */
 void Plugin::createWindow(WindowType windowType) {
+    XPlaneWindow::ptr window;
+
     // check if the window is already created
     try {
-        m_windows.at(windowType);
+        window = m_windows.at(windowType);
+        window->show();
+        return;
     } catch (std::out_of_range&) {
+        window = nullptr;
     }
 
     // looks like we have to create it
-    XPlaneWindow::ptr window;
     switch (windowType) {
         case WindowType::AboutDialog:
             window = std::make_shared<AboutDialog>();
