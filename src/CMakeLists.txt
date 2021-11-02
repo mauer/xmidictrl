@@ -57,6 +57,7 @@ if (WIN32)
 elseif (APPLE)
     target_link_libraries(${PROJECT_NAME} "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
 elseif (UNIX)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 ${RTMIDI_STATIC_LIBRARIES} xpsdk imgui)
 endif ()
 
 # Set output properties for X-Plane standards
