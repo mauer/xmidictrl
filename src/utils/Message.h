@@ -18,35 +18,23 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MESSAGELIST_H
-#define MESSAGELIST_H
-
-// Standard
-#include <memory>
-#include <string_view>
-#include <vector>
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 // XMidiCtrl
-#include "Message.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-class MessageList {
-public:
-    explicit MessageList();
-    ~MessageList();
+// Structs
+struct Message {
+    std::string time;
+    MessageType type;
+    std::string text;
 
-    typedef std::shared_ptr<MessageList> ptr;
-
-    void addMessage(MessageType type, std::string_view text);
-
-    void clear();
-    unsigned int size();
-
-private:
-    std::vector<Message::ptr> m_list;
+    typedef std::shared_ptr<Message> ptr;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // MESSAGELIST_H
+#endif // MESSAGE_H

@@ -18,9 +18,13 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+// Standard
+#include <filesystem>
+
 // XMidiCtrl
 #include "Logger.h"
 #include "Settings.h"
+#include "Utils.h"
 
 namespace XMidiCtrl {
 
@@ -31,7 +35,14 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Settings::Settings() = default;
+Settings::Settings(XPlane::ptr xplane)
+        : Config(xplane, "Settings") {
+    // build name for general settings file
+    m_fileName = m_xplane->preferencesPath().data() + std::string(XMIDICTRL_NAME) + std::string(SETTINGS_FILE_SUFFIX);
+
+    if (!load(m_fileName))
+        LOG_WARN << "--> Will use default settings" << LOG_END
+}
 
 
 /**
@@ -47,10 +58,69 @@ Settings::~Settings() = default;
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Show screen messages
+ * Set the active log level
  */
-bool Settings::showScreenMessages() {
-    return true;
+void Settings::setLogLevel(const LogLevel logLevel) {
+    LOG_ALL << "Set log level to '" << Utils::getLogLevelText(logLevel) << "'" << LOG_END
+
+    // set log level in logging instance
+    Logger::Instance().setLogLevel(logLevel);
+
+    // store it in the general settings
+    m_config[CFG_KEY_LOG_LEVEL] = Utils::getLogLevelCode(logLevel);
+
+    // save settings
+    saveSettings();
+}
+
+
+/**
+ * Return the active log level
+ */
+LogLevel Settings::logLevel() {
+    std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL, Utils::getLogLevelCode(LogLevel::Debug));
+    return Utils::getLogLevelFromCode(logLevel);
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Save the current settings
+ */
+void Settings::saveSettings() {
+    std::ofstream stream;
+
+    if (m_fileName.empty()) {
+        LOG_ERROR << "Could not determine file name for general settings" << LOG_END
+        return;
+    }
+
+    // check if our directory already exists in the preference folder
+    if (!std::filesystem::exists(m_xplane->preferencesPath())) {
+        LOG_INFO << "Directory '" << m_xplane->preferencesPath() << "' not found" << LOG_END
+
+        if (std::filesystem::create_directory(m_xplane->preferencesPath())) {
+            LOG_INFO << "Directory '" << m_xplane->preferencesPath() << "' created" << LOG_END
+        } else {
+            LOG_ERROR << "Could not create directory '" << m_xplane->preferencesPath() << "'" << LOG_END
+            return;
+        }
+    }
+
+    stream.open(m_fileName, std::ios_base::out | std::ios_base::trunc);
+
+    if (!stream.is_open()) {
+        LOG_ERROR << "Could not save general settings file '" << m_fileName << "'" << LOG_END
+        return;
+    }
+
+    stream << m_config;
+    stream.close();
 }
 
 } // Namespace XMidiCtrl

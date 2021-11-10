@@ -18,11 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// X-Plane Environment
-#include "utils/Logger.h"
-
 // XMidiCtrl
 #include "DeviceList.h"
+#include "Logger.h"
 
 namespace XMidiCtrl {
 
@@ -40,7 +38,7 @@ DeviceList::DeviceList() = default;
  * Destructor
  */
 DeviceList::~DeviceList() {
-    m_list.clear();
+    clear();
 }
 
 
@@ -65,8 +63,6 @@ Device::ptr DeviceList::createDevice(std::string_view name, unsigned int portIn,
  * Open all midi connections
  */
 void DeviceList::openConnections() {
-    LOG_INFO << "DEVICELIST :: Open MIDI connections" << LOG_END
-
     for (auto const &device: m_list) {
         if (device != nullptr) {
             device->openConnections();
@@ -79,8 +75,6 @@ void DeviceList::openConnections() {
  * Close all midi connections
  */
 void DeviceList::closeConnections() {
-    LOG_INFO << "DEVICELIST :: Close MIDI connections" << LOG_END
-
     for (auto const &device: m_list) {
         if (device != nullptr) {
             device->closeConnections();
@@ -93,6 +87,8 @@ void DeviceList::closeConnections() {
  * Clear the device list
  */
 void DeviceList::clear() {
+    closeConnections();
+
     m_list.clear();
 }
 

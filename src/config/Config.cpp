@@ -20,6 +20,7 @@
 
 // Standard
 #include <filesystem>
+#include <utility>
 
 // XMidiCtrl
 #include "Config.h"
@@ -34,15 +35,12 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-Config::Config() {
+Config::Config(XPlane::ptr xplane, std::string_view name) {
+    m_name   = name;
+    m_xplane = std::move(xplane);
+
     clear();
 }
-
-
-/**
- * Destructor
- */
-Config::~Config() = default;
 
 
 
@@ -59,28 +57,28 @@ bool Config::load(std::string_view fileName) {
 
     // check file name
     if (fileName.empty()) {
-        LOG_ERROR << "Cannot load config file, because the given filename is empty" << LOG_END
+        LOG_ERROR << "Cannot load " << m_name << ", because the given filename is empty" << LOG_END
         return false;
     }
 
     // check if file exists
     if (!std::filesystem::exists(fileName))
     {
-        LOG_INFO << "Config file '" << fileName.data() << "' not found" << LOG_END
+        LOG_ERROR << m_name << " '" << fileName.data() << "' not found" << LOG_END
         return false;
     }
 
     try {
-        // load config
+        // load config file
         m_config = toml::parse(fileName);
-        LOG_INFO << "Config file '" << fileName.data() << "' loaded successfully" << LOG_END
+        LOG_INFO << m_name << " '" << fileName.data() << "' loaded successfully" << LOG_END
     } catch (const toml::syntax_error& error) {
-        LOG_ERROR << "Error parsing config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << "Error parsing " << m_name << " '" << fileName.data() << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
         return false;
 
     } catch (const std::runtime_error& error) {
-        LOG_ERROR << "Error opening config file '" << fileName.data() << "'" << LOG_END
+        LOG_ERROR << "Error opening " << m_name << " '" << fileName.data() << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
         return false;
     }
@@ -96,4 +94,4 @@ void Config::clear() {
     m_config = toml::value();
 }
 
-} // XMidiCtrl
+} // Namespace XMidiCtrl

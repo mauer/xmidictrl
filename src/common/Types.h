@@ -36,36 +36,45 @@ const int FLIGHTLOOP_INTERVAL (-1.0);
 
 
 // Name of the aircraft profile file
-const char* const FILENAME_PROFILE  = "xmidictrl.toml";
+const char* const FILENAME_PROFILE  = "XMidiCtrl.toml";
 
 
 // Suffix for the XMidiCtrl log file
-const char* const LOGFILE_SUFFIX = "_log.txt";
+const char* const LOGFILE_SUFFIX = "_Log.txt";
 
 
-// Name of the general settings file
-const char* const FILENAME_SETTINGS = "xmidictrl_settings.toml";
+// Suffix the general settings file
+const char* const SETTINGS_FILE_SUFFIX = "_Settings.toml";
+
+
+// Profiles directory name
+const char* const PROFILES_DIRECTORY_NAME = "Profiles";
 
 
 // Menu items
 const char* const MENUITEM_ABOUT_DIALOG            = "ABOUT_DIALOG";
 const char* const MENUITEM_RELOAD_AIRCRAFT_PROFILE = "RELOAD_AIRCRAFT_PROFILE";
-const char* const MENUITEM_SEARCH_MIDI_DEVICES     = "SEARCH_MIDI_DEVICES";
+const char* const MENUITEM_MIDI_DEVICES_DIALOG     = "MIDI_DEVICES_DIALOG";
 const char* const MENUITEM_SETTINGS_DIALOG         = "SETTINGS_DIALOG";
-const char* const MENUITEM_SHOW_AIRCRAFT_PROFILE   = "SHOW_AIRCRAFT_PROFILE";
-
+const char* const MENUITEM_AIRCRAFT_PROFILE_DIALOG = "AIRCRAFT_PROFILE_DIALOG";
 
 // Keys for the config files
-const char* const CFG_KEY_CC                = "CC";
+const char* const CFG_KEY_CC                = "cc";
+const char* const CFG_KEY_CC_DEPRECATED     = "CC";
 const char* const CFG_KEY_COMMAND           = "command";
 const char* const CFG_KEY_COMMAND_DOWN      = "command_down";
 const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
 const char* const CFG_KEY_COMMAND_FAST_UP   = "command_fast_up";
+const char* const CFG_KEY_COMMAND_MIDDLE    = "command_middle";
 const char* const CFG_KEY_COMMAND_PULL      = "command_pull";
 const char* const CFG_KEY_COMMAND_PUSH      = "command_push";
 const char* const CFG_KEY_COMMAND_UP        = "command_up";
 const char* const CFG_KEY_DATAREF           = "dataref";
 const char* const CFG_KEY_DEVICE            = "device";
+const char* const CFG_KEY_LOG_LEVEL         = "log_level";
+const char* const CFG_KEY_MAPPING           = "mapping";
+const char* const CFG_KEY_MIDI_IN           = "midi_in";
+const char* const CFG_KEY_MIDI_OUT          = "midi_out";
 const char* const CFG_KEY_NAME              = "name";
 const char* const CFG_KEY_PORT_IN           = "port_in";
 const char* const CFG_KEY_PORT_OUT          = "port_out";
@@ -85,9 +94,9 @@ const char* const CFG_MAPTYPE_INTERNAL    = "int";
 
 
 // Windows Types
-const char* const WINDOW_ABOUT             = "WINDOW_ABOUT";
-const char* const WINDOW_DEVICES           = "WINDOW_DEVICES";
-const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
+const char* const WINDOW_ABOUT    = "WINDOW_ABOUT";
+const char* const WINDOW_DEVICES  = "WINDOW_DEVICES";
+const char* const WINDOW_SETTINGS = "WINDOW_SETTINGS";
 
 
 
@@ -95,6 +104,25 @@ const char* const WINDOW_SETTINGS          = "WINDOW_SETTINGS";
 //---------------------------------------------------------------------------------------------------------------------
 //   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
+
+// Log levels
+enum class LogLevel {
+    Error = 1,
+    Warn  = 2,
+    Info  = 3,
+    Debug = 4
+};
+
+
+// Message types
+enum class MessageType {
+    All   = 0,
+    Error = 1,
+    Warn  = 2,
+    Info  = 3,
+    Debug = 4
+};
+
 
 // Midi mapping types
 enum class MappingType {
@@ -108,13 +136,7 @@ enum class MappingType {
 };
 
 
-enum class MessageType {
-    Info,
-    Warn,
-    Error
-};
-
-
+// Window types
 enum class WindowType {
     AboutDialog,
     MessageWindow,

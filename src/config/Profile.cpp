@@ -20,10 +20,6 @@
 
 // Standard
 #include <filesystem>
-#include <utility>
-
-// X-Plane SDK
-#include "XPLMPlanes.h"
 
 // XMidiCtrl
 #include "Logger.h"
@@ -45,15 +41,7 @@ namespace XMidiCtrl {
  * Constructor
  */
 Profile::Profile(XPlane::ptr xplane)
-        : Config() {
-    m_xplane = std::move(xplane);
-};
-
-
-/**
- * Destructor
- */
-Profile::~Profile() = default;
+        : Config(xplane, "Aircraft Profile") {};
 
 
 
@@ -66,10 +54,15 @@ Profile::~Profile() = default;
  * Load the settings for the current aircraft
  */
 bool Profile::load() {
-    LOG_INFO << "PROFILE :: Load aircraft profile" << LOG_END
+    std::string fileName = getProfileFileName();
 
-    // load profile for current aircraft
-    return Config::load(determineProfileFileName());
+    if (!fileName.empty()) {
+        LOG_INFO << "Aircraft Profile '" << fileName << "' found" << LOG_END
+        return Config::load(fileName);
+    } else {
+        LOG_INFO << "No profile found for current aircraft" << LOG_END
+        return false;
+    }
 }
 
 
@@ -87,7 +80,7 @@ DeviceList::ptr Profile::createMidiDevices() {
         // get all devices
         auto devices = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
 
-        LOG_INFO << "PROFILE :: " << devices.size() << " Device(s) found in profile" << LOG_END
+        LOG_INFO << devices.size() << " Device(s) found in aircraft profile" << LOG_END
 
         // parse every device
         for (int i = 0; i < static_cast<int>(devices.size()); i++) {
@@ -102,15 +95,14 @@ DeviceList::ptr Profile::createMidiDevices() {
                     name = deviceSettings[CFG_KEY_NAME].as_string();
                 else {
                     name = "<undefined>";
-                    LOG_WARN << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_NAME << "' is missing" << LOG_END
+                    LOG_WARN << "Device (" << i << ") :: Parameter '" << CFG_KEY_NAME << "' is missing" << LOG_END
                 }
 
                 // port in
                 if (deviceSettings.contains(CFG_KEY_PORT_IN))
                     portIn = static_cast<unsigned int>(deviceSettings[CFG_KEY_PORT_IN].as_integer());
                 else {
-                    LOG_ERROR << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_IN << "' is missing"
-                              << LOG_END
+                    LOG_ERROR << "Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_IN << "' is missing" << LOG_END
                     continue;
                 }
 
@@ -118,27 +110,37 @@ DeviceList::ptr Profile::createMidiDevices() {
                 if (deviceSettings.contains(CFG_KEY_PORT_OUT))
                     portOut = static_cast<unsigned int>(deviceSettings[CFG_KEY_PORT_OUT].as_integer());
                 else {
-                    LOG_ERROR << "PROFILE :: Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_OUT << "' is missing"
-                              << LOG_END
+                    LOG_ERROR << "Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_OUT << "' is missing" << LOG_END
                     continue;
                 }
 
                 // create device and mapping
                 std::shared_ptr<Device> device = deviceList->createDevice(name, portIn, portOut);
-                if (device)
-                    createMappingForDevice(i, deviceSettings["mapping"].as_array(), device);
+                if (device != nullptr) {
+                    // Inbound mapping
+                    if (deviceSettings.contains(CFG_KEY_MIDI_IN))
+                        createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MIDI_IN].as_array(), device);
+                    else if (deviceSettings.contains(CFG_KEY_MAPPING))
+                    {
+                        LOG_WARN << "Device (" << i << ") :: Key '" << CFG_KEY_MAPPING
+                                 << "' is deprecated, please rename it to '" << CFG_KEY_MIDI_IN << "'" << LOG_END
+                        createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MAPPING].as_array(), device);
+                    } else {
+                        LOG_INFO << "Device (" << i << ") :: No midi inbound mapping found" << LOG_END
+                    }
 
-
+                    // TODO Outbound mapping
+                }
             } catch (const std::out_of_range& error) {
-                LOG_ERROR << "PROFILE :: Error reading config for midi device (" << i << ")" << LOG_END
+                LOG_ERROR << "Device (" << i << ") :: Error reading profile" << LOG_END
                 LOG_ERROR << error.what() << LOG_END
             }  catch (toml::type_error& error) {
-                LOG_ERROR << "PROFILE :: Error reading config for midi device (" << i << ")" << LOG_END
+                LOG_ERROR << "Device (" << i << ") :: Error reading profile" << LOG_END
                 LOG_ERROR << error.what() << LOG_END
             }
         }
     } catch (std::out_of_range& error) {
-        LOG_WARN << "PROFILE :: No midi devices found in config" << LOG_END
+        LOG_WARN << "No midi devices found in aircraft profile" << LOG_END
         LOG_WARN << error.what() << LOG_END
     }
 
@@ -153,38 +155,52 @@ DeviceList::ptr Profile::createMidiDevices() {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Determine the config filename for the currently loaded aircraft
+ * Get the profile filename for the current aircraft
  */
-std::string Profile::determineProfileFileName() {
+std::string Profile::getProfileFileName() {
     std::string fileName;
 
-    char aircraftFileName[256];
-    char aircraftPath[512];
+    // 1. check if there is a profile in the aircraft directory
+    fileName = m_xplane->currentAircraftPath().data() + std::string(FILENAME_PROFILE);
 
-    // aircraft with index 0 is the user aircraft
-    XPLMGetNthAircraftModel(0, aircraftFileName, aircraftPath);
-
-    LOG_INFO << "PROFILE :: Current Aircraft :: Filename = " << aircraftFileName << LOG_END
-    LOG_INFO << "PROFILE :: Current Aircraft :: Path = " << aircraftPath << LOG_END
-
-    if (!std::string(aircraftFileName).empty()) {
-        // remove filename from path
-        fileName = std::string(aircraftPath);
-        fileName = fileName.substr(0, fileName.size() - std::string(aircraftFileName).size());
-        fileName = fileName + FILENAME_PROFILE;
+    LOG_DEBUG << "Search for aircraft profile '" << fileName << "'" << LOG_END
+    if (std::filesystem::exists(fileName)) {
+        return fileName;
     }
 
-    LOG_INFO << "PROFILE :: Current Aircraft Profile :: Filename = " << fileName << LOG_END
+    // 2. check if there is a profile in the profiles directory including the author and ICAO
+    fileName = m_xplane->profilesPath().data() + m_xplane->currentAircraftAuthor() + "_" +
+               m_xplane->currentAircraftICAO() + "_" + std::string(FILENAME_PROFILE);
 
-    return fileName;
+    LOG_DEBUG << "Search for aircraft profile '" << fileName << "'" << LOG_END
+    if (std::filesystem::exists(fileName)) {
+        return fileName;
+    }
+
+    // 2. check if there is a profile in the profiles directory including the ICAO
+    fileName = m_xplane->profilesPath().data() + m_xplane->currentAircraftICAO() + "_" + std::string(FILENAME_PROFILE);
+
+    LOG_DEBUG << "Search for aircraft profile '" << fileName << "'" << LOG_END
+    if (std::filesystem::exists(fileName)) {
+        return fileName;
+    }
+
+    // 3. check for the default profile
+    fileName = m_xplane->profilesPath().data() + std::string(FILENAME_PROFILE);
+    LOG_DEBUG << "Search for aircraft profile '" << fileName << "'" << LOG_END
+    if (std::filesystem::exists(fileName)) {
+        return fileName;
+    }
+
+    return std::string();
 }
 
 
 /**
- * Create the mapping for a device and store it
+ * Create the inbound mapping for a device and store it
  */
-void Profile::createMappingForDevice(int deviceNo, toml::array settings, Device::ptr device) {
-    LOG_DEBUG << "PROFILE :: " << settings.size() << " Mapping(s) found" << LOG_END
+void Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device) {
+    LOG_INFO << "Device (" << deviceNo << ") :: " << settings.size() << " Mapping(s) found" << LOG_END
 
     // parse each mapping entry
     for (int i = 0; i < static_cast<int>(settings.size()); i++) {
@@ -193,66 +209,77 @@ void Profile::createMappingForDevice(int deviceNo, toml::array settings, Device:
 
         std::shared_ptr<Mapping> mapping;
 
-        LOG_DEBUG << "PROFILE :: Reading mapping " << i << LOG_END
+        LOG_DEBUG << "Device (" << deviceNo << ") :: Read mapping(" << i << LOG_END
 
         try {
             if (settings[i].contains(CFG_KEY_CC)) {
                 cc = static_cast<int>( settings[i][CFG_KEY_CC].as_integer());
-                LOG_DEBUG << "PROFILE :: Mapping (" << i << ") :: CC = " << cc << LOG_END
+                LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: cc = '" << cc << "'" << LOG_END
+            } else if (settings[i].contains(CFG_KEY_CC_DEPRECATED)) {
+                cc = static_cast<int>( settings[i][CFG_KEY_CC_DEPRECATED].as_integer());
+                LOG_WARN << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter 'CC' is deprecated, "
+                         << "please rename it to 'cc'" << LOG_END
+                LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: CC = '" << cc << "'" << LOG_END
             } else
-                LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_CC << "' is missing" << LOG_END
+                LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_CC
+                          << "' is missing" << LOG_END
 
             if (settings[i].contains(CFG_KEY_TYPE)) {
                 std::string_view typeStr { settings[i][CFG_KEY_TYPE].as_string() };
-                LOG_DEBUG << "PROFILE :: Mapping (" << i << ") :: Type = " << typeStr << LOG_END
+                LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: type = '" << typeStr << "'"
+                          << LOG_END
 
                 // get the mapping type
                 type = translateMapTypeStr(typeStr);
             } else
-                LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_TYPE << "' is missing" << LOG_END
+                LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_TYPE
+                          << "' is missing" << LOG_END
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case MappingType::Command:
-                    mapping = readSettingsForCommand(cc, &settings[i]);
+                    mapping = readSettingsForCommand(deviceNo, i, cc, &settings[i]);
                     break;
 
                 case MappingType::Dataref:
-                    mapping = readSettingsForDataref(cc, &settings[i]);
+                    mapping = readSettingsForDataref(deviceNo, i, cc, &settings[i]);
                     break;
 
                 case MappingType::Slider:
-                    mapping = readSettingsForSlider(cc, &settings[i]);
+                    mapping = readSettingsForSlider(deviceNo, i, cc, &settings[i]);
                     break;
 
                 case MappingType::PushAndPull:
-                    mapping = readSettingsForPushAndPull(cc, &settings[i]);
+                    mapping = readSettingsForPushAndPull(deviceNo, i, cc, &settings[i]);
                     break;
 
                 case MappingType::Encoder:
-                    mapping = readSettingsForEncoder(cc, &settings[i]);
+                    mapping = readSettingsForEncoder(deviceNo, i, cc, &settings[i]);
                     break;
 
                 case MappingType::Internal:
+                    LOG_WARN << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: "
+                             << "Mapping type 'int' is currently unsupported" << LOG_END
                     break;
 
                 case MappingType::None:
-                    LOG_ERROR << "PROFILE :: Mapping (" << i << ") :: Invalid mapping type" << LOG_END
+                    LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Invalid mapping type"
+                              << LOG_END
                     break;
             }
 
             if (!mapping) {
-                LOG_ERROR << "PROFILE :: Error reading mapping " << i << " for midi device " << deviceNo << LOG_END
+                LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Error reading mapping" << LOG_END
                 continue;
             }
 
             if (mapping->check())
                 device->addMapping(mapping);
             else
-                LOG_ERROR << "PROFILE :: Parameters incomplete for CC " << cc << LOG_END
+                LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameters incomplete" << LOG_END
 
         } catch (toml::type_error& error) {
-            LOG_ERROR << "PROFILE :: Error reading mapping " << i << " for midi device " << deviceNo << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Error reading mapping" << LOG_END
             LOG_ERROR << error.what() << LOG_END
         }
     }
@@ -285,8 +312,8 @@ MappingType Profile::translateMapTypeStr(std::string_view typeStr) {
 /**
  * Read settings for mapping type command
  */
-Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* settings) {
-    LOG_INFO << "PROFILE :: Read settings for type = 'cmd'" << LOG_END
+Mapping::ptr Profile::readSettingsForCommand(int deviceNo, int mapNo, int controlChange, toml::value* settings) {
+    LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Read settings for type 'cmd'" << LOG_END
 
     std::shared_ptr<MappingCommand> mapping = std::make_shared<MappingCommand>(m_xplane, controlChange);
 
@@ -294,12 +321,14 @@ Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* set
     try {
         if (settings->contains(CFG_KEY_COMMAND)) {
             mapping->setCommand(settings->at(CFG_KEY_COMMAND).as_string().str);
-            LOG_INFO << "PROFILE :: Command = " << mapping->command() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND << " = '"
+                      << mapping->command() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_COMMAND
+                      << "' not found" << LOG_END
 
     } catch (toml::type_error& error) {
-        LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END
+        LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 
@@ -310,8 +339,8 @@ Mapping::ptr Profile::readSettingsForCommand(int controlChange, toml::value* set
 /**
  * Read settings for mapping type dataref
  */
-Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* settings) {
-    LOG_INFO << "PROFILE :: Read settings for type = 'drf'" << LOG_END
+Mapping::ptr Profile::readSettingsForDataref(int deviceNo, int mapNo, int controlChange, toml::value* settings) {
+    LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Read settings for type 'drf'" << LOG_END
 
     std::shared_ptr<MappingDataref> mapping = std::make_shared<MappingDataref>(m_xplane, controlChange);
 
@@ -319,26 +348,32 @@ Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* set
         // read the actual dataref
         if (settings->contains(CFG_KEY_DATAREF)) {
             mapping->setDataref(settings->at(CFG_KEY_DATAREF).as_string().str);
-            LOG_INFO << "PROFILE :: Dataref = " << mapping->dataref() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_DATAREF
+                      << " = '" << mapping->dataref() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_DATAREF << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_DATAREF
+                      << "' not found" << LOG_END
 
         // read value on
         if (settings->contains(CFG_KEY_VALUE_ON)) {
             mapping->setValueOn(settings->at(CFG_KEY_VALUE_ON).as_string().str);
-            LOG_INFO << "PROFILE :: Value On = " << mapping->valueOn() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_VALUE_ON << " = '"
+                      << mapping->valueOn() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_VALUE_ON << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_VALUE_ON
+                      << "' not found" << LOG_END
 
         // read value off
         if (settings->contains(CFG_KEY_VALUE_OFF)) {
             mapping->setValueOff(settings->at(CFG_KEY_VALUE_OFF).as_string().str);
-            LOG_INFO << "PROFILE :: Value Off = " << mapping->valueOff() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_VALUE_OFF << " = '"
+                      << mapping->valueOff() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_VALUE_OFF << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_VALUE_OFF
+                      << "' not found" << LOG_END
 
     } catch (toml::type_error& error) {
-        LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END
+        LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 
@@ -349,8 +384,8 @@ Mapping::ptr Profile::readSettingsForDataref(int controlChange, toml::value* set
 /**
  * Read settings for mapping type slider
  */
-Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* settings) {
-    LOG_INFO << "PROFILE :: Read settings for type = 'sld'" << LOG_END
+Mapping::ptr Profile::readSettingsForSlider(int deviceNo, int mapNo, int controlChange, toml::value* settings) {
+    LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Read settings for type 'sld'" << LOG_END
 
     std::shared_ptr<MappingSlider> mapping = std::make_shared<MappingSlider>(m_xplane, controlChange);
 
@@ -358,18 +393,28 @@ Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* sett
     try {
         if (settings->contains(CFG_KEY_COMMAND_UP)) {
             mapping->setCommandUp(settings->at(CFG_KEY_COMMAND_UP).as_string().str);
-            LOG_INFO << "PROFILE :: Command Up = " << mapping->commandUp() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_UP << " = '"
+                      << mapping->commandUp() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_UP << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_COMMAND_UP
+                      << "' not found" << LOG_END
+
+        if (settings->contains(CFG_KEY_COMMAND_MIDDLE)) {
+            mapping->setCommandMiddle(settings->at(CFG_KEY_COMMAND_MIDDLE).as_string().str);
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_MIDDLE
+                      << " = '" << mapping->commandMiddle() << "'" << LOG_END
+        }
 
         if (settings->contains(CFG_KEY_COMMAND_DOWN)) {
             mapping->setCommandDown(settings->at(CFG_KEY_COMMAND_DOWN).as_string().str);
-            LOG_INFO << "PROFILE :: Command Down = " << mapping->commandDown() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_DOWN
+                      << " = '" << mapping->commandDown() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_DOWN << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '"
+                      << CFG_KEY_COMMAND_DOWN << "' not found" << LOG_END
 
     } catch (toml::type_error& error) {
-        LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END
+        LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 
@@ -380,8 +425,8 @@ Mapping::ptr Profile::readSettingsForSlider(int controlChange, toml::value* sett
 /**
  * Read settings for mapping type push and pull
  */
-Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value* settings) {
-    LOG_INFO << "PROFILE :: Read settings for type = 'pnp'" << LOG_END
+Mapping::ptr Profile::readSettingsForPushAndPull(int deviceNo, int mapNo, int controlChange, toml::value* settings) {
+    LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Read settings for type 'pnp'" << LOG_END
 
     std::shared_ptr<MappingPushAndPull> mapping = std::make_shared<MappingPushAndPull>(m_xplane, controlChange);
 
@@ -389,18 +434,22 @@ Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value*
     try {
         if (settings->contains(CFG_KEY_COMMAND_PUSH)) {
             mapping->setCommandPush(settings->at(CFG_KEY_COMMAND_PUSH).as_string().str);
-            LOG_INFO << "PROFILE :: Command Push = " << mapping->commandPush() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_PUSH
+                      << " = '" << mapping->commandPush() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_PUSH << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '"
+                      << CFG_KEY_COMMAND_PUSH << "' not found" << LOG_END
 
         if (settings->contains(CFG_KEY_COMMAND_PULL)) {
             mapping->setCommandPull(settings->at(CFG_KEY_COMMAND_PULL).as_string().str);
-            LOG_INFO << "PROFILE :: Command Pull = " << mapping->commandPull() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_PULL
+                      << " = '" << mapping->commandPull() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_PULL << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '"
+                      << CFG_KEY_COMMAND_PULL << "' not found" << LOG_END
 
     } catch (toml::type_error& error) {
-        LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END
+        LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 
@@ -411,8 +460,8 @@ Mapping::ptr Profile::readSettingsForPushAndPull(int controlChange, toml::value*
 /**
  * Read settings for mapping type encoder
  */
-Mapping::ptr Profile::readSettingsForEncoder(int controlChange, toml::value* settings) {
-    LOG_INFO << "PROFILE :: Read settings for type = 'enc'" << LOG_END
+Mapping::ptr Profile::readSettingsForEncoder(int deviceNo, int mapNo, int controlChange, toml::value* settings) {
+    LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Read settings for type 'enc'" << LOG_END
 
     std::shared_ptr<MappingEncoder> mapping = std::make_shared<MappingEncoder>(m_xplane, controlChange);
 
@@ -420,28 +469,34 @@ Mapping::ptr Profile::readSettingsForEncoder(int controlChange, toml::value* set
     try {
         if (settings->contains(CFG_KEY_COMMAND_UP)) {
             mapping->setCommandUp(settings->at(CFG_KEY_COMMAND_UP).as_string().str);
-            LOG_INFO << "PROFILE :: Command Up = " << mapping->commandUp() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_UP << " = '"
+                      << mapping->commandUp() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_UP << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '" << CFG_KEY_COMMAND_UP
+                      << "' not found" << LOG_END
 
         if (settings->contains(CFG_KEY_COMMAND_DOWN)) {
             mapping->setCommandDown(settings->at(CFG_KEY_COMMAND_DOWN).as_string().str);
-            LOG_INFO << "PROFILE :: Command Down = " << mapping->commandDown() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_DOWN
+                      << " = '" << mapping->commandDown() << "'" << LOG_END
         } else
-            LOG_ERROR << "PROFILE :: Parameter '" << CFG_KEY_COMMAND_DOWN << "' not found for CC " << controlChange << LOG_END
+            LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Parameter '"
+                      << CFG_KEY_COMMAND_DOWN << "' not found" << LOG_END
 
         if (settings->contains(CFG_KEY_COMMAND_FAST_UP)) {
             mapping->setCommandFastUp(settings->at(CFG_KEY_COMMAND_FAST_UP).as_string().str);
-            LOG_INFO << "PROFILE :: Command Up (fast) = " << mapping->commandFastUp() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_FAST_UP
+                      << " = '" << mapping->commandFastUp() << "'" << LOG_END
         }
 
         if (settings->contains(CFG_KEY_COMMAND_FAST_DOWN)) {
             mapping->setCommandFastDown(settings->at(CFG_KEY_COMMAND_FAST_DOWN).as_string().str);
-            LOG_INFO << "PROFILE :: Command Down (fast) = " << mapping->commandFastDown() << LOG_END
+            LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: " << CFG_KEY_COMMAND_FAST_DOWN
+                      << " = '" << mapping->commandFastDown() << "'" << LOG_END
         }
 
     } catch (toml::type_error& error) {
-        LOG_ERROR << "PROFILE :: Error reading mapping for CC " << controlChange << LOG_END
+        LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << mapNo << ") :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 

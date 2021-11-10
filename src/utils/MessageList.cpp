@@ -18,26 +18,56 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
-
-// Standard
-#include <memory>
-#include <string>
-
 // XMidiCtrl
-#include "Types.h"
+#include "MessageList.h"
 
 namespace XMidiCtrl {
 
-// Screen Message
-struct Message {
-    MessageType type;
-    std::string text;
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
-    typedef std::shared_ptr<Message> ptr;
-};
+/**
+ * Constructor
+ */
+MessageList::MessageList() = default;
+
+
+/**
+ * Destructor
+ */
+MessageList::~MessageList() {
+    m_list.clear();
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add a new message to be display
+ */
+void MessageList::addMessage(Message::ptr message) {
+    m_list.push_back(message);
+}
+
+
+/**
+ * Clear the message list
+ */
+void MessageList::clear() {
+    m_list.clear();
+}
+
+
+/**
+ * Return the number of messages
+ */
+unsigned int MessageList::size() {
+    return m_list.size();
+}
 
 } // Namespace XMidiCtrl
-
-#endif // MESSAGE_H

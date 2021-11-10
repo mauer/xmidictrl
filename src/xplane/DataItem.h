@@ -30,8 +30,10 @@
 namespace XMidiCtrl {
 
 struct DataItem {
+    std::string name;
     XPLMDataRef dataRef;
     XPLMDataTypeID type;
+    std::size_t size;
     bool writeable;
 
     typedef std::shared_ptr<DataItem> ptr;

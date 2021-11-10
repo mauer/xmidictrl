@@ -64,7 +64,6 @@ private:
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
     void initialiseDevices();
-    void closeMidiConnections();
 
     void showMessages();
     void showMessageWindow();

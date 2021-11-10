@@ -62,8 +62,6 @@ int Mapping::controlChange() const {
  * Check the mapping
  */
 bool Mapping::check() {
-    LOG_DEBUG << "MAPPING :: Check controlChange = '" << m_controlChange << "'" << LOG_END
-
     if (m_controlChange >= 0)
         return true;
     else

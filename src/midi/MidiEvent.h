@@ -26,21 +26,12 @@
 
 namespace XMidiCtrl {
 
-class MidiEvent {
-public:
-    MidiEvent(int controlChange, int status, int velocity);
-    ~MidiEvent();
+struct MidiEvent {
+    int controlChange;
+    int status;
+    int velocity;
 
     typedef std::shared_ptr<MidiEvent> ptr;
-
-    [[nodiscard]] int controlChange() const;
-    [[nodiscard]] int status() const;
-    [[nodiscard]] int velocity() const;
-
-private:
-    int m_controlChange;
-    int m_status;
-    int m_velocity;
 };
 
 } // Namespace XMidiCtrl

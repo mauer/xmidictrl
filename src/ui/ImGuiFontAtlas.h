@@ -46,7 +46,7 @@
 
 #include <imgui.h>
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 /** Construct an empty font atlas we can use later
  *
@@ -98,6 +98,6 @@ protected:
     int         mGLTextureNum;
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
 #endif // IMGUIFONTATLAS_H

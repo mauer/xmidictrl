@@ -30,6 +30,9 @@
 
 namespace XMidiCtrl {
 
+typedef std::multimap<int, Mapping::ptr>::iterator MappingItr;
+typedef std::pair<MappingItr, MappingItr> MappingPair;
+
 class MappingList {
 public:
     explicit MappingList();
@@ -37,10 +40,10 @@ public:
 
     void add(const Mapping::ptr& mapping);
 
-    Mapping::ptr mappingForControlChange(int controlChange);
+    MappingPair mappingForControlChange(int controlChange);
 
 protected:
-    std::map<int, Mapping::ptr> m_list;
+    std::multimap<int, Mapping::ptr> m_list;
 };
 
 } // Namespace XMidiCtrl

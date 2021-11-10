@@ -66,6 +66,22 @@ std::string_view MappingSlider::commandUp() const {
 
 
 /**
+ * Set the middle command
+ */
+void MappingSlider::setCommandMiddle(std::string_view commandMiddle) {
+    m_commandMiddle = commandMiddle;
+}
+
+
+/**
+ * Return the middle command
+ */
+std::string_view MappingSlider::commandMiddle() const {
+    return m_commandMiddle;
+}
+
+
+/**
  * Set the down command
  */
 void MappingSlider::setCommandDown(std::string_view commandDown) {
@@ -99,12 +115,14 @@ bool MappingSlider::check() {
  * Execute the action in X-Plane
  */
 void MappingSlider::execute(MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingSlider::execute" << LOG_END
-
-    if (midiEvent->velocity() <= 10)
+    if (midiEvent->velocity <= 10)
         m_xplane->commands()->execute(m_commandDown);
-    else if (midiEvent->velocity() >= 117)
+    else if (midiEvent->velocity >= 117)
         m_xplane->commands()->execute(m_commandUp);
+    else if (midiEvent->velocity >= 50 && midiEvent->velocity <= 70) {
+        if (!m_commandMiddle.empty())
+            m_xplane->commands()->execute(m_commandMiddle);
+    }
 }
 
 } // Namespace XMidiCtrl

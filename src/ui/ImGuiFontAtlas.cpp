@@ -35,7 +35,7 @@
 #include "ImGuiFontAtlas.h"
 #include <XPLMGraphics.h>
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 ImGuiFontAtlas::ImGuiFontAtlas():
         mOurAtlas(nullptr),
@@ -134,4 +134,4 @@ ImGuiFontAtlas::bindTexture()
     mTextureBound = true;
 }
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

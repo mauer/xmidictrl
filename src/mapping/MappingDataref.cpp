@@ -115,8 +115,6 @@ bool MappingDataref::check() {
  * Execute the action in X-Plane
  */
 void MappingDataref::execute(MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingDataref::execute" << LOG_END
-
     m_xplane->data()->toggle(m_dataref, m_valueOn, m_valueOff);
 }
 

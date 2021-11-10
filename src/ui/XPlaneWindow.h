@@ -36,10 +36,10 @@
 
 // OpenGL
 #ifdef __APPLE__
-    #include <OpenGL/gl.h>
+#include <OpenGL/gl.h>
 #else
-    #include <GL/gl.h>
-    #include <GL/glext.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 
 // X-Plane SDK
@@ -49,76 +49,56 @@
 
 namespace XMidiCtrl {
 
-    class XPlaneWindow {
-    public:
-        XPlaneWindow(int width, int height, bool translucent = false);
-        virtual ~XPlaneWindow();
+class XPlaneWindow {
+public:
+    XPlaneWindow(int width, int height, bool translucent = false);
+    virtual ~XPlaneWindow();
 
-        typedef std::shared_ptr<XPlaneWindow> ptr;
+    typedef std::shared_ptr<XPlaneWindow> ptr;
 
-        XPLMWindowID windowID();
+    XPLMWindowID windowID();
 
-        void show();
-        void hide();
+    void show();
+    void hide();
 
-        void setTitle(std::string_view title);
+    void setTitle(std::string_view title);
 
-        [[nodiscard]] bool isVisible() const;
+    [[nodiscard]] bool isVisible() const;
 
-        //void setPosition(int posx, int posy);
+    bool hasKeyboardFocus();
+    void requestKeyboardFocus(bool request);
 
-        //void moveFromOrToVR();
-        bool hasKeyboardFocus();
-        void requestKeyboardFocus(bool request);
+    void boxelsToNative(int x, int y, int &outX, int &outY);
 
-        //void reportClose();
-        void boxelsToNative(int x, int y, int &outX, int &outY);
+    static void MultiMatrixVec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4]);
+ protected:
+    virtual void onDraw() = 0;
+    virtual bool onClick(int x, int y, XPLMMouseStatus status);
+    virtual bool onRightClick(int x, int y, XPLMMouseStatus status);
+    virtual void onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus);
+    virtual XPLMCursorStatus onCursor(int x, int y);
+    virtual bool onMouseWheel(int x, int y, int wheel, int clicks);
 
-        //bool isPopped();
-        //bool isFront();
-        //void bringToFront();
-        //void setResizingLimits(int minwidth, int minheight, int maxwidth, int maxheight);
-        //void setPositioningMode(int pmode, int monindex);
-        //void setGravity(float inLeftGravity, float inTopGravity, float inRightGravity, float inBottomGravity);
-        //void setWindowGeometry(int mleft, int mtop, int mright, int mbot);
-        //void setWindowGeometryOS(int mleft, int mtop, int mright, int mbot);
-        //void setWindowGeometryVR(int bWidth, int bHeight);
-        //bool isVR();
-        //void setIsCmdVisible(int fCondition);
-        //bool getIsCmdVisible();
+    void updateMatrices();
+ private:
+    void createWindow(bool translucent);
 
-        static void MultiMatrixVec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4]);
-    protected:
-        virtual void onDraw() = 0;
-        virtual bool onClick(int x, int y, XPLMMouseStatus status);
-        virtual bool onRightClick(int x, int y, XPLMMouseStatus status);
-        virtual void onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus);
-        virtual XPLMCursorStatus onCursor(int x, int y);
-        virtual bool onMouseWheel(int x, int y, int wheel, int clicks);
+    XPLMWindowID m_windowID;
 
-        void updateMatrices();
-    private:
-        void createWindow(bool translucent);
+    int m_width;
+    int m_height;
 
-        XPLMWindowID m_windowID;
+    static XPLMDataRef m_vrEnabledRef;
+    static XPLMDataRef m_modelviewMatrixRef;
+    static XPLMDataRef m_viewportRef;
+    static XPLMDataRef m_projectionMatrixRef;
 
-        int m_width;
-        int m_height;
+    float m_modelView[16]{};
+    float m_projection[16]{};
 
-        //bool isInVR = false;
-
-        //bool isCmdVisible = false;
-        static XPLMDataRef m_vrEnabledRef;
-        static XPLMDataRef m_modelviewMatrixRef;
-        static XPLMDataRef m_viewportRef;
-        static XPLMDataRef m_projectionMatrixRef;
-
-        float m_modelView[16]{};
-        float m_projection[16]{};
-
-        int m_viewport[4]{};
-    };
+    int m_viewport[4]{};
+};
 
 } // Namespace XMidiCtrl
 
-#endif //XPLANEWINDOW_H
+#endif // XPLANEWINDOW_H

@@ -20,10 +20,12 @@
 
 // Standard
 #include <chrono>
+#include <ctime>
 
 // XMidiCtrl
 #include "LogEntry.h"
 #include "Logger.h"
+#include "Message.h"
 
 namespace XMidiCtrl {
 
@@ -35,7 +37,8 @@ namespace XMidiCtrl {
  * Constructor
  */
 LogEntry::LogEntry() {
-    m_logLevel = LogLevel::Error;
+    // Default setting
+    m_messageType = MessageType::Debug;
 }
 
 
@@ -46,10 +49,19 @@ LogEntry::LogEntry() {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Log a message regardless of the current log level
+ */
+LogEntry& LogEntry::all(LogEntry& logEntry) {
+    logEntry.setMessageType(MessageType::All);
+    return logEntry;
+}
+
+
+/**
  * Log an error message
  */
-LogEntry& LogEntry::Error(LogEntry& logEntry) {
-    logEntry.m_logLevel = LogLevel::Error;
+LogEntry& LogEntry::error(LogEntry& logEntry) {
+    logEntry.setMessageType(MessageType::Error);
     return logEntry;
 }
 
@@ -57,8 +69,8 @@ LogEntry& LogEntry::Error(LogEntry& logEntry) {
 /**
  * Log a warning message
  */
-LogEntry& LogEntry::Warn(LogEntry& logEntry) {
-    logEntry.m_logLevel = LogLevel::Warn;
+LogEntry& LogEntry::warn(LogEntry& logEntry) {
+    logEntry.setMessageType(MessageType::Warn);
     return logEntry;
 }
 
@@ -66,8 +78,8 @@ LogEntry& LogEntry::Warn(LogEntry& logEntry) {
 /**
  * Log an info message
  */
-LogEntry& LogEntry::Info(LogEntry& logEntry) {
-    logEntry.m_logLevel = LogLevel::Info;
+LogEntry& LogEntry::info(LogEntry& logEntry) {
+    logEntry.setMessageType(MessageType::Info);
     return logEntry;
 }
 
@@ -75,8 +87,8 @@ LogEntry& LogEntry::Info(LogEntry& logEntry) {
 /**
  * Log a debug message
  */
-LogEntry& LogEntry::Debug(LogEntry& logEntry) {
-    logEntry.m_logLevel = LogLevel::Debug;   
+LogEntry& LogEntry::debug(LogEntry& logEntry) {
+    logEntry.setMessageType(MessageType::Debug);
     return logEntry;
 }
 
@@ -84,16 +96,25 @@ LogEntry& LogEntry::Debug(LogEntry& logEntry) {
 /**
  * Log the end of a message
  */
-LogEntry& LogEntry::Endl(LogEntry& logEntry) {
-    PluginLogData logData;
-    logData.time  = std::time(nullptr);
-    logData.level = logEntry.m_logLevel;
-    logData.text  = logEntry.m_stream.str();
+LogEntry& LogEntry::endLine(LogEntry& logEntry) {
+    Message::ptr message = std::make_shared<Message>();
 
-    Logger::Instance().postData(logData);
+    // get current date time stamp
+    time_t t = std::time(nullptr);
+    struct tm* lTime = localtime(&t);
+
+    // format into a string
+    char dateTimeStr[32];
+    std::strftime(&dateTimeStr[0], sizeof(dateTimeStr), "%Y-%m-%d %H:%M:%S", lTime);
+
+    message->type = logEntry.messageType();
+    message->time = dateTimeStr;
+    message->text = logEntry.messageText();
+
+    Logger::Instance().postMessage(message);
 
     // clear data and return
-    logEntry.m_stream.clear();
+    logEntry.clear();
     return logEntry;
 } 
 
@@ -178,4 +199,37 @@ LogEntry& LogEntry::operator<<(LogEntry& (*f)(LogEntry&)) {
     return *this;
 }
 
-} // Namespace XPEnv
+
+/**
+ * Clear the data
+ */
+void LogEntry::clear() {
+    m_messageType = MessageType::Debug;
+    m_stream.clear();
+}
+
+
+/**
+ * Set the message type
+ */
+void LogEntry::setMessageType(MessageType messageType) {
+    m_messageType = messageType;
+}
+
+
+/**
+ * Return the message type
+ */
+MessageType LogEntry::messageType() {
+    return m_messageType;
+}
+
+
+/**
+ * Return the message text
+ */
+std::string LogEntry::messageText() {
+    return m_stream.str();
+}
+
+} // Namespace XMidiCtrl

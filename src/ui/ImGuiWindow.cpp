@@ -36,13 +36,19 @@
 // X-Plane SDK
 #include <XPLMGraphics.h>
 
-// X-Plane Environment
-#include "utils/Logger.h"
+// XMidiCtrl
 #include "ImGuiWindow.h"
+#include "Logger.h"
+#include "Version.h"
 
-namespace XPEnv {
+namespace XMidiCtrl {
 
 std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CONSTRUCTOR / DESTRUCTOR
+//---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Constructor
@@ -53,11 +59,9 @@ ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
     // font atlas for Dear ImGui
     if (!m_imGuiFontAtlas) {
         m_imGuiFontAtlas = std::make_shared<ImGuiFontAtlas>();
+
         if (!m_imGuiFontAtlas->AddFontFromFileTTF("./Resources/fonts/DejaVuSans.ttf", IMGUI_FONT_SIZE))
-        //if (!m_imGuiFontAtlas->AddFontFromFileTTF("./Resources/fonts/SVBasicManual.ttf", IMGUI_FONT_SIZE))
-            LOG_ERROR << "ImGuiWindow :: Could not load font" << LOG_END
-        else
-            LOG_INFO << "ImGuiWindow :: Font loaded" << LOG_END
+            LOG_WARN << "Error loading font 'DejaVuSans' for Dear ImGui" << LOG_END
     }
 
     // check if a font atlas was supplied
@@ -126,14 +130,16 @@ ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
     }
 }
 
-void ImGuiWindow::setBuildCallback(BuildCallback cb) {
-    doBuild = cb;
-}
 
-void ImGuiWindow::setErrorHandler(ErrorHandler eh) {
-    onError = eh;
-}
 
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Draw the Dear ImGui window
+ */
 void ImGuiWindow::onDraw() {
     if (stopped) {
         return;
@@ -142,18 +148,16 @@ void ImGuiWindow::onDraw() {
     updateMatrices();
 
     try {
-        buildGUI();
-        showGUI();
+        buildWindow();
+        showWindow();
     } catch (const std::exception &e) {
-        if (onError) {
-            onError(e.what());
-        }
+        LOG_ERROR << "Error drawing Dear ImGui window" << e.what() << LOG_END
         stopped = true;
     }
 
     ImGui::SetCurrentContext(imGuiContext);
 
-    auto &io = ImGui::GetIO();
+    auto& io = ImGui::GetIO();
     bool focus = hasKeyboardFocus();
 
     if (io.WantTextInput && !focus) {
@@ -166,7 +170,16 @@ void ImGuiWindow::onDraw() {
 }
 
 
-void ImGuiWindow::buildGUI() {
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Build the Dear ImGui window
+ */
+void ImGuiWindow::buildWindow() {
     ImGui::SetCurrentContext(imGuiContext);
     auto &io = ImGui::GetIO();
 
@@ -185,18 +198,20 @@ void ImGuiWindow::buildGUI() {
     ImGui::SetNextWindowSize(ImVec2(win_width, win_height), ImGuiCond_Always);
 
     // and construct the window
-    ImGui::Begin("XMidiCtrl", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(XMIDICTRL_NAME, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     // create custom widgets
     createWidgets();
 
     ImGui::End();
-
     ImGui::Render();
 }
 
 
-void ImGuiWindow::showGUI() {
+/**
+ * Show the window
+ */
+void ImGuiWindow::showWindow() {
     ImGui::SetCurrentContext(imGuiContext);
     auto &io = ImGui::GetIO();
 
@@ -348,7 +363,7 @@ void ImGuiWindow::onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losi
         }
     }
 
-    buildGUI();
+    buildWindow();
 
     XPlaneWindow::onKey(key, flags, virtualKey, losingFocus);
 }
@@ -380,4 +395,4 @@ ImGuiWindow::~ImGuiWindow() {
     m_imGuiFontAtlas.reset();
 }
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl

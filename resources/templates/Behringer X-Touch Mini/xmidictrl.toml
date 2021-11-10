@@ -8,7 +8,7 @@
 # X-Touch configuration software. You have to apply Layer A and B.
 #----------------------------------------------------------------------------------------------------------------------
 title   = "Template for the Behringer X-Touch Mini"
-version = "0.3"
+version = "0.4"
 
 # How do create a new mapping for a plane?
 #   1. Copy this file into the aircraft directory
@@ -27,7 +27,7 @@ version = "0.3"
 #          addition, it's possible to define command for fast up and down, if the knob was turned rather fast. This can
 #          be useful in some aircraft. Normally, defining up and down should be sufficient.
 #          Example: { CC = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
-#          Example: { CC = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
+#          Example: { CC = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_down = "FlyWithLua/airspeed_sel_10_down" }
 #
 #   pnp -> Similar to a cmd mapping, but simulates push and push. If the button gets pressed normally, the push command
 #          will be executed. If the button was pressed for a longer time, the pull command will be executed.
@@ -38,6 +38,14 @@ version = "0.3"
 #          improved in the future.
 #          Example: { CC = 0, type = "sld", command_up = "sim/engines/carb_heat_off", command_down = "sim/engines/carb_heat_on" }
 
+# Multi-Mapping
+#   It is possible to map a Control Change event to multiple mappings. The following example will execute both commands,
+#   when a midi event with Control Change 25 is being raised:
+#
+#   mapping = [
+#     { CC = 25, type = "cmd", command = "A300/accept_master_caution" },
+#     { CC = 25, type = "cmd", command = "A300/accept_master_warning" }
+#   ]
 
 # Behringer X-Touch Mini
 [[device]]

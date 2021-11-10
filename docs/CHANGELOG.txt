@@ -2,6 +2,18 @@ XMidiCtrl
 CHANGELOG
 
 -----------------------------------------------------------------------------------------------------------------------
+  VERSION 0.04
+-----------------------------------------------------------------------------------------------------------------------
+
++ Added support for Linux
++ Reduced plugin size for the Microsoft Windows platform
++ Corrected spelling error in A321.toml example
++ Corrected encoder example of xmidictrl.toml file for the Behringer X-Touch Mini
++ Enabled multiple mappings for the same Control Change
++ Enhanced the general logging
++ Enhanced mapping options for sliders (up, middle, down)
+
+-----------------------------------------------------------------------------------------------------------------------
   VERSION 0.03
 -----------------------------------------------------------------------------------------------------------------------
 

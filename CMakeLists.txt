@@ -22,7 +22,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 0.03 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+project(XMidiCtrl VERSION 0.04 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
 
 message("-----------------------------------------------")
 message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -38,9 +38,9 @@ configure_file(
 add_definitions("-include ${PROJECT_BINARY_DIR}/Version.h")
 include_directories(${PROJECT_BINARY_DIR})
 
-# use highest optimization level
+# use highest optimization level and optimize for size
 if (NOT MSVC)
-    add_compile_options(-O3)
+    add_compile_options(-O3 -Os)
 endif()
 
 # set compiler options

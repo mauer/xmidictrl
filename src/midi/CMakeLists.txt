@@ -25,7 +25,6 @@ set(MIDI_SRC
         ${CMAKE_CURRENT_LIST_DIR}/Device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/DeviceList.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MappedEvent.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MidiEvent.cpp
         )
 
 # Add sources to target

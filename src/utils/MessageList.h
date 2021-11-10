@@ -18,44 +18,35 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
+#ifndef MESSAGELIST_H
+#define MESSAGELIST_H
 
 // Standard
-#include <string>
+#include <memory>
 #include <string_view>
+#include <vector>
 
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+#include "Message.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
+class MessageList {
 public:
-    explicit MappingSlider(XPlane::ptr xplane, int controlChange);
-    ~MappingSlider() override = default;
+    explicit MessageList();
+    ~MessageList();
 
-    MappingType type() override;
+    typedef std::shared_ptr<MessageList> ptr;
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
+    void addMessage(Message::ptr message);
 
-    void setCommandMiddle(std::string_view commandMiddle);
-    [[nodiscard]] std::string_view commandMiddle() const;
-
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
-
-    bool check() override;
-    void execute(MidiEvent::ptr midiEvent) override;
+    void clear();
+    unsigned int size();
 
 private:
-    std::string m_commandUp;
-    std::string m_commandMiddle;
-    std::string m_commandDown;
+    std::vector<Message::ptr> m_list;
 };
 
 } // Namespace XMidiCtrl
 
-#endif // MAPPINGCOMMAND_H
+#endif // MESSAGELIST_H

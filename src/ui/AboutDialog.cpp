@@ -23,9 +23,7 @@
 
 // XMidiCtrl
 #include "AboutDialog.h"
-#include "Config.h"
-
-using namespace XPEnv;
+#include "Logger.h"
 
 namespace XMidiCtrl {
 
@@ -36,9 +34,11 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-AboutDialog::AboutDialog() :
-ImGuiWindow(700, 400)
+AboutDialog::AboutDialog()
+        : ImGuiWindow(700, 450)
 {
+    LOG_DEBUG << "Create the about dialog" << LOG_END
+
     setTitle("About " + std::string(XMIDICTRL_NAME) + " " + std::string(XMIDICTRL_VERSION_STR));
 }
 
@@ -80,6 +80,8 @@ void AboutDialog::createWidgets() {
     ImGui::TextUnformatted("TOML for Modern C++ from Toru Niina (https:://github.com/ToruNiina/toml11)");
     ImGui::Bullet();
     ImGui::TextUnformatted("Dear ImGui from Omar Cornut (https:://github.com/ocornut/imgui)");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("Dear ImGui X-Plane Integration from Christopher Collins (https://github.com/xsquawkbox/xsb_public)");
     ImGui::Bullet();
     ImGui::TextUnformatted("The X-Plane SDK from Laminar Research");
 }

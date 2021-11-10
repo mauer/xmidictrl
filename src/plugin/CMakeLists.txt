@@ -24,7 +24,6 @@ message("---- Directory: src/plugin")
 set(PLUGIN_SRC
         ${CMAKE_CURRENT_LIST_DIR}/EventHandler.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Menu.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MessageList.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Plugin.cpp
         )
 

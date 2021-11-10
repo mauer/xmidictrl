@@ -33,7 +33,7 @@
 
 // XMidiCtrl
 #include "MappingList.h"
-#include "Types.h"
+#include "common/Types.h"
 
 namespace XMidiCtrl {
 
@@ -66,8 +66,6 @@ public:
 
     static void midiCallback(double deltatime, std::vector<unsigned char>* message, void* userdata);
     void processMessage(double deltatime, std::vector<unsigned char>* message);
-    
-    [[nodiscard]] std::string_view name() const;
 
 private:
     void saveEventDateTime(int controlChange);

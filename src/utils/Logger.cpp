@@ -18,10 +18,6 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Standard
-#include <chrono>
-#include <ctime>
-
 // XMidiCtrl
 #include "Logger.h"
 
@@ -35,7 +31,8 @@ namespace XMidiCtrl {
  * Constructor
  */
 Logger::Logger() {
-    m_logLevel = LogLevel::Error;
+    // initially we set the highest log level
+    m_logLevel = LogLevel::Debug;
     m_messages = std::make_shared<MessageList>();
 }
 
@@ -67,9 +64,9 @@ Logger& Logger::Instance() {
 /**
  * Initialise the logger
  */
-void Logger::initialise(std::string_view path, std::string_view pluginName) {
-    if (!path.empty() && !pluginName.empty()) {
-        std::string fileName = std::string(path) + std::string(pluginName) + "_log.txt";
+void Logger::initialise(std::string_view path) {
+    if (!path.empty()) {
+        std::string fileName = std::string(path) + XMIDICTRL_NAME + LOGFILE_SUFFIX;
 
         m_stream.open(fileName, std::ios_base::out | std::ios_base::trunc);
     }
@@ -77,37 +74,45 @@ void Logger::initialise(std::string_view path, std::string_view pluginName) {
 
 
 /**
+ * Set the active log loevel
+ */
+void Logger::setLogLevel(LogLevel logLevel) {
+    m_logLevel = logLevel;
+}
+
+
+/**
  * Post a log entry
  */
-void Logger::postData(const PluginLogData& logData) {
+void Logger::postMessage(Message::ptr message) {
+    if (!checkLogLevel(message->type))
+        return;
+
+    // add message to internal list
+    m_messages->addMessage(message);
+
     if (!m_stream.is_open())
         return;
 
-    // format datetime stamp
-    char dateTimeStr[32];
-    time_t t = time(nullptr);
-    struct tm *tm = localtime(&t);
-
-    std::strftime(&dateTimeStr[0], sizeof(dateTimeStr), "%Y-%m-%d %H:%M:%S", tm);
-
-    switch (logData.level) {
-        case LogLevel::Error:
-            m_stream << dateTimeStr << "   " << "[ERROR]" << "   " << logData.text << std::endl;
-            m_messages->addMessage(MessageType::Error, std::string(dateTimeStr) + "   " + logData.text);
+    switch (message->type) {
+        case MessageType::All:
+            m_stream << message->time << "   " << "[ALL]" << "     " << message->text << std::endl;
             break;
 
-        case LogLevel::Warn:
-            m_stream << dateTimeStr << "   " << "[WARM]" << "    " << logData.text << std::endl;
-            m_messages->addMessage(MessageType::Warn, std::string(dateTimeStr) + "   " + logData.text);
+        case MessageType::Error:
+            m_stream << message->time << "   " << "[ERROR]" << "   " << message->text << std::endl;
             break;
 
-        case LogLevel::Info:
-            m_stream << dateTimeStr << "   " << "[INFO]" << "    " << logData.text << std::endl;
-            m_messages->addMessage(MessageType::Info, std::string(dateTimeStr) + "   " + logData.text);
+        case MessageType::Warn:
+            m_stream << message->time << "   " << "[WARN]" << "    " << message->text << std::endl;
             break;
 
-        case LogLevel::Debug:
-            m_stream << dateTimeStr << "   " << "[DEBUG]" << "   " << logData.text << std::endl;
+        case MessageType::Info:
+            m_stream << message->time << "   " << "[INFO]" << "    " << message->text << std::endl;
+            break;
+
+        case MessageType::Debug:
+            m_stream << message->time << "   " << "[DEBUG]" << "   " << message->text << std::endl;
             break;
     }
 }
@@ -119,5 +124,43 @@ void Logger::postData(const PluginLogData& logData) {
 MessageList::ptr Logger::messages() {
     return m_messages;
 }
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Check the current log level
+ */
+bool Logger::checkLogLevel(MessageType messageType) {
+    switch (messageType) {
+        case MessageType::All:
+            return true;
+
+        case MessageType::Error:
+            return true;
+
+        case MessageType::Warn:
+            if (m_logLevel != LogLevel::Error)
+                return true;
+            break;
+
+        case MessageType::Info:
+            if (m_logLevel == LogLevel::Info || m_logLevel == LogLevel::Debug)
+                return true;
+            break;
+
+        case MessageType::Debug:
+            if (m_logLevel == LogLevel::Debug)
+                return true;
+            break;
+    }
+
+    return false;
+}
+
 
 } // Namespace XMidiCtrl

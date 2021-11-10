@@ -28,22 +28,26 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "Settings.h"
+#include "Config.h"
 #include "Types.h"
+#include "XPlane.h"
 
 namespace XMidiCtrl {
 
-class Settings {
+class Settings : public Config {
 public:
-    Settings();
+    Settings(XPlane::ptr xplane);
     ~Settings();
 
     typedef std::shared_ptr<Settings> ptr;
 
-    bool showScreenMessages();
+    void setLogLevel(const LogLevel logLevel);
+    LogLevel logLevel();
 
 private:
-    toml::value m_generalConfig;
+    void saveSettings();
+
+    std::string m_fileName;
 };
 
 } // Namespace XMidiCtrl

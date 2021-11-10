@@ -23,19 +23,22 @@
 
 // XMidiCtrl
 #include "ImGuiWindow.h"
+#include "Settings.h"
 
 namespace XMidiCtrl {
 
-class SettingsDialog : public XPEnv::ImGuiWindow {
+class SettingsDialog : public ImGuiWindow {
 public:
-    SettingsDialog();
+    SettingsDialog(Settings::ptr settings);
     ~SettingsDialog() override;
 
 protected:
     void createWidgets() override;
 
 private:
-    int m_loggingLevel;
+    LogLevel m_selectedLogLevel;
+
+    Settings::ptr m_settings;
 };
 
 } // Namespace XMidiCtrl

@@ -47,24 +47,16 @@
 // Dear ImGui
 #include "imgui.h"
 
-// X-Plane Environment
+// XMidiCtrl
 #include "ImGuiFontAtlas.h"
 #include "XPlaneWindow.h"
 
-namespace XPEnv {
-
-using namespace XMidiCtrl;
+namespace XMidiCtrl {
 
 class ImGuiWindow: public XPlaneWindow {
 public:
     ImGuiWindow(int width, int height, bool translucent = false);
     ~ImGuiWindow() override;
-
-    using BuildCallback = std::function<void(ImGuiWindow &)>;
-    using ErrorHandler = std::function<void(const std::string &)>;
-
-    void setErrorHandler(ErrorHandler eh);
-    void setBuildCallback(BuildCallback cb);
 
 protected:
     void onDraw() override;
@@ -83,17 +75,15 @@ private:
     GLuint m_fontTextureId{};
     ImGuiContext *imGuiContext{};
     int mLeft{}, mTop{}, mRight{}, mBottom{};
-    ErrorHandler onError;
-    BuildCallback doBuild;
     bool stopped = false;
 
-    void buildGUI();
-    void showGUI();
+    void buildWindow();
+    void showWindow();
 
     void translateImguiToBoxel(float inX, float inY, int &outX, int &outY);
     void translateToImguiSpace(int inX, int inY, float &outX, float &outY);
 };
 
-} // Namespace XPEnv
+} // Namespace XMidiCtrl
 
 #endif // IMGUIWINDOW_H

@@ -33,7 +33,7 @@ namespace XMidiCtrl {
 class XPlane {
 public:
     XPlane();
-    ~XPlane();
+    ~XPlane() = default;
 
     typedef std::shared_ptr<XPlane> ptr;
 
@@ -41,6 +41,14 @@ public:
 
     std::string_view pluginPath();
     std::string_view xplanePath();
+    std::string_view preferencesPath();
+
+    std::string_view profilesPath();
+
+    std::string currentAircraftPath();
+    std::string currentAircraftAuthor();
+    std::string currentAircraftICAO();
+    std::string currentAircraftDescription();
 
     Commands::ptr commands();
     Data::ptr data();
@@ -50,6 +58,8 @@ private:
 
     std::string m_xplanePath;
     std::string m_pluginPath;
+    std::string m_preferencesPath;
+    std::string m_profilesPath;
 
     Commands::ptr m_commands;
     Data::ptr m_data;

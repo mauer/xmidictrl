@@ -19,6 +19,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // X-Plane SDK
+#include "XPLMPlanes.h"
 #include "XPLMPlugin.h"
 
 // XMidiCtrl
@@ -35,22 +36,16 @@ namespace XMidiCtrl {
  * Constructor
  */
 XPlane::XPlane() {
-    m_pluginId = -1;
+    m_pluginId   = -1;
     m_pluginPath = "";
     m_xplanePath = "";
 
     // access to X-Plane commands
     m_commands = std::make_shared<Commands>();
 
-    // access to X-Plane datarefs
+    // access to X-Plane data
     m_data = std::make_shared<Data>();
 }
-
-
-/**
- * Destructor
- */
-XPlane::~XPlane() = default;
 
 
 
@@ -63,8 +58,10 @@ XPlane::~XPlane() = default;
  * Return the plugin ID
  */
 XPLMPluginID XPlane::pluginId() {
-    if (m_pluginId == -1)
+    if (m_pluginId == -1) {
         m_pluginId = XPLMGetMyID();
+        LOG_DEBUG << "X-Plane Plugin ID = '" << m_pluginId << "'" << LOG_END
+    }
 
     return m_pluginId;
 }
@@ -74,11 +71,12 @@ XPLMPluginID XPlane::pluginId() {
  * Return the path of the plugin installation
  */
 std::string_view XPlane::pluginPath() {
-    if (m_xplanePath.empty()) {
+    if (m_pluginPath.empty()) {
         char path[512];
         XPLMGetPluginInfo(pluginId(), nullptr, path, nullptr, nullptr);
 
         m_pluginPath = std::string(path);
+        LOG_DEBUG << XMIDICTRL_NAME << " Path = '" << m_pluginPath << "'" << LOG_END
     }
 
     return m_pluginPath;
@@ -94,9 +92,85 @@ std::string_view XPlane::xplanePath() {
         XPLMGetSystemPath(path);
 
         m_xplanePath = std::string(path);
+        LOG_DEBUG << "X-Plane Path = '" << m_xplanePath << "'" << LOG_END
     }
 
     return m_xplanePath;
+}
+
+
+/**
+ * Return the preferences path of the plugin
+ */
+std::string_view XPlane::preferencesPath() {
+    if (m_preferencesPath.empty()) {
+        char path[512];
+        XPLMGetPrefsPath(path);
+
+        // remove file name
+        XPLMExtractFileAndPath(path);
+
+        m_preferencesPath = std::string(path) + "/" + XMIDICTRL_NAME + "/";
+        LOG_DEBUG << "Preferences Path = '" << m_preferencesPath << "'" << LOG_END
+    }
+
+    return m_preferencesPath;
+}
+
+
+/**
+ * Return the profiles path within the preferences
+ */
+std::string_view XPlane::profilesPath() {
+    if (m_profilesPath.empty()) {
+        m_profilesPath = std::string(preferencesPath()) + PROFILES_DIRECTORY_NAME + "/";
+        LOG_DEBUG << "Profiles Path = '" << m_profilesPath << "'" << LOG_END
+    }
+
+    return m_profilesPath;
+}
+
+
+/**
+ * Return the current aircraft path
+ */
+std::string XPlane::currentAircraftPath() {
+    char aircraftFileName[256];
+    char aircraftPath[512];
+
+    // aircraft with index 0 is the user aircraft
+    XPLMGetNthAircraftModel(0, aircraftFileName, aircraftPath);
+
+    if (!std::string(aircraftPath).empty())
+        XPLMExtractFileAndPath(aircraftPath);
+
+    LOG_DEBUG << "Current Aircraft Path = " << aircraftPath << LOG_END
+
+    return std::string(aircraftPath) + "/";
+}
+
+
+/**
+ * Return the author of the current aircraft
+ */
+std::string XPlane::currentAircraftAuthor() {
+    return m_data->readByte("sim/aircraft/view/acf_author");
+}
+
+
+/**
+ * Return the ICAO of the current aircraft
+ */
+std::string XPlane::currentAircraftICAO() {
+    return m_data->readByte("sim/aircraft/view/acf_ICAO");
+}
+
+
+/**
+ * Return the description of the current aircraft
+ */
+std::string XPlane::currentAircraftDescription() {
+    return m_data->readByte("sim/aircraft/view/acf_descrip");
 }
 
 

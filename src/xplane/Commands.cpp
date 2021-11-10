@@ -54,7 +54,7 @@ Commands::~Commands() {
 void Commands::begin(std::string_view command) {
     XPLMCommandRef cmdRef = findCommandRef(command);
 
-    if (cmdRef)
+    if (cmdRef != nullptr)
         XPLMCommandBegin(cmdRef);
 }
 
@@ -65,7 +65,7 @@ void Commands::begin(std::string_view command) {
 void Commands::end(std::string_view command) {
     XPLMCommandRef cmdRef = findCommandRef(command);
 
-    if (cmdRef)
+    if (cmdRef != nullptr)
         XPLMCommandEnd(cmdRef);
 }
 
@@ -76,7 +76,7 @@ void Commands::end(std::string_view command) {
 void Commands::execute(std::string_view command) {
     XPLMCommandRef cmdRef = findCommandRef(command);
 
-    if (cmdRef)
+    if (cmdRef != nullptr)
         XPLMCommandOnce(cmdRef);
 }
 
@@ -95,14 +95,14 @@ XPLMCommandRef Commands::findCommandRef(std::string_view command) {
 
     // check the cache first
     try {
-        cmdRef = m_commandCache.at(command);
+        cmdRef = m_commandCache.at(command.data());
     } catch (std::out_of_range const&) {
         cmdRef = XPLMFindCommand(command.data());
         m_commandCache.emplace(command, cmdRef);
     }
 
     if (cmdRef == nullptr)
-        LOG_ERROR << "COMMANDS :: Command '" << command.data() << "' not found" << LOG_END
+        LOG_ERROR << "Command '" << command.data() << "' not found" << LOG_END
 
     return cmdRef;
 }

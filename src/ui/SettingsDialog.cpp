@@ -22,10 +22,9 @@
 #include <string>
 
 // XMidiCtrl
-#include "Config.h"
+#include "Logger.h"
 #include "SettingsDialog.h"
-
-using namespace XPEnv;
+#include "Utils.h"
 
 namespace XMidiCtrl {
 
@@ -36,9 +35,14 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-SettingsDialog::SettingsDialog() :
+SettingsDialog::SettingsDialog(Settings::ptr settings) :
 ImGuiWindow(500, 200)
 {
+    LOG_DEBUG << "Create the settings dialog" << LOG_END
+
+    m_settings = std::move(settings);
+    m_selectedLogLevel = m_settings->logLevel();
+
     setTitle(std::string(XMIDICTRL_NAME) + " Settings");
 }
 
@@ -59,21 +63,48 @@ SettingsDialog::~SettingsDialog() = default;
  * Create widgets
  */
 void SettingsDialog::createWidgets() {
-    const char* logLevelItems[] = { "Debug", "Info", "Warning", "Error" };
+    ImGui::Text("GENERAL");
+    ImGui::Separator();
+    ImGui::NewLine();
+
     ImGui::Text("Logging Level:");
-    ImGui::SameLine();
-    ImGui::Combo("", &m_loggingLevel, logLevelItems, IM_ARRAYSIZE(logLevelItems));
+    ImGui::SameLine(150);
 
-    if (ImGui::Button("Save")) {
+    if (ImGui::BeginCombo("", Utils::getLogLevelText(m_selectedLogLevel).c_str())) {
+        if (ImGui::Selectable(Utils::getLogLevelText(LogLevel::Error).c_str(),
+                              m_selectedLogLevel == LogLevel::Error)) {
+            m_selectedLogLevel = LogLevel::Error;
+            ImGui::SetItemDefaultFocus();
+        }
 
+        if (ImGui::Selectable(Utils::getLogLevelText(LogLevel::Warn).c_str(),
+                              m_selectedLogLevel == LogLevel::Warn)) {
+            m_selectedLogLevel = LogLevel::Warn;
+            ImGui::SetItemDefaultFocus();
+        }
 
-        hide();
+        if (ImGui::Selectable(Utils::getLogLevelText(LogLevel::Info).c_str(),
+                            m_selectedLogLevel == LogLevel::Info)) {
+            m_selectedLogLevel = LogLevel::Info;
+            ImGui::SetItemDefaultFocus();
+        }
+
+        if (ImGui::Selectable(Utils::getLogLevelText(LogLevel::Debug).c_str(),
+                            m_selectedLogLevel == LogLevel::Debug)) {
+            m_selectedLogLevel = LogLevel::Debug;
+            ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
     }
 
-    ImGui::SameLine();
+    ImGui::NewLine();
+    ImGui::NewLine();
 
-    if (ImGui::Button("Cancel"))
+    if (ImGui::Button("Save Settings")) {
+        m_settings->setLogLevel(m_selectedLogLevel);
         hide();
+    }
 }
 
 } // Namespace XMidiCtrl

@@ -41,7 +41,7 @@ namespace XMidiCtrl {
 class Profile : public Config {
 public:
     explicit Profile(XPlane::ptr xplane);
-    ~Profile();
+    ~Profile() = default;
 
     typedef std::shared_ptr<Profile> ptr;
 
@@ -50,19 +50,17 @@ public:
     DeviceList::ptr createMidiDevices();
 
 private:
-    std::string determineProfileFileName();
+    std::string getProfileFileName();
 
-    void createMappingForDevice(int deviceNo, toml::array settings, Device::ptr device);
+    void createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device);
     
     static MappingType translateMapTypeStr(std::string_view typeStr);
 
-    Mapping::ptr readSettingsForCommand(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForDataref(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForSlider(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForPushAndPull(int controlChange, toml::value* settings);
-    Mapping::ptr readSettingsForEncoder(int controlChange, toml::value* settings);
-
-    XPlane::ptr m_xplane;
+    Mapping::ptr readSettingsForCommand(int deviceNo, int mapNo, int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForDataref(int deviceNo, int mapNo, int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForSlider(int deviceNo, int mapNo, int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForPushAndPull(int deviceNo, int mapNo, int controlChange, toml::value* settings);
+    Mapping::ptr readSettingsForEncoder(int deviceNo, int mapNo, int controlChange, toml::value* settings);
 };
 
 } // Namespace XMidiCtrl

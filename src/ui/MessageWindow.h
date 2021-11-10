@@ -26,7 +26,7 @@
 
 // XMidiCtrl
 #include "XPlaneWindow.h"
-#include "Types.h"
+#include "common/Types.h"
 
 namespace XMidiCtrl {
 

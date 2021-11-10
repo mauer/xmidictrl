@@ -27,7 +27,7 @@
 // XMidiCtrl
 #include "Mapping.h"
 #include "MidiEvent.h"
-#include "Types.h"
+#include "common/Types.h"
 
 namespace XMidiCtrl {
 

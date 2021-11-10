@@ -57,10 +57,10 @@ EventHandler::~EventHandler() = default;
  * Add a midi event
  */
 void EventHandler::addMappedEvent(const MappedEvent::ptr& mappedEvent) {
-    LOG_DEBUG << "EVENTHANDLER :: Adding event on Thread " << std::this_thread::get_id() << " :: Status = '"
-              << mappedEvent->midiEvent()->status()
-              << "', CC = '" << mappedEvent->midiEvent()->controlChange() << "', Velocity = '"
-              << mappedEvent->midiEvent()->velocity() << "'" << LOG_END
+    LOG_DEBUG << "Event Handler -> Add event on Thread " << std::this_thread::get_id() << " :: "
+              << "Status = '" << mappedEvent->midiEvent()->status << "', "
+              << "CC = '" << mappedEvent->midiEvent()->controlChange << "', "
+              << "Velocity = '" << mappedEvent->midiEvent()->velocity << "'" << LOG_END
 
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
@@ -93,36 +93,5 @@ void EventHandler::processEvents() {
         m_eventList.pop();
     }
 }
-
-/**
- * Change an float dataref
- */
-//void EventHandler::changeFloatDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent) {
-//    float value = XPLMGetDataf(dataDetails.dataRef);
-//
-//    if (value == std::stof(midiEvent->mapping.valueOn)) {
-//        LOG_DEBUG << "EVENTHANDLER :: Set dataref " << midiEvent->mapping.dataRef << " to value " << midiEvent->mapping.valueOff << LOG_END
-//        XPLMSetDataf(dataDetails.dataRef, std::stof(midiEvent->mapping.valueOff));
-//    } else {
-//        LOG_DEBUG << "EVENTHANDLER :: Set dataref " << midiEvent->mapping.dataRef << " to value " << midiEvent->mapping.valueOn << LOG_END
-//        XPLMSetDataf(dataDetails.dataRef, std::stof(midiEvent->mapping.valueOn));
-//    }
-//}
-
-
-/**
- * Change a double dataref
- */
-//void EventHandler::changeDoubleDataRef(const DataDetails& dataDetails, const std::shared_ptr<MidiEvent>& midiEvent) {
-//    double value = XPLMGetDatad(dataDetails.dataRef);
-//
-//    if (value == std::stod(midiEvent->mapping.valueOn)) {
-//        LOG_DEBUG << "EVENTHANDLER :: Set dataref " << midiEvent->mapping.dataRef << " to value " << midiEvent->mapping.valueOff << LOG_END
-//        XPLMSetDatad(dataDetails.dataRef, std::stod(midiEvent->mapping.valueOff));
-//    } else {
-//        LOG_DEBUG << "EVENTHANDLER :: Set dataref " << midiEvent->mapping.dataRef << " to value " << midiEvent->mapping.valueOn << LOG_END
-//        XPLMSetDatad(dataDetails.dataRef, std::stod(midiEvent->mapping.valueOn));
-//    }
-//}
 
 } // Namespace XMidiCtrl

@@ -117,7 +117,6 @@ void MappingPushAndPull::execute(MidiEvent::ptr midiEvent) {
             m_xplane->commands()->execute(m_commandPull);
             break;
     }
-
 }
 
 } // Namespace XMidiCtrl

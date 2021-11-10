@@ -18,13 +18,9 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Standard
-#include <string>
-
 // XMidiCtrl
+#include "Logger.h"
 #include "MidiDevicesDialog.h"
-
-using namespace XPEnv;
 
 namespace XMidiCtrl {
 
@@ -38,6 +34,8 @@ namespace XMidiCtrl {
 MidiDevicesDialog::MidiDevicesDialog() :
 ImGuiWindow(700, 350)
 {
+    LOG_DEBUG << "Create the midi devices dialog" << LOG_END
+
     setTitle("Midi Devices");
 }
 

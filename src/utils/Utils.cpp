@@ -18,44 +18,72 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAPPINGSLIDER_H
-#define MAPPINGSLIDER_H
-
-// Standard
-#include <string>
-#include <string_view>
-
 // XMidiCtrl
-#include "Mapping.h"
-#include "MidiEvent.h"
+
+#include "Utils.h"
 
 namespace XMidiCtrl {
 
-class MappingSlider : public Mapping {
-public:
-    explicit MappingSlider(XPlane::ptr xplane, int controlChange);
-    ~MappingSlider() override = default;
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
 
-    MappingType type() override;
+/**
+ * Return the text of a log level
+ */
+std::string Utils::getLogLevelText(LogLevel logLevel) {
+    switch (logLevel) {
+        case LogLevel::Error:
+            return "Errors";
 
-    void setCommandUp(std::string_view commandUp);
-    [[nodiscard]] std::string_view commandUp() const;
+        case LogLevel::Warn:
+            return "Warnings";
 
-    void setCommandMiddle(std::string_view commandMiddle);
-    [[nodiscard]] std::string_view commandMiddle() const;
+        case LogLevel::Info:
+            return "Information";
 
-    void setCommandDown(std::string_view commandDown);
-    [[nodiscard]] std::string_view commandDown() const;
+        case LogLevel::Debug:
+            return "Debug";
+    }
 
-    bool check() override;
-    void execute(MidiEvent::ptr midiEvent) override;
+    return std::string("Debug");
+}
 
-private:
-    std::string m_commandUp;
-    std::string m_commandMiddle;
-    std::string m_commandDown;
-};
+
+/**
+ * Return the code of a log level
+ */
+std::string Utils::getLogLevelCode(LogLevel logLevel) {
+    switch (logLevel) {
+        case LogLevel::Error:
+            return "E";
+
+        case LogLevel::Warn:
+            return "W";
+
+        case LogLevel::Info:
+            return "I";
+
+        case LogLevel::Debug:
+            return "D";
+    }
+
+    return std::string("D");
+}
+
+
+/**
+ * Return the log level for a given code
+ */
+LogLevel Utils::getLogLevelFromCode(std::string_view code) {
+    if (code == "E")
+        return LogLevel::Error;
+    else if (code == "W")
+        return LogLevel::Warn;
+    else if (code == "I")
+        return LogLevel::Info;
+    else
+        return LogLevel::Debug;
+}
 
 } // Namespace XMidiCtrl
-
-#endif // MAPPINGCOMMAND_H

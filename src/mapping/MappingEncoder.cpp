@@ -137,17 +137,15 @@ bool MappingEncoder::check() {
  * Execute the action in X-Plane
  */
 void MappingEncoder::execute(MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingEncoder::execute" << LOG_END
-
-    if (midiEvent->velocity() < 64) {
+    if (midiEvent->velocity < 64) {
         // Down
-        if (midiEvent->velocity() < 61)
+        if (midiEvent->velocity < 61)
             m_xplane->commands()->execute(m_commandFastDown);
         else
             m_xplane->commands()->execute(m_commandDown);
-    } else if (midiEvent->velocity() > 64) {
+    } else if (midiEvent->velocity > 64) {
         // Up
-        if (midiEvent->velocity() > 68)
+        if (midiEvent->velocity > 68)
             m_xplane->commands()->execute(m_commandFastUp);
         else
             m_xplane->commands()->execute(m_commandUp);

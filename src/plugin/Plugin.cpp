@@ -45,19 +45,28 @@ namespace XMidiCtrl {
  */
 Plugin::Plugin() {
     m_flightLoopId = nullptr;
-    m_profile      = nullptr;
-    m_devices      = nullptr;
 
     // create the integration to X-Plane
     m_xplane = std::make_shared<XPlane>();
 
-    Logger::Instance().initialise(m_xplane->xplanePath(), XMIDICTRL_NAME);
+    // initialize our logging instance
+    Logger::Instance().initialise(m_xplane->xplanePath());
+    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
 
-    // create the event handler, which process all midi events
+    // load general settings
+    m_settings = std::make_shared<Settings>(m_xplane);
+
+    // set general settings
+    Logger::Instance().setLogLevel(m_settings->logLevel());
+
+    // create the aircraft profile
+    m_profile = std::make_shared<Profile>(m_xplane);
+
+    // create list for midi devices
+    m_devices = std::make_shared<DeviceList>();
+
+    // create the event handler
     m_eventHandler = std::make_shared<EventHandler>();
-
-    // initialize the logger
-    LOG_INFO << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
 }
 
 
@@ -68,8 +77,7 @@ Plugin::~Plugin() {
     m_flightLoopId = nullptr;
     m_windows.clear();
 
-    // close all midi connections
-    closeMidiConnections();
+    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " unloaded successfully" << LOG_END
 }
 
 
@@ -118,7 +126,7 @@ void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
  * Enable the plugin
  */
 void Plugin::enablePlugin() {
-    LOG_INFO << "Plugin " << XMIDICTRL_FULL_NAME << " enabled" << LOG_END
+    LOG_INFO << "Plugin " << XMIDICTRL_NAME << " enabled" << LOG_END
 
     // create all required menu entries
     m_menu.createMenu();
@@ -133,11 +141,11 @@ void Plugin::enablePlugin() {
     m_flightLoopId = XPLMCreateFlightLoop(&params);
 
     if (m_flightLoopId != nullptr) {
-        LOG_DEBUG << "Flight loop successfully registered" << LOG_END
+        LOG_DEBUG << "Flight loop registered" << LOG_END
 
         XPLMScheduleFlightLoop(m_flightLoopId, FLIGHTLOOP_INTERVAL, true);
     } else
-        LOG_ERROR << "Could not create flight loop" << LOG_END
+        LOG_ERROR << "Could not register flight loop" << LOG_END
 }
 
 
@@ -156,9 +164,10 @@ void Plugin::disablePlugin() {
         LOG_DEBUG << "Flight loop destroyed" << LOG_END
     }
 
-    closeMidiConnections();
+    // close midi connections
+    m_devices->clear();
 
-    LOG_INFO << "Plugin disabled" << LOG_END
+    LOG_INFO << "Plugin " << XMIDICTRL_NAME << " disabled" << LOG_END
 }
 
 
@@ -166,14 +175,10 @@ void Plugin::disablePlugin() {
  * Load the profile for the current aircraft
  */
 void Plugin::loadAircraftProfile() {
-    LOG_DEBUG << "Start loading aircraft profile" << LOG_END
+    unloadAircraftProfile();
 
-    // reload settings for current aircraft
-    if (m_profile == nullptr)
-        m_profile = std::make_shared<Profile>(m_xplane);
-
-    m_profile->load();
-    initialiseDevices();
+    if (m_profile->load())
+        initialiseDevices();
 }
 
 
@@ -181,13 +186,9 @@ void Plugin::loadAircraftProfile() {
  * Unload the aircraft profile
  */
 void Plugin::unloadAircraftProfile() {
-    LOG_DEBUG << "Start to unload the current aircraft profile" << LOG_END
-
     // clear current aircraft settings
-    if (m_profile != nullptr)
-        m_profile->clear();
-
-    closeMidiConnections();
+    m_profile->clear();
+    m_devices->clear();
 }
 
 
@@ -232,28 +233,15 @@ void Plugin::showAboutDialog() {
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
-    LOG_INFO << "Initialise MIDI devices" << LOG_END
+    // close all open connections
+    m_devices->clear();
 
-    closeMidiConnections();
+    // create a new device list
+    m_devices = m_profile->createMidiDevices();
 
-    if (m_profile != nullptr)
-        m_devices = m_profile->createMidiDevices();
-
+    // open the connections again
     if (m_devices != nullptr && m_devices->size() > 0)
         m_devices->openConnections();
-}
-
-
-/**
- * Close all open midi connections
- */
-void Plugin::closeMidiConnections() {
-    LOG_DEBUG << "Close all midi connections" << LOG_END
-
-    if (m_devices != nullptr) {
-        m_devices->closeConnections();
-        m_devices->clear();
-    }
 }
 
 
@@ -304,7 +292,7 @@ void Plugin::createWindow(WindowType windowType) {
             break;
 
         case WindowType::SettingsDialog:
-            window = std::make_shared<SettingsDialog>();
+            window = std::make_shared<SettingsDialog>(m_settings);
             break;
     }
 

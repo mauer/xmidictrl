@@ -27,18 +27,24 @@
 // toml11
 #include <toml.hpp>
 
+// XMidiCtrl
+#include "XPlane.h"
+
 namespace XMidiCtrl {
 
 class Config {
 public:
-    Config();
-    ~Config();
+    Config(XPlane::ptr xplane, std::string_view name);
+    ~Config() = default;
 
     bool load(std::string_view fileName);
     void clear();
 
 protected:
     toml::value m_config;
+    std::string m_name;
+
+    XPlane::ptr m_xplane;
 };
 
 } // Namespace XMidiCtrl

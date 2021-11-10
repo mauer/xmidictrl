@@ -18,61 +18,24 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifndef UTILS_H_
+#define UTILS_H_
+
+// Standard
+#include <string>
+
 // XMidiCtrl
-#include "MessageList.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Constructor
- */
-MessageList::MessageList() = default;
-
-
-/**
- * Destructor
- */
-MessageList::~MessageList() {
-    m_list.clear();
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Add a new message to be display
- */
-void MessageList::addMessage(MessageType type, std::string_view text) {
-    Message::ptr message = std::make_shared<Message>();
-
-    message->type = type;
-    message->text = text;
-
-    m_list.push_back(message);
-}
-
-
-/**
- * Clear the message list
- */
-void MessageList::clear() {
-    m_list.clear();
-}
-
-
-/**
- * Return the number of messages
- */
-unsigned int MessageList::size() {
-    return m_list.size();
-}
+class Utils {
+ public:
+    static std::string getLogLevelText(LogLevel logLevel);
+    static std::string getLogLevelCode(LogLevel logLevel);
+    static LogLevel getLogLevelFromCode(std::string_view code);
+};
 
 } // Namespace XMidiCtrl
+
+#endif // UTILS_H

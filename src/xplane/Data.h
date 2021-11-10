@@ -40,10 +40,8 @@ public:
 
     typedef std::shared_ptr<Data> ptr;
 
+    std::string readByte(std::string_view name);
     bool toggle(std::string_view name, std::string_view valueOn, std::string_view valueOff);
-
-    bool read(std::string_view name, int& value);
-    bool write(std::string_view name, int value);
 
 private:
     DataItem::ptr retrieveData(std::string_view name);
@@ -51,8 +49,9 @@ private:
     void toggleInteger(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
     void toggleFloat(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
     void toggleDouble(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
+    void toggleByte(const DataItem::ptr& dataItem, std::string_view valueOn, std::string_view valueOff);
 
-    std::map<std::string_view, DataItem::ptr> m_dataCache;
+    std::map<std::string, DataItem::ptr> m_dataCache;
 };
 
 } // Namespace XMidiCtrl

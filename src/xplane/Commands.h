@@ -46,7 +46,7 @@ public:
 private:
     XPLMCommandRef findCommandRef(std::string_view command);
 
-    std::map<std::string_view, XPLMCommandRef> m_commandCache;
+    std::map<std::string, XPLMCommandRef> m_commandCache;
 };
 
 } // Namespace XMidiCtrl

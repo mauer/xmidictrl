@@ -29,7 +29,7 @@
 
 namespace XMidiCtrl {
 
-class MidiDevicesDialog : public XPEnv::ImGuiWindow {
+class MidiDevicesDialog : public ImGuiWindow {
 public:
     MidiDevicesDialog();
     ~MidiDevicesDialog() override;

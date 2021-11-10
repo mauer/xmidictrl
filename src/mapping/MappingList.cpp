@@ -51,15 +51,15 @@ MappingList::~MappingList() {
  * Add a new mapping
  */
 void MappingList::add(const Mapping::ptr& mapping) {
-    m_list.emplace(mapping->controlChange(), mapping);
+    m_list.insert({mapping->controlChange(), mapping});
 }
 
 
 /**
  * Retrieve the mapping for a control change event
  */
-Mapping::ptr MappingList::mappingForControlChange(const int controlChange) {
-    return m_list.at(controlChange);
+MappingPair MappingList::mappingForControlChange(const int controlChange) {
+    return m_list.equal_range(controlChange);
 }
 
 } // Namespace XMidiCtrl

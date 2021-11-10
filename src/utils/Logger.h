@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef LOGGER_H_
-#define LOGGER_H_
+#ifndef LOGGER_H
+#define LOGGER_H
 
 // Standard
 #include <fstream>
@@ -31,12 +31,13 @@
 #include "MessageList.h"
 
 // Macros for logging
-#define LOG_ERROR (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Error)
-#define LOG_WARN  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Info)
-#define LOG_INFO  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Info)
-#define LOG_DEBUG (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::Debug)
+#define LOG_ALL   (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::all)
+#define LOG_ERROR (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::error)
+#define LOG_WARN  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::warn)
+#define LOG_INFO  (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::info)
+#define LOG_DEBUG (XMidiCtrl::LogEntry() << XMidiCtrl::LogEntry::debug)
 
-#define LOG_END XMidiCtrl::LogEntry::Endl;
+#define LOG_END XMidiCtrl::LogEntry::endLine;
 
 namespace XMidiCtrl {
 
@@ -51,12 +52,16 @@ public:
 
 	static Logger& Instance();
 
-	void initialise(std::string_view path, std::string_view pluginName);
-	void postData(const PluginLogData& logData);
+	void initialise(std::string_view path);
+    void setLogLevel(LogLevel logLevel);
+
+	void postMessage(Message::ptr message);
 
     MessageList::ptr messages();
 
 private:
+    bool checkLogLevel(MessageType messageType);
+
 	LogLevel m_logLevel;
 
 	std::ofstream m_stream;

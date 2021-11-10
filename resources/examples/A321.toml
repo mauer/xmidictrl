@@ -30,7 +30,7 @@ mapping = [
   { CC = 7, type = "enc", command_up = "sim/autopilot/vertical_speed_up", command_down = "sim/autopilot/vertical_speed_down" },
   #{ CC = 8, type = "enc", command_up = "", command_down = "" },
 
-  # Encorder Buttons
+  # Encoder Buttons
   #{ CC = 9, type = "pnp", command_push = "", command_pull = "" },
   { CC = 10, type = "cmd", command = "toliss_airbus/dispcommands/CaptCstrPushButton" },
   { CC = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },

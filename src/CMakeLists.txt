@@ -1,4 +1,4 @@
-#---------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
 #   MIT License
 #
 #   Copyright (c) 2021 Marco Auer
@@ -28,9 +28,10 @@ include_directories(${RTMIDI_INCLUDEDIR})
 include_directories(${IMGUI_INCLUDEDIR})
 
 # Build shared library
-add_library(${PROJECT_NAME} SHARED)
+add_library(${PROJECT_NAME} SHARED utils/Message.h utils/Utils.cpp utils/Utils.h)
 
 # Include sub directories
+include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
@@ -53,7 +54,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # link required dependencies
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static -static-libgcc -static-libstdc++ toml11 ${RTMIDI_STATIC_LIBRARIES} winmm xpsdk imgui)
+    target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 ${RTMIDI_STATIC_LIBRARIES} winmm xpsdk imgui)
 elseif (APPLE)
     target_link_libraries(${PROJECT_NAME} "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
 elseif (UNIX)

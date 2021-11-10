@@ -22,39 +22,30 @@
 #define LOGENTRY_H
 
 // Standard
+#include <memory>
 #include <sstream>
 #include <string>
 #include <thread>
+
+// XMidiCtrl
+#include "Types.h"
 
 namespace XMidiCtrl {
 
 // Forward declarations
 class Logger;
 
-// Enumerations
-enum class LogLevel {
-	Error = 0,
-	Warn  = 1,
-	Info  = 2,
-	Debug = 3
-};
-
-// Structs
-struct PluginLogData {
-	LogLevel    level;
-	time_t      time;
-	std::string text;
-};
 
 class LogEntry {
 public:
 	LogEntry();
 
-	static LogEntry& Error(LogEntry& logEntry);
-	static LogEntry& Warn(LogEntry& logEntry);
-	static LogEntry& Info(LogEntry& logEntry);
-	static LogEntry& Debug(LogEntry& logEntry);
-	static LogEntry& Endl(LogEntry& logEntry);
+    static LogEntry& all(LogEntry& logEntry);
+	static LogEntry& error(LogEntry& logEntry);
+	static LogEntry& warn(LogEntry& logEntry);
+	static LogEntry& info(LogEntry& logEntry);
+	static LogEntry& debug(LogEntry& logEntry);
+	static LogEntry& endLine(LogEntry& logEntry);
 
     LogEntry& operator<<(int32_t i);
     LogEntry& operator<<(int16_t i);
@@ -67,8 +58,15 @@ public:
 
 	LogEntry& operator<<(LogEntry& (*f)(LogEntry&));
 
+    void clear();
+
+    void setMessageType(MessageType messageType);
+    MessageType messageType();
+
+    std::string messageText();
+
 private:
-	LogLevel m_logLevel;
+	MessageType m_messageType;
 
 	std::ostringstream m_stream;
 };

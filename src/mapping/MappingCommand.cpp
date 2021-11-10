@@ -54,7 +54,6 @@ MappingType MappingCommand::type() {
  */
 void MappingCommand::setCommand(std::string_view command) {
     m_command = command;
-    LOG_DEBUG << "MappingCommand::setCommand :: command = '" << command.data() << "'" << LOG_END
 }
 
 
@@ -84,24 +83,18 @@ bool MappingCommand::check() {
  * Execute the action in X-Plane
  */
 void MappingCommand::execute(MidiEvent::ptr midiEvent) {
-    LOG_DEBUG << "MappingCommand :: Execute command '" << m_command.data() << "'" << LOG_END
-
-    switch (midiEvent->velocity()) {
+    switch (midiEvent->velocity) {
         case 127:
-            LOG_DEBUG << "Execute begin command '" << m_command.data() << "'" << LOG_END
             m_xplane->commands()->begin(m_command);
             break;
 
         case 0:
-            LOG_DEBUG << "Execute end command' " << m_command.data() << "'" << LOG_END
             m_xplane->commands()->end(m_command);
             break;
 
         default:
-            LOG_ERROR << "Invalid Midi status '" << midiEvent->status() << "'" << LOG_END
+            LOG_ERROR << "Invalid Midi status '" << midiEvent->status << "'" << LOG_END
     }
-
-    //environment->commands()->execute(m_command);
 }
 
 } // Namespace XMidiCtrl

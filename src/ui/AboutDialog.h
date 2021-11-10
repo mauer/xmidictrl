@@ -26,7 +26,7 @@
 
 namespace XMidiCtrl {
 
-class AboutDialog : public XPEnv::ImGuiWindow {
+class AboutDialog : public ImGuiWindow {
 public:
     AboutDialog();
     ~AboutDialog() override;
