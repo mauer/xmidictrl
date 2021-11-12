@@ -47,12 +47,12 @@ public:
 
     bool load();
 
-    DeviceList::ptr createMidiDevices();
+    bool createMidiDevices(DeviceList::ptr devices);
 
 private:
     std::string getProfileFileName();
 
-    void createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device);
+    bool createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device);
     
     static MappingType translateMapTypeStr(std::string_view typeStr);
 

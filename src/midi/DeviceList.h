@@ -39,7 +39,7 @@ public:
 
     Device::ptr createDevice(std::string_view name, unsigned int portIn, unsigned int portOut);
 
-    void openConnections();
+    bool openConnections();
     void closeConnections();
 
     void clear();

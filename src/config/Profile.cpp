@@ -69,25 +69,28 @@ bool Profile::load() {
 /**
  * Create all defined midi devices
  */
-DeviceList::ptr Profile::createMidiDevices() {
-    DeviceList::ptr deviceList = std::make_shared<DeviceList>();
+bool Profile::createMidiDevices(DeviceList::ptr devices) {
+    bool result = true;
+
+    // close all open connections
+    devices->clear();
 
     // only continue if the file contains some settings
     if (m_config.type() == toml::value_t::empty)
-        return deviceList;
+        return false;
 
     try {
         // get all devices
-        auto devices = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
+        auto profileDevices = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
 
-        LOG_INFO << devices.size() << " Device(s) found in aircraft profile" << LOG_END
+        LOG_INFO << profileDevices.size() << " Device(s) found in aircraft profile" << LOG_END
 
         // parse every device
-        for (int i = 0; i < static_cast<int>(devices.size()); i++) {
+        for (int i = 0; i < static_cast<int>(profileDevices.size()); i++) {
             std::string name;
             unsigned int portIn;
             unsigned int portOut;
-            toml::value deviceSettings = devices[i];
+            toml::value deviceSettings = profileDevices[i];
 
             try {
                 // name
@@ -103,6 +106,7 @@ DeviceList::ptr Profile::createMidiDevices() {
                     portIn = static_cast<unsigned int>(deviceSettings[CFG_KEY_PORT_IN].as_integer());
                 else {
                     LOG_ERROR << "Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_IN << "' is missing" << LOG_END
+                    result = false;
                     continue;
                 }
 
@@ -111,20 +115,22 @@ DeviceList::ptr Profile::createMidiDevices() {
                     portOut = static_cast<unsigned int>(deviceSettings[CFG_KEY_PORT_OUT].as_integer());
                 else {
                     LOG_ERROR << "Device (" << i << ") :: Parameter '" << CFG_KEY_PORT_OUT << "' is missing" << LOG_END
+                    result = false;
                     continue;
                 }
 
                 // create device and mapping
-                std::shared_ptr<Device> device = deviceList->createDevice(name, portIn, portOut);
+                std::shared_ptr<Device> device = devices->createDevice(name, portIn, portOut);
                 if (device != nullptr) {
                     // Inbound mapping
-                    if (deviceSettings.contains(CFG_KEY_MIDI_IN))
-                        createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MIDI_IN].as_array(), device);
-                    else if (deviceSettings.contains(CFG_KEY_MAPPING))
-                    {
+                    if (deviceSettings.contains(CFG_KEY_MIDI_IN)) {
+                        if (!createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MIDI_IN].as_array(), device))
+                            result = false;
+                    } else if (deviceSettings.contains(CFG_KEY_MAPPING)) {
                         LOG_WARN << "Device (" << i << ") :: Key '" << CFG_KEY_MAPPING
                                  << "' is deprecated, please rename it to '" << CFG_KEY_MIDI_IN << "'" << LOG_END
-                        createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MAPPING].as_array(), device);
+                        if (!createInboundMappingForDevice(i, deviceSettings[CFG_KEY_MAPPING].as_array(), device))
+                            result = false;
                     } else {
                         LOG_INFO << "Device (" << i << ") :: No midi inbound mapping found" << LOG_END
                     }
@@ -134,9 +140,11 @@ DeviceList::ptr Profile::createMidiDevices() {
             } catch (const std::out_of_range& error) {
                 LOG_ERROR << "Device (" << i << ") :: Error reading profile" << LOG_END
                 LOG_ERROR << error.what() << LOG_END
+                result = false;
             }  catch (toml::type_error& error) {
                 LOG_ERROR << "Device (" << i << ") :: Error reading profile" << LOG_END
                 LOG_ERROR << error.what() << LOG_END
+                result = false;
             }
         }
     } catch (std::out_of_range& error) {
@@ -144,7 +152,7 @@ DeviceList::ptr Profile::createMidiDevices() {
         LOG_WARN << error.what() << LOG_END
     }
 
-    return deviceList;
+    return result;
 }
 
 
@@ -199,7 +207,9 @@ std::string Profile::getProfileFileName() {
 /**
  * Create the inbound mapping for a device and store it
  */
-void Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device) {
+bool Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, Device::ptr device) {
+    bool result = true;
+
     LOG_INFO << "Device (" << deviceNo << ") :: " << settings.size() << " Mapping(s) found" << LOG_END
 
     // parse each mapping entry
@@ -220,9 +230,11 @@ void Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, 
                 LOG_WARN << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter 'CC' is deprecated, "
                          << "please rename it to 'cc'" << LOG_END
                 LOG_DEBUG << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: CC = '" << cc << "'" << LOG_END
-            } else
+            } else {
                 LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_CC
                           << "' is missing" << LOG_END
+                result = false;
+            }
 
             if (settings[i].contains(CFG_KEY_TYPE)) {
                 std::string_view typeStr { settings[i][CFG_KEY_TYPE].as_string() };
@@ -231,9 +243,11 @@ void Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, 
 
                 // get the mapping type
                 type = translateMapTypeStr(typeStr);
-            } else
+            } else {
                 LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameter '" << CFG_KEY_TYPE
                           << "' is missing" << LOG_END
+                result = false;
+            }
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
@@ -265,24 +279,31 @@ void Profile::createInboundMappingForDevice(int deviceNo, toml::array settings, 
                 case MappingType::None:
                     LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Invalid mapping type"
                               << LOG_END
+                    result = false;
                     break;
             }
 
             if (!mapping) {
                 LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Error reading mapping" << LOG_END
+                result = false;
                 continue;
             }
 
             if (mapping->check())
                 device->addMapping(mapping);
-            else
+            else {
                 LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Parameters incomplete" << LOG_END
+                result = false;
+            }
 
         } catch (toml::type_error& error) {
             LOG_ERROR << "Device (" << deviceNo << ") :: Mapping (" << i << ") :: Error reading mapping" << LOG_END
             LOG_ERROR << error.what() << LOG_END
+            result = false;
         }
     }
+
+    return result;
 }
 
 

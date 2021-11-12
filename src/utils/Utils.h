@@ -31,6 +31,8 @@ namespace XMidiCtrl {
 
 class Utils {
  public:
+    static std::string getMessageTypeText(MessageType messageType);
+
     static std::string getLogLevelText(LogLevel logLevel);
     static std::string getLogLevelCode(LogLevel logLevel);
     static LogLevel getLogLevelFromCode(std::string_view code);

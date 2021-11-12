@@ -66,6 +66,7 @@ void Menu::createMenu() {
     m_menuId = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menuContainer, menuHandler, this);
 
     XPLMAppendMenuItem(m_menuId, "Search for MIDI Devices", (void*) MENUITEM_MIDI_DEVICES_DIALOG, 0);
+    XPLMAppendMenuItem(m_menuId, "Show messages", (void*) MENUITEM_MESSAGES_DIALOG, 0);
     XPLMAppendMenuSeparator(m_menuId);
     //XPLMAppendMenuItem(m_menuId, "Show Aircraft Profile", (void*) MENUITEM_SHOW_AIRCRAFT_PROFILE, 0);
     XPLMAppendMenuItem(m_menuId, "Reload Aircraft Profile", (void*) MENUITEM_RELOAD_AIRCRAFT_PROFILE, 0);
@@ -105,6 +106,10 @@ void Menu::menuHandler(void* in_menu_ref, void* in_item_ref) {
     if (!strcmp((const char*) in_item_ref, MENUITEM_MIDI_DEVICES_DIALOG)) {
         LOG_DEBUG << "Menu Handler -> Search for midi devices and display and display the dialog" << LOG_END
         Plugin::Instance().showMidiDevicesDialog();
+    }
+    else if (!strcmp((const char*) in_item_ref, MENUITEM_MESSAGES_DIALOG)) {
+        LOG_DEBUG << "Menu Handler -> Show the log messages dialog" << LOG_END
+        Plugin::Instance().showMessagesDialog();
     }
     else if (!strcmp((const char*) in_item_ref, MENUITEM_RELOAD_AIRCRAFT_PROFILE)) {
         LOG_DEBUG << "Menu Handler -> Reload the aircraft profile" << LOG_END

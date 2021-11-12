@@ -56,8 +56,6 @@ MidiDevicesDialog::~MidiDevicesDialog() = default;
  * Create widgets
  */
 void MidiDevicesDialog::createWidgets() {
-    //ImGui::PushFont
-
     ImGui::Text("INBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
@@ -65,10 +63,10 @@ void MidiDevicesDialog::createWidgets() {
     try {
         m_midiIn = std::make_unique<RtMidiIn>();
 
-        ImGui::BeginTable("tableInbound", 2);
+        ImGui::BeginTable("tableInbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
 
-        ImGui::TableSetupColumn("Port No.");
-        ImGui::TableSetupColumn("MIDI Device");
+        ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
         // check inbound ports
@@ -99,10 +97,10 @@ void MidiDevicesDialog::createWidgets() {
     try {
         m_midiOut = std::make_unique<RtMidiOut>();
 
-        ImGui::BeginTable("tableOutbound", 2);
+        ImGui::BeginTable("tableOutbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
 
-        ImGui::TableSetupColumn("Port No.");
-        ImGui::TableSetupColumn("MIDI Device");
+        ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
         // check outbound ports

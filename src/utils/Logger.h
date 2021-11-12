@@ -53,7 +53,9 @@ public:
 	static Logger& Instance();
 
 	void initialise(std::string_view path);
+
     void setLogLevel(LogLevel logLevel);
+    const LogLevel logLevel();
 
 	void postMessage(Message::ptr message);
 

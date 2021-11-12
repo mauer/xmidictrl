@@ -56,6 +56,17 @@ void MessageList::addMessage(Message::ptr message) {
 
 
 /**
+ * Return a specific message
+ */
+Message::ptr MessageList::message(int number) {
+    if (static_cast<size_t>(number) < m_list.size())
+        return m_list[number];
+    else
+        return nullptr;
+}
+
+
+/**
  * Clear the message list
  */
 void MessageList::clear() {

@@ -25,14 +25,11 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // Standard
-#include <memory>
 #include <stdexcept>
 
 // X-Plane SDK
 #include <XPLMDataAccess.h>
 #include <XPLMDisplay.h>
-#include <XPLMGraphics.h>
-#include <XPLMUtilities.h>
 
 // XMidiCtrl
 #include "Logger.h"
@@ -135,12 +132,6 @@ bool XPlaneWindow::isVisible() const {
         return false;
 }
 
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC STATIC
-//---------------------------------------------------------------------------------------------------------------------
 
 void XPlaneWindow::MultiMatrixVec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4]) {
     dst[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];

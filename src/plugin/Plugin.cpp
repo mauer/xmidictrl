@@ -18,17 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// Standard
-#include <string>
-#include <utility>
-
-#include <XPLMUtilities.h>
-
 // XMidiCtrl
 #include "AboutDialog.h"
 #include "Config.h"
 #include "Logger.h"
-#include "MessageWindow.h"
+#include "MessagesDialog.h"
 #include "MidiDevicesDialog.h"
 #include "Plugin.h"
 #include "SettingsDialog.h"
@@ -116,9 +110,6 @@ float Plugin::callbackFlightLoop(float elapsedMe, float elapsedSim, int counter,
 void Plugin::processFlightLoop(float elapsedMe, float elapsedSim, int counter) {
     // process midi events
     m_eventHandler->processEvents();
-
-    // display screen messages
-    showMessages();
 }
 
 
@@ -179,6 +170,10 @@ void Plugin::loadAircraftProfile() {
 
     if (m_profile->load())
         initialiseDevices();
+    else {
+        if (m_settings->showMessagesDialog())
+            showMessagesDialog();
+    }
 }
 
 
@@ -197,6 +192,14 @@ void Plugin::unloadAircraftProfile() {
  */
 void Plugin::addMappedEvent(const MappedEvent::ptr& mappedEvent) {
     m_eventHandler->addMappedEvent(mappedEvent);
+}
+
+
+/**
+ * Show the log messages dialog
+ */
+void Plugin::showMessagesDialog() {
+    createWindow(WindowType::MessagesDialog);
 }
 
 
@@ -233,32 +236,15 @@ void Plugin::showAboutDialog() {
  * Initialise configured midi devices
  */
 void Plugin::initialiseDevices() {
-    // close all open connections
-    m_devices->clear();
-
     // create a new device list
-    m_devices = m_profile->createMidiDevices();
+    if (m_profile->createMidiDevices(m_devices)) {
+        if (m_settings->showMessagesDialog())
+            showMessagesDialog();
+    }
 
     // open the connections again
     if (m_devices != nullptr && m_devices->size() > 0)
         m_devices->openConnections();
-}
-
-
-/**
- * Display messages in the message queue
- */
-void Plugin::showMessages() {
-    if (Logger::Instance().messages()->size() > 0)
-        showMessageWindow();
-}
-
-
-/**
- * Show the global message window
- */
-void Plugin::showMessageWindow() {
-
 }
 
 
@@ -283,8 +269,8 @@ void Plugin::createWindow(WindowType windowType) {
             window = std::make_shared<AboutDialog>();
             break;
 
-        case WindowType::MessageWindow:
-            window = std::make_shared<MessageWindow>();
+        case WindowType::MessagesDialog:
+            window = std::make_shared<MessagesDialog>();
             break;
 
         case WindowType::MidiDevicesDialog:

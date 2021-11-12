@@ -1,4 +1,2 @@
-+ Look for xxxx_xmidictrl.toml in the plugin profile folder if nothing is found in the aircraft folder, if no file was
-  found for the aircraft, load the default configuration
 + FAQ - MIDI Device cannot be used by two programs at the same time
 + Show error dialog if something goes wrong

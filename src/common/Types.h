@@ -54,9 +54,11 @@ const char* const PROFILES_DIRECTORY_NAME = "Profiles";
 // Menu items
 const char* const MENUITEM_ABOUT_DIALOG            = "ABOUT_DIALOG";
 const char* const MENUITEM_RELOAD_AIRCRAFT_PROFILE = "RELOAD_AIRCRAFT_PROFILE";
+const char* const MENUITEM_MESSAGES_DIALOG         = "MESSAGES_DIALOG";
 const char* const MENUITEM_MIDI_DEVICES_DIALOG     = "MIDI_DEVICES_DIALOG";
 const char* const MENUITEM_SETTINGS_DIALOG         = "SETTINGS_DIALOG";
 const char* const MENUITEM_AIRCRAFT_PROFILE_DIALOG = "AIRCRAFT_PROFILE_DIALOG";
+
 
 // Keys for the config files
 const char* const CFG_KEY_CC                = "cc";
@@ -78,6 +80,7 @@ const char* const CFG_KEY_MIDI_OUT          = "midi_out";
 const char* const CFG_KEY_NAME              = "name";
 const char* const CFG_KEY_PORT_IN           = "port_in";
 const char* const CFG_KEY_PORT_OUT          = "port_out";
+const char* const CFG_KEY_SHOW_MSG_DIALOG   = "show_message_dialog";
 const char* const CFG_KEY_TYPE              = "type";
 const char* const CFG_KEY_VALUE_ON          = "value_on";
 const char* const CFG_KEY_VALUE_OFF         = "value_off";
@@ -96,6 +99,7 @@ const char* const CFG_MAPTYPE_INTERNAL    = "int";
 // Windows Types
 const char* const WINDOW_ABOUT    = "WINDOW_ABOUT";
 const char* const WINDOW_DEVICES  = "WINDOW_DEVICES";
+const char* const WINDOW_MESSAGES = "WINDOW_MESSAGES";
 const char* const WINDOW_SETTINGS = "WINDOW_SETTINGS";
 
 
@@ -139,7 +143,7 @@ enum class MappingType {
 // Window types
 enum class WindowType {
     AboutDialog,
-    MessageWindow,
+    MessagesDialog,
     MidiDevicesDialog,
     SettingsDialog,
 };

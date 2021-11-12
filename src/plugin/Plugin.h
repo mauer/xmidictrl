@@ -56,6 +56,7 @@ public:
 
     void addMappedEvent(const MappedEvent::ptr& mappedEvent);
 
+    void showMessagesDialog();
     void showMidiDevicesDialog();
     void showSettingsDialog();
     void showAboutDialog();
@@ -64,9 +65,6 @@ private:
     void processFlightLoop(float elapsedMe, float elapsedSim, int counter);
 
     void initialiseDevices();
-
-    void showMessages();
-    void showMessageWindow();
 
     void createWindow(WindowType windowType);
 

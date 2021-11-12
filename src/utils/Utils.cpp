@@ -29,6 +29,31 @@ namespace XMidiCtrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Return the text of a message type
+ */
+std::string Utils::getMessageTypeText(MessageType messageType) {
+    switch (messageType) {
+        case MessageType::All:
+            return "All";
+
+        case MessageType::Error:
+            return "Error";
+
+        case MessageType::Warn:
+            return "Warning";
+
+        case MessageType::Info:
+            return "Information";
+
+        case MessageType::Debug:
+            return "Debug";
+    }
+
+    return std::string("Debug");
+}
+
+
+/**
  * Return the text of a log level
  */
 std::string Utils::getLogLevelText(LogLevel logLevel) {

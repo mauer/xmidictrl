@@ -39,6 +39,7 @@ public:
     typedef std::shared_ptr<MessageList> ptr;
 
     void addMessage(Message::ptr message);
+    Message::ptr message(int number);
 
     void clear();
     unsigned int size();

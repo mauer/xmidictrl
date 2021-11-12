@@ -19,8 +19,9 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // XMidiCtrl
-#include "DeviceList.h"
 #include "Logger.h"
+#include "MessagesDialog.h"
+#include "Utils.h"
 
 namespace XMidiCtrl {
 
@@ -31,78 +32,66 @@ namespace XMidiCtrl {
 /**
  * Constructor
  */
-DeviceList::DeviceList() = default;
+MessagesDialog::MessagesDialog()
+        : ImGuiWindow(1200, 700) {
+    LOG_DEBUG << "Create the messages dialog" << LOG_END
+
+    setTitle("Messages");
+}
 
 
 /**
  * Destructor
  */
-DeviceList::~DeviceList() {
-    clear();
-}
+MessagesDialog::~MessagesDialog() = default;
 
 
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Create a new midi device
+ * Create widgets
  */
-Device::ptr DeviceList::createDevice(std::string_view name, unsigned int portIn, unsigned int portOut) {
-    Device::ptr device = std::make_shared<Device>(name, portIn, portOut);
-    m_list.push_back(device);
+void MessagesDialog::createWidgets() {
+    ImGui::Text("Current Logging Level: %s", Utils::getLogLevelText(Logger::Instance().logLevel()).c_str());
+    ImGui::SameLine(ImGui::GetWindowWidth()-250);
 
-    return device;
-}
+    if (ImGui::Button("Clear Messages"))
+        Logger::Instance().messages()->clear();
 
+    ImGui::NewLine();
 
-/**
- * Open all midi connections
- */
-bool DeviceList::openConnections() {
-    bool result = true;
+    ImGui::Text("LOGGING MESSAGES");
+    ImGui::Separator();
+    ImGui::NewLine();
+    ImGui::BeginTable("tableMessages", 3, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
+    ImGui::TableSetupColumn("Message Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
+    ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
+    ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableHeadersRow();
 
-    for (auto const &device: m_list) {
-        if (device != nullptr) {
-            if (!device->openConnections())
-                result = false;
-        }
+    for (int i = Logger::Instance().messages()->size() - 1; i >= 0; i--) {
+        Message::ptr message = Logger::Instance().messages()->message(i);
+
+        if (message == nullptr)
+            continue;
+
+        ImGui::TableNextRow();
+
+        ImGui::TableNextColumn();
+        ImGui::Text("%s", message->time.c_str());
+
+        ImGui::TableNextColumn();
+        ImGui::Text("%s", Utils::getMessageTypeText(message->type).c_str());
+
+        ImGui::TableNextColumn();
+        ImGui::Text("%s", message->text.c_str());
     }
 
-    return result;
-}
-
-
-/**
- * Close all midi connections
- */
-void DeviceList::closeConnections() {
-    for (auto const &device: m_list) {
-        if (device != nullptr) {
-            device->closeConnections();
-        }
-    }
-}
-
-
-/**
- * Clear the device list
- */
-void DeviceList::clear() {
-    closeConnections();
-
-    m_list.clear();
-}
-
-
-/**
- * Return the number of devices
- */
-unsigned int DeviceList::size() {
-    return m_list.size();
+    ImGui::EndTable();
 }
 
 } // Namespace XMidiCtrl

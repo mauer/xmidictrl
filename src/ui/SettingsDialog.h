@@ -37,6 +37,7 @@ protected:
 
 private:
     LogLevel m_selectedLogLevel;
+    bool     m_showMessagesDialog;
 
     Settings::ptr m_settings;
 };

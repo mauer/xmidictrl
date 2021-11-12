@@ -77,9 +77,30 @@ void Settings::setLogLevel(const LogLevel logLevel) {
 /**
  * Return the active log level
  */
-LogLevel Settings::logLevel() {
+const LogLevel Settings::logLevel() {
     std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL, Utils::getLogLevelCode(LogLevel::Debug));
     return Utils::getLogLevelFromCode(logLevel);
+}
+
+
+/**
+ * Set if the messages dialog should be displayed in case of error
+ */
+void Settings::setShowMessagesDialog(const bool showDialog) {
+    // store it in the general settings
+    m_config[CFG_KEY_SHOW_MSG_DIALOG] = showDialog;
+
+    // save settings
+    saveSettings();
+}
+
+
+/**
+ * Return if the messages dialog should be displayed in case of error
+ */
+const bool Settings::showMessagesDialog() {
+    bool showDialog = toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+    return showDialog;
 }
 
 

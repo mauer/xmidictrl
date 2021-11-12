@@ -98,11 +98,14 @@ void SettingsDialog::createWidgets() {
         ImGui::EndCombo();
     }
 
+    ImGui::Checkbox("Show Messages Dialog in case of errors", &m_showMessagesDialog);
+
     ImGui::NewLine();
     ImGui::NewLine();
 
     if (ImGui::Button("Save Settings")) {
         m_settings->setLogLevel(m_selectedLogLevel);
+        m_settings->setShowMessagesDialog(m_showMessagesDialog);
         hide();
     }
 }

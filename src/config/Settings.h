@@ -42,7 +42,10 @@ public:
     typedef std::shared_ptr<Settings> ptr;
 
     void setLogLevel(const LogLevel logLevel);
-    LogLevel logLevel();
+    const LogLevel logLevel();
+
+    void setShowMessagesDialog(const bool showDialog);
+    const bool showMessagesDialog();
 
 private:
     void saveSettings();

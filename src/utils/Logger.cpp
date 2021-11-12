@@ -74,10 +74,18 @@ void Logger::initialise(std::string_view path) {
 
 
 /**
- * Set the active log loevel
+ * Set the active log level
  */
 void Logger::setLogLevel(LogLevel logLevel) {
     m_logLevel = logLevel;
+}
+
+
+/**
+ * Return the current log level
+ */
+const LogLevel Logger::logLevel() {
+    return m_logLevel;
 }
 
 

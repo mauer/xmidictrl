@@ -25,7 +25,7 @@ set(UI_SRC
         ${CMAKE_CURRENT_LIST_DIR}/AboutDialog.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiWindow.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MessageWindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MessagesDialog.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MidiDevicesDialog.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.cpp
         ${CMAKE_CURRENT_LIST_DIR}/XPlaneWindow.cpp

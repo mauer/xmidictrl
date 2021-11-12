@@ -18,52 +18,27 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-// XMidiCtrl
-#include "MessageWindow.h"
+#ifndef MESSAGESDIALOG_H
+#define MESSAGESDUALOG_H
 
-#include <utility>
+// Standard
+#include <memory>
+
+// XMidiCtrl
+#include "ImGuiWindow.h"
+#include "Types.h"
 
 namespace XMidiCtrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
+class MessagesDialog : public ImGuiWindow {
+public:
+    MessagesDialog();
+    ~MessagesDialog() override;
 
-/**
- * Constructor
- */
-MessageWindow::MessageWindow()
-        : XPlaneWindow(400, 580, true) {}
-
-
-/**
- * Destructor
- */
-MessageWindow::~MessageWindow() = default;
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PROTECTED
-//---------------------------------------------------------------------------------------------------------------------
-
-void MessageWindow::onDraw() {
-    // Mandatory: set the OpenGL state before drawing
-    XPLMSetGraphicsState(
-            0 /* no fog */,
-            0 /* 0 texture units */,
-            0 /* no lighting */,
-            0 /* no alpha testing */,
-            1 /* do alpha blend */,
-            1 /* do depth testing */,
-            0 /* no depth writing */
-    );
-
-    // draw a translucent box
-    int left, top, right, bottom;
-    XPLMGetWindowGeometry(windowID(), &left, &top, &right, &bottom);
-    XPLMDrawTranslucentDarkBox(left, top, right, bottom);
-}
+protected:
+    void createWidgets() override;
+};
 
 } // Namespace XMidiCtrl
+
+#endif // MESSAGESDIALOG_H
