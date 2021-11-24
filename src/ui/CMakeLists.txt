@@ -22,12 +22,13 @@ message("---- Directory: src/ui")
 
 # Add sources
 set(UI_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/AboutDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/about_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiWindow.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MessagesDialog.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MidiDevicesDialog.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/menu.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/messages_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/devices_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/settings_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/XPlaneWindow.cpp
         )
 

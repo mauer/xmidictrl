@@ -38,10 +38,10 @@
 
 // XMidiCtrl
 #include "ImGuiWindow.h"
-#include "Logger.h"
+#include "logger.h"
 #include "Version.h"
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
 
@@ -53,8 +53,8 @@ std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
 /**
  * Constructor
  */
-ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
-    XPlaneWindow(width, height, translucent)
+ImGuiWindow::ImGuiWindow(int width, int height, bool translucent)
+    : XPlaneWindow(width, height, translucent)
 {
     // font atlas for Dear ImGui
     if (!m_imGuiFontAtlas) {
@@ -67,7 +67,7 @@ ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
     // check if a font atlas was supplied
     if (m_imGuiFontAtlas) {
         m_imGuiFontAtlas->bindTexture();
-        imGuiContext =  ImGui::CreateContext(m_imGuiFontAtlas->getAtlas());
+        imGuiContext = ImGui::CreateContext(m_imGuiFontAtlas->getAtlas());
     } else
         imGuiContext = ImGui::CreateContext();
 
@@ -75,7 +75,7 @@ ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
     ImGui::SetCurrentContext(imGuiContext);
 
     // disable window rounding since the frame gets rendered by X-Plane
-    auto& style = ImGui::GetStyle();
+    auto &style = ImGui::GetStyle();
     style.WindowRounding = 0;
 
     // Disable ImGui ini-file
@@ -140,7 +140,8 @@ ImGuiWindow::ImGuiWindow(int width, int height, bool translucent) :
 /**
  * Draw the Dear ImGui window
  */
-void ImGuiWindow::onDraw() {
+void ImGuiWindow::onDraw()
+{
     if (stopped) {
         return;
     }
@@ -157,7 +158,7 @@ void ImGuiWindow::onDraw() {
 
     ImGui::SetCurrentContext(imGuiContext);
 
-    auto& io = ImGui::GetIO();
+    auto &io = ImGui::GetIO();
     bool focus = hasKeyboardFocus();
 
     if (io.WantTextInput && !focus) {
@@ -179,7 +180,8 @@ void ImGuiWindow::onDraw() {
 /**
  * Build the Dear ImGui window
  */
-void ImGuiWindow::buildWindow() {
+void ImGuiWindow::buildWindow()
+{
     ImGui::SetCurrentContext(imGuiContext);
     auto &io = ImGui::GetIO();
 
@@ -198,7 +200,9 @@ void ImGuiWindow::buildWindow() {
     ImGui::SetNextWindowSize(ImVec2(win_width, win_height), ImGuiCond_Always);
 
     // and construct the window
-    ImGui::Begin(XMIDICTRL_NAME, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(XMIDICTRL_NAME,
+                 nullptr,
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     // create custom widgets
     createWidgets();
@@ -211,7 +215,8 @@ void ImGuiWindow::buildWindow() {
 /**
  * Show the window
  */
-void ImGuiWindow::showWindow() {
+void ImGuiWindow::showWindow()
+{
     ImGui::SetCurrentContext(imGuiContext);
     auto &io = ImGui::GetIO();
 
@@ -241,22 +246,29 @@ void ImGuiWindow::showWindow() {
     glTranslatef(static_cast<GLfloat>(mLeft), static_cast<GLfloat>(-mTop), 0.0f);
 
     // Render command lists
-    for (int n = 0; n < drawData->CmdListsCount; n++)
-    {
-        const ImDrawList* cmd_list = drawData->CmdLists[n];
-        const ImDrawVert* vtx_buffer = cmd_list->VtxBuffer.Data;
-        const ImDrawIdx* idx_buffer = cmd_list->IdxBuffer.Data;
-        glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, pos)));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, uv)));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, col)));
+    for (int n = 0; n < drawData->CmdListsCount; n++) {
+        const ImDrawList *cmd_list = drawData->CmdLists[n];
+        const ImDrawVert *vtx_buffer = cmd_list->VtxBuffer.Data;
+        const ImDrawIdx *idx_buffer = cmd_list->IdxBuffer.Data;
+        glVertexPointer(2,
+                        GL_FLOAT,
+                        sizeof(ImDrawVert),
+                        (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, pos)));
+        glTexCoordPointer(2,
+                          GL_FLOAT,
+                          sizeof(ImDrawVert),
+                          (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, uv)));
+        glColorPointer(4,
+                       GL_UNSIGNED_BYTE,
+                       sizeof(ImDrawVert),
+                       (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, col)));
 
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
-        {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+            const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
             if (pcmd->UserCallback) {
                 pcmd->UserCallback(cmd_list, pcmd);
             } else {
-                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+                glBindTexture(GL_TEXTURE_2D, (GLuint) (intptr_t) pcmd->TextureId);
 
                 // Scissors work in viewport space - must translate the coordinates from ImGui -> Boxels, then Boxels -> Native.
                 //FIXME: it must be possible to apply the scale+transform manually to the projection matrix so we don't need to doublestep.
@@ -266,8 +278,11 @@ void ImGuiWindow::showWindow() {
                 int nTop, nLeft, nRight, nBottom;
                 boxelsToNative(bLeft, bTop, nLeft, nTop);
                 boxelsToNative(bRight, bBottom, nRight, nBottom);
-                glScissor(nLeft, nBottom, nRight-nLeft, nTop-nBottom);
-                glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer);
+                glScissor(nLeft, nBottom, nRight - nLeft, nTop - nBottom);
+                glDrawElements(GL_TRIANGLES,
+                               (GLsizei) pcmd->ElemCount,
+                               sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT,
+                               idx_buffer);
             }
             idx_buffer += pcmd->ElemCount;
         }
@@ -285,9 +300,10 @@ void ImGuiWindow::showWindow() {
 }
 
 
-bool ImGuiWindow::onClick(int x, int y, XPLMMouseStatus status) {
+bool ImGuiWindow::onClick(int x, int y, XPLMMouseStatus status)
+{
     ImGui::SetCurrentContext(imGuiContext);
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
     float outX, outY;
     translateToImguiSpace(x, y, outX, outY);
@@ -295,21 +311,22 @@ bool ImGuiWindow::onClick(int x, int y, XPLMMouseStatus status) {
 
     switch (status) {
         case xplm_MouseDown:
-            case xplm_MouseDrag:
-                io.MouseDown[0] = true;
-                break;
-                case xplm_MouseUp:
-                    io.MouseDown[0] = false;
-                    break;
+        case xplm_MouseDrag:
+            io.MouseDown[0] = true;
+            break;
+        case xplm_MouseUp:
+            io.MouseDown[0] = false;
+            break;
     }
 
     return XPlaneWindow::onClick(x, y, status);
 }
 
 
-bool ImGuiWindow::onMouseWheel(int x, int y, int wheel, int clicks) {
+bool ImGuiWindow::onMouseWheel(int x, int y, int wheel, int clicks)
+{
     ImGui::SetCurrentContext(imGuiContext);
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
     float outX, outY;
     translateToImguiSpace(x, y, outX, outY);
@@ -319,17 +336,19 @@ bool ImGuiWindow::onMouseWheel(int x, int y, int wheel, int clicks) {
         case 0:
             io.MouseWheel = static_cast<float>(clicks);
             break;
-            case 1:
-                io.MouseWheelH = static_cast<float>(clicks);
-                break;
+        case 1:
+            io.MouseWheelH = static_cast<float>(clicks);
+            break;
     }
 
     return XPlaneWindow::onMouseWheel(x, y, wheel, clicks);
 }
 
-XPLMCursorStatus ImGuiWindow::onCursor(int x, int y) {
+
+XPLMCursorStatus ImGuiWindow::onCursor(int x, int y)
+{
     ImGui::SetCurrentContext(imGuiContext);
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
 
     float outX, outY;
     translateToImguiSpace(x, y, outX, outY);
@@ -338,13 +357,15 @@ XPLMCursorStatus ImGuiWindow::onCursor(int x, int y) {
     return xplm_CursorDefault;
 }
 
-void ImGuiWindow::onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus) {
+
+void ImGuiWindow::onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus)
+{
     if (losingFocus) {
         return;
     }
 
     ImGui::SetCurrentContext(imGuiContext);
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     if (io.WantTextInput) {
         // If you press and hold a key, the flags will actually be down, 0, 0, ..., up
         // So the key always has to be considered as pressed unless the up flag is set
@@ -355,10 +376,10 @@ void ImGuiWindow::onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losi
         io.KeyCtrl = (flags & xplm_ControlFlag) == xplm_ControlFlag;
 
         if ((flags & xplm_UpFlag) != xplm_UpFlag
-        && !io.KeyCtrl
-        && !io.KeyAlt
-        && std::isprint(key)) {
-            char smallStr[] = { key, 0 };
+            && !io.KeyCtrl
+            && !io.KeyAlt
+            && std::isprint(key)) {
+            char smallStr[] = {key, 0};
             io.AddInputCharactersUTF8(smallStr);
         }
     }
@@ -368,27 +389,33 @@ void ImGuiWindow::onKey(char key, XPLMKeyFlags flags, char virtualKey, bool losi
     XPlaneWindow::onKey(key, flags, virtualKey, losingFocus);
 }
 
-void ImGuiWindow::translateImguiToBoxel(float inX, float inY, int& outX, int& outY) {
-    outX = (int)(mLeft + inX);
-    outY = (int)(mTop - inY);
+
+void ImGuiWindow::translateImguiToBoxel(float inX, float inY, int &outX, int &outY)
+{
+    outX = (int) (mLeft + inX);
+    outY = (int) (mTop - inY);
 }
 
-void ImGuiWindow::translateToImguiSpace(int inX, int inY, float& outX, float& outY) {
+
+void ImGuiWindow::translateToImguiSpace(int inX, int inY, float &outX, float &outY)
+{
     outX = static_cast<float>(inX - mLeft);
-    if (outX < 0.0f || outX > (float)(mRight - mLeft)) {
+    if (outX < 0.0f || outX > (float) (mRight - mLeft)) {
         outX = -FLT_MAX;
         outY = -FLT_MAX;
         return;
     }
     outY = static_cast<float>(mTop - inY);
-    if (outY < 0.0f || outY > (float)(mTop - mBottom)) {
+    if (outY < 0.0f || outY > (float) (mTop - mBottom)) {
         outX = -FLT_MAX;
         outY = -FLT_MAX;
         return;
     }
 }
 
-ImGuiWindow::~ImGuiWindow() {
+
+ImGuiWindow::~ImGuiWindow()
+{
     ImGui::DestroyContext(imGuiContext);
     glDeleteTextures(1, &m_fontTextureId);
 

@@ -51,7 +51,7 @@
 #include "ImGuiFontAtlas.h"
 #include "XPlaneWindow.h"
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 class ImGuiWindow: public XPlaneWindow {
 public:

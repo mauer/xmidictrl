@@ -22,7 +22,8 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 0.04 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+project(XMidiCtrl VERSION 0.50 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
 message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -31,7 +32,7 @@ message("-----------------------------------------------")
 # Create version file with project name and version numbers
 message("-- Creating version file")
 configure_file(
-        "${PROJECT_SOURCE_DIR}/Version.h.in"
+        "${PROJECT_SOURCE_DIR}/version.h.in"
         "${PROJECT_BINARY_DIR}/Version.h"
 )
 

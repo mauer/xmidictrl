@@ -46,7 +46,7 @@
 
 #include <imgui.h>
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 /** Construct an empty font atlas we can use later
  *

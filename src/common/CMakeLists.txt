@@ -20,5 +20,14 @@
 
 message("---- Directory: src/common")
 
+# Add sources
+set(COMMON_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/config.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+        )
+
+# Add sources to target
+target_sources(${PROJECT_NAME} PRIVATE ${COMMON_SRC})
+
 # Add directory to includes
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})

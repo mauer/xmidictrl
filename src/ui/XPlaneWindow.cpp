@@ -32,10 +32,10 @@
 #include <XPLMDisplay.h>
 
 // XMidiCtrl
-#include "Logger.h"
+#include "logger.h"
 #include "XPlaneWindow.h"
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 XPLMDataRef XPlaneWindow::m_vrEnabledRef = nullptr;
 XPLMDataRef XPlaneWindow::m_modelviewMatrixRef = nullptr;

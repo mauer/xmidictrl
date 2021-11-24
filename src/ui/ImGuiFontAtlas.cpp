@@ -35,7 +35,7 @@
 #include "ImGuiFontAtlas.h"
 #include <XPLMGraphics.h>
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 ImGuiFontAtlas::ImGuiFontAtlas():
         mOurAtlas(nullptr),

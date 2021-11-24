@@ -1,6 +1,6 @@
-# Configuration of XMidiCtrl
+# Configuration of xmidictrl
 
-XMidiCtrl uses configuration files in the [TOML](https://toml.io/en/) format. I have chosen this format, as it is easy 
+xmidictrl uses configuration files in the [TOML](https://toml.io/en/) format. I have chosen this format, as it is easy 
 to read and offers comments in the configuration.
 
 ## TOML Syntax
@@ -14,7 +14,7 @@ Comments are easily included by putting a hash symbol before the text:
 
 ```
 # This is the title of my configuration
-title = "My XMidiCtrl configuration for a Cessna 172"
+title = "My xmidictrl configuration for a Cessna 172"
 
 version = "1.0" # current version
 ```

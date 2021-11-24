@@ -22,9 +22,9 @@ message("---- Directory: src/xplane")
 
 # Set sources
 set(XPLANE_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/Commands.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Data.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/XPlane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/commands.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/data.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane.cpp
         )
 
 # Add sources to target

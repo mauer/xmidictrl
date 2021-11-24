@@ -23,20 +23,20 @@
 #include "XPLMPlugin.h"
 
 // XMidiCtrl
-#include "Config.h"
-#include "Plugin.h"
+#include "plugin.h"
 
 #ifndef XPLM300
-	#error This is made to be compiled against the X-Plane SDK Version 300
+    #error This is made to be compiled against the X-Plane SDK Version 300
 #endif
 
 
 /*
  *  The XPluginStart function is called by X-Plane right after the plugin's DLL is loaded.
  */
-PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
+PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc)
+{
     strcpy(outName, XMIDICTRL_NAME);
-    strcpy(outSig,  XMIDICTRL_NAME);
+    strcpy(outSig, XMIDICTRL_SIGNATURE);
     strcpy(outDesc, XMIDICTRL_DESCRIPTION);
 
     XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
@@ -49,17 +49,18 @@ PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc) {
  *  The XPluginStop function is called by X-Plane right before the DLL is unloaded.
  *  The plugin will be disabled (if it was enabled) before this routine is called.
  */
-PLUGIN_API void XPluginStop(void) {
-}
+PLUGIN_API void XPluginStop(void)
+{}
 
 
 /*
  *  The XPluginEnable function is called by X-Plane right before the plugin is enabled.
  *  Until the plugin is enabled, it will not receive any other callbacks and its UI will be hidden and/or disabled.
  */
-PLUGIN_API int XPluginEnable(void) {
-    XMidiCtrl::Plugin::Instance().enablePlugin();
-        
+PLUGIN_API int XPluginEnable(void)
+{
+    xmidictrl::plugin::instance().enable();
+
     return 1;
 }
 
@@ -68,22 +69,24 @@ PLUGIN_API int XPluginEnable(void) {
  *  The XPluginDisable function is called by X-Plane right before the plugin is disabled. When the plugin is disabled,
  *  it will not receive any other callbacks and its UI will be hidden and/or disabled.
  */
-PLUGIN_API void XPluginDisable(void) {
-    XMidiCtrl::Plugin::Instance().disablePlugin();
+PLUGIN_API void XPluginDisable(void)
+{
+    xmidictrl::plugin::instance().disable();
 }
 
 
 /**
  * Process messages from X-Plane
  */
-PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void* inParam) { 
-    switch(inMsg) {
+PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void *inParam)
+{
+    switch (inMsg) {
         case XPLM_MSG_PLANE_LOADED:
-            XMidiCtrl::Plugin::Instance().loadAircraftProfile();
+            xmidictrl::plugin::instance().load_profile();
             break;
 
         case XPLM_MSG_PLANE_UNLOADED:
-            XMidiCtrl::Plugin::Instance().unloadAircraftProfile();
+            xmidictrl::plugin::instance().close_profile();
             break;
 
         default:

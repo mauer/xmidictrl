@@ -47,7 +47,7 @@
 #include <XPLMDisplay.h>
 #include <XPLMGraphics.h>
 
-namespace XMidiCtrl {
+namespace xmidictrl {
 
 class XPlaneWindow {
 public:

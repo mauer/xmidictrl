@@ -20,6 +20,8 @@
 
 message("-- Configuring build scripts for ${PROJECT_NAME}")
 
+set(CMAKE_CXX_STANDARD 20)
+
 # RtMidi
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(RTMIDI REQUIRED rtmidi)
@@ -28,16 +30,16 @@ include_directories(${RTMIDI_INCLUDEDIR})
 include_directories(${IMGUI_INCLUDEDIR})
 
 # Build shared library
-add_library(${PROJECT_NAME} SHARED utils/Message.h utils/Utils.cpp utils/Utils.h)
+add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
 include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/map_in/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/map_out/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/mapping/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/config/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/midi/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
 
 message("---- Directory: src")
