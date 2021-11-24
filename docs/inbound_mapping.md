@@ -71,8 +71,8 @@ aircraft. Normally, defining up and down should be sufficient
 |-------------------|--------------------------------------------------------------------------------------------|
 | command_up        | Command which will be executed when the knob is turn to the right                          |
 | command_down      | Command which will be executed when the knob is turn to the left                           |
-| command_fast_up   | Command which will be executed when the knob is turn quite fast to the right               |
-| command_fast_down | Command which will be executed when the knob is turn quite fast to the left                |
+| command_fast_up   | Command which will be executed when the knob is turn quite fast to the right (optional)    |
+| command_fast_down | Command which will be executed when the knob is turn quite fast to the left (optional)     |
 
 **Examples:**
 ```
@@ -81,6 +81,26 @@ aircraft. Normally, defining up and down should be sufficient
 { cc = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
 ```
 *The first example maps the altimeter setting to a knob. The second example maps the heading knob and uses two custom 
+Lua commands for a faster heading up and down*
+
+###
+### Mapping: Slider
+I have to admit that the supported mapping for sliders is still rather basic. I will try to improve that with some
+future version. Right now you can map three commands to a slider, which will be executed depending on its position.
+
+| Variable          | Description                                                                                |
+|-------------------|--------------------------------------------------------------------------------------------|
+| command_up        | Command which will be executed when the slider is right at the top                         |
+| command_middle    | Command which will be executed when the slider is in the middle (optional)                 |
+| command_down      | Command which will be executed when the slider is right at the bottom                      |
+
+**Examples:**
+```
+{ cc = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
+
+{ cc = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
+```
+*The first example maps the altimeter setting to a knob. The second example maps the heading knob and uses two custom
 Lua commands for a faster heading up and down*
 
 ###

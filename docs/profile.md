@@ -1,7 +1,9 @@
 # Aircraft Profiles
 
 All settings for an aircraft are stored in a profile file. This allows you to have several configuration for different
-aircraft. It is also possible to use a common profile, which will be used if no aircraft profile has been found.
+aircraft. It is also possible to use a common profile, which will be used if no aircraft profile has been found. The 
+aircraft profile uses the TOML language and holds information about all MIDI devices to be used and the mappings of the 
+encoders and buttons.
 
 Once the aircraft has been loaded in X-Plane, the plugin will search the following locations in this order:
 
@@ -20,12 +22,12 @@ directory:
 In order to allow individual profiles for the same aircraft from different developers, the plugin will search for a
 filename that includes the developer name as well as the ICAO code for the current aircraft.
 
-####Definition:
+**Definition:**
 ```
 <Developer> _ <ICAO> _ XMidiCtrl.toml
 ```
 
-####Example:
+**Example:**
 ```
 ToLiss_A321_XMidiCtrl.toml
 ```
@@ -33,12 +35,12 @@ ToLiss_A321_XMidiCtrl.toml
 ### 2.2 Profiles Directory - ICAO
 If the search was not successful, it will search again, but this time without the name of the developer.
 
-####Definition:
+**Definition:**
 ```
 <ICAO> _ XMidiCtrl.toml
 ```
 
-####Example:
+**Example:**
 ```
 A321_XMidiCtrl.toml
 ```
