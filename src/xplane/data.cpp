@@ -114,6 +114,50 @@ bool data::read(std::string_view name, std::string &value)
 
 
 /**
+ * Read a dataref as float array
+ */
+bool data::read(std::string_view name, std::vector<float> &values)
+{
+    data_item *item = retrieve_data(name);
+    values = {};
+
+    if (item == nullptr)
+        return false;
+
+    if (item->type & xplmType_FloatArray) {
+        values = read_float_array(item);
+        return true;
+
+    } else {
+        LOG_ERROR << "Could not read dataref '" << name.data() << "' as 'FloatArray'" << LOG_END
+        return false;
+    }
+}
+
+
+/**
+ * Read a dataref as integer array
+ */
+bool data::read(std::string_view name, std::vector<int> &values)
+{
+    data_item *item = retrieve_data(name);
+    values = {};
+
+    if (item == nullptr)
+        return false;
+
+    if (item->type & xplmType_IntArray) {
+        values = read_int_array(item);
+        return true;
+
+    } else {
+        LOG_ERROR << "Could not read dataref '" << name.data() << "' as 'IntArray'" << LOG_END
+        return false;
+    }
+}
+
+
+/**
  * Toggle a dataref between on and off
  */
 bool data::toggle(std::string_view name, std::string_view value_on, std::string_view value_off)
@@ -171,6 +215,7 @@ data_item *data::retrieve_data(std::string_view name)
         std::unique_ptr<data_item> item = std::make_unique<data_item>();
 
         item->dataref = XPLMFindDataRef(name.data());
+        item->name = name;
         item->type = xplmType_Unknown;
 
         if (item->dataref == nullptr) {
@@ -233,6 +278,36 @@ std::string data::read_byte(const data_item *item)
     XPLMGetDatab(item->dataref, &tmpValue[0], 0, tmpValue.size());
 
     return {tmpValue.data(), strnlen(tmpValue.data(), tmpValue.size())};
+}
+
+
+/**
+ * Read a float array dataref
+ */
+std::vector<float> data::read_float_array(const data_item *item)
+{
+    std::vector<float> values;
+
+    int size = XPLMGetDatavf(item->dataref, nullptr, 0, 0);
+
+    values.resize(size);
+    XPLMGetDatavf(item->dataref, &values[0], 0, size);
+
+    return values;
+}
+
+
+/**
+ * Read an integer array dataref
+ */
+std::vector<int> data::read_int_array(const data_item *item)
+{
+    std::vector<int> values;
+
+    values.resize(XPLMGetDatavi(item->dataref, nullptr, 0, 0));
+    XPLMGetDatavi(item->dataref, &values[0], 0, values.size());
+
+    return values;
 }
 
 

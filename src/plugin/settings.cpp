@@ -22,6 +22,7 @@
 
 // Standard
 #include <filesystem>
+#include <utility>
 
 // XMidiCtrl
 #include "logger.h"
@@ -36,13 +37,12 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(xplane::ptr xplane)
-    : config(xplane)
+settings::settings(std::shared_ptr<xplane> xp)
+    : config(std::move(xp))
 {
     // build name for general settings file
-    m_filename = m_xp->preferences_path().data() + std::string(XMIDICTRL_NAME) + std::string(SETTINGS_FILE_SUFFIX);
 
-    if (!load(m_filename))
+    if (!load(get_settings_filename()))
         LOG_WARN << " --> Will use default settings" << LOG_END
 }
 
@@ -62,59 +62,65 @@ settings::~settings() = default;
 /**
  * Set the active log level
  */
-void settings::set_loglevel(log_level log_level)
+void settings::set_log_level(log_level level)
 {
-    LOG_ALL << "Set log level to '" << utils::get_log_level_Text(log_level) << "'" << LOG_END
-
-    // set log level in logging instance
-    logger::instance().set_log_level(log_level);
-
-    // store it in the general settings
-    m_config[CFG_KEY_LOG_LEVEL] = utils::get_log_level_code(log_level);
-
-    // save settings
-    save_settings();
+    LOG_ALL << "Set log level to '" << utils::log_level_as_text(level) << "'" << LOG_END
+    m_config[CFG_KEY_LOG_LEVEL] = utils::log_level_as_code(level);
 }
 
 
 /**
  * Return the active log level
  */
-log_level settings::loglevel()
+log_level settings::get_log_level()
 {
     std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
-                                                      utils::get_log_level_code(log_level::debug));
-    return utils::get_log_level_from_code(logLevel);
+                                                      utils::log_level_as_code(log_level::debug));
+    return utils::log_level_from_code(logLevel);
+}
+
+
+/**
+ * Set if midi logging is active
+ */
+void settings::set_log_midi(bool enabled)
+{
+    m_config[CFG_KEY_LOG_MIDI] = enabled;
+}
+
+
+/**
+ * Return if midi logging is active
+ */
+bool settings::get_log_midi()
+{
+    return toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
 }
 
 
 /**
  * Set if the messages dialog should be displayed in case of error
  */
-void settings::set_show_messages(const bool show_messages)
+void settings::set_show_messages(const bool enabled)
 {
-    // store it in the general settings
-    m_config[CFG_KEY_SHOW_MSG_DIALOG] = show_messages;
+    if (m_config[CFG_KEY_SHOW_MSG_DIALOG].as_boolean() != enabled) {
+        // store it in the general settings
+        m_config[CFG_KEY_SHOW_MSG_DIALOG] = enabled;
 
-    // save settings
-    save_settings();
+        // save settings
+        save_settings();
+    }
 }
 
 
 /**
  * Return if the messages dialog should be displayed in case of error
  */
-bool settings::show_messages()
+bool settings::get_show_messages()
 {
     return toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
 }
 
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
-//---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Save the current settings
@@ -122,8 +128,9 @@ bool settings::show_messages()
 void settings::save_settings()
 {
     std::ofstream stream;
+    std::string filename = get_settings_filename();
 
-    if (m_filename.empty()) {
+    if (filename.empty()) {
         LOG_ERROR << "Could not determine file name for general settings" << LOG_END
         return;
     }
@@ -140,10 +147,10 @@ void settings::save_settings()
         }
     }
 
-    stream.open(m_filename, std::ios_base::out | std::ios_base::trunc);
+    stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
     if (!stream.is_open()) {
-        LOG_ERROR << "Could not save general settings file '" << m_filename << "'" << LOG_END
+        LOG_ERROR << "Could not save general settings file '" << filename << "'" << LOG_END
         return;
     }
 
@@ -151,4 +158,18 @@ void settings::save_settings()
     stream.close();
 }
 
-} // Namespace XMidiCtrl
+
+/**
+ * Returns the file name for the general settings
+ */
+std::string settings::get_settings_filename()
+{
+    std::string filename = m_xp->preferences_path().data() + std::string(XMIDICTRL_NAME) +
+                           std::string(SETTINGS_FILE_SUFFIX);
+
+    return filename;
+}
+
+
+
+} // Namespace xmidictrl

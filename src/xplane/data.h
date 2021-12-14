@@ -24,6 +24,7 @@
 // Standard
 #include <map>
 #include <memory>
+#include <vector>
 
 // X-Plane SDK
 #include "XPLMDataAccess.h"
@@ -35,24 +36,30 @@ namespace xmidictrl {
 
 class data {
 public:
-	data() = default;
+    data() = default;
     ~data();
 
     bool read(std::string_view name, std::string &value);
+    bool read(std::string_view name, std::vector<float> &values);
+    bool read(std::string_view name, std::vector<int> &values);
+
     bool toggle(std::string_view name, std::string_view value_on, std::string_view value_off);
 
 private:
     data_item *retrieve_data(std::string_view name);
 
-    int read_int(const data_item *item);
-    float read_float(const data_item *item);
-    double read_double(const data_item *item);
-    std::string read_byte(const data_item *item);
+    static int read_int(const data_item *item);
+    static float read_float(const data_item *item);
+    static double read_double(const data_item *item);
+    static std::string read_byte(const data_item *item);
 
-    void toggle_int(const data_item *item, std::string_view value_on, std::string_view value_off);
-    void toggle_float(const data_item *item, std::string_view value_on, std::string_view value_off);
-    void toggle_double(const data_item *item, std::string_view value_on, std::string_view value_off);
-    void toggle_byte(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static std::vector<float> read_float_array(const data_item *item);
+    static std::vector<int> read_int_array(const data_item *item);
+
+    static void toggle_int(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static void toggle_float(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static void toggle_double(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static void toggle_byte(const data_item *item, std::string_view value_on, std::string_view value_off);
 
     std::map<std::string, std::unique_ptr<data_item>> m_data_cache;
 };

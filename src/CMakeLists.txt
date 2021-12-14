@@ -36,11 +36,8 @@ add_library(${PROJECT_NAME} SHARED)
 include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/map_in/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/map_out/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
 
 message("---- Directory: src")
 

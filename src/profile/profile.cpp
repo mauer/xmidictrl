@@ -200,7 +200,7 @@ void profile::create_device_list()
 
             try {
                 // name
-                name = utils::read_config_parameter(settings_dev, CFG_KEY_NAME, false);
+                name = utils::read_string_parameter(settings_dev, CFG_KEY_NAME, false);
 
                 if (name.empty()) {
                     name = "<undefined>";
@@ -208,23 +208,17 @@ void profile::create_device_list()
                 }
 
                 // port in
-                if (settings_dev.contains(CFG_KEY_PORT_IN)) {
-                    port_in = static_cast<unsigned int>(settings_dev[CFG_KEY_PORT_IN].as_integer());
-                } else {
-                    LOG_ERROR << "Device " << dev_no << " :: Parameter '" << CFG_KEY_PORT_IN << "' is missing"
-                              << LOG_END
+                    port_in = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_IN));
 
-                    m_errors_found = true;
-                    continue;
-                }
+                    if (port_in < 0) {
+                        m_errors_found = true;
+                        continue;
+                    }
 
                 // port out
-                if (settings_dev.contains(CFG_KEY_PORT_OUT)) {
-                    port_out = static_cast<unsigned int>(settings_dev[CFG_KEY_PORT_OUT].as_integer());
-                } else {
-                    LOG_ERROR << "Device " << dev_no << " :: Parameter '" << CFG_KEY_PORT_OUT << "' is missing"
-                              << LOG_END
+                port_out = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_OUT));
 
+                if (port_out < 0) {
                     m_errors_found = true;
                     continue;
                 }
@@ -285,36 +279,36 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, std::shar
         LOG_DEBUG << "Device " << dev_no << " :: Read settings for mapping " << map_no << LOG_END
 
         try {
-            mapping_type type = read_mapping_type(settings[map_no]);
+            map_type type = read_mapping_type(settings[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
-                case mapping_type::command:
-                    mapping = std::make_shared<map_in_cmd>(m_xp, settings[map_no]);
+                case map_type::command:
+                    mapping = std::make_shared<map_in_cmd>(m_xp);
                     break;
 
-                case mapping_type::dataref:
-                    mapping = std::make_shared<map_in_drf>(m_xp, settings[map_no]);
+                case map_type::dataref:
+                    mapping = std::make_shared<map_in_drf>(m_xp);
                     break;
 
-                case mapping_type::slider:
-                    mapping = std::make_shared<map_in_sld>(m_xp, settings[map_no]);
+                case map_type::slider:
+                    mapping = std::make_shared<map_in_sld>(m_xp);
                     break;
 
-                case mapping_type::push_pull:
-                    mapping = std::make_shared<map_in_pnp>(m_xp, settings[map_no]);
+                case map_type::push_pull:
+                    mapping = std::make_shared<map_in_pnp>(m_xp);
                     break;
 
-                case mapping_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(m_xp, settings[map_no]);
+                case map_type::encoder:
+                    mapping = std::make_shared<map_in_enc>(m_xp);
                     break;
 
-                case mapping_type::internal:
+                case map_type::internal:
                     LOG_WARN << "Device " << dev_no << " :: Mapping " << map_no
                              << " :: Mapping type 'int' is currently unsupported" << LOG_END
                     break;
 
-                case mapping_type::none:
+                case map_type::none:
                     LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Invalid mapping type"
                               << LOG_END
 
@@ -328,6 +322,9 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, std::shar
                 m_errors_found = true;
                 continue;
             }
+
+            // read the settings and check if everything we need was defined
+            mapping->read_config(settings[map_no]);
 
             if (mapping->check())
                 device->add_inbound_map(mapping);
@@ -361,16 +358,16 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, std::sha
         LOG_DEBUG << "Device " << dev_no << " :: Mapping " << map_no << " :: Reading config" << LOG_END
 
         try {
-            mapping_type type = read_mapping_type(settings[map_no]);
+            map_type type = read_mapping_type(settings[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
 
-                case mapping_type::dataref:
-                    mapping = std::make_shared<map_out_drf>(m_xp, settings[map_no]);
+                case map_type::dataref:
+                    mapping = std::make_shared<map_out_drf>(m_xp);
                     break;
 
-                case mapping_type::internal:
+                case map_type::internal:
                     LOG_WARN << "Device " << dev_no << " :: Mapping " << map_no
                              << " :: Mapping type 'int' is currently unsupported" << LOG_END
                     break;
@@ -389,6 +386,9 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, std::sha
                 m_errors_found = true;
                 continue;
             }
+
+            // read the settings and check if everything we need was defined
+            mapping->read_config(settings[map_no]);
 
             if (mapping->check())
                 device->add_outbound_map(mapping);
@@ -411,22 +411,22 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, std::sha
 /**
  * Translate a type string to an enum value
  */
-mapping_type profile::translateMapTypeStr(std::string_view typeStr)
+map_type profile::translateMapTypeStr(std::string_view typeStr)
 {
-    mapping_type mapType = mapping_type::none;
+    map_type mapType = map_type::none;
 
     if (typeStr == CFG_MAPTYPE_COMMAND)
-        mapType = mapping_type::command;
+        mapType = map_type::command;
     else if (typeStr == CFG_MAPTYPE_SLIDER)
-        mapType = mapping_type::slider;
+        mapType = map_type::slider;
     else if (typeStr == CFG_MAPTYPE_DATAREF)
-        mapType = mapping_type::dataref;
+        mapType = map_type::dataref;
     else if (typeStr == CFG_MAPTYPE_PUSH_PULL)
-        mapType = mapping_type::push_pull;
+        mapType = map_type::push_pull;
     else if (typeStr == CFG_MAPTYPE_ENCODER)
-        mapType = mapping_type::encoder;
+        mapType = map_type::encoder;
     else if (typeStr == CFG_MAPTYPE_INTERNAL)
-        mapType = mapping_type::internal;
+        mapType = map_type::internal;
 
     return mapType;
 }
@@ -435,9 +435,9 @@ mapping_type profile::translateMapTypeStr(std::string_view typeStr)
 /**
  * Read the mapping type
  */
-mapping_type profile::read_mapping_type(toml::value &settings)
+map_type profile::read_mapping_type(toml::value &settings)
 {
-    mapping_type type = mapping_type::none;
+    map_type type = map_type::none;
 
     try {
         // read type

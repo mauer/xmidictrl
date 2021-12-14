@@ -18,10 +18,11 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef TYPES_H
+#define TYPES_H
 
 // Standard
+#include <chrono>
 #include <map>
 #include <string>
 
@@ -31,8 +32,14 @@ namespace xmidictrl {
 //   CONSTANTS
 //---------------------------------------------------------------------------------------------------------------------
 
+// Colour for Values im ImGui
+#define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
+
 // Interval of flight loop
 const int FLIGHTLOOP_INTERVAL(-1.0);
+
+// Offset for midi channel status
+const int OFFSET_MIDI_CHANNEL_STATUS(175);
 
 // Name of the aircraft profile file
 const char *const FILENAME_PROFILE = "XMidiCtrl.toml";
@@ -57,6 +64,7 @@ const char *const MENUITEM_AIRCRAFT_PROFILE_DIALOG = "AIRCRAFT_PROFILE_DIALOG";
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";
 const char *const CFG_KEY_CC_DEPRECATED = "CC";
+const char *const CFG_KEY_CH = "ch";
 const char *const CFG_KEY_COMMAND = "command";
 const char *const CFG_KEY_COMMAND_DOWN = "command_down";
 const char *const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
@@ -68,6 +76,7 @@ const char *const CFG_KEY_COMMAND_UP = "command_up";
 const char *const CFG_KEY_DATAREF = "dataref";
 const char *const CFG_KEY_DEVICE = "device";
 const char *const CFG_KEY_LOG_LEVEL = "log_level";
+const char *const CFG_KEY_LOG_MIDI = "get_log_midi";
 const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
@@ -101,6 +110,9 @@ const char *const WINDOW_SETTINGS = "WINDOW_SETTINGS";
 //   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
 
+// time point
+using time_point = std::chrono::time_point<std::chrono::system_clock>;
+
 // Log levels
 enum class log_level {
     error = 1,
@@ -110,7 +122,7 @@ enum class log_level {
 };
 
 // Message types
-enum class message_type {
+enum class text_msg_type {
     all = 0,
     error = 1,
     warn = 2,
@@ -118,8 +130,20 @@ enum class message_type {
     debug = 4
 };
 
+// midi type
+enum class midi_type {
+    inbound,
+    outbound
+};
+
+// Midi velocity codes
+enum class midi_velocity {
+    key_released = 0,
+    key_pressed = 127
+};
+
 // Midi mapping types
-enum class mapping_type {
+enum class map_type {
     none,
     command,
     dataref,
@@ -129,27 +153,15 @@ enum class mapping_type {
     slider
 };
 
-// Midi status codes
-enum class midi_status {
-    note_begin = 154,
-    note_end = 138,
-    control_change = 186
-};
-
-// Midi velocity codes
-enum class midi_velocity {
-    key_released = 0,
-    key_pressed = 127
-};
-
 // Window types
-enum class WindowType {
-    AboutDialog,
-    MessagesDialog,
-    MidiDevicesDialog,
-    SettingsDialog,
+enum class window_type {
+    about_window,
+    messages_window,
+    devices_window,
+    profile_window,
+    settings_window,
 };
 
 } // Namespace xmidictrl
 
-#endif // _TYPES_H_
+#endif // TYPES_H

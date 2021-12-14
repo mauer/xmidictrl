@@ -20,6 +20,9 @@
 
 #include "utils.h"
 
+// Standard
+#include <ctime>
+
 // XMidiCtrl
 #include "logger.h"
 
@@ -30,9 +33,9 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read the value of a parameter
+ * Read the value of a string parameter
  */
-std::string utils::read_config_parameter(toml::value &settings, std::string_view parameter, bool mandatory)
+std::string utils::read_string_parameter(toml::value &settings, std::string_view parameter, bool mandatory)
 {
     std::string value;
 
@@ -65,24 +68,59 @@ std::string utils::read_config_parameter(toml::value &settings, std::string_view
 
 
 /**
- * Return the text of a message type
+ * Read the value of an integer
  */
-std::string utils::get_message_type_text(message_type type)
+int utils::read_int_parameter(toml::value &settings, std::string_view parameter, bool mandatory)
+{
+    int value = -1;
+
+    if (parameter.empty()) {
+        LOG_ERROR << "Internal error (map::read_parameter --> parameter is empty" << LOG_END
+        return value;
+    }
+
+    try {
+        // read dataref
+        if (settings.contains(parameter.data())) {
+            value = settings[parameter.data()].as_integer();
+            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << parameter << "' = '"
+                      << value << "'" << LOG_END
+        } else {
+            if (mandatory) {
+                LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str()
+                          << LOG_END
+                LOG_ERROR << " --> Parameter '" << parameter << "' not found" << LOG_END
+            }
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return value;
+}
+
+
+/**
+ * Return the text of a text message type
+ */
+std::string utils::text_msg_type_as_text(text_msg_type type)
 {
     switch (type) {
-        case message_type::all:
+        case text_msg_type::all:
             return "All";
 
-        case message_type::error:
+        case text_msg_type::error:
             return "Error";
 
-        case message_type::warn:
+        case text_msg_type::warn:
             return "Warning";
 
-        case message_type::info:
+        case text_msg_type::info:
             return "Information";
 
-        case message_type::debug:
+        case text_msg_type::debug:
             return "Debug";
     }
 
@@ -91,9 +129,26 @@ std::string utils::get_message_type_text(message_type type)
 
 
 /**
+ * Return the text of a midi message type
+ */
+std::string utils::midi_msg_type_as_text(midi_type type)
+{
+    switch (type) {
+        case midi_type::inbound:
+            return "Inbound";
+
+        case midi_type::outbound:
+            return "Outbound";
+    }
+
+    return "Unknown";
+}
+
+
+/**
  * Return the text of a log level
  */
-std::string utils::get_log_level_Text(log_level level)
+std::string utils::log_level_as_text(log_level level)
 {
     switch (level) {
         case log_level::error:
@@ -117,7 +172,7 @@ std::string utils::get_log_level_Text(log_level level)
 /**
  * Return the code of a log level
  */
-std::string utils::get_log_level_code(log_level level)
+std::string utils::log_level_as_code(log_level level)
 {
     switch (level) {
         case log_level::error:
@@ -141,7 +196,7 @@ std::string utils::get_log_level_code(log_level level)
 /**
  * Return the log level for a given code
  */
-log_level utils::get_log_level_from_code(std::string_view code)
+log_level utils::log_level_from_code(std::string_view code)
 {
     if (code == "E")
         return log_level::error;
@@ -151,6 +206,30 @@ log_level utils::get_log_level_from_code(std::string_view code)
         return log_level::info;
     else
         return log_level::debug;
+}
+
+
+/**
+ * Convert a time point into a string
+ */
+std::string utils::time_to_string(time_point time)
+{
+    std::time_t t = std::chrono::system_clock::to_time_t(time);
+    std::tm tm = *std::localtime(&t);
+
+    // format into a string
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+
+    return oss.str();
+}
+
+
+/**
+ * Return MIDI channel and control change as combined string
+ */
+std::string utils::ch_cc(const int ch, const int cc) {
+    return std::to_string(ch) + "_" + std::to_string(cc);
 }
 
 } // Namespace xmidictrl

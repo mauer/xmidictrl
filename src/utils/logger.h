@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _LOGGER_H_
-#define _LOGGER_H_
+#ifndef LOGGER_H
+#define LOGGER_H
 
 // Standard
 #include <fstream>
@@ -28,7 +28,11 @@
 
 // XMidiCtrl
 #include "log_entry.h"
-#include "message_list.h"
+#include "midi_log_msg.h"
+#include "midi_message.h"
+#include "settings.h"
+#include "text_log_msg.h"
+#include "text_message.h"
 
 // Macros for logging
 #define LOG_ALL   (xmidictrl::log_entry() << xmidictrl::log_entry::all)
@@ -43,7 +47,7 @@ namespace xmidictrl {
 
 class logger {
 public:
-	logger();
+	logger() = default;
 	~logger();
 
 	// Object cannot be copied, because of the stream
@@ -52,25 +56,34 @@ public:
 
 	static logger& instance();
 
-	void init(std::string_view path);
+    void init(std::string_view a_path, std::shared_ptr<settings> a_settings);
 
-    void set_log_level(log_level logLevel);
+	void post_text_message(const std::shared_ptr<text_message> &msg);
+    void post_midi_message(const std::shared_ptr<midi_message> &msg);
+
     log_level get_log_Level() const;
+    bool get_log_midi() const;
 
-	void post_message(std::shared_ptr<message> msg);
+    void clear_text_messages();
+    void clear_midi_messages();
 
-    message_list::ptr messages();
+    unsigned int count_text_messages();
+    unsigned int count_midi_messages();
+
+    std::shared_ptr<text_log_msg> get_text_message(int idx);
+    std::shared_ptr<midi_log_msg> get_midi_message(int idx);
 
 private:
-    bool check_log_level(message_type type);
+    bool check_log_level(text_msg_type type);
 
-	log_level m_log_level {log_level::debug};
+    std::shared_ptr<settings> m_settings;
 
-	std::ofstream m_stream;
+    std::ofstream m_stream;
 
-	message_list::ptr m_messages;
+	std::vector<std::shared_ptr<text_log_msg>> m_text_messages;
+    std::vector<std::shared_ptr<midi_log_msg>> m_midi_messages;
 };
 
 } // Namespace xmidictrl
 
-#endif // _LOGGER_H_
+#endif // LOGGER_H

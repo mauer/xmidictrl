@@ -18,22 +18,28 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _MIDI_MESSAGE_H_
-#define _MIDI_MESSAGE_H_
+#ifndef MIDI_MESSAGE_H
+#define MIDI_MESSAGE_H
 
 // Standard
-#include <memory>
+#include <chrono>
+
+// XMidiCtrl
+#include "types.h"
 
 namespace xmidictrl {
 
 struct midi_message {
-    int cc;
-    int status;
-    int velocity;
+    time_point time;
+    midi_type type {midi_type::inbound};
 
-    typedef std::shared_ptr<midi_message> ptr;
+    unsigned int port {};
+
+    int status {};
+    int data {};
+    int velocity {};
 };
 
 } // Namespace xmidictrl
 
-#endif // _MIDI_MESSAGE_H_
+#endif // MIDI_MESSAGE_H

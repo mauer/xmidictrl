@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _DEVICE_H_
-#define _DEVICE_H_
+#ifndef DEVICE_H
+#define DEVICE_H
 
 // Standard
 #include <chrono>
@@ -40,9 +40,6 @@
 #include "types.h"
 
 namespace xmidictrl {
-
-// let's make life a little easier
-using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
 class device_list;
 
@@ -88,4 +85,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // _DEVICE_H_
+#endif // DEVICE_H

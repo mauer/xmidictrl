@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _PLUGIN_H_
-#define _PLUGIN_H_
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 // Standard
 #include <map>
@@ -33,7 +33,7 @@
 #include "settings.h"
 #include "types.h"
 #include "xplane.h"
-#include "XPlaneWindow.h"
+#include "xplane_window.h"
 
 namespace xmidictrl {
 
@@ -52,29 +52,30 @@ public:
     void load_profile();
     void close_profile();
 
-    void show_messages_dialog();
-    void show_devices_dialog();
-    void show_settings_dialog();
-    void show_about_dialog();
+    void show_messages_window();
+    void show_devices_window();
+    void show_profile_window();
+    void show_settings_window();
+    void show_about_window();
 
 private:
     void process_flight_loop(float elapsed_me, float elapsed_sim, int counter);
 
-    void create_window(WindowType windowType);
+    void create_window(window_type windowType);
 
     XPLMFlightLoopID m_flight_loop_id {nullptr};
 
-    xplane::ptr m_xplane;
+    std::shared_ptr<xplane> m_xp;
 
     std::unique_ptr<menu> m_menu;
 
-    settings::ptr m_settings;
+    std::shared_ptr<settings> m_settings;
     std::unique_ptr<profile> m_profile;
 
     // list of all plugin windows
-    std::map<WindowType, XPlaneWindow::ptr> m_windows;
+    std::map<window_type, std::shared_ptr<xplane_window>> m_windows;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
-#endif // _PLUGIN_H_
+#endif // PLUGIN_H

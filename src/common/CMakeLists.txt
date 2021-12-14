@@ -23,7 +23,6 @@ message("---- Directory: src/common")
 # Add sources
 set(COMMON_SRC
         ${CMAKE_CURRENT_LIST_DIR}/config.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
         )
 
 # Add sources to target

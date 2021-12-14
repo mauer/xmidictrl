@@ -24,7 +24,6 @@ message("---- Directory: src/utils")
 set(UTILS_SRC
         ${CMAKE_CURRENT_LIST_DIR}/log_entry.cpp
         ${CMAKE_CURRENT_LIST_DIR}/logger.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/message_list.cpp
         ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
         )
 

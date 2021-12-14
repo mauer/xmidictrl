@@ -23,9 +23,10 @@
 // XMidiCtrl
 #include "about_window.h"
 #include "config.h"
+#include "devices_window.h"
 #include "logger.h"
 #include "messages_window.h"
-#include "devices_window.h"
+#include "profile_window.h"
 #include "settings_window.h"
 #include "Version.h"
 
@@ -41,23 +42,20 @@ namespace xmidictrl {
 plugin::plugin()
 {
     // create the integration to X-Plane
-    m_xplane = std::make_shared<xplane>();
-
-    // initialize our logging instance
-    logger::instance().init(m_xplane->xplane_path());
-    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
+    m_xp = std::make_shared<xplane>();
 
     // load general settings
-    m_settings = std::make_shared<settings>(m_xplane);
+    m_settings = std::make_shared<settings>(m_xp);
 
-    // set general settings
-    logger::instance().set_log_level(m_settings->loglevel());
+    // initialize our logging instance
+    logger::instance().init(m_xp->xplane_path(), m_settings);
+    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
 
     // create the menu
     m_menu = std::make_unique<menu>();
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(m_xplane);
+    m_profile = std::make_unique<profile>(m_xp);
 }
 
 
@@ -166,9 +164,9 @@ void plugin::disable()
  */
 void plugin::load_profile()
 {
-    if (!m_profile->load() || m_profile->has_errors()) {
-        if (m_settings->show_messages())
-            show_messages_dialog();
+    if (!m_profile->load() && m_profile->has_errors()) {
+        if (m_settings->get_show_messages())
+            show_messages_window();
     }
 }
 
@@ -185,36 +183,45 @@ void plugin::close_profile()
 /**
  * Show the log messages dialog
  */
-void plugin::show_messages_dialog()
+void plugin::show_messages_window()
 {
-    create_window(WindowType::MessagesDialog);
+    create_window(window_type::messages_window);
 }
 
 
 /**
  * Search for available midi devices
  */
-void plugin::show_devices_dialog()
+void plugin::show_devices_window()
 {
-    create_window(WindowType::MidiDevicesDialog);
+    create_window(window_type::devices_window);
+}
+
+
+/**
+ * Show the aircraft profile window
+ */
+void plugin::show_profile_window()
+{
+    create_window(window_type::profile_window);
 }
 
 
 /**
  * Show general settings dialog
  */
-void plugin::show_settings_dialog()
+void plugin::show_settings_window()
 {
-    create_window(WindowType::SettingsDialog);
+    create_window(window_type::settings_window);
 }
 
 
 /**
  * Show the about dialog
  */
-void plugin::show_about_dialog()
+void plugin::show_about_window()
 {
-    create_window(WindowType::AboutDialog);
+    create_window(window_type::about_window);
 }
 
 
@@ -227,9 +234,9 @@ void plugin::show_about_dialog()
 /**
  * Create and returns windows
  */
-void plugin::create_window(WindowType windowType)
+void plugin::create_window(window_type windowType)
 {
-    XPlaneWindow::ptr window;
+    std::shared_ptr<xplane_window> window;
 
     // check if the window is already created
     try {
@@ -242,20 +249,24 @@ void plugin::create_window(WindowType windowType)
 
     // looks like we have to create it
     switch (windowType) {
-        case WindowType::AboutDialog:
-            window = std::make_shared<about_window>();
+        case window_type::about_window:
+            window = std::make_shared<about_window>(m_xp);
             break;
 
-        case WindowType::MessagesDialog:
-            window = std::make_shared<messages_window>();
+        case window_type::messages_window:
+            window = std::make_shared<messages_window>(m_xp);
             break;
 
-        case WindowType::MidiDevicesDialog:
-            window = std::make_shared<devices_window>();
+        case window_type::devices_window:
+            window = std::make_shared<devices_window>(m_xp);
             break;
 
-        case WindowType::SettingsDialog:
-            window = std::make_shared<settings_window>(m_settings);
+        case window_type::profile_window:
+            window = std::make_shared<profile_window>(m_xp);
+            break;
+
+        case window_type::settings_window:
+            window = std::make_shared<settings_window>(m_xp, m_settings);
             break;
     }
 
@@ -263,4 +274,4 @@ void plugin::create_window(WindowType windowType)
         m_windows.emplace(windowType, window);
 }
 
-} // Mamespace XMidiCtrl
+} // Mamespace xmidictrl

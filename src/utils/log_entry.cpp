@@ -37,7 +37,7 @@ namespace xmidictrl {
  * Log a message regardless of the current log level
  */
 log_entry &log_entry::all(log_entry &entry) {
-    entry.set_message_type(message_type::all);
+    entry.set_message_type(text_msg_type::all);
     return entry;
 }
 
@@ -46,7 +46,7 @@ log_entry &log_entry::all(log_entry &entry) {
  * Log an error message
  */
 log_entry &log_entry::error(log_entry &entry) {
-    entry.set_message_type(message_type::error);
+    entry.set_message_type(text_msg_type::error);
     return entry;
 }
 
@@ -55,7 +55,7 @@ log_entry &log_entry::error(log_entry &entry) {
  * Log a warning message
  */
 log_entry &log_entry::warn(log_entry &entry) {
-    entry.set_message_type(message_type::warn);
+    entry.set_message_type(text_msg_type::warn);
     return entry;
 }
 
@@ -64,7 +64,7 @@ log_entry &log_entry::warn(log_entry &entry) {
  * Log an info message
  */
 log_entry &log_entry::info(log_entry &entry) {
-    entry.set_message_type(message_type::info);
+    entry.set_message_type(text_msg_type::info);
     return entry;
 }
 
@@ -73,7 +73,7 @@ log_entry &log_entry::info(log_entry &entry) {
  * Log a debug message
  */
 log_entry &log_entry::debug(log_entry &entry) {
-    entry.set_message_type(message_type::debug);
+    entry.set_message_type(text_msg_type::debug);
     return entry;
 }
 
@@ -82,7 +82,7 @@ log_entry &log_entry::debug(log_entry &entry) {
  * Log the end of a message
  */
 log_entry &log_entry::endLine(log_entry &entry) {
-    std::shared_ptr<message> msg = std::make_shared<message>();
+    std::shared_ptr<text_message> msg = std::make_shared<text_message>();
 
     // get current date time stamp
     time_t t = std::time(nullptr);
@@ -96,7 +96,7 @@ log_entry &log_entry::endLine(log_entry &entry) {
     msg->time = datetime_str;
     msg->text = entry.message_text();
 
-    logger::instance().post_message(msg);
+    logger::instance().post_text_message(msg);
 
     // clear data and return
     entry.clear();
@@ -189,7 +189,7 @@ log_entry &log_entry::operator<<(log_entry& (*f)(log_entry&)) {
  * Clear the data
  */
 void log_entry::clear() {
-    m_type = message_type::debug;
+    m_type = text_msg_type::debug;
     m_stream.clear();
 }
 
@@ -197,7 +197,7 @@ void log_entry::clear() {
 /**
  * Set the message type
  */
-void log_entry::set_message_type(message_type type) {
+void log_entry::set_message_type(text_msg_type type) {
     m_type = type;
 }
 
@@ -205,7 +205,7 @@ void log_entry::set_message_type(message_type type) {
 /**
  * Return the message type
  */
-message_type log_entry::get_message_type() {
+text_msg_type log_entry::get_message_type() {
     return m_type;
 }
 

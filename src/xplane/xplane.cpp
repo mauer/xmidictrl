@@ -74,7 +74,10 @@ std::string_view xplane::plugin_path()
         char path[512];
         XPLMGetPluginInfo(plugin_id(), nullptr, path, nullptr, nullptr);
 
-        m_plugin_path = std::string(path);
+        // remove file name
+        XPLMExtractFileAndPath(path);
+
+        m_plugin_path = std::string(path) + XPLMGetDirectorySeparator();
 
         LOG_DEBUG << "Plugin Path = '" << m_plugin_path << "'" << LOG_END
     }
@@ -113,7 +116,8 @@ std::string_view xplane::preferences_path()
         // remove file name
         XPLMExtractFileAndPath(path);
 
-        m_preferences_path = std::string(path) + XPLMGetDirectorySeparator() + XMIDICTRL_NAME;
+        m_preferences_path = std::string(path) + XPLMGetDirectorySeparator() + XMIDICTRL_NAME
+                             + XPLMGetDirectorySeparator();
 
         LOG_DEBUG << "Preferences Path = '" << m_preferences_path << "'" << LOG_END
     }

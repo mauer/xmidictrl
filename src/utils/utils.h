@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _UTILS_H_
-#define _UTILS_H_
+#ifndef UTILS_H
+#define UTILS_H
 
 // Standard
 #include <string>
@@ -34,15 +34,20 @@ namespace xmidictrl {
 
 class utils {
 public:
-    static std::string read_config_parameter(toml::value &settings, std::string_view parameter, bool mandatory = true);
+    static std::string read_string_parameter(toml::value &settings, std::string_view parameter, bool mandatory = true);
+    static int read_int_parameter(toml::value &settings, std::string_view parameter, bool mandatory = true);
 
-    static std::string get_message_type_text(message_type type);
+    static std::string text_msg_type_as_text(text_msg_type type);
+    static std::string midi_msg_type_as_text(midi_type type);
 
-    static std::string get_log_level_Text(log_level level);
-    static std::string get_log_level_code(log_level level);
-    static log_level get_log_level_from_code(std::string_view code);
+    static std::string log_level_as_text(log_level level);
+    static std::string log_level_as_code(log_level level);
+    static log_level log_level_from_code(std::string_view code);
+
+    static std::string time_to_string(time_point time);
+    static std::string ch_cc(int ch, int cc);
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
-#endif // _UTILS_H_
+#endif // UTILS_H

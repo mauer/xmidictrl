@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef CONFIG_H
+#define CONFIG_H
 
 // Standard
 #include <string_view>
@@ -34,18 +34,21 @@ namespace xmidictrl {
 
 class config {
 public:
-    explicit config(xplane::ptr xp);
-    ~config() = default;
+    explicit config(std::shared_ptr<xplane> xp);
+    virtual ~config() = default;
 
     bool load(std::string_view filename);
     virtual void close();
 
 protected:
     toml::value m_config {};
+
+    std::shared_ptr<xplane> m_xp;
+
+private:
     std::string m_filename {};
-    xplane::ptr m_xp;
 };
 
 } // Namespace xmidictrl
 
-#endif // _CONFIG_H_
+#endif // CONFIG_H

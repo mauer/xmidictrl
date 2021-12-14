@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _LOG_ENTRY_H_
-#define _LOG_ENTRY_H_
+#ifndef LOG_ENTRY_H
+#define LOG_ENTRY_H
 
 // Standard
 #include <memory>
@@ -60,17 +60,17 @@ public:
 
     void clear();
 
-    void set_message_type(message_type type);
-    message_type get_message_type();
+    void set_message_type(text_msg_type type);
+    text_msg_type get_message_type();
 
     std::string message_text();
 
 private:
-    message_type m_type {message_type::debug};
+    text_msg_type m_type {text_msg_type::debug};
 
     std::ostringstream m_stream;
 };
 
 } // Namespace xmidictrl
 
-#endif // _LOG_ENTRY_H_
+#endif // LOG_ENTRY_H

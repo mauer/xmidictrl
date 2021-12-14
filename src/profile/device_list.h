@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _DEVICE_LIST_H_
-#define _DEVICE_LIST_H_
+#ifndef DEVICE_LIST_H
+#define DEVICE_LIST_H
 
 // Standard
 #include <memory>
@@ -28,7 +28,7 @@
 
 // XMidiCtrl
 #include "device.h"
-#include "inbound_event.h"
+#include "task.h"
 
 namespace xmidictrl {
 
@@ -44,7 +44,7 @@ public:
     bool open_connections();
     void close_connections();
 
-    void add_event(const std::shared_ptr<inbound_event>& event);
+    void add_event(const std::shared_ptr<task> &event);
 
     void process_inbound_events();
     void process_outbound_mappings();
@@ -53,10 +53,10 @@ public:
     unsigned int size();
 
 private:
-    std::queue<std::shared_ptr<inbound_event>> m_inbound_events;
+    std::queue<std::shared_ptr<task>> m_inbound_events;
     std::vector<std::shared_ptr<device>> m_device_list;
 };
 
 } // Namespace xmidictrl
 
-#endif // _DEVICE_LIST_H_
+#endif // DEVICE_LIST_H

@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _SETTINGS_H_
-#define _SETTINGS_H_
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 // Standard
 #include <memory>
@@ -36,23 +36,26 @@ namespace xmidictrl {
 
 class settings : public config {
 public:
-    settings(xplane::ptr xplane);
-    ~settings();
+    explicit settings(std::shared_ptr<xplane> xp);
+    ~settings() override;
 
     typedef std::shared_ptr<settings> ptr;
 
-    void set_loglevel(log_level log_level);
-    log_level loglevel();
+    void set_log_level(log_level level);
+    log_level get_log_level();
 
-    void set_show_messages(bool show_messages);
-    bool show_messages();
+    void set_log_midi(bool enabled);
+    bool get_log_midi();
 
-private:
+    void set_show_messages(bool enabled);
+    bool get_show_messages();
+
     void save_settings();
 
-    std::string m_filename;
+private:
+    std::string get_settings_filename();
 };
 
 } // Namespace xmidictrl
 
-#endif // _SETTINGS_H_
+#endif // SETTINGS_H

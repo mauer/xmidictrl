@@ -35,7 +35,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(xplane::ptr xp)
+config::config(std::shared_ptr<xplane> xp)
     : m_xp(std::move(xp))
 {}
 
@@ -69,7 +69,9 @@ bool config::load(std::string_view filename)
     try {
         // load config file
         m_config = toml::parse(filename.data());
-        LOG_DEBUG << "File '" << filename.data() << "' loaded successfully" << LOG_END
+        m_filename = filename;
+        
+        LOG_DEBUG << "File '" << m_filename << "' loaded successfully" << LOG_END
     } catch (const toml::syntax_error &error) {
         LOG_ERROR << "Error parsing file '" << filename.data() << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
@@ -90,7 +92,11 @@ bool config::load(std::string_view filename)
  */
 void config::close()
 {
+    if (!m_filename.empty())
+        LOG_DEBUG << "File '" << m_filename << "' closed" << LOG_END
+
     m_config = toml::value();
+    m_filename.clear();
 }
 
 } // Namespace xmidictrl

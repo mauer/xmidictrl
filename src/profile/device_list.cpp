@@ -93,7 +93,7 @@ void device_list::close_connections()
 /**
  * Add a midi event
  */
-void device_list::add_event(const std::shared_ptr<inbound_event>& event) {
+void device_list::add_event(const std::shared_ptr<task> &event) {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
@@ -110,14 +110,14 @@ void device_list::process_inbound_events() {
 
     // process the midi inbound queue for each midi device
     while (!m_inbound_events.empty()) {
-        std::shared_ptr<inbound_event> event = m_inbound_events.front();
+        std::shared_ptr<task> event = m_inbound_events.front();
 
         if (event == nullptr)
             continue;
 
         // perform the action related to the mapping
         if (event->map != nullptr)
-            event->map->execute(event->event);
+            event->map->execute(*event->msg);
 
         // delete entry from list
         m_inbound_events.pop();
