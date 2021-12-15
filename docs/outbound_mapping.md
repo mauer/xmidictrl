@@ -1,29 +1,50 @@
 # Outbound Mappings
+Outbound mappings are used to set a status on your MIDI controller, such as highlight a button if a certain function
+got activated in X-Plane.
+
+## Common variables
+The following variables are required for each mapping.
+
+| Variable | Description                       |
+|----------|-----------------------------------|
+| ch       | MIDI Channel (Default Value = 11) |
+| cc       | Control Change No Number          |
 
 ## Mapping Types
-Each outgoing MIDI Message can be mapped to one of the following functions:
+The following mapping types are supported:
 
-| Mapping Type | Name        | Description and usage                                                         |
-|:------------:|:-----------:|-------------------------------------------------------------------------------|
-| drf          | Dataref     | Toggles a given Dataref between two values                                    |
-| int          | Internal    | Performs an internal command (not implemented yet)                            |
+| Mapping Type |  Name   | Description and usage                                         |
+|:------------:|:-------:|---------------------------------------------------------------|
+| drf          | DataRef | Reads the DataRef value and sends a MIDI message if necessary |
 
 ###
 ### Mapping Type: Dataref
-Toggles a given dataref between two values. This is very useful when no command was provided by the aircraft developer.
+Read the given DataRef and sends a MIDI message if the value has been changed. There a different methods to trigger
+the creation of the MIDI Message, which will be explained below.
 
-| Variable  | Description                                                                                |
-|-----------|--------------------------------------------------------------------------------------------|
-| dataref   | Defines the DataRef which should be changed                                                |
-| value_on  | Defines the value the DataRef should be set to, if the current value is equal to value_off |
-| value_off | Defines the value the DataRef should be set to, if the current value is equal to value_on  |
+| Variable  | Description                                                                                     |
+|-----------|-------------------------------------------------------------------------------------------------|
+| dataref   | Defines the DataRef which should be checked                                                     |
+| value_on  | As soon as the DataRef will be set to this value, a MIDI message with velocity 127 will be send |
+| value_off | As soon as the DataRef will be set to this value, a MIDI message with velocity 0 will be send   |
 
-**Example:**
+**Note:**
+It's not required to define *value_on* and *value_off*. However, at least one of them has to be defined. 
+
+**Examples:**
 ```
-{ cc = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" }
+{ ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_on = "1", value_off = "0" }
 ```
-*Changes dataref 'AirbusFBW/SDENG' to value '1' if the current value is '0' and the cc is equal to '68'*
+*Will send a MIDI message for Channel 11 and Control Change 50 if the DataRef toggles between values 1 and 0*
 
-###
-### Internal
-*Not implemented in the current version*
+```
+{ ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_on = "1" }
+```
+*Will send a MIDI message with velocity 127 for Channel 11 and Control Change 50 if the DataRef's value is equal to 1,
+otherwise velocity 0 will be used.*
+
+```
+{ ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_off = "0" }
+```
+*Will send a MIDI message with velocity 0 for Channel 11 and Control Change 50 if the DataRef's value is equal to 0,
+otherwise velocity 127 will be used.*

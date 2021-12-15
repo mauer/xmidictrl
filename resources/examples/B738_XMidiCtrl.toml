@@ -1,0 +1,150 @@
+#----------------------------------------------------------------------------------------------------------------------
+# XMidiCtrl
+#
+# Example configuration for the Behringer X-Touch Mini MIDI controller together with the ToLiss Airbus A321
+#
+# How to use:
+#   1. Copy this file into your aircraft directory and rename it to XMidiCtrl.toml
+#   2. Adjust the port_in and port_out variables
+#   3. Start X-Plane or execute from the plugin menu XMidiCtrl -> Reload Aircraft Profile
+#----------------------------------------------------------------------------------------------------------------------
+title   = "Settings for the ZIBO 737-800"
+version = "0.50"
+
+# Behringer X-Touch Mini
+[[device]]
+name       = "Behringer X-Touch Mini"
+port_in    = 0
+port_out   = 1
+mapping_in = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer A
+  #--------------------------------------------------------------------------------------------------------------------
+  
+  # Slider
+  #{ ch = 11, cc = 0,  type = "sld", command_up = "", command_middle = "", command_down = "" },
+  
+  # Encoders
+  { ch = 11, cc = 1,  type = "enc", command_up = "laminar/B738/pfd/dh_pilot_up", command_down = "laminar/B738/pfd/dh_pilot_up" },
+  { ch = 11, cc = 2,  type = "enc", command_up = "laminar/B738/pilot/barometer_up", command_down = "laminar/B738/pilot/barometer_down" },
+  { ch = 11, cc = 3,  type = "enc", command_up = "laminar/B738/autopilot/course_pilot_up", command_down = "laminar/B738/autopilot/course_pilot_dn" },
+  { ch = 11, cc = 4,  type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down" },
+  { ch = 11, cc = 5,  type = "enc", command_up = "laminar/B738/autopilot/heading_up", command_down = "laminar/B738/autopilot/heading_dn" },
+  { ch = 11, cc = 6,  type = "enc", command_up = "laminar/B738/autopilot/altitude_up", command_down = "laminar/B738/autopilot/altitude_dn" },
+  { ch = 11, cc = 7,  type = "enc", command_up = "sim/autopilot/vertical_speed_up", command_down = "sim/autopilot/vertical_speed_down" },
+  { ch = 11, cc = 8,  type = "enc", command_up = "laminar/B738/autopilot/course_copilot_up", command_down = "laminar/B738/autopilot/course_copilot_dn" },
+    
+  # Encoder Buttons
+  { ch = 11, cc = 9,  type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/rst_press" },
+  { ch = 11, cc = 10, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/std_press" },
+  { ch = 11, cc = 11, type = "cmd", command = "laminar/B738/autopilot/flight_director_toggle" },
+  { ch = 11, cc = 12, type = "cmd", command = "laminar/B738/autopilot/spd_interv" },
+  { ch = 11, cc = 13, type = "cmd", command = "laminar/B738/autopilot/hdg_sel_press" },
+  { ch = 11, cc = 14, type = "cmd", command = "laminar/B738/autopilot/alt_interv" },
+  { ch = 11, cc = 15, type = "cmd", command = "laminar/B738/autopilot/vs_press" },
+  { ch = 11, cc = 16, type = "cmd", command = "laminar/B738/autopilot/flight_director_fo_toggle" },
+    
+  # Buttons Upper Row
+  { ch = 11, cc = 17, type = "cmd", command = "laminar/B738/LDU_control/push_button/MFD_ENG" },
+  { ch = 11, cc = 18, type = "cmd", command = "laminar/B738/LDU_control/push_button/MFD_SYS" },
+  { ch = 11, cc = 19, type = "cmd", command = "laminar/B738/autopilot/speed_press" },
+  { ch = 11, cc = 20, type = "cmd", command = "laminar/B738/autopilot/vnav_press" },
+  { ch = 11, cc = 21, type = "cmd", command = "laminar/B738/autopilot/lnav_press" },
+  { ch = 11, cc = 22, type = "cmd", command = "laminar/B738/autopilot/alt_hld_press" },
+  { ch = 11, cc = 23, type = "cmd", command = "laminar/B738/autopilot/cmd_a_press" },
+  { ch = 11, cc = 24, type = "cmd", command = "laminar/B738/autopilot/cmd_b_press" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 25, type = "cmd", command = "laminar/B738/push_button/master_caution1" },
+  { ch = 11, cc = 26, type = "cmd", command = "laminar/B738/LDU_control/push_button/MFD_CR" },
+  { ch = 11, cc = 27, type = "cmd", command = "laminar/B738/autopilot/n1_press" },
+  { ch = 11, cc = 28, type = "cmd", command = "laminar/B738/autopilot/lvl_chg_press" },
+  { ch = 11, cc = 29, type = "cmd", command = "laminar/B738/autopilot/vorloc_press" },
+  { ch = 11, cc = 30, type = "cmd", command = "laminar/B738/autopilot/app_press" },
+  { ch = 11, cc = 31, type = "cmd", command = "laminar/B738/autopilot/cws_a_press" },
+  { ch = 11, cc = 32, type = "cmd", command = "laminar/B738/autopilot/cws_b_press" },
+  
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer B
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Slider
+  #{ ch = 11, cc = 50, type = "sld", command_up = "", command_middle = "", command_down = "" },
+  
+  # Encoders
+  { ch = 11, cc = 51, type = "enc", command_up = "laminar/B738/pfd/dh_pilot_up", command_down = "laminar/B738/pfd/dh_pilot_up" },
+  { ch = 11, cc = 52, type = "enc", command_up = "laminar/B738/pilot/barometer_up", command_down = "laminar/B738/pilot/barometer_down" },
+  { ch = 11, cc = 53, type = "enc", command_up = "laminar/B738/autopilot/course_pilot_up", command_down = "laminar/B738/autopilot/course_pilot_dn" },
+  { ch = 11, cc = 54, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down" },
+  { ch = 11, cc = 55, type = "enc", command_up = "laminar/B738/autopilot/heading_up", command_down = "laminar/B738/autopilot/heading_dn" },
+  { ch = 11, cc = 56, type = "enc", command_up = "laminar/B738/autopilot/altitude_up", command_down = "laminar/B738/autopilot/altitude_dn" },
+  { ch = 11, cc = 57, type = "enc", command_up = "sim/autopilot/vertical_speed_up", command_down = "sim/autopilot/vertical_speed_down" },
+  { ch = 11, cc = 58, type = "enc", command_up = "laminar/B738/autopilot/course_copilot_up", command_down = "laminar/B738/autopilot/course_copilot_dn" },
+    
+  # Encoder Buttons
+  { ch = 11, cc = 59, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/rst_press" },
+  { ch = 11, cc = 60, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/std_press" },
+  { ch = 11, cc = 61, type = "cmd", command = "laminar/B738/autopilot/flight_director_toggle" },
+  { ch = 11, cc = 62, type = "cmd", command = "laminar/B738/autopilot/spd_interv" },
+  { ch = 11, cc = 63, type = "cmd", command = "laminar/B738/autopilot/hdg_sel_press" },
+  { ch = 11, cc = 64, type = "cmd", command = "laminar/B738/autopilot/alt_interv" },
+  { ch = 11, cc = 65, type = "cmd", command = "laminar/B738/autopilot/vs_press" },
+  { ch = 11, cc = 66, type = "cmd", command = "laminar/B738/autopilot/flight_director_fo_toggle" },
+  
+  # Buttons Upper Row
+  { ch = 11, cc = 67, type = "cmd", command = "laminar/B738/push_button/chrono_capt_et_mode" },
+  { ch = 11, cc = 68, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/ctr_press" },
+  { ch = 11, cc = 69, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/tfc_press" },
+  { ch = 11, cc = 70, type = "cmd", command = "laminar/B738/knob/transponder_stby" },
+  { ch = 11, cc = 71, type = "cmd", command = "laminar/B738/knob/transponder_altoff" },
+  { ch = 11, cc = 72, type = "cmd", command = "laminar/B738/knob/transponder_alton" },
+  { ch = 11, cc = 73, type = "cmd", command = "laminar/B738/knob/transponder_ta" },
+  { ch = 11, cc = 74, type = "cmd", command = "laminar/B738/knob/transponder_tara" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 75, type = "cmd", command = "laminar/B738/push_button/master_caution1" },
+  { ch = 11, cc = 76, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/wxr_press" },
+  { ch = 11, cc = 77, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/sta_press" },
+  { ch = 11, cc = 78, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/wpt_press" },
+  { ch = 11, cc = 79, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/arpt_press" },
+  { ch = 11, cc = 80, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/data_press" },
+  { ch = 11, cc = 81, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/pos_press" },
+  { ch = 11, cc = 82, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/terr_press" }
+] 
+mapping_out = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer A
+  #--------------------------------------------------------------------------------------------------------------------
+  
+  # Buttons Upper Row
+  { ch = 11, cc = 19, type = "drf", dataref = "laminar/B738/autopilot/speed_pos", value_on="1" },
+  { ch = 11, cc = 20, type = "drf", dataref = "laminar/B738/autopilot/vnav_pos", value_on="1" },
+  { ch = 11, cc = 21, type = "drf", dataref = "laminar/B738/autopilot/lnav_pos", value_on="1" },
+  { ch = 11, cc = 22, type = "drf", dataref = "laminar/B738/autopilot/alt_hld_pos", value_on="1" },
+  { ch = 11, cc = 23, type = "drf", dataref = "laminar/B738/autopilot/cmd_a_pos", value_on="1" },
+  { ch = 11, cc = 24, type = "drf", dataref = "laminar/B738/autopilot/cmd_b_pos", value_on="1" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 25, type = "drf", dataref = "laminar/B738/annunciator/master_caution_light", value_off = "0" },
+  { ch = 11, cc = 27, type = "drf", dataref = "laminar/B738/autopilot/n1_pos", value_on="1" },
+  { ch = 11, cc = 28, type = "drf", dataref = "laminar/B738/autopilot/lvl_chg_pos", value_on="1" },
+  { ch = 11, cc = 29, type = "drf", dataref = "laminar/B738/autopilot/vorloc_pos", value_on="1" },
+  { ch = 11, cc = 30, type = "drf", dataref = "laminar/B738/autopilot/app_pos", value_on="1" },
+  { ch = 11, cc = 31, type = "drf", dataref = "laminar/B738/autopilot/cws_a_pos", value_on="1" },
+  { ch = 11, cc = 32, type = "drf", dataref = "laminar/B738/autopilot/cws_b_pos", value_on="1" },
+  
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer B
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Buttons Upper Row
+  { ch = 11, cc = 67, type = "drf", dataref = "laminar/B738/clock/captain/et_mode", value_on = "1" },
+  { ch = 11, cc = 70, type = "drf", dataref = "laminar/B738/knob/transponder_pos", value_on = "1" },
+  { ch = 11, cc = 71, type = "drf", dataref = "laminar/B738/knob/transponder_pos", value_on = "2" },
+  { ch = 11, cc = 72, type = "drf", dataref = "laminar/B738/knob/transponder_pos", value_on = "3" },
+  { ch = 11, cc = 73, type = "drf", dataref = "laminar/B738/knob/transponder_pos", value_on = "4" },
+  { ch = 11, cc = 74, type = "drf", dataref = "laminar/B738/knob/transponder_pos", value_on = "5" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 75, type = "drf", dataref = "laminar/B738/annunciator/master_caution_light", value_off = "0" }
+] 

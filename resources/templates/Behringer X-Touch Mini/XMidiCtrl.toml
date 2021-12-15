@@ -1,9 +1,9 @@
 #----------------------------------------------------------------------------------------------------------------------
-# xmidictrl
+# XMidiCtrl
 #
-# Template configuration for the Behringer X-Touch Mini midi controller
+# Template configuration for the Behringer X-Touch Mini MIDI controller
 #
-# Please make sure that your midi device is configured to send control change (CC) messages instead of notes!
+# Please make sure that your MIDI device is configured to send Control Change (CC) messages instead of notes!
 # I included my config files in this directory for your convenience. Those can be applied by using the Behringer 
 # X-Touch configuration software. You have to apply Layer A and B.
 #----------------------------------------------------------------------------------------------------------------------
@@ -13,137 +13,168 @@ version = "0.50"
 # How do create a new mapping for a plane?
 #   1. Copy this file into the aircraft directory
 #   2. Modify the mapping
-#   3. Start X-Plane, or if it's already running Choose from the plugin menu "xmidictrl -> Reload Aircraft profile"
+#   3. If not sure which ports to use then go into X-Plane and open the MIDI devices window form the plugin menu
+#      "XMidiCtrl -> Show MIDI Devices"
+#   4. Start X-Plane, or if it's already running choose from the plugin menu "XMidiCtrl -> Reload Aircraft profile"
 
-# Possible mapping types:
+# Inbound mapping types:
 #   cmd -> Simple mapping for buttons. It executes the specified X-Plane command when the button is pressed
-#          Example: { CC = 12, type = "cmd", command = "sim/autopilot/heading_sync" }
+#          Example: { ch = 11, cc = 12, type = "cmd", command = "sim/autopilot/heading_sync" }
 #
 #   drf -> Toggles a given DataRef between two values. This is very useful when no command was provided by the aircraft
 #          developer. You can define a value of the on and off state.
-#          Example: { CC = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" }
+#          Example: { ch = 11 , cc = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" }
 #
-#   enc -> map for an encoder (knob). You can define a command for up (right turn) and down (left turn). In
+#   enc -> Mapping for an encoder (knob). You can define a command for up (right turn) and down (left turn). In
 #          addition, it's possible to define command for fast up and down, if the knob was turned rather fast. This can
 #          be useful in some aircraft. Normally, defining up and down should be sufficient.
-#          Example: { CC = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
-#          Example: { CC = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_down = "FlyWithLua/airspeed_sel_10_down" }
+#          Example: { ch = 11, cc = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
+#          Example: { ch = 11, cc = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_down = "FlyWithLua/airspeed_sel_10_down" }
 #
 #   pnp -> Similar to a cmd mapping, but simulates push and push. If the button gets pressed normally, the push command
-#          will be executed. If the button was pressed for a longer time, the pull command will be executed.
-#          Example: { CC = 13, type = "pnp", command_push = "sim/autopilot/altitude_hold", command_pull = "sim/autopilot/altitude_arm" }
+#          will be executed. If the button was pressed for a longer time (~1 sec), the pull command will be executed.
+#          Example: { ch = 11, cc = 13, type = "pnp", command_push = "sim/autopilot/altitude_hold", command_pull = "sim/autopilot/altitude_arm" }
 #
-#   sld -> map for sliders. Right now only two commands are supported, command_up and command_down. They will be
-#          triggered depending on the position of the slider (all the way up or down). This behaviour will be 
+#   sld -> Mapping for sliders. Right now only three commands are supported, command_up, command_middle and command_down. They will be
+#          triggered depending on the position of the slider (all the way up, in the middle or down). This behaviour will be
 #          improved in the future.
-#          Example: { CC = 0, type = "sld", command_up = "sim/engines/carb_heat_off", command_down = "sim/engines/carb_heat_on" }
+#          Example: { ch = 11, cc = 0, type = "sld", command_up = "sim/engines/carb_heat_off", command_down = "sim/engines/carb_heat_on" }
 
-# Multi-map
-#   It is possible to map a Control Change event to multiple mappings. The following example will execute both cmd,
-#   when a midi event with Control Change 25 is being raised:
+# Outbound mapping types:
+#   drf -> Reads the given DataRef and sends a MIDI message to the device as soon as the value of the DataRef changes
+#          Example: { ch = 11 , cc = 68, type = "drf", dataref = "sim/autopilot/heading_mode", value_on = "1", value_off = "0" }
+
+# Common parameters
+#   ch = MIDI Channel (Default Value = 11)
+#   cc = Control Change No
+
+# Multi-Map
+#   It is possible to map a MIDI message to multiple mappings. The following example will execute both commands,
+#   when a MIDI message with Channel 11 and Control Change 25 is being received:
 #
 #   mapping = [
-#     { CC = 25, type = "cmd", command = "A300/accept_master_caution" },
-#     { CC = 25, type = "cmd", command = "A300/accept_master_warning" }
+#     { ch = 11, cc = 25, type = "cmd", command = "A300/accept_master_caution" },
+#     { ch = 11, cc = 25, type = "cmd", command = "A300/accept_master_warning" }
 #   ]
 
 # Behringer X-Touch Mini
 [[device]]
 name       = "Behringer X-Touch Mini"
-port_in    = 0
-port_out   = 0
+port_in    = 0        # <-- don't forget to adjust the inbound port
+port_out   = 1        # <-- don't forget to adjust the outbound port
 mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer A
   #--------------------------------------------------------------------------------------------------------------------
   
   # Slider
-  { CC = 0,  type = "sld", command_up = "", command_down = "" },
+  { ch = 11, cc = 0,  type = "sld", command_up = "", command_middle = "", command_down = "" },
   
   # Encoders
-  { CC = 1,  type = "enc", command_up = "", command_down = "" },
-  { CC = 2,  type = "enc", command_up = "", command_down = "" },
-  { CC = 3,  type = "enc", command_up = "", command_down = "" },
-  { CC = 4,  type = "enc", command_up = "", command_down = "" },
-  { CC = 5,  type = "enc", command_up = "", command_down = "" },
-  { CC = 6,  type = "enc", command_up = "", command_down = "" },
-  { CC = 7,  type = "enc", command_up = "", command_down = "" },
-  { CC = 8,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 1,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 2,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 3,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 4,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 5,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 6,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 7,  type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 8,  type = "enc", command_up = "", command_down = "" },
   
-  # encoder Buttons
-  { CC = 9,  type = "cmd", command = "" },
-  { CC = 10, type = "cmd", command = "" },
-  { CC = 11, type = "cmd", command = "" },
-  { CC = 12, type = "cmd", command = "" },
-  { CC = 13, type = "cmd", command = "" },
-  { CC = 14, type = "cmd", command = "" },
-  { CC = 15, type = "cmd", command = "" },
-  { CC = 16, type = "cmd", command = "" },
+  # Encoder Buttons
+  { ch = 11, cc = 9,  type = "cmd", command = "" },
+  { ch = 11, cc = 10, type = "cmd", command = "" },
+  { ch = 11, cc = 11, type = "cmd", command = "" },
+  { ch = 11, cc = 12, type = "cmd", command = "" },
+  { ch = 11, cc = 13, type = "cmd", command = "" },
+  { ch = 11, cc = 14, type = "cmd", command = "" },
+  { ch = 11, cc = 15, type = "cmd", command = "" },
+  { ch = 11, cc = 16, type = "cmd", command = "" },
   
   # Buttons Upper Row
-  { CC = 17, type = "cmd", command = "" },
-  { CC = 18, type = "cmd", command = "" },
-  { CC = 19, type = "cmd", command = "" },
-  { CC = 20, type = "cmd", command = "" },
-  { CC = 21, type = "cmd", command = "" },
-  { CC = 22, type = "cmd", command = "" },
-  { CC = 23, type = "cmd", command = "" },
-  { CC = 24, type = "cmd", command = "" },
+  { ch = 11, cc = 17, type = "cmd", command = "" },
+  { ch = 11, cc = 18, type = "cmd", command = "" },
+  { ch = 11, cc = 19, type = "cmd", command = "" },
+  { ch = 11, cc = 20, type = "cmd", command = "" },
+  { ch = 11, cc = 21, type = "cmd", command = "" },
+  { ch = 11, cc = 22, type = "cmd", command = "" },
+  { ch = 11, cc = 23, type = "cmd", command = "" },
+  { ch = 11, cc = 24, type = "cmd", command = "" },
   
   # Buttons Lower Row
-  { CC = 25, type = "cmd", command = "" },
-  { CC = 26, type = "cmd", command = "" },
-  { CC = 27, type = "cmd", command = "" },
-  { CC = 28, type = "cmd", command = "" },
-  { CC = 29, type = "cmd", command = "" },
-  { CC = 30, type = "cmd", command = "" },
-  { CC = 31, type = "cmd", command = "" },
-  { CC = 32, type = "cmd", command = "" },
+  { ch = 11, cc = 25, type = "cmd", command = "" },
+  { ch = 11, cc = 26, type = "cmd", command = "" },
+  { ch = 11, cc = 27, type = "cmd", command = "" },
+  { ch = 11, cc = 28, type = "cmd", command = "" },
+  { ch = 11, cc = 29, type = "cmd", command = "" },
+  { ch = 11, cc = 30, type = "cmd", command = "" },
+  { ch = 11, cc = 31, type = "cmd", command = "" },
+  { ch = 11, cc = 32, type = "cmd", command = "" },
   
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
 
   # Slider
-  { CC = 50, type = "sld", command_up = "", command_down = "" },
+  { ch = 11, cc = 50, type = "sld", command_up = "", command_middle = "", command_down = "" },
   
   # Encoders
-  { CC = 51, type = "enc", command_up = "", command_down = "" },
-  { CC = 52, type = "enc", command_up = "", command_down = "" },
-  { CC = 53, type = "enc", command_up = "", command_down = "" },
-  { CC = 54, type = "enc", command_up = "", command_down = "" },
-  { CC = 55, type = "enc", command_up = "", command_down = "" },
-  { CC = 56, type = "enc", command_up = "", command_down = "" },
-  { CC = 57, type = "enc", command_up = "", command_down = "" },
-  { CC = 58, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 51, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 52, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 53, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 54, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 55, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 56, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 57, type = "enc", command_up = "", command_down = "" },
+  { ch = 11, cc = 58, type = "enc", command_up = "", command_down = "" },
   
-  # encoder Buttons
-  { CC = 59, type = "cmd", command = "" },
-  { CC = 60, type = "cmd", command = "" },
-  { CC = 61, type = "cmd", command = "" },
-  { CC = 62, type = "cmd", command = "" },
-  { CC = 63, type = "cmd", command = "" },
-  { CC = 64, type = "cmd", command = "" },
-  { CC = 65, type = "cmd", command = "" },
-  { CC = 66, type = "cmd", command = "" },
+  # Encoder Buttons
+  { ch = 11, cc = 59, type = "cmd", command = "" },
+  { ch = 11, cc = 60, type = "cmd", command = "" },
+  { ch = 11, cc = 61, type = "cmd", command = "" },
+  { ch = 11, cc = 62, type = "cmd", command = "" },
+  { ch = 11, cc = 63, type = "cmd", command = "" },
+  { ch = 11, cc = 64, type = "cmd", command = "" },
+  { ch = 11, cc = 65, type = "cmd", command = "" },
+  { ch = 11, cc = 66, type = "cmd", command = "" },
   
   # Buttons Upper Row
-  { CC = 67, type = "cmd", command = "" },
-  { CC = 68, type = "cmd", command = "" },
-  { CC = 69, type = "cmd", command = "" },
-  { CC = 70, type = "cmd", command = "" },
-  { CC = 71, type = "cmd", command = "" },
-  { CC = 72, type = "cmd", command = "" },
-  { CC = 73, type = "cmd", command = "" },
-  { CC = 74, type = "cmd", command = "" },
+  { ch = 11, cc = 67, type = "cmd", command = "" },
+  { ch = 11, cc = 68, type = "cmd", command = "" },
+  { ch = 11, cc = 69, type = "cmd", command = "" },
+  { ch = 11, cc = 70, type = "cmd", command = "" },
+  { ch = 11, cc = 71, type = "cmd", command = "" },
+  { ch = 11, cc = 72, type = "cmd", command = "" },
+  { ch = 11, cc = 73, type = "cmd", command = "" },
+  { ch = 11, cc = 74, type = "cmd", command = "" },
   
   # Buttons Lower Row
-  { CC = 75, type = "cmd", command = "" },
-  { CC = 76, type = "cmd", command = "" },
-  { CC = 77, type = "cmd", command = "" },
-  { CC = 78, type = "cmd", command = "" },
-  { CC = 79, type = "cmd", command = "" },
-  { CC = 80, type = "cmd", command = "" },
-  { CC = 81, type = "cmd", command = "" },
-  { CC = 82, type = "cmd", command = "" }
-] 
+  { ch = 11, cc = 75, type = "cmd", command = "" },
+  { ch = 11, cc = 76, type = "cmd", command = "" },
+  { ch = 11, cc = 77, type = "cmd", command = "" },
+  { ch = 11, cc = 78, type = "cmd", command = "" },
+  { ch = 11, cc = 79, type = "cmd", command = "" },
+  { ch = 11, cc = 80, type = "cmd", command = "" },
+  { ch = 11, cc = 81, type = "cmd", command = "" },
+  { ch = 11, cc = 82, type = "cmd", command = "" }
+]
+mapping_out = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer A
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Buttons Upper Row
+  { ch = 11, cc = 17, type = "drf", dataref = "", value_on = "", value_off = "" },
+
+  # Buttons Lower Row
+  { ch = 11, cc = 25, type = "drf", dataref = "", value_on = "", value_off = "" },
+
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer B
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Buttons Upper Row
+  { ch = 11, cc = 67, type = "drf", dataref = "", value_on = "", value_off = "" },
+
+  # Buttons Lower Row
+  { ch = 11, cc = 75, type = "drf", dataref = "", value_on = "", value_off = "" }
+]

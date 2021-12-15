@@ -22,6 +22,8 @@
 
 // Standard
 #include <ctime>
+#include <filesystem>
+#include <utility>
 
 // XMidiCtrl
 #include "logger.h"
@@ -228,8 +230,42 @@ std::string utils::time_to_string(time_point time)
 /**
  * Return MIDI channel and control change as combined string
  */
-std::string utils::ch_cc(const int ch, const int cc) {
+std::string utils::ch_cc(const int ch, const int cc)
+{
     return std::to_string(ch) + "_" + std::to_string(cc);
+}
+
+
+/**
+ * Create all required preference folders
+ */
+bool utils::create_preference_folders(const std::shared_ptr<xplane>& xp)
+{
+    // check preference folder
+    if (!std::filesystem::exists(xp->preferences_path())) {
+        LOG_INFO << "Directory '" << xp->preferences_path() << "' not found" << LOG_END
+
+        if (std::filesystem::create_directory(xp->preferences_path())) {
+            LOG_INFO << "Directory '" << xp->preferences_path() << "' created" << LOG_END
+        } else {
+            LOG_ERROR << "Could not create directory '" << xp->preferences_path() << "'" << LOG_END
+            return false;
+        }
+    }
+
+    // check profiles folder
+    if (!std::filesystem::exists(xp->profiles_path())) {
+        LOG_INFO << "Directory '" << xp->profiles_path() << "' not found" << LOG_END
+
+        if (std::filesystem::create_directory(xp->profiles_path())) {
+            LOG_INFO << "Directory '" << xp->profiles_path() << "' created" << LOG_END
+        } else {
+            LOG_ERROR << "Could not create directory '" << xp->profiles_path() << "'" << LOG_END
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // Namespace xmidictrl

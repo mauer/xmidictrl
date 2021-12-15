@@ -58,22 +58,26 @@ void menu::create_menu()
     m_menu_container = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, nullptr, 0);
     m_menu_id = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menu_container, event_handler, this);
 
-    XPLMAppendMenuItem(m_menu_id, "Show MIDI Devices", (void *) MENUITEM_MIDI_DEVICES_DIALOG, 0);
-    XPLMAppendMenuItem(m_menu_id, "Show Messages", (void *) MENUITEM_MESSAGES_DIALOG, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show MIDI Devices", (void *) MENUITEM_DEVICES_WINDOW, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show Messages", (void *) MENUITEM_MESSAGES_WINDOW, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
-    XPLMAppendMenuItem(m_menu_id, "Show Aircraft Profile", (void*) MENUITEM_AIRCRAFT_PROFILE_DIALOG, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show Aircraft Profile", (void*) MENUITEM_PROFILE_WINDOW, 0);
 
     XPLMAppendMenuItem(m_menu_id, "Reload Aircraft Profile", (void *) MENUITEM_RELOAD_AIRCRAFT_PROFILE, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
-    XPLMAppendMenuItem(m_menu_id, "Settings", (void *) MENUITEM_SETTINGS_DIALOG, 0);
+    XPLMAppendMenuItem(m_menu_id, "Settings", (void *) MENUITEM_SETTINGS_WINDOW, 0);
+
+    XPLMAppendMenuSeparator(m_menu_id);
+
+    XPLMAppendMenuItem(m_menu_id, "Documentation", (void *) MENUITEM_SHOW_DOCUMENTATION, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
     XPLMAppendMenuItem(m_menu_id, std::string_view("About " + std::string(XMIDICTRL_NAME)).data(),
-                       (void *) MENUITEM_ABOUT_DIALOG, 0);
+                       (void *) MENUITEM_ABOUT_WINDOW, 0);
 }
 
 
@@ -104,16 +108,31 @@ void menu::remove_menu()
  */
 void menu::event_handler(void *in_menu_ref, void *in_item_ref)
 {
-    if (!strcmp((const char *) in_item_ref, MENUITEM_MIDI_DEVICES_DIALOG))
+    if (!strcmp((const char *) in_item_ref, MENUITEM_DEVICES_WINDOW))
         plugin::instance().show_devices_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_MESSAGES_DIALOG))
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_MESSAGES_WINDOW))
         plugin::instance().show_messages_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_SETTINGS_DIALOG))
-        plugin::instance().show_settings_window();
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_PROFILE_WINDOW))
+        plugin::instance().show_profile_window();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_RELOAD_AIRCRAFT_PROFILE))
         plugin::instance().load_profile();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_ABOUT_DIALOG))
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_SETTINGS_WINDOW))
+        plugin::instance().show_settings_window();
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
+        show_documentation();
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_ABOUT_WINDOW))
         plugin::instance().show_about_window();
 }
+
+
+/**
+ * Open the plugin documentation
+ */
+void menu::show_documentation()
+{
+    std::string linkChar = "https://mauer.github.io/xmidictrl/#/";
+    ShellExecute(nullptr, nullptr, linkChar.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+}
+
 
 } // Namespace XMidiCtrl

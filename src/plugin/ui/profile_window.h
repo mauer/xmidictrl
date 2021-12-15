@@ -23,17 +23,21 @@
 
 // XMidiCtrl
 #include "ImGuiWindow.h"
+#include "profile.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
 class profile_window : public ImGuiWindow {
 public:
-    explicit profile_window(std::shared_ptr<xplane> xp);
+    profile_window(std::shared_ptr<xplane> xp, std::shared_ptr<profile> prf);
     ~profile_window() override = default;
 
 protected:
     void create_widgets() override;
+
+private:
+    std::shared_ptr<profile> m_prf;
 };
 
 } // Namespace xmidictrl

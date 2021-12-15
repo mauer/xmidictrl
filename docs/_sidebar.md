@@ -4,14 +4,15 @@
 
 * **General**
   * [Installation](installation.md)
-  * [Aircraft Profiles](profile.md)
   * [Configuration](configuration.md)
 
 * **Getting started**
-  * [Creating a profile](creating_profile.md)
+  * [Create a profile](create_profile.md)
 
-* **Mapping**
+* **Mappings**
   * [Inbound Mappings](inbound_mapping.md)
   * [Outbound Mappings](outbound_mapping.md)
-  
+
+* **Advanced Options**
+  * [Aircraft Profiles](profile.md)  
 

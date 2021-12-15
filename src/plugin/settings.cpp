@@ -37,8 +37,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(std::shared_ptr<xplane> xp)
-    : config(std::move(xp))
+settings::settings(std::shared_ptr<xplane> xp) : config(std::move(xp))
 {
     // build name for general settings file
 
@@ -64,7 +63,7 @@ settings::~settings() = default;
  */
 void settings::set_log_level(log_level level)
 {
-    LOG_ALL << "Set log level to '" << utils::log_level_as_text(level) << "'" << LOG_END
+    LOG_ALL << "Set logging level to '" << utils::log_level_as_text(level) << "'" << LOG_END
     m_config[CFG_KEY_LOG_LEVEL] = utils::log_level_as_code(level);
 }
 
@@ -74,8 +73,8 @@ void settings::set_log_level(log_level level)
  */
 log_level settings::get_log_level()
 {
-    std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
-                                                      utils::log_level_as_code(log_level::debug));
+    std::string
+        logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL, utils::log_level_as_code(log_level::debug));
     return utils::log_level_from_code(logLevel);
 }
 
@@ -136,16 +135,8 @@ void settings::save_settings()
     }
 
     // check if our directory already exists in the preference folder
-    if (!std::filesystem::exists(m_xp->preferences_path())) {
-        LOG_INFO << "Directory '" << m_xp->preferences_path() << "' not found" << LOG_END
-
-        if (std::filesystem::create_directory(m_xp->preferences_path())) {
-            LOG_INFO << "Directory '" << m_xp->preferences_path() << "' created" << LOG_END
-        } else {
-            LOG_ERROR << "Could not create directory '" << m_xp->preferences_path() << "'" << LOG_END
-            return;
-        }
-    }
+    if (!utils::create_preference_folders(m_xp))
+        return;
 
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
@@ -169,7 +160,5 @@ std::string settings::get_settings_filename()
 
     return filename;
 }
-
-
 
 } // Namespace xmidictrl

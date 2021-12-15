@@ -33,7 +33,7 @@ message("-----------------------------------------------")
 message("-- Creating version file")
 configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
-        "${PROJECT_BINARY_DIR}/Version.h"
+        "${PROJECT_BINARY_DIR}/version.h"
 )
 
 add_definitions("-include ${PROJECT_BINARY_DIR}/Version.h")

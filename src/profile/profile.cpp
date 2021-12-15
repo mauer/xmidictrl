@@ -79,10 +79,13 @@ bool profile::load()
     LOG_INFO << "Aircraft Profile '" << filename << "' found" << LOG_END
 
     // load the profile and create all devices with their mappings
-    if (config::load(filename))
+    if (config::load(filename)) {
+        m_filename = filename;
         create_device_list();
-    else
+    } else {
+        m_filename.clear();
         return false;
+    }
 
     // open the midi connections
     return m_device_list->open_connections();
@@ -94,8 +97,19 @@ bool profile::load()
  */
 void profile::close()
 {
+    m_filename.clear();
     m_device_list->clear();
     config::close();
+}
+
+
+/**
+ * Return the filename of the loaded profile
+ */
+
+std::string_view profile::filename() const
+{
+    return m_filename;
 }
 
 
@@ -105,6 +119,48 @@ void profile::close()
 bool profile::has_errors() const
 {
     return m_errors_found;
+}
+
+
+/**
+ * Returns the title of the current profile
+ */
+std::string profile::title()
+{
+    return toml::find_or<std::string>(m_config, CFG_KEY_TITLE, "");
+}
+
+
+/**
+ * Returns the version of the current profile
+ */
+std::string profile::version()
+{
+    return toml::find_or<std::string>(m_config, CFG_KEY_VERSION, "");
+}
+
+
+/**
+ * Return the filename for the aircraft path
+ */
+std::string profile::get_filename_aircraft_path()
+{
+    return m_xp->current_aircraft_path() + std::string(FILENAME_PROFILE);
+}
+
+
+/**
+ * Return the filename for the profile path
+ */
+std::string profile::get_filename_profiles_path(bool icao, bool author)
+{
+    if (icao && author)
+        return m_xp->profiles_path().data() + m_xp->current_aircraft_author() + "_" +
+               m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+    else if (icao)
+        return m_xp->profiles_path().data() + m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+    else
+        return m_xp->profiles_path().data() + std::string(FILENAME_PROFILE);
 }
 
 
@@ -133,7 +189,7 @@ std::string profile::get_profile_filename()
     std::string filename;
 
     // 1. check if there is a profile in the aircraft directory
-    filename = m_xp->current_aircraft_path() + std::string(FILENAME_PROFILE);
+    filename = get_filename_aircraft_path();
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
     if (std::filesystem::exists(filename)) {
@@ -141,8 +197,7 @@ std::string profile::get_profile_filename()
     }
 
     // 2. check if there is a profile in the profile directory including the author and ICAO
-    filename = m_xp->profiles_path().data() + m_xp->current_aircraft_author() + "_" +
-               m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+    filename = get_filename_profiles_path(true, true);
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
     if (std::filesystem::exists(filename)) {
@@ -150,8 +205,7 @@ std::string profile::get_profile_filename()
     }
 
     // 3. check if there is a profile in the profile directory including the ICAO
-    filename =
-        m_xp->profiles_path().data() + m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+    filename = get_filename_profiles_path(true, false);
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
     if (std::filesystem::exists(filename)) {
@@ -159,7 +213,7 @@ std::string profile::get_profile_filename()
     }
 
     // 4. check for the default profile
-    filename = m_xp->profiles_path().data() + std::string(FILENAME_PROFILE);
+    filename = get_filename_profiles_path(false, false);
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
     if (std::filesystem::exists(filename)) {
         return filename;
@@ -208,12 +262,12 @@ void profile::create_device_list()
                 }
 
                 // port in
-                    port_in = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_IN));
+                port_in = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_IN));
 
-                    if (port_in < 0) {
-                        m_errors_found = true;
-                        continue;
-                    }
+                if (port_in < 0) {
+                    m_errors_found = true;
+                    continue;
+                }
 
                 // port out
                 port_out = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_OUT));

@@ -112,25 +112,21 @@ void settings_window::create_widgets()
     ImGui::Separator();
     ImGui::NewLine();
 
-    ImGui::AlignTextToFramePadding();
     ImGui::Text("X-Plane:");
     ImGui::SameLine(150);
-    ImGui::TextColored((ImVec4) ImColor(255, 127, 39), "%s", m_path_xplane.c_str());
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_xplane.c_str());
 
-    ImGui::AlignTextToFramePadding();
     ImGui::Text("Plugin:");
     ImGui::SameLine(150);
-    ImGui::TextColored((ImVec4) ImColor(255, 127, 39), "%s", m_path_plugin.c_str());
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_plugin.c_str());
 
-    ImGui::AlignTextToFramePadding();
     ImGui::Text("Preferences:");
     ImGui::SameLine(150);
-    ImGui::TextColored((ImVec4) ImColor(255, 127, 39), "%s", m_path_preferences.c_str());
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_preferences.c_str());
 
-    ImGui::AlignTextToFramePadding();
     ImGui::Text("Profiles:");
     ImGui::SameLine(150);
-    ImGui::TextColored((ImVec4) ImColor(255, 127, 39), "%s", m_path_profiles.c_str());
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_profiles.c_str());
 
     ImGui::NewLine();
     if (ImGui::Button("Save Settings")) {

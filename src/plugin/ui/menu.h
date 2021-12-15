@@ -18,8 +18,8 @@
 //   IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _MENU_H_
-#define _MENU_H_
+#ifndef MENU_H
+#define MENU_H
 
 // Standard
 #include <memory>
@@ -43,10 +43,12 @@ public:
 private:
     static void event_handler(void *in_menu_ref, void *in_item_ref);
 
+    static void show_documentation();
+
     int m_menu_container = -1;
     XPLMMenuID m_menu_id = nullptr;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
-#endif // _MENU_H_
+#endif // MENU_H

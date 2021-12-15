@@ -22,6 +22,7 @@
 
 // Standard
 #include <string>
+#include <utility>
 
 // XMidiCtrl
 #include "logger.h"
@@ -35,8 +36,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile_window::profile_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(xp, 850, 450)
+profile_window::profile_window(std::shared_ptr<xplane> xp, std::shared_ptr<profile> prf)
+    : ImGuiWindow(xp, 1200, 550),
+      m_prf(std::move(prf))
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");
 }
@@ -53,32 +55,71 @@ profile_window::profile_window(std::shared_ptr<xplane> xp)
  */
 void profile_window::create_widgets()
 {
-    ImGui::NewLine();
-    ImGui::TextUnformatted(XMIDICTRL_NAME " - " XMIDICTRL_DESCRIPTION);
-    ImGui::NewLine();
-    ImGui::TextUnformatted("Version " XMIDICTRL_VERSION_STR);
-    ImGui::NewLine();
+    ImGui::Text("AIRCRAFT INFORMATION");
     ImGui::Separator();
     ImGui::NewLine();
-    ImGui::TextUnformatted("Copyright (c) 2021 by Marco Auer");
+
+    ImGui::Text("ICAO:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_icao().c_str());
+
+    ImGui::Text("Description:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_descr().c_str());
+
+    ImGui::Text("Author:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_author().c_str());
+
     ImGui::NewLine();
-    ImGui::TextUnformatted(XMIDICTRL_NAME " has been released under the MIT License and is therefore free to use without");
-    ImGui::TextUnformatted("any restrictions or limitations. This software is provided without warranty of any kind.");
     ImGui::NewLine();
+
+    ImGui::Text("CURRENT PROFILE");
     ImGui::Separator();
     ImGui::NewLine();
-    ImGui::TextUnformatted(XMIDICTRL_NAME " uses the following libraries:");
-    ImGui::Bullet();
-    ImGui::TextUnformatted("RtMidi from Gary P. Scavone (https://github.com/thestk/rtmidi)");
-    ImGui::Bullet();
-    ImGui::TextUnformatted("TOML for Modern C++ from Toru Niina (https:://github.com/ToruNiina/toml11)");
-    ImGui::Bullet();
-    ImGui::TextUnformatted("Dear ImGui from Omar Cornut (https:://github.com/ocornut/imgui)");
-    ImGui::Bullet();
-    ImGui::TextUnformatted(
-        "Dear ImGui X-Plane Integration from Christopher Collins (https://github.com/xsquawkbox/xsb_public)");
-    ImGui::Bullet();
-    ImGui::TextUnformatted("The X-Plane SDK from Laminar Research");
+
+    ImGui::Text("Title:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->title().data());
+
+    ImGui::Text("Version:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->version().data());
+
+    ImGui::Text("Filename:");
+    ImGui::SameLine(150);
+
+    if (m_prf->filename().empty())
+        ImGui::TextColored(COL_TEXT_VALUE, "<not loaded>");
+    else
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->filename().data());
+
+    ImGui::NewLine();
+    ImGui::NewLine();
+
+    ImGui::Text("POSSIBLE PROFILE NAMES");
+    ImGui::Separator();
+    ImGui::NewLine();
+
+    ImGui::Text("Aircraft folder:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->get_filename_aircraft_path().data());
+
+    ImGui::NewLine();
+
+    ImGui::Text("ICAO and Author:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->get_filename_profiles_path(true, true).data());
+
+    ImGui::Text("ICAO only:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->get_filename_profiles_path(true, false).data());
+
+    ImGui::NewLine();
+
+    ImGui::Text("Generic Profile:");
+    ImGui::SameLine(150);
+    ImGui::TextColored(COL_TEXT_VALUE, "%s", m_prf->get_filename_profiles_path(false, false).data());
 }
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl

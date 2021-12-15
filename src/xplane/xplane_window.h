@@ -85,10 +85,11 @@ public:
     virtual bool on_mouse_wheel(int x, int y, int wheel, int clicks);
 
     void update_matrices();
- private:
-    void create_window(bool translucent);
 
     std::shared_ptr<xplane> m_xp;
+
+ private:
+    void create_window(bool translucent);
 
     XPLMWindowID m_window_id {nullptr};
 

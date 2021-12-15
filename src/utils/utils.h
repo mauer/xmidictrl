@@ -29,6 +29,7 @@
 
 // XMidiCtrl
 #include "types.h"
+#include "xplane.h"
 
 namespace xmidictrl {
 
@@ -46,6 +47,8 @@ public:
 
     static std::string time_to_string(time_point time);
     static std::string ch_cc(int ch, int cc);
+
+    static bool create_preference_folders(const std::shared_ptr<xplane>& xp);
 };
 
 } // Namespace xmidictrl

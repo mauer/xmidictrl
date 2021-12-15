@@ -81,4 +81,4 @@ void about_window::create_widgets()
     ImGui::TextUnformatted("The X-Plane SDK from Laminar Research");
 }
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl

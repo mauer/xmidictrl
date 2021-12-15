@@ -1,5 +1,5 @@
 # MIDI Controller plugin for X-Plane
-XMidiCtrl is a plugin for X-Plane 11 and allows you to connect MIDI controllers to commands and datarefs without the
+XMidiCtrl is a plugin for X-Plane 11 and allows you to connect MIDI devices to commands and datarefs without the
 need of additional software.
 
 The following devices are officially supported:
@@ -9,8 +9,7 @@ The following devices are officially supported:
 Other midi devices should work, as long as they send MIDI Control Change (CC) messages.
 
 # Supported Operating Systems
-This version supports Microsoft Windows, macOS and Linux operating systems. Please that I'm unable to test the macOS
-build, as I don't own any computers from Apple.
+This version supports Microsoft Windows.
 
 # Logging
 XMidiCtrl does not log directly in the **Log.txt** of X-Plane. Instead, it's using an own log file called
@@ -26,11 +25,11 @@ To use the template file, simply copy it into your aircraft folder and start add
 buttons and encoders.
 
 # Usage
-When a new aircraft is loaded, the plugin will search in the aircraft directory for a profile file called 
-**midictrl.toml**. The profile uses the TOML language and holds information about the MIDI devices to be used and the 
-mappings of the encoders and buttons.  Further information about the TOML syntax can be found [here](https://toml.io/en/).
+When a new aircraft is loaded, the plugin will search in the aircraft directory for a file called **XMidiCtrl.toml**. 
+The profile uses the TOML language and holds information about the MIDI devices to be used and the mappings of the 
+encoders and buttons.  Further information about the TOML syntax can be found [here](https://toml.io/en/).
 
-The configuration of xmidictrl might be a bit intimidating at the beginning, but it is quite straight forward. Please
+The configuration of XMidiCtrl might be a bit intimidating at the beginning, but it is quite straight forward. Please
 don't hesitate to contact me if you run into problems.
 
 # Examples

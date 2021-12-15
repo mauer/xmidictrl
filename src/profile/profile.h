@@ -41,12 +41,19 @@ namespace xmidictrl {
 class profile : public config {
 public:
     explicit profile(xplane::ptr xplane);
-    ~profile() = default;
+    ~profile() override = default;
 
     bool load();
     void close() override;
 
+    [[nodiscard]] std::string_view filename() const;
     [[nodiscard]] bool has_errors() const;
+
+    std::string title();
+    std::string version();
+
+    std::string get_filename_aircraft_path();
+    std::string get_filename_profiles_path(bool icao, bool author);
 
     void process();
 
@@ -63,6 +70,7 @@ private:
 
     std::shared_ptr<device_list> m_device_list;
 
+    std::string m_filename {};
     bool m_errors_found {false};
 };
 

@@ -70,7 +70,7 @@ private:
     std::unique_ptr<menu> m_menu;
 
     std::shared_ptr<settings> m_settings;
-    std::unique_ptr<profile> m_profile;
+    std::shared_ptr<profile> m_profile;
 
     // list of all plugin windows
     std::map<window_type, std::shared_ptr<xplane_window>> m_windows;

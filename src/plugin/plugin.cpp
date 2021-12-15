@@ -28,7 +28,8 @@
 #include "messages_window.h"
 #include "profile_window.h"
 #include "settings_window.h"
-#include "Version.h"
+#include "version.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -55,7 +56,7 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(m_xp);
+    m_profile = std::make_shared<profile>(m_xp);
 }
 
 
@@ -122,8 +123,7 @@ void plugin::enable()
     m_menu->create_menu();
 
     // register flight loop
-    XPLMCreateFlightLoop_t params = {sizeof(XPLMCreateFlightLoop_t),
-                                     xplm_FlightLoop_Phase_BeforeFlightModel,
+    XPLMCreateFlightLoop_t params = {sizeof(XPLMCreateFlightLoop_t), xplm_FlightLoop_Phase_BeforeFlightModel,
                                      callback_flight_loop, this};
     m_flight_loop_id = XPLMCreateFlightLoop(&params);
 
@@ -131,8 +131,12 @@ void plugin::enable()
         LOG_DEBUG << "Flight loop registered" << LOG_END
 
         XPLMScheduleFlightLoop(m_flight_loop_id, FLIGHTLOOP_INTERVAL, true);
-    } else
+    } else {
         LOG_ERROR << "Could not register flight loop" << LOG_END
+    }
+
+    // check if our directory already exists in the preference folder
+    utils::create_preference_folders(m_xp);
 }
 
 
@@ -262,7 +266,7 @@ void plugin::create_window(window_type windowType)
             break;
 
         case window_type::profile_window:
-            window = std::make_shared<profile_window>(m_xp);
+            window = std::make_shared<profile_window>(m_xp, m_profile);
             break;
 
         case window_type::settings_window:
