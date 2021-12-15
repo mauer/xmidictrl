@@ -73,8 +73,8 @@ void settings::set_log_level(log_level level)
  */
 log_level settings::get_log_level()
 {
-    std::string
-        logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL, utils::log_level_as_code(log_level::debug));
+    std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
+                                                      utils::log_level_as_code(log_level::debug));
     return utils::log_level_from_code(logLevel);
 }
 
@@ -102,13 +102,7 @@ bool settings::get_log_midi()
  */
 void settings::set_show_messages(const bool enabled)
 {
-    if (m_config[CFG_KEY_SHOW_MSG_DIALOG].as_boolean() != enabled) {
-        // store it in the general settings
-        m_config[CFG_KEY_SHOW_MSG_DIALOG] = enabled;
-
-        // save settings
-        save_settings();
-    }
+    m_config[CFG_KEY_SHOW_MSG_DIALOG] = enabled;
 }
 
 
