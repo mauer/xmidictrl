@@ -43,6 +43,6 @@ Many thanks to [JetBrains](https://www.jetbrains.com/) for sponsoring a free lic
 [CLion](https://www.jetbrains.com/clion/) for the development of XMidiCtrl.
 
 ## License
-XMidiCtrl is written by Marco Auer and release under the MIT License.
+XMidiCtrl is written by Marco Auer and released under the GNU Affero General Public License .
 
 &copy; 2021 Marco Auer
