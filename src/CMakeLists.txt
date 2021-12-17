@@ -20,11 +20,7 @@ message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
 
-# RtMidi
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(RTMIDI REQUIRED rtmidi)
-
-include_directories(${RTMIDI_INCLUDEDIR})
+# Include the ImGui files
 include_directories(${IMGUI_INCLUDEDIR})
 
 # Build shared library
@@ -51,11 +47,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # link required dependencies
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 ${RTMIDI_STATIC_LIBRARIES} winmm xpsdk imgui)
+    target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 rtmidi winmm xpsdk imgui)
 elseif (APPLE)
     target_link_libraries(${PROJECT_NAME} "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
 elseif (UNIX)
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 ${RTMIDI_STATIC_LIBRARIES} xpsdk imgui)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 rtmidi xpsdk imgui)
 endif ()
 
 # Set output properties for X-Plane standards

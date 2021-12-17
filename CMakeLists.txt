@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 0.50 DESCRIPTION "A Midi Controller Plugin for X-Plane 11")
+project(XMidiCtrl VERSION 0.50 DESCRIPTION "MIDI Controller Plugin for X-Plane 11")
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
@@ -43,8 +43,9 @@ endif()
 
 # set compiler options
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-free-nonheap-object -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
 
 # Add subdirectories
 add_subdirectory(lib)
 add_subdirectory(src)
+

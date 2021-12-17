@@ -19,11 +19,23 @@
 message("-- Configuring build scripts for toml11")
 add_subdirectory(toml11)
 
-## Add the X-Plane SDK
+# Add RtMidi for accessing MIDI devices
+message("-- Configuring build scripts for RtMidi")
+
+# Configre RtMidi
+set(RTMIDI_BUILD_STATIC_LIBS ON)
+set(RTMIDI_BUILD_TESTING OFF)
+
+if (WIN32)
+    set(RTMIDI_API_WINMM ON)
+    set(RTMIDI_API_JACK OFF)
+endif()
+
+add_subdirectory(rtmidi)
+ 
+# Add the X-Plane SDK
 include(${CMAKE_CURRENT_LIST_DIR}/xpsdk.cmake)
 
 # Add ImGui for the User Interface
 include(${CMAKE_CURRENT_LIST_DIR}/imgui.cmake)
 
-# Add ImgWindow
-#include(${CMAKE_CURRENT_LIST_DIR}/imgwindow.cmake)
