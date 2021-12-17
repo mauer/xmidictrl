@@ -148,11 +148,11 @@ void messages_window::create_tab_midi_msg()
 
         ImGui::BeginTable("tableMidiMessages", 7, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
         ImGui::TableSetupColumn("Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
-        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("Control Change", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Control Change", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 150);
         ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
