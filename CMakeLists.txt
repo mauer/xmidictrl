@@ -33,7 +33,7 @@ configure_file(
         "${PROJECT_BINARY_DIR}/version.h"
 )
 
-add_definitions("-include ${PROJECT_BINARY_DIR}/Version.h")
+add_definitions("-include ${PROJECT_BINARY_DIR}/version.h")
 include_directories(${PROJECT_BINARY_DIR})
 
 # use highest optimization level and optimize for size
