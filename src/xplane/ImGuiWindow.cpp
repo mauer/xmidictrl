@@ -36,7 +36,7 @@
 // XMidiCtrl
 #include "ImGuiWindow.h"
 #include "logger.h"
-#include "Version.h"
+#include "version.h"
 
 namespace xmidictrl {
 
