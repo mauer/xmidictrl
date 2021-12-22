@@ -46,7 +46,7 @@ public:
     void read_config(toml::value &settings) override;
     bool check() override;
 
-    void execute(midi_message &msg) override;
+    bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
     std::string m_command {};

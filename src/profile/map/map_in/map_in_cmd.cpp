@@ -77,7 +77,7 @@ void map_in_cmd::read_config(toml::value &settings)
     map::read_config(settings);
 
     // read the command
-    set_command(utils::read_string_parameter(settings, CFG_KEY_COMMAND));
+    set_command(utils::toml_read_string(settings, CFG_KEY_COMMAND));
 }
 
 
@@ -99,8 +99,11 @@ bool map_in_cmd::check()
 /**
  * Execute the action in X-Plane
  */
-void map_in_cmd::execute(midi_message &msg)
+bool map_in_cmd::execute(midi_message &msg, std::string_view sl_value)
 {
+    if (!check_sublayer(sl_value))
+        return true;
+
     LOG_DEBUG << " --> Execute command '" << m_command << "'" << LOG_END
 
     switch (msg.velocity) {
@@ -116,6 +119,8 @@ void map_in_cmd::execute(midi_message &msg)
             LOG_ERROR << "Invalid midi velocity '" << msg.velocity << "'" << LOG_END
             LOG_ERROR << " --> Supported values are '127' and '0'" << LOG_END
     }
+
+    return true;
 }
 
 } // Namespace xmidictrl

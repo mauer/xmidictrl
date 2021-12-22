@@ -92,8 +92,8 @@ float plugin::callback_flight_loop(float elapsed_me, float elapsed_sim, int coun
 {
     // call instance method
     if (refcon != nullptr) {
-        auto midiCtrl = static_cast<plugin *>(refcon);
-        midiCtrl->process_flight_loop(elapsed_me, elapsed_sim, counter);
+        auto instance = static_cast<plugin *>(refcon);
+        instance->process_flight_loop(elapsed_me, elapsed_sim, counter);
     }
 
     return FLIGHTLOOP_INTERVAL;
@@ -119,6 +119,9 @@ void plugin::enable()
     // create all required menu entries
     m_menu->create_menu();
 
+    // create the custom commands
+    create_commands();
+
     // register flight loop
     XPLMCreateFlightLoop_t params = {sizeof(XPLMCreateFlightLoop_t), xplm_FlightLoop_Phase_BeforeFlightModel,
                                      callback_flight_loop, this};
@@ -142,8 +145,11 @@ void plugin::enable()
  */
 void plugin::disable()
 {
-    // delete the menu entries
+    // remove the menu entries
     m_menu->remove_menu();
+
+    // remove the commands
+    remove_commands();
 
     // destroy the flight loop
     if (m_flight_loop_id != nullptr) {
@@ -166,7 +172,7 @@ void plugin::disable()
 void plugin::load_profile()
 {
     if (!m_profile->load() && m_profile->has_errors()) {
-        if (m_settings->get_show_messages())
+        if (m_settings->show_messages())
             show_messages_window();
     }
 }
@@ -231,6 +237,59 @@ void plugin::show_about_window()
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create customs commands
+ */
+void plugin::create_commands()
+{
+    m_cmd_show_messages = XPLMCreateCommand("xmidictrl/show_messages_window", "Show the messages window");
+    XPLMRegisterCommandHandler(m_cmd_show_messages,
+                               command_handler,
+                               1,
+                               (void *) COMMAND_MESSAGE_WINDOW);
+
+    m_cmd_show_profile = XPLMCreateCommand("xmidictrl/show_profile_window", "Show the aircraft profile window");
+    XPLMRegisterCommandHandler(m_cmd_show_profile,
+                               command_handler,
+                               1,
+                               (void *) COMMAND_PROFILE_WINDOW);
+
+    m_cmd_reload_profile = XPLMCreateCommand("xmidictrl/reload_profile", "Reload the aircraft profile");
+    XPLMRegisterCommandHandler(m_cmd_reload_profile,
+                               command_handler,
+                               1,
+                               (void *) COMMAND_RELOAD_PROFILE);
+}
+
+
+/**
+ * Remove all custom commands
+ */
+void plugin::remove_commands()
+{
+    XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, 0);
+    XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, 0);
+    XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, 0);
+}
+
+
+int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon)
+{
+    if (phase != xplm_CommandEnd)
+        return 1;
+
+    if (!strcmp((const char *) refcon, COMMAND_MESSAGE_WINDOW))
+        plugin::instance().show_messages_window();
+    else if (!strcmp((const char *) refcon, COMMAND_PROFILE_WINDOW))
+        plugin::instance().show_profile_window();
+    else if (!strcmp((const char *) refcon, COMMAND_RELOAD_PROFILE))
+        plugin::instance().load_profile();
+
+    // disable further processing by X-Plane.
+    return 0;
+}
+
 
 /**
  * Create and returns windows

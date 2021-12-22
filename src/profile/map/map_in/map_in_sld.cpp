@@ -113,13 +113,13 @@ void map_in_sld::read_config(toml::value &settings)
     map::read_config(settings);
 
     // read command up
-    set_command_up(utils::read_string_parameter(settings, CFG_KEY_COMMAND_UP));
+    set_command_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_UP));
 
     // read command middle
-    set_command_middle(utils::read_string_parameter(settings, CFG_KEY_COMMAND_MIDDLE));
+    set_command_middle(utils::toml_read_string(settings, CFG_KEY_COMMAND_MIDDLE));
 
     // read command down
-    set_command_down(utils::read_string_parameter(settings, CFG_KEY_COMMAND_DOWN));
+    set_command_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_DOWN));
 }
 
 
@@ -141,8 +141,11 @@ bool map_in_sld::check()
 /**
  * Execute the action in X-Plane
  */
-void map_in_sld::execute(midi_message &msg)
+bool map_in_sld::execute(midi_message &msg, std::string_view sl_value)
 {
+    if (!check_sublayer(sl_value))
+        return true;
+
     if (msg.velocity <= 10) {
         LOG_DEBUG << " --> Execute command '" << m_command_down << "'" << LOG_END
         m_xp->cmd().execute(m_command_down);
@@ -155,6 +158,8 @@ void map_in_sld::execute(midi_message &msg)
             m_xp->cmd().execute(m_command_middle);
         }
     }
+
+    return true;
 }
 
 } // Namespace xmidictrl

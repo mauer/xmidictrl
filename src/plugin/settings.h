@@ -38,14 +38,14 @@ public:
 
     typedef std::shared_ptr<settings> ptr;
 
-    void set_log_level(log_level level);
-    log_level get_log_level();
+    void set_logging_level(log_level level);
+    log_level logging_level();
 
     void set_log_midi(bool enabled);
-    bool get_log_midi();
+    bool log_midi();
 
     void set_show_messages(bool enabled);
-    bool get_show_messages();
+    bool show_messages();
 
     void save_settings();
 

@@ -52,12 +52,17 @@ const char *const PROFILES_DIRECTORY_NAME = "Profiles";
 
 // Menu items
 const char *const MENUITEM_ABOUT_WINDOW = "ABOUT_WINDOW";
-const char *const MENUITEM_RELOAD_AIRCRAFT_PROFILE = "RELOAD_AIRCRAFT_PROFILE";
+const char *const MENUITEM_RELOAD_PROFILE = "RELOAD_PROFILE";
 const char *const MENUITEM_MESSAGES_WINDOW = "MESSAGES_WINDOW";
 const char *const MENUITEM_DEVICES_WINDOW = "DEVICES_WINDOW";
 const char *const MENUITEM_SETTINGS_WINDOW = "SETTINGS_WINDOW";
 const char *const MENUITEM_SHOW_DOCUMENTATION = "SHOW_DOCUMENTATION";
 const char *const MENUITEM_PROFILE_WINDOW = "PROFILE_WINDOW";
+
+// Custom commands
+const char *const COMMAND_MESSAGE_WINDOW = "MESSAGES_WINDOW";
+const char *const COMMAND_PROFILE_WINDOW = "PROFILE_WINDOW";
+const char *const COMMAND_RELOAD_PROFILE = "RELOAD_PROFILE";
 
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";
@@ -73,8 +78,8 @@ const char *const CFG_KEY_COMMAND_PUSH = "command_push";
 const char *const CFG_KEY_COMMAND_UP = "command_up";
 const char *const CFG_KEY_DATAREF = "dataref";
 const char *const CFG_KEY_DEVICE = "device";
-const char *const CFG_KEY_LOG_LEVEL = "log_level";
-const char *const CFG_KEY_LOG_MIDI = "get_log_midi";
+const char *const CFG_KEY_LOG_LEVEL = "logging_level";
+const char *const CFG_KEY_LOG_MIDI = "log_midi";
 const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
@@ -82,6 +87,8 @@ const char *const CFG_KEY_NAME = "name";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
 const char *const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";
+const char *const CFG_KEY_SL = "sl";
+const char *const CFG_KEY_SL_DATAREF = "sl_dataref";
 const char *const CFG_KEY_TITLE = "title";
 const char *const CFG_KEY_TYPE = "type";
 const char *const CFG_KEY_VALUE_ON = "value_on";
@@ -96,12 +103,6 @@ const char *const CFG_MAPTYPE_INTERNAL = "int";
 const char *const CFG_MAPTYPE_PUSH_PULL = "pnp";
 const char *const CFG_MAPTYPE_SLIDER = "sld";
 
-// Windows Types
-const char *const WINDOW_ABOUT = "WINDOW_ABOUT";
-const char *const WINDOW_DEVICES = "WINDOW_DEVICES";
-const char *const WINDOW_MESSAGES = "WINDOW_MESSAGES";
-const char *const WINDOW_SETTINGS = "WINDOW_SETTINGS";
-
 
 
 
@@ -110,7 +111,8 @@ const char *const WINDOW_SETTINGS = "WINDOW_SETTINGS";
 //---------------------------------------------------------------------------------------------------------------------
 
 // time point
-using time_point = std::chrono::time_point<std::chrono::system_clock>;
+//using time_point = std::chrono::time_point<std::chrono::system_clock>;
+using time_point = std::chrono::system_clock::time_point;
 
 // Log levels
 enum class log_level {

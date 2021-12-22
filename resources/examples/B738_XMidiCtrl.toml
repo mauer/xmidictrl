@@ -120,18 +120,18 @@ mapping_out = [
   { ch = 11, cc = 19, type = "drf", dataref = "laminar/B738/autopilot/speed_pos", value_on="1" },
   { ch = 11, cc = 20, type = "drf", dataref = "laminar/B738/autopilot/vnav_pos", value_on="1" },
   { ch = 11, cc = 21, type = "drf", dataref = "laminar/B738/autopilot/lnav_pos", value_on="1" },
-  { ch = 11, cc = 22, type = "drf", dataref = "laminar/B738/autopilot/alt_hld_pos", value_on="1" },
-  { ch = 11, cc = 23, type = "drf", dataref = "laminar/B738/autopilot/cmd_a_pos", value_on="1" },
-  { ch = 11, cc = 24, type = "drf", dataref = "laminar/B738/autopilot/cmd_b_pos", value_on="1" },
+  { ch = 11, cc = 22, type = "drf", dataref = "laminar/B738/autopilot/alt_hld_status", value_on="1" },
+  { ch = 11, cc = 23, type = "drf", dataref = "laminar/B738/autopilot/cmd_a_status", value_on="1" },
+  { ch = 11, cc = 24, type = "drf", dataref = "laminar/B738/autopilot/cmd_b_status", value_on="1" },
   
   # Buttons Lower Row
   { ch = 11, cc = 25, type = "drf", dataref = "laminar/B738/annunciator/master_caution_light", value_off = "0" },
   { ch = 11, cc = 27, type = "drf", dataref = "laminar/B738/autopilot/n1_pos", value_on="1" },
-  { ch = 11, cc = 28, type = "drf", dataref = "laminar/B738/autopilot/lvl_chg_pos", value_on="1" },
-  { ch = 11, cc = 29, type = "drf", dataref = "laminar/B738/autopilot/vorloc_pos", value_on="1" },
-  { ch = 11, cc = 30, type = "drf", dataref = "laminar/B738/autopilot/app_pos", value_on="1" },
-  { ch = 11, cc = 31, type = "drf", dataref = "laminar/B738/autopilot/cws_a_pos", value_on="1" },
-  { ch = 11, cc = 32, type = "drf", dataref = "laminar/B738/autopilot/cws_b_pos", value_on="1" },
+  { ch = 11, cc = 28, type = "drf", dataref = "laminar/B738/autopilot/lvl_chg_status", value_on="1" },
+  { ch = 11, cc = 29, type = "drf", dataref = "laminar/B738/autopilot/vorloc_status", value_on="1" },
+  { ch = 11, cc = 30, type = "drf", dataref = "laminar/B738/autopilot/app_status", value_on="1" },
+  { ch = 11, cc = 31, type = "drf", dataref = "laminar/B738/autopilot/cws_a_status", value_on="1" },
+  { ch = 11, cc = 32, type = "drf", dataref = "laminar/B738/autopilot/cws_b_status", value_on="1" },
   
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B

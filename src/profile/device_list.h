@@ -34,8 +34,6 @@ public:
     explicit device_list() = default;
     ~device_list();
 
-    typedef std::shared_ptr<device_list> ptr;
-
     std::shared_ptr<device> create_device(std::string_view name, unsigned int port_in, unsigned int port_out);
 
     bool open_connections();
@@ -43,14 +41,14 @@ public:
 
     void add_event(const std::shared_ptr<task> &event);
 
-    void process_inbound_events();
-    void process_outbound_mappings();
+    void process_inbound_events(std::string_view sl_value);
+    void process_outbound_mappings(std::string_view sl_value);
 
     void clear();
     unsigned int size();
 
 private:
-    std::queue<std::shared_ptr<task>> m_inbound_events;
+    std::queue<std::shared_ptr<task>> m_inbound_tasks;
     std::vector<std::shared_ptr<device>> m_device_list;
 };
 

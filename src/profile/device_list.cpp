@@ -90,34 +90,51 @@ void device_list::close_connections()
 /**
  * Add a midi event
  */
-void device_list::add_event(const std::shared_ptr<task> &event) {
+void device_list::add_event(const std::shared_ptr<task> &event)
+{
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    m_inbound_events.push(event);
+    LOG_DEBUG << "Task " << event->map->ch() << " " << event->map->cc() << " " << event->map->sl() << " added to queue"
+              << LOG_END
+
+    m_inbound_tasks.push(event);
 }
 
 
 /**
- * Process events
+ * Process inbound events
  */
-void device_list::process_inbound_events() {
+void device_list::process_inbound_events(std::string_view sl_value)
+{
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    // process the midi inbound queue for each midi device
-    while (!m_inbound_events.empty()) {
-        std::shared_ptr<task> event = m_inbound_events.front();
+    std::queue<std::shared_ptr<task>> temp_list;
 
-        if (event == nullptr)
+    // process the midi inbound queue for each midi device
+    while (!m_inbound_tasks.empty()) {
+        std::shared_ptr<task> t = m_inbound_tasks.front();
+
+        if (t == nullptr || t->map == nullptr)
             continue;
 
         // perform the action related to the mapping
-        if (event->map != nullptr)
-            event->map->execute(*event->msg);
+        if (!t->map->execute(*t->msg, sl_value)) {
+            // store in temp list
+            temp_list.push(t);
+        }
 
         // delete entry from list
-        m_inbound_events.pop();
+        m_inbound_tasks.pop();
+    }
+
+    // add temp tasks to queue again, will be executed in next flight loop
+    while (!temp_list.empty()) {
+        std::shared_ptr<task> t = temp_list.front();
+        m_inbound_tasks.push(t);
+
+        temp_list.pop();
     }
 }
 
@@ -125,11 +142,11 @@ void device_list::process_inbound_events() {
 /**
  * Process the midi outbound mappings
  */
-void device_list::process_outbound_mappings()
+void device_list::process_outbound_mappings(std::string_view sl_value)
 {
     for (auto const &device: m_device_list) {
         if (device != nullptr)
-            device->process_outbound_mappings();
+            device->process_outbound_mappings(sl_value);
     }
 }
 

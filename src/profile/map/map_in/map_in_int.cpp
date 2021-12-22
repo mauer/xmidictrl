@@ -65,8 +65,12 @@ bool map_in_int::check()
 /**
  * Execute the action in X-Plane
  */
-void map_in_int::execute(midi_message &msg)
+bool map_in_int::execute(midi_message &msg, std::string_view sl_value)
 {
+    if (!check_sublayer(sl_value))
+        return true;
+
+    return true;
 }
 
 } // Namespace xmidictrl

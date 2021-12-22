@@ -32,29 +32,56 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read the value of a string parameter
+ * Check if the given key is in the config
  */
-std::string utils::read_string_parameter(toml::value &settings, std::string_view parameter, bool mandatory)
+bool utils::toml_contains(toml::value &settings, std::string_view name, bool mandatory)
 {
-    std::string value;
-
-    if (parameter.empty()) {
-        LOG_ERROR << "Internal error (map::read_parameter --> parameter is empty" << LOG_END
-        return {};
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_contains --> name is empty" << LOG_END
+        return false;
     }
 
     try {
         // read dataref
-        if (settings.contains(parameter.data())) {
-            value = settings[parameter.data()].as_string();
-            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << parameter << "' = '"
-                      << value << "'" << LOG_END
+        if (settings.contains(name.data())) {
+            return true;
         } else {
             if (mandatory) {
                 LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str()
                           << LOG_END
-                LOG_ERROR << " --> Parameter '" << parameter << "' not found" << LOG_END
+                LOG_ERROR << " --> Parameter '" << name << "' not found" << LOG_END
             }
+
+            return false;
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return false;
+}
+
+
+/**
+ * Read the value of a string parameter
+ */
+std::string utils::toml_read_string(toml::value &settings, std::string_view name, bool mandatory)
+{
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_read_string --> name is empty" << LOG_END
+        return {};
+    }
+
+    std::string value;
+
+    try {
+        // read dataref
+        if (toml_contains(settings, name, mandatory)) {
+            value = settings[name.data()].as_string();
+            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                      << value << "'" << LOG_END
         }
     } catch (toml::type_error &error) {
         LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
@@ -67,29 +94,60 @@ std::string utils::read_string_parameter(toml::value &settings, std::string_view
 
 
 /**
+ * Read the values of a string array
+ */
+std::vector<std::string> utils::toml_read_string_array(toml::value &settings,
+                                                       std::string_view name,
+                                                       bool mandatory)
+{
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_read_string --> name is empty" << LOG_END
+        return {};
+    }
+
+    std::vector<std::string> list;
+
+    try {
+        // read dataref array
+        if (toml_contains(settings, name, mandatory) && (settings[name.data()].is_array())) {
+            for (int i = 0; i < settings[name.data()].size(); i++) {
+                std::string value = settings[name.data()][i].as_string();
+
+                LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                          << value << "'" << LOG_END
+
+                if (!value.empty())
+                    list.emplace_back(value);
+            }
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return list;
+}
+
+
+/**
  * Read the value of an integer
  */
-int utils::read_int_parameter(toml::value &settings, std::string_view parameter, bool mandatory)
+std::int64_t utils::toml_read_int(toml::value &settings, std::string_view name, bool mandatory)
 {
-    int value = -1;
-
-    if (parameter.empty()) {
-        LOG_ERROR << "Internal error (map::read_parameter --> parameter is empty" << LOG_END
-        return value;
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_read_int --> name is empty" << LOG_END
+        return -1;
     }
+
+    std::int64_t value = -1;
 
     try {
         // read dataref
-        if (settings.contains(parameter.data())) {
-            value = settings[parameter.data()].as_integer();
-            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << parameter << "' = '"
+        if (toml_contains(settings, name, mandatory)) {
+            value = settings[name.data()].as_integer();
+            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
                       << value << "'" << LOG_END
-        } else {
-            if (mandatory) {
-                LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str()
-                          << LOG_END
-                LOG_ERROR << " --> Parameter '" << parameter << "' not found" << LOG_END
-            }
         }
     } catch (toml::type_error &error) {
         LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
@@ -236,7 +294,7 @@ std::string utils::ch_cc(const int ch, const int cc)
 /**
  * Create all required preference folders
  */
-bool utils::create_preference_folders(const std::shared_ptr<xplane>& xp)
+bool utils::create_preference_folders(const std::shared_ptr<xplane> &xp)
 {
     // check preference folder
     if (!std::filesystem::exists(xp->preferences_path())) {

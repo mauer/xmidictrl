@@ -61,7 +61,7 @@ void menu::create_menu()
     XPLMAppendMenuSeparator(m_menu_id);
     XPLMAppendMenuItem(m_menu_id, "Show Aircraft Profile", (void*) MENUITEM_PROFILE_WINDOW, 0);
 
-    XPLMAppendMenuItem(m_menu_id, "Reload Aircraft Profile", (void *) MENUITEM_RELOAD_AIRCRAFT_PROFILE, 0);
+    XPLMAppendMenuItem(m_menu_id, "Reload Aircraft Profile", (void *) MENUITEM_RELOAD_PROFILE, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
@@ -111,7 +111,7 @@ void menu::event_handler(void *in_menu_ref, void *in_item_ref)
         plugin::instance().show_messages_window();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_PROFILE_WINDOW))
         plugin::instance().show_profile_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_RELOAD_AIRCRAFT_PROFILE))
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_RELOAD_PROFILE))
         plugin::instance().load_profile();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_SETTINGS_WINDOW))
         plugin::instance().show_settings_window();

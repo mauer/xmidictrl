@@ -8,7 +8,7 @@
 # X-Touch configuration software. You have to apply Layer A and B.
 #----------------------------------------------------------------------------------------------------------------------
 title   = "Template for the Behringer X-Touch Mini"
-version = "0.50"
+version = "0.51"
 
 # How do create a new mapping for a plane?
 #   1. Copy this file into the aircraft directory
@@ -56,6 +56,29 @@ version = "0.50"
 #     { ch = 11, cc = 25, type = "cmd", command = "A300/accept_master_caution" },
 #     { ch = 11, cc = 25, type = "cmd", command = "A300/accept_master_warning" }
 #   ]
+
+# Sublayers
+#   Sublayers allow the definition of additional layers in the mapping. The mappings will be filtered during the
+#   execution phase, depending on the value of a defined dataref in X-Plane. This feature works for inbound and
+#   outbound mappings.
+#
+#   To enable this feature, the datref has to be defined in the profile. This dataref will be read during every
+#   flight loop. If the parameter sl has been set in a mapping, it will be checked against the value of the dataref
+#
+#   Example:
+#     title      = "Example for sublayers"
+#     version    = "0.51"
+#     sl_dataref = "sim/cockpit2/switches/fasten_seat_belts"
+#
+#     [[device]]
+#     name       = "Behringer X-Touch Mini"
+#     port_in    = 0
+#     port_out   = 1
+#     mapping_in = [
+#       { ch = 11, cc = 2, sl = "1", type = "enc", command_up = "laminar/B738/pilot/barometer_up", command_down = "laminar/B738/pilot/barometer_down" },
+#       { ch = 11, cc = 2, sl = "0", type = "enc", command_up = "laminar/B738/autopilot/heading_up", command_down = "laminar/B738/autopilot/heading_dn" }
+#     ]
+
 
 # Behringer X-Touch Mini
 [[device]]

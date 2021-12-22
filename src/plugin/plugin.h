@@ -58,6 +58,11 @@ public:
 private:
     void process_flight_loop(float elapsed_me, float elapsed_sim, int counter);
 
+    void create_commands();
+    void remove_commands();
+
+    static int command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon);
+
     void create_window(window_type windowType);
 
     XPLMFlightLoopID m_flight_loop_id {nullptr};
@@ -68,6 +73,11 @@ private:
 
     std::shared_ptr<settings> m_settings;
     std::shared_ptr<profile> m_profile;
+
+    // references for custom commands
+    XPLMCommandRef m_cmd_show_messages;
+    XPLMCommandRef m_cmd_show_profile;
+    XPLMCommandRef m_cmd_reload_profile;
 
     // list of all plugin windows
     std::map<window_type, std::shared_ptr<xplane_window>> m_windows;

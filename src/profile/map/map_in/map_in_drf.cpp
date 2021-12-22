@@ -114,13 +114,13 @@ void map_in_drf::read_config(toml::value &settings)
     map::read_config(settings);
 
     // read dataref
-    set_dataref(utils::read_string_parameter(settings, CFG_KEY_DATAREF));
+    set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
 
     // read value on
-    set_value_on(utils::read_string_parameter(settings, CFG_KEY_VALUE_ON));
+    set_value_on(utils::toml_read_string(settings, CFG_KEY_VALUE_ON));
 
     // read value off
-    set_value_off(utils::read_string_parameter(settings, CFG_KEY_VALUE_OFF, false));
+    set_value_off(utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false));
 }
 
 
@@ -145,11 +145,16 @@ bool map_in_drf::check()
 /**
  * Execute the action in X-Plane
  */
-void map_in_drf::execute(midi_message &msg)
+bool map_in_drf::execute(midi_message &msg, std::string_view sl_value)
 {
+    if (!check_sublayer(sl_value))
+        return true;
+
     LOG_DEBUG << " --> Change dataref '" << m_dataref << "'" << LOG_END
 
     m_xp->datarefs().toggle(m_dataref, m_value_on, m_value_off);
+
+    return true;
 }
 
 } // Namespace xmidictrl

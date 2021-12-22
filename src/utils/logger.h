@@ -58,8 +58,8 @@ public:
 	void post_text_message(const std::shared_ptr<text_message> &msg);
     void post_midi_message(const std::shared_ptr<midi_message> &msg);
 
-    log_level get_log_Level() const;
-    bool get_log_midi() const;
+    log_level logging_Level() const;
+    bool log_midi() const;
 
     void clear_text_messages();
     void clear_midi_messages();

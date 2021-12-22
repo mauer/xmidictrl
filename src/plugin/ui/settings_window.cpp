@@ -36,9 +36,9 @@ settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_
     : ImGuiWindow(xp, 1000, 450),
       m_settings(std::move(set))
 {
-    m_log_level = m_settings->get_log_level();
-    m_log_midi = m_settings->get_log_midi();
-    m_show_messages = m_settings->get_show_messages();
+    m_log_level = m_settings->logging_level();
+    m_log_midi = m_settings->log_midi();
+    m_show_messages = m_settings->show_messages();
 
     m_path_xplane = xp->xplane_path();
     m_path_plugin = xp->plugin_path();
@@ -127,7 +127,7 @@ void settings_window::create_widgets()
 
     ImGui::NewLine();
     if (ImGui::Button("Save Settings")) {
-        m_settings->set_log_level(m_log_level);
+        m_settings->set_logging_level(m_log_level);
         m_settings->set_log_midi(m_log_midi);
         m_settings->set_show_messages(m_show_messages);
 

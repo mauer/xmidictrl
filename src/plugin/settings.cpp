@@ -58,7 +58,7 @@ settings::~settings() = default;
 /**
  * Set the active log level
  */
-void settings::set_log_level(log_level level)
+void settings::set_logging_level(log_level level)
 {
     LOG_ALL << "Set logging level to '" << utils::log_level_as_text(level) << "'" << LOG_END
     m_config[CFG_KEY_LOG_LEVEL] = utils::log_level_as_code(level);
@@ -68,11 +68,11 @@ void settings::set_log_level(log_level level)
 /**
  * Return the active log level
  */
-log_level settings::get_log_level()
+log_level settings::logging_level()
 {
-    std::string logLevel = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
+    std::string level = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
                                                       utils::log_level_as_code(log_level::debug));
-    return utils::log_level_from_code(logLevel);
+    return utils::log_level_from_code(level);
 }
 
 
@@ -88,7 +88,7 @@ void settings::set_log_midi(bool enabled)
 /**
  * Return if midi logging is active
  */
-bool settings::get_log_midi()
+bool settings::log_midi()
 {
     return toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
 }
@@ -106,7 +106,7 @@ void settings::set_show_messages(const bool enabled)
 /**
  * Return if the messages dialog should be displayed in case of error
  */
-bool settings::get_show_messages()
+bool settings::show_messages()
 {
     return toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
 }

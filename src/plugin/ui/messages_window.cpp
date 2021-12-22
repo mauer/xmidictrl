@@ -78,7 +78,7 @@ void messages_window::create_tab_text_msg()
         ImGui::Text("Logging Level:");
         ImGui::SameLine(150);
         ImGui::TextColored(COL_TEXT_VALUE, "%s",
-                           utils::log_level_as_text(logger::instance().get_log_Level()).c_str());
+                           utils::log_level_as_text(logger::instance().logging_Level()).c_str());
         ImGui::SameLine(ImGui::GetWindowWidth() - 150);
 
         if (ImGui::Button("Clear Messages"))
@@ -130,7 +130,7 @@ void messages_window::create_tab_midi_msg()
         ImGui::Text("MIDI Logging:");
         ImGui::SameLine(150);
 
-        if (logger::instance().get_log_midi())
+        if (logger::instance().log_midi())
             ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");

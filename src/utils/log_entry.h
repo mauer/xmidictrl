@@ -44,6 +44,7 @@ public:
     static log_entry &debug(log_entry &entry);
     static log_entry &endLine(log_entry &entry);
 
+    log_entry &operator<<(int64_t i);
     log_entry &operator<<(int32_t i);
     log_entry &operator<<(int16_t i);
     log_entry &operator<<(unsigned int i);

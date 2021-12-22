@@ -42,18 +42,25 @@ public:
     [[nodiscard]] int ch() const;
     [[nodiscard]] int cc() const;
 
+    [[nodiscard]] std::string_view sl() const;
+
     virtual void read_config(toml::value &data);
     virtual bool check();
 
 protected:
     void read_ch(toml::value &data);
     void read_cc(toml::value &data);
+    void read_sl(toml::value &data);
+
+    bool check_sublayer(std::string_view sl_value);
 
     std::shared_ptr<xplane> m_xp;
 
 private:
     int m_ch {-1};
     int m_cc {-1};
+
+    std::string m_sl {};
 };
 
 } // Namespace xmidictrl

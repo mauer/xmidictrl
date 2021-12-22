@@ -19,6 +19,7 @@
 #define MAP_IN_PNP_H
 
 // Standard
+#include <atomic>
 #include <memory>
 #include <string>
 
@@ -54,13 +55,21 @@ public:
 
     void set_command_type(CommandType commandType);
 
+    void set_time_point_received();
+    void set_time_point_released();
+
     void read_config(toml::value &settings) override;
     bool check() override;
 
-    void execute(midi_message &msg) override;
+    bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
+    void time_point_reset();
+
     CommandType m_command_type {CommandType::Push};
+
+    std::atomic<time_point> m_time_point_received {time_point ::min()};
+    std::atomic<time_point> m_time_point_released {time_point::min()};
 
     std::string m_command_push {};
     std::string m_command_pull {};

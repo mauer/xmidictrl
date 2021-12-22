@@ -56,13 +56,13 @@ public:
     void close_connections();
 
     static void midi_callback(double deltatime, std::vector<unsigned char> *message, void *userdata);
-    void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
 
-    void process_outbound_mappings();
+    void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
+    void process_outbound_mappings(std::string_view sl_value);
 
 private:
-    void save_event_datetime(unsigned int cc);
-    double retrieve_event_datetime(unsigned int cc);
+    void save_event_datetime(unsigned int ch, unsigned int cc);
+    double retrieve_event_datetime(unsigned int ch, unsigned int cc);
 
     std::shared_ptr<device_list> m_device_list;
 
@@ -76,8 +76,8 @@ private:
     std::unique_ptr<RtMidiIn> m_midi_in;
     std::unique_ptr<RtMidiOut> m_midi_out;
 
-    std::map<int, time_point> m_event_storage;
-    std::set<int> m_cc_locked;
+    std::map<std::string, time_point> m_event_storage;
+    std::set<std::string> m_ch_cc_locked;
 };
 
 } // Namespace xmidictrl

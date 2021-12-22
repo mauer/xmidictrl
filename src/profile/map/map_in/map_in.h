@@ -36,7 +36,7 @@ public:
 
     typedef std::shared_ptr<map_in> ptr;
 
-    virtual void execute(midi_message &msg) = 0;
+    virtual bool execute(midi_message &msg, std::string_view sl_value) = 0;
 };
 
 } // Namespace xmiditrl

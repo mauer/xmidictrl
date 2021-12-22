@@ -73,18 +73,18 @@ void logger::init(std::string_view a_path, std::shared_ptr<settings> a_settings)
 /**
  * Return the current log level
  */
-log_level logger::get_log_Level() const
+log_level logger::logging_Level() const
 {
-    return m_settings->get_log_level();
+    return m_settings->logging_level();
 }
 
 
 /**
  * Return if midi logging is enabled
  */
-bool logger::get_log_midi() const
+bool logger::log_midi() const
 {
-    return m_settings->get_log_midi();
+    return m_settings->log_midi();
 }
 
 
@@ -137,7 +137,7 @@ void logger::post_text_message(const std::shared_ptr<text_message> &msg)
  */
 void logger::post_midi_message(const std::shared_ptr<midi_message> &msg)
 {
-    if (m_settings->get_log_midi()) {
+    if (m_settings->log_midi()) {
         std::shared_ptr<midi_log_msg> log_msg = std::make_shared<midi_log_msg>();
 
         log_msg->time = utils::time_to_string(msg->time);
@@ -230,7 +230,7 @@ bool logger::check_log_level(text_msg_type type)
     log_level level = log_level::debug;
 
     if (m_settings != nullptr)
-        level = m_settings->get_log_level();
+        level = m_settings->logging_level();
 
     switch (type) {
         case text_msg_type::all:

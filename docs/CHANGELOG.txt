@@ -10,6 +10,9 @@
 
 + Changed mapping error in profile for ZIBO 737-800 (CC 11 -> DH)
 + Changed license from MIT to AGPL
++ Improved column widths in messages window
++ Fixed mapping error in ZIBO example (many thanks to daan_vb for pointing them out)
++ Implemented new feature to use sublayers for even more possible mappings
 
 -----------------------------------------------------------------------------------------------------------------------
   VERSION 0.50

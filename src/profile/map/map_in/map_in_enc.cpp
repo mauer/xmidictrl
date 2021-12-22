@@ -137,16 +137,16 @@ void map_in_enc::read_config(toml::value &settings)
     map::read_config(settings);
 
     // read command up
-    set_command_up(utils::read_string_parameter(settings, CFG_KEY_COMMAND_UP));
+    set_command_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_UP));
 
     // read command down
-    set_command_down(utils::read_string_parameter(settings, CFG_KEY_COMMAND_DOWN));
+    set_command_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_DOWN));
 
     // read fast command up
-    set_command_fast_up(utils::read_string_parameter(settings, CFG_KEY_COMMAND_FAST_UP, false));
+    set_command_fast_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_FAST_UP, false));
 
     // read fast command down
-    set_command_fast_down(utils::read_string_parameter(settings, CFG_KEY_COMMAND_FAST_DOWN, false));
+    set_command_fast_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_FAST_DOWN, false));
 }
 
 
@@ -168,8 +168,11 @@ bool map_in_enc::check()
 /**
  * Execute the action in X-Plane
  */
-void map_in_enc::execute(midi_message &msg)
+bool map_in_enc::execute(midi_message &msg, std::string_view sl_value)
 {
+    if (!check_sublayer(sl_value))
+        return true;
+
     if (msg.velocity < 64) {
         // Down
         if (msg.velocity < 61) {
@@ -189,6 +192,8 @@ void map_in_enc::execute(midi_message &msg)
             m_xp->cmd().execute(command_up());
         }
     }
+
+    return true;
 }
 
 } // Namespace xmidictrl

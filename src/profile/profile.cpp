@@ -49,6 +49,15 @@ profile::profile(xplane::ptr xplane)
 };
 
 
+/**
+ * Destructor
+ */
+profile::~profile()
+{
+    clear();
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -78,9 +87,16 @@ bool profile::load()
     // load the profile and create all devices with their mappings
     if (config::load(filename)) {
         m_filename = filename;
+
+        // load general settings for the profile
+        m_sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
+
+        if (!m_sl_dataref.empty())
+            LOG_INFO << "SubLayer Mode is active" << LOG_END
+
         create_device_list();
     } else {
-        m_filename.clear();
+        clear();
         return false;
     }
 
@@ -94,8 +110,7 @@ bool profile::load()
  */
 void profile::close()
 {
-    m_filename.clear();
-    m_device_list->clear();
+    clear();
     config::close();
 }
 
@@ -166,17 +181,35 @@ std::string profile::get_filename_profiles_path(bool icao, bool author)
  */
 void profile::process()
 {
+    std::string sl_value {};
+
+    // are the sublayers active?
+    if (!m_sl_dataref.empty())
+        m_xp->datarefs().read(m_sl_dataref, sl_value);
+
     // process midi inbound events
-    m_device_list->process_inbound_events();
+    m_device_list->process_inbound_events(sl_value);
 
     // process midi outbound mappings
-    m_device_list->process_outbound_mappings();
+    m_device_list->process_outbound_mappings(sl_value);
 }
 
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Clear all data
+ */
+void profile::clear()
+{
+    m_sl_dataref.clear();
+
+    m_filename.clear();
+    m_device_list->clear();
+}
+
 
 /**
  * Get the profile filename for the current aircraft
@@ -251,7 +284,7 @@ void profile::create_device_list()
 
             try {
                 // name
-                name = utils::read_string_parameter(settings_dev, CFG_KEY_NAME, false);
+                name = utils::toml_read_string(settings_dev, CFG_KEY_NAME, false);
 
                 if (name.empty()) {
                     name = "<undefined>";
@@ -259,7 +292,7 @@ void profile::create_device_list()
                 }
 
                 // port in
-                port_in = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_IN));
+                port_in = static_cast<unsigned int>(utils::toml_read_int(settings_dev, CFG_KEY_PORT_IN));
 
                 if (port_in < 0) {
                     m_errors_found = true;
@@ -267,7 +300,7 @@ void profile::create_device_list()
                 }
 
                 // port out
-                port_out = static_cast<unsigned int>(utils::read_int_parameter(settings_dev, CFG_KEY_PORT_OUT));
+                port_out = static_cast<unsigned int>(utils::toml_read_int(settings_dev, CFG_KEY_PORT_OUT));
 
                 if (port_out < 0) {
                     m_errors_found = true;
@@ -319,7 +352,7 @@ void profile::create_device_list()
 /**
  * Create the inbound mapping for a device and store it
  */
-void profile::create_inbound_mapping(int dev_no, toml::array settings, std::shared_ptr<device> device)
+void profile::create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device>& device)
 {
     LOG_INFO << "Device " << dev_no << " :: " << settings.size() << " inbound mapping(s) found" << LOG_END
 
@@ -377,9 +410,9 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, std::shar
             // read the settings and check if everything we need was defined
             mapping->read_config(settings[map_no]);
 
-            if (mapping->check())
+            if (mapping->check()) {
                 device->add_inbound_map(mapping);
-            else {
+            } else {
                 LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Parameters incomplete" << LOG_END
 
                 m_errors_found = true;

@@ -20,10 +20,13 @@
 // Standard
 #include <thread>
 
+#include "XPLMGraphics.h"
+
 // XMidiCtrl
 #include "device_list.h"
 #include "logger.h"
 #include "map_in_pnp.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -169,8 +172,6 @@ void device::midi_callback(double deltatime, std::vector<unsigned char> *message
  */
 void device::process_inbound_message(double deltatime, std::vector<unsigned char> *message)
 {
-    bool add_event = false;
-
     // read midi message
     if (message->size() > 2) {
         std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();
@@ -213,66 +214,62 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         }
 
         // check for a mapping
-        try {
-            auto mappings = m_map_in.get(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data);
+        auto mappings = m_map_in.get(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data);
 
-            for (auto it = mappings.first; it != mappings.second; it++) {
-                auto mapping = it->second;
+        for (auto it = mappings.first; it != mappings.second; it++) {
+            auto mapping = it->second;
 
-                // for push and pull we have to wait until the command has ended
-                if (mapping->type() == map_type::push_pull) {
-                    switch (msg->velocity) {
-                        case 127: {
-                            save_event_datetime(msg->data);
-                            break;
-                        }
+            bool add_task = false;
 
-                        case 0: {
-                            double seconds = retrieve_event_datetime(msg->data);
-
-                            if (seconds > -0.5f) {
-                                map_in_pnp::ptr mappingPnP = std::static_pointer_cast<map_in_pnp>(mapping);
-
-                                mappingPnP->set_command_type(seconds < 1 ? CommandType::Push : CommandType::Pull);
-                                add_event = true;
-                            }
-
-                            break;
-                        }
-
-                        default:
-                            LOG_WARN << "Invalid midi status '" << msg->status << "' for a Push & Pull mapping"
-                                     << LOG_END
-                            break;
+            // for push and pull we have to wait until the command has ended
+            if (mapping->type() == map_type::push_pull) {
+                switch (msg->velocity) {
+                    case 127: {
+                        std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
+                        pnp->set_time_point_received();
+                        add_task = true;
+                        break;
                     }
 
-                    // for dataref changes, we will only process the event with key pressed (velocity == 127)
-                } else if (mapping->type() == map_type::dataref) {
-                    if (msg->velocity == 127)
-                        add_event = true;
-                } else if (mapping->type() == map_type::command) {
-                    // lock the current control change for outgoing messages
-                    if (msg->velocity == 127)
-                        m_cc_locked.insert(msg->data);
-                    else if (msg->velocity == 0)
-                        m_cc_locked.erase(msg->data);
+                    case 0: {
+                        // no additional task is required, it's already in the event queue waiting for the
+                        // release time point
+                        std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
+                        pnp->set_time_point_released();
+                        break;
+                    }
 
-                    add_event = true;
-                } else
-                    add_event = true;
-
-                // push to event handler
-                if (add_event) {
-                    std::shared_ptr<task> event = std::make_shared<task>();
-                    event->msg = msg;
-                    event->map = mapping;
-
-                    m_device_list->add_event(event);
+                    default:
+                        LOG_WARN << "Invalid MIDI status '" << msg->status << "' for a Push&Pull mapping"
+                                 << LOG_END
+                        break;
                 }
+
+            } else if (mapping->type() == map_type::dataref) {
+                // for dataref changes, we will only process the event with key pressed (velocity == 127)
+                if (msg->velocity == 127)
+                    add_task = true;
+
+            } else if (mapping->type() == map_type::command) {
+                // lock the current control change for outgoing messages
+                if (msg->velocity == 127)
+                    m_ch_cc_locked.insert(utils::ch_cc(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data));
+                else if (msg->velocity == 0)
+                    m_ch_cc_locked.erase(utils::ch_cc(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data));
+
+                add_task = true;
+            } else {
+                add_task = true;
             }
-        } catch (std::out_of_range const &) {
-            LOG_WARN << "No mapping found for CC '" << msg->data << "' midi message from device '" << m_name << "'"
-                     << LOG_END
+
+            // push to event handler
+            if (add_task) {
+                std::shared_ptr<task> t = std::make_shared<task>();
+                t->msg = msg;
+                t->map = mapping;
+
+                m_device_list->add_event(t);
+            }
         }
     }
 }
@@ -281,13 +278,13 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
 /**
  * Process all outbound midi mappings
  */
-void device::process_outbound_mappings()
+void device::process_outbound_mappings(std::string_view sl_value)
 {
     for (auto &mapping: m_map_out) {
-        if (m_cc_locked.contains(mapping.second->cc()))
+        if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc())))
             continue;
 
-        std::shared_ptr<midi_message> msg = mapping.second->execute();
+        std::shared_ptr<midi_message> msg = mapping.second->execute(sl_value);
 
         if (msg == nullptr)
             continue;
@@ -312,7 +309,7 @@ void device::process_outbound_mappings()
             try {
                 m_midi_out->sendMessage(&midi_out);
             } catch (const RtMidiError &error) {
-                LOG_ERROR << "Midi Device '" << m_name << "' :: " << error.what() << LOG_END;
+                LOG_ERROR << "MIDI Device '" << m_name << "' :: " << error.what() << LOG_END;
             }
         }
     }
@@ -328,23 +325,23 @@ void device::process_outbound_mappings()
 /**
  * Save the current midi event time stamp for later processing
  */
-void device::save_event_datetime(unsigned int cc)
+void device::save_event_datetime(unsigned int ch, unsigned int cc)
 {
-    m_event_storage.emplace(cc, std::chrono::system_clock::now());
+    m_event_storage.emplace(utils::ch_cc(ch, cc), std::chrono::system_clock::now());
 }
 
 
 /**
  * Retrieve a stored event date time stamp and calculate duration between push and release
  */
-double device::retrieve_event_datetime(unsigned int cc)
+double device::retrieve_event_datetime(unsigned int ch, unsigned int cc)
 {
     try {
-        time_point prevTime = m_event_storage.at(cc);
+        time_point prevTime = m_event_storage.at(utils::ch_cc(ch, cc));
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - prevTime;
 
         // delete entry
-        m_event_storage.erase(cc);
+        m_event_storage.erase(utils::ch_cc(ch, cc));
 
         return elapsed_seconds.count();
 

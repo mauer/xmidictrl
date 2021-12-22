@@ -34,12 +34,12 @@ namespace xmidictrl {
 class map_out_drf : public map_out {
 public:
     explicit map_out_drf(std::shared_ptr<xplane> xp);
-    ~map_out_drf() override = default;
+    ~map_out_drf() override;
 
     map_type type() override;
 
     void set_dataref(std::string_view dataref);
-    [[nodiscard]] std::string_view dataref() const;
+    void set_dataref(std::vector<std::string> dataref);
 
     void set_value_on(std::string_view value_on);
     [[nodiscard]] std::string_view value_on() const;
@@ -50,14 +50,16 @@ public:
     void read_config(toml::value &settings) override;
     bool check() override;
 
-    std::shared_ptr<midi_message> execute() override;
+    std::shared_ptr<midi_message> execute(std::string_view sl_value) override;
 
 private:
-    std::string m_dataref;
+    std::vector<std::string> m_datarefs;
+    std::map<std::string, std::string> m_xp_values;
+
     std::string m_value_on;
     std::string m_value_off;
 
-    std::string m_value_previous;
+
 };
 
 } // Namespace xmidictrl

@@ -120,6 +120,15 @@ log_entry &log_entry::operator<<(int32_t i) {
 
 
 /**
+ * Log an int64 value
+ */
+log_entry &log_entry::operator<<(int64_t i) {
+    m_stream << i;
+    return *this;
+}
+
+
+/**
  * Log an unsigned int value
  */
 log_entry &log_entry::operator<<(unsigned int i) {
