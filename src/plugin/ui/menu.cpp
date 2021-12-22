@@ -128,7 +128,12 @@ void menu::event_handler(void *in_menu_ref, void *in_item_ref)
 void menu::show_documentation()
 {
     std::string linkChar = "https://mauer.github.io/xmidictrl/#/";
+
+#if IBM
     ShellExecute(nullptr, nullptr, linkChar.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+#elif LIN
+    (void) system((std::string("xdg-open '") + linkChar + "'").c_str());
+#endif
 }
 
 

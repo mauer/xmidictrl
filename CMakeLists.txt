@@ -33,7 +33,7 @@ configure_file(
         "${PROJECT_BINARY_DIR}/version.h"
 )
 
-add_definitions("-include ${PROJECT_BINARY_DIR}/Version.h")
+add_definitions("-include ${PROJECT_BINARY_DIR}/version.h")
 include_directories(${PROJECT_BINARY_DIR})
 
 # use highest optimization level and optimize for size
@@ -43,7 +43,15 @@ endif()
 
 # set compiler options
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
+
+message(${CMAKE_CXX_COMPILER_VERSION})
+
+# disable warning no-free-nonheap-object because of toml11
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 10.0.0)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -fPIC")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
+endif()
 
 # Add subdirectories
 add_subdirectory(lib)
