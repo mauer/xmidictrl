@@ -17,7 +17,7 @@ The following mapping types are supported:
 | Mapping Type |   Name    | Description and usage                                                            |
 |:------------:|:---------:|----------------------------------------------------------------------------------|
 | cmd          |  Command  | Executes a X-Plane command                                                       |
-| pnp          | Push&Pull | Simulates a Push & Pull button, which can execute two different commands         |   
+| pnp          | Push&pull | Simulates a Push & pull button, which can execute two different commands         |   
 | drf          |  Dataref  | Toggles a given Dataref between two values                                       |
 | enc          |  Encoder  | Executes different commands for up/down and fast up/fast down                    |
 | sld          |  Slider   | Executes up to three different commands, depending on the location of the slider |
@@ -39,7 +39,7 @@ returns to the map screen.
 *Flips between active and standby frequency for COM1 when Channel is 11 and Control Change is equal to 67.*
 
 ###
-### Mapping Type: Push&Pull
+### Mapping Type: Push&pull
 This mapping simulates a push and pull button, as found in Airbus aircraft. A short button press will execute the push
 command, while a longer button press (~1 sec) will execute the pull command.
 

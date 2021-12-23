@@ -20,8 +20,6 @@
 // Standard
 #include <thread>
 
-#include "XPLMGraphics.h"
-
 // XMidiCtrl
 #include "device_list.h"
 #include "logger.h"
@@ -53,7 +51,7 @@ device::device(std::string_view name,
 
     } catch (RtMidiError &error) {
         // we should never reach this, but let's be on the safe side
-        LOG_ERROR << "Error creating midi connections for device '" << m_name << "'" << LOG_END
+        LOG_ERROR << "Error creating MIDI connections for device '" << m_name << "'" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
 }
@@ -226,7 +224,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                 switch (msg->velocity) {
                     case 127: {
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
-                        pnp->set_time_point_received();
+                        pnp->set_time_received();
                         add_task = true;
                         break;
                     }
@@ -235,7 +233,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                         // no additional task is required, it's already in the event queue waiting for the
                         // release time point
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
-                        pnp->set_time_point_released();
+                        pnp->set_time_released();
                         break;
                     }
 
@@ -312,41 +310,6 @@ void device::process_outbound_mappings(std::string_view sl_value)
                 LOG_ERROR << "MIDI Device '" << m_name << "' :: " << error.what() << LOG_END;
             }
         }
-    }
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Save the current midi event time stamp for later processing
- */
-void device::save_event_datetime(unsigned int ch, unsigned int cc)
-{
-    m_event_storage.emplace(utils::ch_cc(ch, cc), std::chrono::system_clock::now());
-}
-
-
-/**
- * Retrieve a stored event date time stamp and calculate duration between push and release
- */
-double device::retrieve_event_datetime(unsigned int ch, unsigned int cc)
-{
-    try {
-        time_point prevTime = m_event_storage.at(utils::ch_cc(ch, cc));
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - prevTime;
-
-        // delete entry
-        m_event_storage.erase(utils::ch_cc(ch, cc));
-
-        return elapsed_seconds.count();
-
-    } catch (std::out_of_range const &) {
-        return -1;
     }
 }
 

@@ -33,9 +33,10 @@
 
 namespace xmidictrl {
 
-enum class CommandType {
-    Push,
-    Pull
+enum class command_type {
+    none,
+    push,
+    pull
 };
 
 class map_in_pnp : public map_in {
@@ -53,10 +54,8 @@ public:
     void set_command_pull(std::string_view command);
     [[nodiscard]] std::string_view command_pull() const;
 
-    void set_command_type(CommandType commandType);
-
-    void set_time_point_received();
-    void set_time_point_released();
+    void set_time_received();
+    void set_time_released();
 
     void read_config(toml::value &settings) override;
     bool check() override;
@@ -64,12 +63,13 @@ public:
     bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
-    void time_point_reset();
+    void reset();
 
-    CommandType m_command_type {CommandType::Push};
+    command_type m_command_type {command_type::none};
+    time_point m_time_command {time_point::min()};
 
-    std::atomic<time_point> m_time_point_received {time_point ::min()};
-    std::atomic<time_point> m_time_point_released {time_point::min()};
+    std::atomic<time_point> m_time_received {time_point::min()};
+    std::atomic<time_point> m_time_released {time_point::min()};
 
     std::string m_command_push {};
     std::string m_command_pull {};

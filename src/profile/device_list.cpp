@@ -95,9 +95,6 @@ void device_list::add_event(const std::shared_ptr<task> &event)
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    LOG_DEBUG << "Task " << event->map->ch() << " " << event->map->cc() << " " << event->map->sl() << " added to queue"
-              << LOG_END
-
     m_inbound_tasks.push(event);
 }
 

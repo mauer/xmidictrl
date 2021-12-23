@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _DATA_H_
-#define _DATA_H_
+#ifndef DATA_H
+#define DATA_H
 
 // Standard
 #include <map>
@@ -63,4 +63,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // _DATA_H_
+#endif // DATA_H

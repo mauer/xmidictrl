@@ -87,33 +87,24 @@ std::string_view map_in_pnp::command_pull() const
 
 
 /**
- * Set the command type
- */
-void map_in_pnp::set_command_type(CommandType commandType)
-{
-    m_command_type = commandType;
-}
-
-
-/**
  * Set the time point when the initial message was received
  */
-void map_in_pnp::set_time_point_received()
+void map_in_pnp::set_time_received()
 {
     // reset all times first
-    time_point_reset();
-    m_time_point_received.store(std::chrono::system_clock::now());
+    reset();
+    m_time_received.store(std::chrono::system_clock::now());
 }
 
 
 /**
  * Set the time point when the initial message was released
  */
-void map_in_pnp::set_time_point_released()
+void map_in_pnp::set_time_released()
 {
     // only set the released time, if a received time is present
-    if (m_time_point_received.load() > time_point::min())
-        m_time_point_released.store(std::chrono::system_clock::now());
+    if (m_time_received.load() > time_point::min())
+        m_time_released.store(std::chrono::system_clock::now());
 }
 
 
@@ -167,32 +158,63 @@ bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
     std::strftime(timedisplay, sizeof(timedisplay), "%H:%M:%S", &buf);
     LOG_DEBUG << "Time received: " << timedisplay << LOG_END */
 
-    if (!check_sublayer(sl_value) || m_time_point_received.load() == time_point::min()) {
+    if (!check_sublayer(sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)
-        time_point_reset();
+        reset();
         return true;
     }
 
-    if (m_time_point_released.load() == time_point::min()) {
+    // check if the command has been already executed
+    if (m_command_type != command_type::none && m_time_command > time_point::min()) {
+        std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - m_time_command;
+
+        if (elapsed.count() > 0.3f) {
+            switch (m_command_type) {
+                case command_type::push:
+                    LOG_DEBUG << " --> End push command '" << m_command_push << "'" << LOG_END
+                    m_xp->cmd().end(m_command_push);
+                    break;
+
+                case command_type::pull:
+                    LOG_DEBUG << " --> End pull command '" << m_command_push << "'" << LOG_END
+                    m_xp->cmd().end(m_command_pull);
+                    break;
+
+                default:
+                    break;
+            }
+
+            reset();
+            return true;
+        } else {
+            // let's wait a bit longer...
+            return false;
+        }
+    }
+
+    if (m_time_released.load() == time_point::min()) {
         // failsafe, don't want to keep this task in the lst forever
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_point_received.load();
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_received.load();
 
         if (elapsed_seconds.count() < 0.5f)
             return false;
     }
 
-    std::chrono::duration<double> elapsed_seconds = m_time_point_released.load() - m_time_point_received.load();
+    std::chrono::duration<double> elapsed_seconds = m_time_released.load() - m_time_received.load();
+    m_time_command = std::chrono::system_clock::now();
 
-    if (elapsed_seconds.count() > 0.5f || m_time_point_released.load() == time_point::min()) {
-        LOG_DEBUG << " --> Execute pull command '" << m_command_pull << "'" << LOG_END
-        m_xp->cmd().execute(m_command_pull);
+    if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
+        LOG_DEBUG << " --> Begin pull command '" << m_command_pull << "'" << LOG_END
+        m_command_type = command_type::pull;
+        m_xp->cmd().begin(m_command_pull);
     } else {
-        LOG_DEBUG << " --> Execute push command '" << m_command_push << "'" << LOG_END
-        m_xp->cmd().execute(m_command_push);
+        LOG_DEBUG << " --> Begin push command '" << m_command_push << "'" << LOG_END
+        m_command_type = command_type::push;
+        m_xp->cmd().begin(m_command_push);
     }
 
-    time_point_reset();
-    return true;
+    // keep the task in the queue to end the command
+    return false;
 }
 
 
@@ -203,12 +225,15 @@ bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Reset the time points to min date
+ * Reset all data
  */
-void map_in_pnp::time_point_reset()
+void map_in_pnp::reset()
 {
-    m_time_point_received.store(time_point::min());
-    m_time_point_released.store(time_point::min());
+    m_command_type = command_type::none;
+    m_time_command = time_point::min();
+
+    m_time_received.store(time_point::min());
+    m_time_released.store(time_point::min());
 }
 
 } // Namespace xmidictrl
