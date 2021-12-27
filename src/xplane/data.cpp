@@ -98,7 +98,7 @@ bool data::read(std::string_view name, std::string &value)
         return false;
 
     } else if (item->type & xplmType_Unknown) {
-        LOG_ERROR << "Could not determine type of dataref '" << name.data() << "'" << LOG_END
+        LOG_ERROR << "Could not determine type for dataref '" << name.data() << "'" << LOG_END
 
         return false;
 
@@ -155,6 +155,49 @@ bool data::read(std::string_view name, std::vector<int> &values)
 
 
 /**
+ * Write an value to a dataref
+ */
+bool data::write(std::string_view name, std::string_view value)
+{
+    data_item *item = retrieve_data(name);
+
+    if (item == nullptr)
+        return false;
+
+    if (!item->writeable) {
+        LOG_ERROR << "Dataref '" << name.data() << "' is not writeable" << LOG_END
+        return false;
+    }
+
+    if (item->type & xplmType_Int) {
+        write_int(item, std::stoi(value.data()));
+        return true;
+    } else if (item->type & xplmType_Float) {
+        write_float(item, std::stof(value.data()));
+        return true;
+    } else if (item->type & xplmType_Double) {
+        write_double(item, std::stod(value.data()));
+        return true;
+    } else if (item->type & xplmType_Data) {
+        write_byte(item, value);
+        return true;
+    } else if (item->type & xplmType_IntArray) {
+        LOG_ERROR << "Unsupported type 'IntArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else if (item->type & xplmType_FloatArray) {
+        LOG_ERROR << "Unsupported type 'FloatArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else if (item->type & xplmType_Unknown) {
+        LOG_ERROR << "Could not determine type for dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else {
+        LOG_ERROR << "Unknown type '" << item->type << "' for dataref '" << name.data() << "'" << LOG_END
+        return false;
+    }
+}
+
+
+/**
  * Toggle a dataref between on and off
  */
 bool data::toggle(std::string_view name, std::string_view value_on, std::string_view value_off)
@@ -188,7 +231,7 @@ bool data::toggle(std::string_view name, std::string_view value_on, std::string_
         LOG_ERROR << "Unsupported type 'FloatArray' of dataref '" << name.data() << "'" << LOG_END
         return false;
     } else if (item->type & xplmType_Unknown) {
-        LOG_ERROR << "Could not determine type of dataref '" << name.data() << "'" << LOG_END
+        LOG_ERROR << "Could not determine type for dataref '" << name.data() << "'" << LOG_END
         return false;
     } else {
         LOG_ERROR << "Unknown type '" << item->type << "' for dataref '" << name.data() << "'" << LOG_END
@@ -279,6 +322,42 @@ std::string data::read_byte(const data_item *item)
 
 
 /**
+ * Write an integer dataref
+ */
+void data::write_int(const data_item *item, int value)
+{
+    XPLMSetDatai(item->dataref, value);
+}
+
+
+/**
+ * Write a float dataref
+ */
+void data::write_float(const data_item *item, float value)
+{
+    XPLMSetDataf(item->dataref, value);
+}
+
+
+/**
+ * Write a double dataref
+ */
+void data::write_double(const data_item *item, double value)
+{
+    XPLMSetDatad(item->dataref, value);
+}
+
+
+/**
+ * Write a byte dataref
+ */
+void data::write_byte(const data_item *item, std::string_view value)
+{
+    XPLMSetDatab(item->dataref, const_cast<char *>(value.data()), 0, static_cast<int>(value.size()) + 1);
+}
+
+
+/**
  * Read a float array dataref
  */
 std::vector<float> data::read_float_array(const data_item *item)
@@ -318,10 +397,10 @@ void data::toggle_int(const data_item *item, std::string_view value_on, std::str
 
     if (value == std::stoi(value_on.data())) {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        XPLMSetDatai(item->dataref, std::stoi(value_off.data()));
+        write_int(item, std::stoi(value_off.data()));
     } else {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        XPLMSetDatai(item->dataref, std::stoi(value_on.data()));
+        write_int(item, std::stoi(value_on.data()));
     }
 }
 
@@ -336,10 +415,10 @@ void data::toggle_float(const data_item *item, std::string_view value_on, std::s
 
     if (value == std::stof(value_on.data())) {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        XPLMSetDataf(item->dataref, std::stoi(value_off.data()));
+        write_float(item, std::stof(value_off.data()));
     } else {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        XPLMSetDataf(item->dataref, std::stoi(value_on.data()));
+        write_float(item, std::stof(value_on.data()));
     }
 }
 
@@ -354,10 +433,10 @@ void data::toggle_double(const data_item *item, std::string_view value_on, std::
 
     if (value == std::stod(value_on.data())) {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        XPLMSetDatad(item->dataref, std::stoi(value_off.data()));
+        write_double(item, std::stod(value_off.data()));
     } else {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        XPLMSetDatad(item->dataref, std::stoi(value_on.data()));
+        write_double(item, std::stod(value_on.data()));
     }
 }
 
@@ -371,10 +450,10 @@ void data::toggle_byte(const data_item *item, std::string_view value_on, std::st
 
     if (value == value_on.data()) {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        XPLMSetDatab(item->dataref, const_cast<char *>(value_off.data()), 0, value_off.size() + 1);
+        write_byte(item, value_off);
     } else {
         LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        XPLMSetDatab(item->dataref, const_cast<char *>(value_on.data()), 0, value_on.size() + 1);
+        write_byte(item, value_on);
     }
 }
 

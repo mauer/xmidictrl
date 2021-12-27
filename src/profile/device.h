@@ -59,6 +59,7 @@ public:
 
     void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
     void process_outbound_mappings(std::string_view sl_value);
+    void process_outbound_reset();
 
 private:
     std::shared_ptr<device_list> m_device_list;

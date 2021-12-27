@@ -21,6 +21,7 @@
 // Standard
 #include <string>
 #include <string_view>
+#include <vector>
 
 // toml11
 #include <toml.hpp>
@@ -38,14 +39,14 @@ public:
 
     map_type type() override;
 
-    void set_dataref(std::string_view dataref);
-    [[nodiscard]] std::string_view dataref() const;
+    //void set_dataref(std::string_view dataref);
+    //[[nodiscard]] std::string_view dataref() const;
 
-    void set_value_on(std::string_view value_on);
-    [[nodiscard]] std::string_view value_on() const;
+    //void set_value_on(std::string_view value_on);
+    //[[nodiscard]] std::string_view value_on() const;
 
-    void set_value_off(std::string_view value_off);
-    [[nodiscard]] std::string_view value_off() const;
+    //void set_value_off(std::string_view value_off);
+    //[[nodiscard]] std::string_view value_off() const;
 
     void read_config(toml::value &settings) override;
     bool check() override;
@@ -54,6 +55,9 @@ public:
 
 private:
     std::string m_dataref {};
+
+    std::vector<std::string> m_values {};
+
     std::string m_value_on {};
     std::string m_value_off {};
 };

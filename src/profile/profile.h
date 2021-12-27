@@ -61,8 +61,8 @@ private:
 
     void create_device_list();
 
-    void create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device>& device);
-    void create_outbound_mapping(int dev_no, toml::array settings, std::shared_ptr<device> device);
+    void create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device);
+    void create_outbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device);
 
     static map_type translateMapTypeStr(std::string_view typeStr);
     static map_type read_mapping_type(toml::value &settings);

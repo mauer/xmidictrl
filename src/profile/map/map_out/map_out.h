@@ -37,6 +37,7 @@ public:
     typedef std::shared_ptr<map_out> ptr;
 
     virtual std::shared_ptr<midi_message> execute(std::string_view sl_value) = 0;
+    virtual std::shared_ptr<midi_message> reset() = 0;
 };
 
 } // Namespace xmidictrl

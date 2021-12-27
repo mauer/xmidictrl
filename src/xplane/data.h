@@ -40,6 +40,8 @@ public:
     bool read(std::string_view name, std::vector<float> &values);
     bool read(std::string_view name, std::vector<int> &values);
 
+    bool write(std::string_view name, std::string_view value);
+
     bool toggle(std::string_view name, std::string_view value_on, std::string_view value_off);
 
 private:
@@ -49,6 +51,11 @@ private:
     static float read_float(const data_item *item);
     static double read_double(const data_item *item);
     static std::string read_byte(const data_item *item);
+
+    static void write_int(const data_item *item, int value);
+    static void write_float(const data_item *item, float value);
+    static void write_double(const data_item *item, double value);
+    static void write_byte(const data_item *item, std::string_view value);
 
     static std::vector<float> read_float_array(const data_item *item);
     static std::vector<int> read_int_array(const data_item *item);

@@ -88,14 +88,16 @@ void device_list::close_connections()
 
 
 /**
- * Add a midi event
+ * Add a task to be executed
  */
-void device_list::add_event(const std::shared_ptr<task> &event)
+void device_list::add_task(const std::shared_ptr<task> &t)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    m_inbound_tasks.push(event);
+    LOG_DEBUG << " --> Task added to queue" << LOG_END
+
+    m_inbound_tasks.push(t);
 }
 
 
@@ -144,6 +146,18 @@ void device_list::process_outbound_mappings(std::string_view sl_value)
     for (auto const &device: m_device_list) {
         if (device != nullptr)
             device->process_outbound_mappings(sl_value);
+    }
+}
+
+
+/**
+ * Process an outbound reset of all MIDI devices
+ */
+void device_list::process_outbound_reset()
+{
+    for (auto const &device: m_device_list) {
+        if (device != nullptr)
+            device->process_outbound_reset();
     }
 }
 

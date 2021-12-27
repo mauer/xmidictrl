@@ -110,6 +110,8 @@ bool profile::load()
  */
 void profile::close()
 {
+    m_device_list->process_outbound_reset();
+
     clear();
     config::close();
 }
@@ -352,7 +354,7 @@ void profile::create_device_list()
 /**
  * Create the inbound mapping for a device and store it
  */
-void profile::create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device>& device)
+void profile::create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
 {
     LOG_INFO << "Device " << dev_no << " :: " << settings.size() << " inbound mapping(s) found" << LOG_END
 
@@ -401,8 +403,9 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             }
 
             if (mapping == nullptr) {
-                LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Error reading config" << LOG_END
-
+                LOG_ERROR << "Line " << settings[map_no].location().line() << " :: "
+                          << settings[map_no].location().line_str() << LOG_END
+                LOG_ERROR << " --> Error reading mapping" << LOG_END
                 m_errors_found = true;
                 continue;
             }
@@ -413,13 +416,17 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             if (mapping->check()) {
                 device->add_inbound_map(mapping);
             } else {
-                LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Parameters incomplete" << LOG_END
+                LOG_ERROR << "Line " << settings[map_no].location().line() << " :: "
+                          << settings[map_no].location().line_str() << LOG_END
+                LOG_ERROR << " --> Parameters incomplete" << LOG_END
 
                 m_errors_found = true;
             }
 
         } catch (toml::type_error &error) {
-            LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Error reading mapping" << LOG_END
+            LOG_ERROR << "Line " << settings[map_no].location().line() << " :: "
+                      << settings[map_no].location().line_str() << LOG_END
+            LOG_ERROR << " --> Error reading config" << LOG_END
             LOG_ERROR << error.what() << LOG_END
 
             m_errors_found = true;
@@ -431,7 +438,7 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
 /**
  * Create the outbound mapping for a device and store it
  */
-void profile::create_outbound_mapping(int dev_no, toml::array settings, std::shared_ptr<device> device)
+void profile::create_outbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
 {
     LOG_INFO << "Device " << dev_no << " :: " << settings.size() << " outbound mapping(s) found" << LOG_END
 

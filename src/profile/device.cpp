@@ -99,7 +99,7 @@ bool device::open_connections()
     if (m_map_in.size() > 0) {
         try {
             m_midi_in->openPort(m_port_in);
-            m_midi_in->ignoreTypes(false, false, false);
+            m_midi_in->ignoreTypes(false, true, true);
             m_midi_in->setCallback(&device::midi_callback, this);
 
             LOG_INFO << "Inbound port '" << m_port_in << "' opened for device '" << m_name << "'" << LOG_END
@@ -217,6 +217,8 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         for (auto it = mappings.first; it != mappings.second; it++) {
             auto mapping = it->second;
 
+            LOG_DEBUG << " --> Mapping found" << LOG_END
+
             bool add_task = false;
 
             // for push and pull we have to wait until the command has ended
@@ -266,7 +268,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                 t->msg = msg;
                 t->map = mapping;
 
-                m_device_list->add_event(t);
+                m_device_list->add_task(t);
             }
         }
     }
@@ -295,7 +297,45 @@ void device::process_outbound_mappings(std::string_view sl_value)
             // add message for internal list
             logger::instance().post_midi_message(msg);
 
-            LOG_DEBUG << "Outbound message from device '" << m_name << " on port '" << m_port_out << "' :: "
+            LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
+                      << "Status = '" << msg->status << "', Data = '" << msg->data << "', Velocity = '"
+                      << msg->velocity << "'" << LOG_END
+
+            std::vector<unsigned char> midi_out;
+            midi_out.push_back(msg->status);
+            midi_out.push_back(msg->data);
+            midi_out.push_back(msg->velocity);
+
+            try {
+                m_midi_out->sendMessage(&midi_out);
+            } catch (const RtMidiError &error) {
+                LOG_ERROR << "MIDI Device '" << m_name << "' :: " << error.what() << LOG_END;
+            }
+        }
+    }
+}
+
+
+/**
+ * Process a reset off all outbound mappings
+ */
+void device::process_outbound_reset()
+{
+    for (auto &mapping: m_map_out) {
+        std::shared_ptr<midi_message> msg = mapping.second->reset();
+
+        if (msg == nullptr)
+            continue;
+
+        if (msg->data > 0 && m_midi_out != nullptr && m_midi_out->isPortOpen()) {
+            msg->time = std::chrono::system_clock::now();
+            msg->port = m_port_out;
+            msg->type = midi_type::outbound;
+
+            // add message for internal list
+            logger::instance().post_midi_message(msg);
+
+            LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
                       << "Status = '" << msg->status << "', Data = '" << msg->data << "', Velocity = '"
                       << msg->velocity << "'" << LOG_END
 

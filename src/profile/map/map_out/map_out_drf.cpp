@@ -203,7 +203,7 @@ bool map_out_drf::check()
 
 
 /**
- * Execute the action in X-Plane
+ * Create a MIDI outbound message if necessary
  */
 std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
 {
@@ -274,6 +274,20 @@ std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
     }
 
     return {};
+}
+
+
+/**
+ * Reset the lights on the MIDI device
+ */
+std::shared_ptr<midi_message> map_out_drf::reset()
+{
+    std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();
+    msg->status = OFFSET_MIDI_CHANNEL_STATUS + ch();
+    msg->data = cc();
+    msg->velocity = 0;
+
+    return msg;
 }
 
 } // Namespace xmidictrl

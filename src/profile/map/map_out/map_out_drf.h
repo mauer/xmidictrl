@@ -51,6 +51,7 @@ public:
     bool check() override;
 
     std::shared_ptr<midi_message> execute(std::string_view sl_value) override;
+    std::shared_ptr<midi_message> reset() override;
 
 private:
     std::vector<std::string> m_datarefs;

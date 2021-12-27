@@ -13,6 +13,9 @@
 + Improved column widths in messages window
 + Fixed mapping error in ZIBO example (many thanks to daan_vb for pointing them out)
 + Implemented new feature to use sublayers for even more possible mappings
++ Improved push&pull mapping
++ Added option to define two different datarefs for outbound messages
++ Added option to define multiple values for inbound dataref messages
 
 -----------------------------------------------------------------------------------------------------------------------
   VERSION 0.50

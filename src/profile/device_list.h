@@ -39,10 +39,12 @@ public:
     bool open_connections();
     void close_connections();
 
-    void add_event(const std::shared_ptr<task> &event);
+    void add_task(const std::shared_ptr<task> &event);
 
     void process_inbound_events(std::string_view sl_value);
     void process_outbound_mappings(std::string_view sl_value);
+
+    void process_outbound_reset();
 
     void clear();
     unsigned int size();
