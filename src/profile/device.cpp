@@ -210,13 +210,13 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         // check status
         if (msg->status < 176 || msg->status > 191) {
             LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid status '" << msg->status
-                      << "', only Control Change messages are supported" << LOG_END
+                      << "', only Control Change messages are currently supported" << LOG_END
             return;
         }
 
         // check data
         if (msg->data < 0 || msg->data > 127) {
-            LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid Control Change '" << msg->data
+            LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid data '" << msg->data
                       << "', supported values are 0 - 127" << LOG_END
             return;
         }

@@ -75,9 +75,9 @@ private:
     std::shared_ptr<profile> m_profile;
 
     // references for custom commands
-    XPLMCommandRef m_cmd_show_messages;
-    XPLMCommandRef m_cmd_show_profile;
-    XPLMCommandRef m_cmd_reload_profile;
+    XPLMCommandRef m_cmd_show_messages {nullptr};
+    XPLMCommandRef m_cmd_show_profile {nullptr};
+    XPLMCommandRef m_cmd_reload_profile {nullptr};
 
     // list of all plugin windows
     std::map<window_type, std::shared_ptr<xplane_window>> m_windows;

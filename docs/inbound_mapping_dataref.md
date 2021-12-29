@@ -1,9 +1,10 @@
 # Mapping Type: DataRef
 
 ## Description
+
 Toggles a given DataRef between two or more values. This is very useful when no command was provided by the aircraft developer.
 
-## Parameters
+## Required Parameters
 
 **Option 1 (for on/off values)**
 

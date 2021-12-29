@@ -268,9 +268,9 @@ void plugin::create_commands()
  */
 void plugin::remove_commands()
 {
-    XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, 0);
-    XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, 0);
-    XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, 0);
+    XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, nullptr);
+    XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, nullptr);
+    XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, nullptr);
 }
 
 

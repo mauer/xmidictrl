@@ -193,7 +193,7 @@ unsigned int logger::count_midi_messages()
 /**
  * Return a text message
  */
-std::shared_ptr<text_log_msg> logger::get_text_message(int idx)
+std::shared_ptr<text_log_msg> logger::get_text_message(unsigned int idx)
 {
     try {
         return m_text_messages.at(idx);
@@ -206,7 +206,7 @@ std::shared_ptr<text_log_msg> logger::get_text_message(int idx)
 /**
  * Return a midi message
  */
-std::shared_ptr<midi_log_msg> logger::get_midi_message(int idx)
+std::shared_ptr<midi_log_msg> logger::get_midi_message(unsigned int idx)
 {
     try {
         return m_midi_messages.at(idx);

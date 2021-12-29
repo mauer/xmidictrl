@@ -38,7 +38,7 @@ public:
     static std::vector<std::string> toml_read_string_array(toml::value &settings,
                                                            std::string_view name,
                                                            bool mandatory = true);
-    static std::int64_t toml_read_int(toml::value &settings, std::string_view name, bool mandatory = true);
+    static int toml_read_int(toml::value &settings, std::string_view name, bool mandatory = true);
 
     static std::string text_msg_type_as_text(text_msg_type type);
     static std::string midi_msg_type_as_text(midi_type type);
@@ -50,7 +50,7 @@ public:
     static mode_out mode_out_from_int(int mode);
 
     static std::string time_to_string(time_point time);
-    static std::string ch_cc(int ch, int cc);
+    static std::string ch_cc(unsigned int ch, unsigned int cc);
 
     static bool create_preference_folders(const std::shared_ptr<xplane> &xp);
 };

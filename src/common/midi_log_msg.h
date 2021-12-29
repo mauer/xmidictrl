@@ -32,9 +32,9 @@ struct midi_log_msg {
 
     unsigned int port {};
 
-    int status {};
-    int data {};
-    int velocity {};
+    unsigned int status {};
+    unsigned int data {};
+    unsigned int velocity {};
 };
 
 } // Namespace xmidictrl

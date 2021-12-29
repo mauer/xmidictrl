@@ -47,6 +47,12 @@ public:
     void set_value_off(std::string_view value_off);
     [[nodiscard]] std::string_view value_off() const;
 
+    void set_velocity_on(int velocity_on);
+    [[nodiscard]] unsigned int velocity_on() const;
+
+    void set_velocity_off(int value_off);
+    [[nodiscard]] unsigned int velocity_off() const;
+
     void read_config(toml::value &settings) override;
     bool check() override;
 
@@ -54,11 +60,14 @@ public:
     std::shared_ptr<outbound_task> reset() override;
 
 private:
-    std::vector<std::string> m_datarefs;
-    std::map<std::string, std::string> m_xp_values;
+    std::vector<std::string> m_datarefs {};
+    std::map<std::string, std::string> m_xp_values {};
 
-    std::string m_value_on;
-    std::string m_value_off;
+    std::string m_value_on {};
+    std::string m_value_off {};
+
+    unsigned int m_velocity_on {127};
+    unsigned int m_velocity_off {0};
 };
 
 } // Namespace xmidictrl

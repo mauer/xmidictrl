@@ -53,7 +53,7 @@ void map_in_list::add(const std::shared_ptr<map_in>& map)
 /**
  * Retrieve the mapping for a control change
  */
-map_in_pair map_in_list::get(const int ch, const int cc)
+map_in_pair map_in_list::get(const unsigned int ch, const unsigned int cc)
 {
     return m_list.equal_range(utils::ch_cc(ch, cc));
 }

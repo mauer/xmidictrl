@@ -27,14 +27,14 @@
 namespace xmidictrl {
 
 struct midi_message {
-    time_point time;
+    time_point time {time_point::min()};
     midi_type type {midi_type::inbound};
 
-    unsigned int port {};
+    unsigned int port {0};
 
-    int status {};
-    int data {};
-    int velocity {};
+    unsigned int status {0};
+    unsigned int data {0};
+    unsigned int velocity {0};
 };
 
 } // Namespace xmidictrl

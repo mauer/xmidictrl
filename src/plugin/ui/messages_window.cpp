@@ -17,6 +17,8 @@
 
 #include "messages_window.h"
 
+#include <utility>
+
 // XMidiCtrl
 #include "logger.h"
 #include "utils.h"
@@ -31,7 +33,7 @@ namespace xmidictrl {
  * Constructor
  */
 messages_window::messages_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(xp, 1400, 700)
+    : ImGuiWindow(std::move(xp), 1400, 700)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Messages");
 }

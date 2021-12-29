@@ -5,6 +5,7 @@ to read and offers comments in the configuration. There is no User Interface to 
 done outside X-Plane using a text editor. I recommend Visual Studio Code as it includes syntax highlighting for TOML.
 
 ## TOML Syntax
+
 TOML is using a very simple key/value pair syntax. To set the version number in the config file you just have to type:
 
 ```

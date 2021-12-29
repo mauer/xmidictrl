@@ -31,7 +31,7 @@ namespace xmidictrl {
 
 class map_in : public map {
 public:
-    map_in(std::shared_ptr<xplane> xp);
+    explicit map_in(std::shared_ptr<xplane> xp);
     ~map_in() override = default;
 
     typedef std::shared_ptr<map_in> ptr;

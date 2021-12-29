@@ -57,7 +57,7 @@ public:
     typedef std::shared_ptr<xplane_window> ptr;
 
     //static void multi_matrix_vec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4]);
-    static void multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> m, const GLfloat v[4]);
+    static void multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> &m, const GLfloat v[4]);
 
     XPLMWindowID window_id();
 

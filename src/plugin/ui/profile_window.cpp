@@ -34,7 +34,7 @@ namespace xmidictrl {
  * Constructor
  */
 profile_window::profile_window(std::shared_ptr<xplane> xp, std::shared_ptr<profile> prf)
-    : ImGuiWindow(xp, 1200, 550),
+    : ImGuiWindow(std::move(xp), 1200, 550),
       m_prf(std::move(prf))
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");

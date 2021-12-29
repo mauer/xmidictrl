@@ -6,6 +6,7 @@ command. However, most advanced options are possible, such as changing datarefs.
 All incoming mappings are defined for each MIDI device individually with the parameter **mapping_in**
 
 ## Example
+
 ```
 title   = "Settings for my favourite aircraft"
 version = "1.00"
@@ -36,6 +37,7 @@ mapping_in = [
 ```
 
 ## Common variables
+
 The following variables are required for each mapping.
 
 | Variable | Description                       |
@@ -45,6 +47,7 @@ The following variables are required for each mapping.
 | sl       | Sublayer (optional)               |
 
 ## Mapping Types
+
 The following mapping types are supported: 
 
 | Mapping Type |   Name    | Description and usage                                                            |
@@ -55,8 +58,8 @@ The following mapping types are supported:
 | enc          |  Encoder  | Executes different commands for up/down and fast up/fast down                    |
 | sld          |  Slider   | Executes up to three different commands, depending on the location of the slider |
 
-###
 ### Multi-Map
+
 It is possible to map a MIDI message to multiple mappings. The following example will execute both commands,
 when a MIDI message with Channel 11 and Control Change 25 is being received:
 

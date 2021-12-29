@@ -133,19 +133,19 @@ std::vector<std::string> utils::toml_read_string_array(toml::value &settings,
 /**
  * Read the value of an integer
  */
-std::int64_t utils::toml_read_int(toml::value &settings, std::string_view name, bool mandatory)
+int utils::toml_read_int(toml::value &settings, std::string_view name, bool mandatory)
 {
     if (name.empty()) {
         LOG_ERROR << "Internal error (toml_read_int --> name is empty" << LOG_END
         return -1;
     }
 
-    std::int64_t value = -1;
+    int value = -1;
 
     try {
         // read dataref
         if (toml_contains(settings, name, mandatory)) {
-            value = settings[name.data()].as_integer();
+            value = static_cast<int>(settings[name.data()].as_integer());
             LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
                       << value << "'" << LOG_END
         }
@@ -296,7 +296,7 @@ std::string utils::time_to_string(time_point time)
 /**
  * Return MIDI channel and control change as combined string
  */
-std::string utils::ch_cc(const int ch, const int cc)
+std::string utils::ch_cc(const unsigned int ch, const unsigned int cc)
 {
     return std::to_string(ch) + "_" + std::to_string(cc);
 }

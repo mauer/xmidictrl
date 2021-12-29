@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _DATA_ITEM_H_
-#define _DATA_ITEM_H_
+#ifndef DATA_ITEM_H
+#define DATA_ITEM_H
 
 // Standard
 #include <memory>
@@ -34,6 +34,6 @@ struct data_item {
     bool writeable;
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
-#endif // _DATA_ITEM_H_
+#endif // DATA_ITEM_H

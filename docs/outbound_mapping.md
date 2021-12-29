@@ -1,10 +1,12 @@
 # Outbound Mappings
+
 Outbound mappings are used to set a status on your MIDI controller, such as highlight a button if a certain function
 got activated in X-Plane.
 
 All outgoing mappings are defined for each MIDI device individually with the parameter **mapping_out**
 
 ## Example
+
 ```
 title   = "Settings for my favourite aircraft"
 version = "1.00"
@@ -23,6 +25,7 @@ mapping_out = [
 ```
 
 ## Common variables
+
 The following variables are required for each mapping.
 
 | Variable | Description                       |
@@ -31,6 +34,7 @@ The following variables are required for each mapping.
 | cc       | Control Change No Number          |
 
 ## Mapping Types
+
 The following mapping types are supported:
 
 | Mapping Type |  Name   | Description and usage                                         |

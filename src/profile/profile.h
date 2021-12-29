@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _PROFILE_H_
-#define _PROFILE_H_
+#ifndef PROFILE_H
+#define PROFILE_H
 
 // Standard
 #include <memory>
@@ -77,4 +77,4 @@ private:
 
 } // Namespace XMidiCtrl
 
-#endif // _PROFILE_H_
+#endif // PROFILE_H

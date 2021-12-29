@@ -276,8 +276,8 @@ void profile::create_device_list()
         // parse every device
         for (int dev_no = 0; dev_no < static_cast<int>(profile_dev.size()); dev_no++) {
             std::string name;
-            unsigned int port_in;
-            unsigned int port_out;
+            int port_in;
+            int port_out;
             mode_out mode_out;
 
             // read all parameters for the current device
@@ -295,7 +295,7 @@ void profile::create_device_list()
                 }
 
                 // port in
-                port_in = static_cast<unsigned int>(utils::toml_read_int(settings_dev, CFG_KEY_PORT_IN));
+                port_in = utils::toml_read_int(settings_dev, CFG_KEY_PORT_IN);
 
                 if (port_in < 0) {
                     m_errors_found = true;
@@ -303,7 +303,7 @@ void profile::create_device_list()
                 }
 
                 // port out
-                port_out = static_cast<unsigned int>(utils::toml_read_int(settings_dev, CFG_KEY_PORT_OUT));
+                port_out = utils::toml_read_int(settings_dev, CFG_KEY_PORT_OUT);
 
                 if (port_out < 0) {
                     m_errors_found = true;
@@ -311,12 +311,13 @@ void profile::create_device_list()
                 }
 
                 // mode outbound
-                mode_out = utils::mode_out_from_int(static_cast<int>(utils::toml_read_int(settings_dev,
-                                                                                          CFG_KEY_MODE_OUT,
-                                                                                          false)));
+                mode_out = utils::mode_out_from_int(utils::toml_read_int(settings_dev,
+                                                                         CFG_KEY_MODE_OUT,
+                                                                         false));
 
                 // create device
-                std::shared_ptr<device> device = m_device_list->create_device(name, port_in, port_out, mode_out);
+                std::shared_ptr<device> device = m_device_list->create_device(name, static_cast<int>(port_in),
+                                                                              static_cast<int>(port_out), mode_out);
 
                 if (device != nullptr) {
                     // create inbound mappings

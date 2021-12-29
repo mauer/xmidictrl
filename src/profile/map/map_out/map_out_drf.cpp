@@ -160,6 +160,48 @@ std::string_view map_out_drf::value_off() const
 
 
 /**
+ * Set velocity on
+ */
+void map_out_drf::set_velocity_on(int velocity_on)
+{
+    if (velocity_on >= 0 && velocity_on <= 127)
+        m_velocity_on = velocity_on;
+    else
+        m_velocity_on = 127;
+}
+
+
+/**
+ * Return velocity on
+ */
+unsigned int map_out_drf::velocity_on() const
+{
+    return m_velocity_on;
+}
+
+
+/**
+ * Set velocity off
+ */
+void map_out_drf::set_velocity_off(int velocity_off)
+{
+    if (velocity_off >= 0 && velocity_off <= 127)
+        m_velocity_off = velocity_off;
+    else
+        m_velocity_off = 0;
+}
+
+
+/**
+ * Return velocity off
+ */
+unsigned int map_out_drf::velocity_off() const
+{
+    return m_velocity_off;
+}
+
+
+/**
  * Read settings from config
  */
 void map_out_drf::read_config(toml::value &settings)
@@ -181,6 +223,12 @@ void map_out_drf::read_config(toml::value &settings)
 
     // read value off
     set_value_off(utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false));
+
+    // read velocity on
+    set_velocity_on(utils::toml_read_int(settings, CFG_KEY_VELOCITY_ON, false));
+
+    // read velocity off
+    set_velocity_off(utils::toml_read_int(settings, CFG_KEY_VELOCITY_OFF, false));
 }
 
 
@@ -275,9 +323,9 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
         task->cc = cc();
 
         if (send_on)
-            task->velocity = 127;
+            task->velocity = m_velocity_on;
         else
-            task->velocity = 0;
+            task->velocity = m_velocity_off;
 
         return task;
     }

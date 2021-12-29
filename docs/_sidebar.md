@@ -5,6 +5,7 @@
 * **General**
   * [Installation](installation.md)
   * [Configuration](configuration.md)
+  * [Plugin Commands](plugin_commands.md)
 
 * **Getting started**
   * [Create a profile](create_profile.md)
@@ -22,4 +23,6 @@
 * **Advanced Options**
   * [Aircraft Profiles](profile.md)  
   * [Sublayers](sublayers.md)
+
+* [Changelog](changelog.md)
 

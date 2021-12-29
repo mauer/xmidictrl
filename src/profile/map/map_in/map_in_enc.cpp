@@ -134,7 +134,7 @@ std::string_view map_in_enc::command_fast_down() const
 void map_in_enc::read_config(toml::value &settings)
 {
     LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'enc'" << LOG_END
-    map::read_config(settings);
+    map_in::read_config(settings);
 
     // read command up
     set_command_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_UP));

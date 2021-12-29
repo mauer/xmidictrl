@@ -30,9 +30,9 @@ namespace xmidictrl {
 struct outbound_task {
     bool data_changed {false};
 
-    int ch {-1};
-    int cc {-1};
-    int velocity {-1};
+    unsigned int ch {0};
+    unsigned int cc {0};
+    unsigned int velocity {0};
 
     std::shared_ptr<midi_message> msg;
 };

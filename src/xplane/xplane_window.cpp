@@ -86,7 +86,7 @@ xplane_window::~xplane_window()
 /**
  * Return multi matrix
  */
-void xplane_window::multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> m, const GLfloat v[4])
+void xplane_window::multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> &m, const GLfloat v[4])
 {
     dst[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
     dst[1] = v[0] * m[1] + v[1] * m[5] + v[2] * m[9] + v[3] * m[13];

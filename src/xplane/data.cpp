@@ -315,7 +315,7 @@ double data::read_double(const data_item *item)
 std::string data::read_byte(const data_item *item)
 {
     std::vector<char> tmpValue(item->size);
-    XPLMGetDatab(item->dataref, &tmpValue[0], 0, tmpValue.size());
+    XPLMGetDatab(item->dataref, &tmpValue[0], 0, static_cast<int>(tmpValue.size()));
 
     return {tmpValue.data(), strnlen(tmpValue.data(), tmpValue.size())};
 }
@@ -381,7 +381,7 @@ std::vector<int> data::read_int_array(const data_item *item)
     std::vector<int> values;
 
     values.resize(XPLMGetDatavi(item->dataref, nullptr, 0, 0));
-    XPLMGetDatavi(item->dataref, &values[0], 0, values.size());
+    XPLMGetDatavi(item->dataref, &values[0], 0, static_cast<int>(values.size()));
 
     return values;
 }

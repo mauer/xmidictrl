@@ -67,8 +67,8 @@ public:
     unsigned int count_text_messages();
     unsigned int count_midi_messages();
 
-    std::shared_ptr<text_log_msg> get_text_message(int idx);
-    std::shared_ptr<midi_log_msg> get_midi_message(int idx);
+    std::shared_ptr<text_log_msg> get_text_message(unsigned int idx);
+    std::shared_ptr<midi_log_msg> get_midi_message(unsigned int idx);
 
 private:
     bool check_log_level(text_msg_type type);

@@ -8,6 +8,7 @@ You can also store your profiles outside the aircraft folders, if you prefer so.
 [Aircraft Profiles](profile.md) for more detailed information about that.
 
 ## Name and Version
+
 The first two lines of a profile are title and version. They don't really have any function and are purely for your
 information.
 
@@ -18,6 +19,7 @@ version = "1.00"
 ```
 
 ## Inbound and Outbound Ports
+
 After copying the file, it is required to set the inbound and outbound ports for the MIDI device. In order to determine 
 the ports for all your MIDI devices, you can use the function **Show MIDI Devices** of the plugin. You can find it 
 in the menu **Plugins -> XMidiCtrl -> Show MIDI Devices**. The dialog will show you with a list of all connected MIDI 
@@ -35,6 +37,7 @@ port_out = 1
 ```
 
 ## Mappings
+
 Next would be the definition of some mappings. You can create inbound mappings and outbound mappings. Inbound mappings
 are MIDI messages, which are sent from the MIDI device to X-Plane. This would happen once a button gets pressed on your
 device. Outbound mappings allow you to control the lights on your MIDI device, such as highlight a button if the 

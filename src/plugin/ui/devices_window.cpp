@@ -17,6 +17,8 @@
 
 #include "devices_window.h"
 
+#include <utility>
+
 // XMidiCtrl
 #include "logger.h"
 
@@ -30,7 +32,7 @@ namespace xmidictrl {
  * Constructor
  */
 devices_window::devices_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(xp, 700, 350)
+    : ImGuiWindow(std::move(xp), 700, 350)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - MIDI Devices");
 }

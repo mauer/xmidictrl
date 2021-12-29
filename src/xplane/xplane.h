@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _XPLANE_H_
-#define _XPLANE_H_
+#ifndef XPLANE_H
+#define XPLANE_H
 
 // Standard
 #include <memory>
@@ -64,4 +64,4 @@ private:
 
 } // namespace xmidictrl
 
-#endif // _XPLANE_H_
+#endif // XPLANE_H

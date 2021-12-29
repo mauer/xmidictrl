@@ -1,19 +1,27 @@
 # Mapping: Encoder
 
 ## Description
+
 Mapping for an encoder (knob). You can define a command for up (right turn) and down (left turn). In addition, it's
 possible to define commands for fast up and down, if the knob was turned faster. This can be useful in some
 aircraft. Normally, defining up and down should be sufficient.
 
-## Parameters
-| Parameter         | Description                                                                                |
-|-------------------|--------------------------------------------------------------------------------------------|
-| command_up        | Command which will be executed when the knob is turn to the right                          |
-| command_down      | Command which will be executed when the knob is turn to the left                           |
-| command_fast_up   | Command which will be executed when the knob is turn quite fast to the right (optional)    |
-| command_fast_down | Command which will be executed when the knob is turn quite fast to the left (optional)     |
+## Required Parameters
+
+| Parameter    | Description                                                        |
+|--------------|--------------------------------------------------------------------|
+| command_up   | Command which will be executed when the knob is turn to the right  |
+| command_down | Command which will be executed when the knob is turn to the left   |
+
+## Optional Parameters
+
+| Parameter         | Description                                                                  |
+|-------------------|------------------------------------------------------------------------------|
+| command_fast_up   | Command which will be executed when the knob is turn quite fast to the right |
+| command_fast_down | Command which will be executed when the knob is turn quite fast to the left  |
 
 ## Examples
+
 ```
 { ch = 11, cc = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
 

@@ -1,8 +1,11 @@
 # Mapping Type: Dataref
+
 Read the given DataRef and sends a MIDI message of the current value. It is also possible to define two DataRefs for a 
 mapping. This can be useful if there are caution lights etc. for pilot and copilot.
 
-| Variable  | Description                                                                                     |
+## Required Parameters
+
+| Parameter | Description                                                                                     |
 |-----------|-------------------------------------------------------------------------------------------------|
 | dataref   | Defines the DataRef which should be checked (or multiple DataRefs)                              |
 | value_on  | As soon as the DataRef will be set to this value, a MIDI message with velocity 127 will be send |
@@ -11,7 +14,15 @@ mapping. This can be useful if there are caution lights etc. for pilot and copil
 **Note:**
 It's not required to define *value_on* and *value_off*. However, at least one of them has to be defined.
 
-**Examples:**
+## Optional Parameters
+
+| Parameter    | Description                                                 |
+|--------------|-------------------------------------------------------------|
+| velocity_on  | Velocity which will be sent for an on message (Default 127) |
+| veloctiy_off | Velocity which will be sent for an off message (Default 0)  |
+
+## Examples
+
 ```
 { ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_on = "1", value_off = "0" }
 ```

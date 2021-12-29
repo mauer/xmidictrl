@@ -95,6 +95,8 @@ const char *const CFG_KEY_TYPE = "type";
 const char *const CFG_KEY_VALUES = "values";
 const char *const CFG_KEY_VALUE_ON = "value_on";
 const char *const CFG_KEY_VALUE_OFF = "value_off";
+const char *const CFG_KEY_VELOCITY_ON = "velocity_on";
+const char *const CFG_KEY_VELOCITY_OFF = "velocity_on";
 const char *const CFG_KEY_VERSION = "version";
 
 // Mapping Types as strings

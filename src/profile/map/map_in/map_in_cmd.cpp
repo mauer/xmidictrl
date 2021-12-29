@@ -74,7 +74,7 @@ std::string_view map_in_cmd::command() const
 void map_in_cmd::read_config(toml::value &settings)
 {
     LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'cmd'" << LOG_END
-    map::read_config(settings);
+    map_in::read_config(settings);
 
     // read the command
     set_command(utils::toml_read_string(settings, CFG_KEY_COMMAND));

@@ -29,6 +29,7 @@
 // Standard
 #include <cstdint>
 #include <cctype>
+#include <utility>
 
 // X-Plane SDK
 #include <XPLMGraphics.h>
@@ -51,7 +52,7 @@ std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
  * Constructor
  */
 ImGuiWindow::ImGuiWindow(std::shared_ptr<xplane> xp, int width, int height, bool translucent)
-    : xplane_window(xp, width, height, translucent)
+    : xplane_window(std::move(xp), width, height, translucent)
 {
     // font atlas for Dear ImGui
     if (!m_imGuiFontAtlas) {

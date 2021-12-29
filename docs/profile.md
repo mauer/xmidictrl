@@ -8,9 +8,11 @@ encoders and buttons.
 Once the aircraft has been loaded in X-Plane, the plugin will search the following locations in this order:
 
 ## 1. Aircraft Directory
+
 The plugin will search for a file called **XMidiCtrl.toml** in the directory of the current aircraft.
 
 ## 2. Profiles Directory
+
 If no profile has been located in the aircraft directory, it will search for the configuration in the **profiles**
 directory:
 
@@ -19,6 +21,7 @@ directory:
 ```
 
 ### 2.1 Profiles Directory - Designer and ICAO
+
 In order to allow individual profiles for the same aircraft from different developers, the plugin will search for a
 filename that includes the developer name as well as the ICAO code for the current aircraft.
 
@@ -33,6 +36,7 @@ ToLiss_A321_XMidiCtrl.toml
 ```
 
 ### 2.2 Profiles Directory - ICAO
+
 If the search was not successful, it will search again, but this time without the name of the developer.
 
 **Definition:**
@@ -46,5 +50,6 @@ A321_XMidiCtrl.toml
 ```
 
 ## 3. Profiles Directory - Common profile
+
 If the plugin was not able to locate any profile so far, it will search for a file called **XMidiCtrl.toml** in the
 **profiles** directory. Obviously, the common profile should not contain any aircraft specific commands or datarefs.

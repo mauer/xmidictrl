@@ -30,15 +30,15 @@ namespace xmidictrl {
 
 class messages_window : public ImGuiWindow {
 public:
-    messages_window(std::shared_ptr<xplane> xp);
+    explicit messages_window(std::shared_ptr<xplane> xp);
     ~messages_window() override;
 
 protected:
     void create_widgets() override;
 
 private:
-    void create_tab_text_msg();
-    void create_tab_midi_msg();
+    static void create_tab_text_msg();
+    static void create_tab_midi_msg();
 };
 
 } // Namespace xmidictrl

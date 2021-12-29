@@ -19,6 +19,7 @@
 
 // Standard
 #include <string>
+#include <utility>
 
 // XMidiCtrl
 #include "logger.h"
@@ -33,7 +34,7 @@ namespace xmidictrl {
  * Constructor
  */
 about_window::about_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(xp, 850, 450)
+    : ImGuiWindow(std::move(xp), 850, 450)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - About");
 }

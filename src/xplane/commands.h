@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef _COMMANDS_H_
-#define _COMMANDS_H_
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
 // Standard
 #include <map>
@@ -48,4 +48,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // _COMMANDS_H_
+#endif // COMMANDS_H
