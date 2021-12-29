@@ -38,8 +38,13 @@ namespace xmidictrl {
 device::device(std::string_view name,
                unsigned int port_in,
                unsigned int port_out,
+               mode_out mode_out,
                std::shared_ptr<device_list> device_list)
-    : m_device_list(std::move(device_list)), m_name(name), m_port_in(port_in), m_port_out(port_out)
+    : m_device_list(std::move(device_list)),
+      m_name(name),
+      m_port_in(port_in),
+      m_port_out(port_out),
+      m_mode_out(mode_out)
 {
     try {
         // create midi classes
@@ -125,6 +130,8 @@ bool device::open_connections()
 
             return false;
         }
+
+        create_outbound_thread();
     }
 
     // connections successfully established
@@ -142,6 +149,16 @@ void device::close_connections()
             LOG_DEBUG << "Close port '" << m_port_in << "' for device '" << m_name << "'" << LOG_END
             m_midi_in->closePort();
         }
+    }
+
+    if (m_outbound_thread != nullptr) {
+        LOG_DEBUG << "Terminate outbound thread '" << m_outbound_thread->get_id() << "' for device '" << m_name << "'"
+                  << LOG_END
+
+        m_exit_outbound_thread.store(true);
+
+        m_outbound_thread->join();
+        m_outbound_thread = nullptr;
     }
 
     if (m_midi_out != nullptr) {
@@ -264,11 +281,11 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
 
             // push to event handler
             if (add_task) {
-                std::shared_ptr<task> t = std::make_shared<task>();
+                std::shared_ptr<inbound_task> t = std::make_shared<inbound_task>();
                 t->msg = msg;
                 t->map = mapping;
 
-                m_device_list->add_task(t);
+                m_device_list->add_inbound_task(t);
             }
         }
     }
@@ -280,31 +297,94 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
  */
 void device::process_outbound_mappings(std::string_view sl_value)
 {
+    if (m_mode_out == mode_out::permanent) {
+        if (m_time_sent != time_point::min()) {
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_sent;
+
+            if (elapsed_seconds.count() < 0.5f)
+                return;
+        }
+    }
+
     for (auto &mapping: m_map_out) {
         if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc())))
             continue;
 
-        std::shared_ptr<midi_message> msg = mapping.second->execute(sl_value);
+        std::shared_ptr<outbound_task> task = mapping.second->execute(m_mode_out);
 
-        if (msg == nullptr)
+        if (task == nullptr)
             continue;
 
-        if (msg->data > 0 && m_midi_out != nullptr && m_midi_out->isPortOpen()) {
-            msg->time = std::chrono::system_clock::now();
-            msg->port = m_port_out;
-            msg->type = midi_type::outbound;
+        if (task->cc > -1 && m_midi_out != nullptr && m_midi_out->isPortOpen())
+            add_outbound_task(task);
+    }
 
-            // add message for internal list
-            logger::instance().post_midi_message(msg);
+    if (m_mode_out == mode_out::permanent)
+        m_time_sent = std::chrono::system_clock::now();
+}
 
-            LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
-                      << "Status = '" << msg->status << "', Data = '" << msg->data << "', Velocity = '"
-                      << msg->velocity << "'" << LOG_END
 
+/**
+ * Process a reset off all outbound mappings
+ */
+void device::process_outbound_reset()
+{
+    for (auto &mapping: m_map_out) {
+        std::shared_ptr<outbound_task> task = mapping.second->reset();
+
+        if (task == nullptr)
+            continue;
+
+        if (task->cc > -1 && m_midi_out != nullptr && m_midi_out->isPortOpen())
+            add_outbound_task(task);
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create a thread to send outbound messages
+ */
+void device::create_outbound_thread()
+{
+    if (m_outbound_thread == nullptr)
+        m_outbound_thread = std::make_unique<std::thread>(&device::process_outbound_tasks, this);
+
+    LOG_DEBUG << "Created outbound thread '" << m_outbound_thread->get_id() << "' for device '" << m_name << "'"
+              << LOG_END
+}
+
+
+/**
+ * Process all outbound tasks in the queueu
+ */
+void device::process_outbound_tasks()
+{
+    while (!m_exit_outbound_thread) {
+        // wait for a task to be added to the queue
+        std::shared_ptr<outbound_task> task;
+        {
+            std::unique_lock<std::mutex> lock(m_outbound_mutex);
+            while (m_outbound_tasks.empty())
+                m_new_outbound_task.wait(lock);
+
+            if (m_outbound_tasks.empty())
+                continue;
+
+            task = m_outbound_tasks.front();
+            m_outbound_tasks.pop();
+        }
+
+        if (task != nullptr) {
             std::vector<unsigned char> midi_out;
-            midi_out.push_back(msg->status);
-            midi_out.push_back(msg->data);
-            midi_out.push_back(msg->velocity);
+            midi_out.push_back(task->msg->status);
+            midi_out.push_back(task->msg->data);
+            midi_out.push_back(task->msg->velocity);
 
             try {
                 m_midi_out->sendMessage(&midi_out);
@@ -317,40 +397,34 @@ void device::process_outbound_mappings(std::string_view sl_value)
 
 
 /**
- * Process a reset off all outbound mappings
+ * Add an outbound task to the queue
  */
-void device::process_outbound_reset()
+void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
 {
-    for (auto &mapping: m_map_out) {
-        std::shared_ptr<midi_message> msg = mapping.second->reset();
+    task->msg = std::make_shared<midi_message>();
 
-        if (msg == nullptr)
-            continue;
+    task->msg->time = std::chrono::system_clock::now();
+    task->msg->port = m_port_out;
+    task->msg->type = midi_type::outbound;
 
-        if (msg->data > 0 && m_midi_out != nullptr && m_midi_out->isPortOpen()) {
-            msg->time = std::chrono::system_clock::now();
-            msg->port = m_port_out;
-            msg->type = midi_type::outbound;
+    task->msg->status = OFFSET_MIDI_CHANNEL_STATUS + task->ch;
+    task->msg->data = task->cc;
+    task->msg->velocity = task->velocity;
 
-            // add message for internal list
-            logger::instance().post_midi_message(msg);
+    // add message for internal list, but only if the dataref value has been changed, otherwise the logging will
+    // increase very quickly
+    if (task->data_changed) {
+        logger::instance().post_midi_message(task->msg);
 
-            LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
-                      << "Status = '" << msg->status << "', Data = '" << msg->data << "', Velocity = '"
-                      << msg->velocity << "'" << LOG_END
-
-            std::vector<unsigned char> midi_out;
-            midi_out.push_back(msg->status);
-            midi_out.push_back(msg->data);
-            midi_out.push_back(msg->velocity);
-
-            try {
-                m_midi_out->sendMessage(&midi_out);
-            } catch (const RtMidiError &error) {
-                LOG_ERROR << "MIDI Device '" << m_name << "' :: " << error.what() << LOG_END;
-            }
-        }
+        LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
+                  << "Status = '" << task->msg->status << "', Data = '" << task->msg->data << "', Velocity = '"
+                  << task->msg->velocity << "'" << LOG_END
     }
+
+    std::lock_guard<std::mutex> lock(m_outbound_mutex);
+
+    m_outbound_tasks.push(task);
+    m_new_outbound_task.notify_one();
 }
 
 } // Namespace xmidictrl

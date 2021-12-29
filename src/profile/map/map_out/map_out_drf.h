@@ -27,7 +27,7 @@
 
 // XMidiCtrl
 #include "map_out.h"
-#include "midi_message.h"
+#include "outbound_task.h"
 
 namespace xmidictrl {
 
@@ -50,8 +50,8 @@ public:
     void read_config(toml::value &settings) override;
     bool check() override;
 
-    std::shared_ptr<midi_message> execute(std::string_view sl_value) override;
-    std::shared_ptr<midi_message> reset() override;
+    std::shared_ptr<outbound_task> execute(mode_out mode) override;
+    std::shared_ptr<outbound_task> reset() override;
 
 private:
     std::vector<std::string> m_datarefs;
@@ -59,8 +59,6 @@ private:
 
     std::string m_value_on;
     std::string m_value_off;
-
-
 };
 
 } // Namespace xmidictrl

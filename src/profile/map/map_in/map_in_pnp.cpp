@@ -144,20 +144,6 @@ bool map_in_pnp::check()
  */
 bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
 {
-    // Keep it here, in case I need it later again
-    /*std::time_t tc = std::chrono::system_clock::to_time_t(m_time_point_released.load());
-
-    char timedisplay[100];
-    struct tm buf;
-    localtime_s(&buf, &tc);
-    std::strftime(timedisplay, sizeof(timedisplay), "%H:%M:%S", &buf);
-    LOG_DEBUG << "Time release: " << timedisplay << LOG_END
-
-    tc = std::chrono::system_clock::to_time_t(m_time_point_received.load());
-    localtime_s(&buf, &tc);
-    std::strftime(timedisplay, sizeof(timedisplay), "%H:%M:%S", &buf);
-    LOG_DEBUG << "Time received: " << timedisplay << LOG_END */
-
     if (!check_sublayer(sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)
         reset();

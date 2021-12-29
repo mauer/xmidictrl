@@ -4,8 +4,8 @@ The easiest way to create a new aircraft profile, would be to create a copy of t
 *Behringer X-Touch Mini*. Simply copy the **XMidiCtrl.toml** file from the templates folder and place it into the 
 **aircraft** folder.
 
-You can also store your profiles outside of the aircraft folders, if you prefer so. Please have a look at 
-[Aircraft Profiles](profile.md) for more detailled information about that.
+You can also store your profiles outside the aircraft folders, if you prefer so. Please have a look at 
+[Aircraft Profiles](profile.md) for more detailed information about that.
 
 ## Name and Version
 The first two lines of a profile are title and version. They don't really have any function and are purely for your

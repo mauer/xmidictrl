@@ -47,9 +47,12 @@ device_list::~device_list()
 /**
  * Create a new midi device
  */
-std::shared_ptr<device> device_list::create_device(std::string_view name, unsigned int port_in, unsigned int port_out)
+std::shared_ptr<device> device_list::create_device(std::string_view name,
+                                                   unsigned int port_in,
+                                                   unsigned int port_out,
+                                                   mode_out mode_out)
 {
-    std::shared_ptr<device> dev = std::make_shared<device>(name, port_in, port_out, shared_from_this());
+    std::shared_ptr<device> dev = std::make_shared<device>(name, port_in, port_out, mode_out, shared_from_this());
     m_device_list.push_back(dev);
 
     return dev;
@@ -90,14 +93,14 @@ void device_list::close_connections()
 /**
  * Add a task to be executed
  */
-void device_list::add_task(const std::shared_ptr<task> &t)
+void device_list::add_inbound_task(const std::shared_ptr<inbound_task> &task)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
     LOG_DEBUG << " --> Task added to queue" << LOG_END
 
-    m_inbound_tasks.push(t);
+    m_inbound_tasks.push(task);
 }
 
 
@@ -109,11 +112,11 @@ void device_list::process_inbound_events(std::string_view sl_value)
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    std::queue<std::shared_ptr<task>> temp_list;
+    std::queue<std::shared_ptr<inbound_task>> temp_list;
 
     // process the midi inbound queue for each midi device
     while (!m_inbound_tasks.empty()) {
-        std::shared_ptr<task> t = m_inbound_tasks.front();
+        std::shared_ptr<inbound_task> t = m_inbound_tasks.front();
 
         if (t == nullptr || t->map == nullptr)
             continue;
@@ -130,7 +133,7 @@ void device_list::process_inbound_events(std::string_view sl_value)
 
     // add temp tasks to queue again, will be executed in next flight loop
     while (!temp_list.empty()) {
-        std::shared_ptr<task> t = temp_list.front();
+        std::shared_ptr<inbound_task> t = temp_list.front();
         m_inbound_tasks.push(t);
 
         temp_list.pop();

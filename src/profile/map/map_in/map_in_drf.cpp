@@ -50,67 +50,13 @@ map_type map_in_drf::type()
 };
 
 
-///**
-// * Set the dataref
-// */
-//void map_in_drf::set_dataref(std::string_view dataref)
-//{
-//    m_dataref = dataref;
-//}
-
-
-///**
-// * Return the dataref
-// */
-//std::string_view map_in_drf::dataref() const
-//{
-//    return m_dataref;
-//}
-//
-//
-///**
-// * Set value on
-// */
-//void map_in_drf::set_value_on(std::string_view value_on)
-//{
-//    m_value_on = value_on;
-//}
-//
-//
-///**
-// * Return value on
-// */
-//std::string_view map_in_drf::value_on() const
-//{
-//    return m_value_on;
-//}
-//
-//
-///**
-// * Set value off
-// */
-//void map_in_drf::set_value_off(std::string_view value_off)
-//{
-//    m_value_off = value_off;
-//}
-//
-//
-///**
-// * Return value off
-// */
-//std::string_view map_in_drf::value_off() const
-//{
-//    return m_value_off;
-//}
-
-
 /**
  * Read settings from config
  */
 void map_in_drf::read_config(toml::value &settings)
 {
     LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
-    map::read_config(settings);
+    map_in::read_config(settings);
 
     // read dataref
     m_dataref = utils::toml_read_string(settings, CFG_KEY_DATAREF);

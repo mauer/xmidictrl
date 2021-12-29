@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TASK_H
-#define TASK_H
+#ifndef INBOUND_TASK_H
+#define INBOUND_TASK_H
 
 // Standard
 #include <memory>
@@ -27,11 +27,11 @@
 
 namespace xmidictrl {
 
-struct task {
+struct inbound_task {
     std::shared_ptr<midi_message> msg;
     std::shared_ptr<map_in> map;
 };
 
 } // Namespace xmidictrl
 
-#endif // TASK_H
+#endif // INBOUND_TASK_H

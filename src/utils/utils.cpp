@@ -267,6 +267,17 @@ log_level utils::log_level_from_code(std::string_view code)
 
 
 /**
+ * Return the outbound mode for a given integer
+ */
+mode_out utils::mode_out_from_int(int mode) {
+    if (mode == 1)
+        return mode_out::on_change;
+    else
+        return mode_out::permanent;
+}
+
+
+/**
  * Convert a time point into a string
  */
 std::string utils::time_to_string(time_point time)

@@ -278,6 +278,7 @@ void profile::create_device_list()
             std::string name;
             unsigned int port_in;
             unsigned int port_out;
+            mode_out mode_out;
 
             // read all parameters for the current device
             toml::value settings_dev = profile_dev[dev_no];
@@ -309,8 +310,13 @@ void profile::create_device_list()
                     continue;
                 }
 
+                // mode outbound
+                mode_out = utils::mode_out_from_int(static_cast<int>(utils::toml_read_int(settings_dev,
+                                                                                          CFG_KEY_MODE_OUT,
+                                                                                          false)));
+
                 // create device
-                std::shared_ptr<device> device = m_device_list->create_device(name, port_in, port_out);
+                std::shared_ptr<device> device = m_device_list->create_device(name, port_in, port_out, mode_out);
 
                 if (device != nullptr) {
                     // create inbound mappings

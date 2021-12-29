@@ -47,6 +47,8 @@ public:
     static std::string log_level_as_code(log_level level);
     static log_level log_level_from_code(std::string_view code);
 
+    static mode_out mode_out_from_int(int mode);
+
     static std::string time_to_string(time_point time);
     static std::string ch_cc(int ch, int cc);
 

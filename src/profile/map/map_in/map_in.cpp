@@ -17,6 +17,9 @@
 
 #include "map_in.h"
 
+// XMidiCtrl
+#include "logger.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -29,5 +32,72 @@ namespace xmidictrl {
 map_in::map_in(std::shared_ptr<xplane> xp)
     : map(std::move(xp))
 {}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the sublayer name
+ */
+std::string_view map_in::sl() const
+{
+    return m_sl;
+}
+
+
+/**
+ * Read the config
+ */
+void map_in::read_config(toml::value &data)
+{
+    map::read_config(data);
+
+    // additional config
+    read_sl(data);
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Read parameter sl
+ */
+void map_in::read_sl(toml::value &data)
+{
+    m_sl.clear();
+
+    try {
+        // read sublayer
+        if (data.contains(CFG_KEY_SL)) {
+            m_sl = data[CFG_KEY_SL].as_string();
+
+            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_SL << "' = '" << m_sl
+                      << "'" << LOG_END
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+}
+
+
+/**
+ * Check if the command is defined for the current sublayer
+ */
+bool map_in::check_sublayer(std::string_view sl_value)
+{
+    if (sl_value != m_sl && !m_sl.empty())
+        return false;
+
+    return true;
+}
 
 } // Namespace xmidictrl

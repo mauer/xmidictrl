@@ -203,11 +203,13 @@ bool map_out_drf::check()
 
 
 /**
- * Create a MIDI outbound message if necessary
+ * Create a MIDI outbound task if required
  */
-std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
+std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
 {
     bool changed = false;
+
+    bool send_msg = false;
     bool send_on = false;
     int send_off = 0;
 
@@ -219,7 +221,7 @@ std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
         if (!m_xp->datarefs().read(dataref, value_current))
             continue;
 
-        // check with previous value and store current value
+        // get current value
         std::string value_previous;
         if (m_xp_values.contains(dataref)) {
             value_previous = m_xp_values[dataref];
@@ -230,9 +232,16 @@ std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
 
         if (value_current != value_previous)
             changed = true;
+
+        if (mode == mode_out::on_change) {
+            if (changed)
+                send_msg = true;
+        } else if (mode == mode_out::permanent) {
+            send_msg = true;
+        }
     }
 
-    if (!changed)
+    if (!send_msg)
         return {};
 
     // alright, some has been changed, let's check what we have to send out
@@ -257,20 +266,20 @@ std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
         }
     }
 
-    if (send_on) {
-        std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();
-        msg->status = OFFSET_MIDI_CHANNEL_STATUS + ch();
-        msg->data = cc();
-        msg->velocity = 127;
-        return msg;
-    }
+    if (send_on || send_off == m_datarefs.size()) {
+        std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 
-    if (send_off == m_datarefs.size()) {
-        std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();
-        msg->status = OFFSET_MIDI_CHANNEL_STATUS + ch();
-        msg->data = cc();
-        msg->velocity = 0;
-        return msg;
+        task->data_changed = changed;
+
+        task->ch = ch();
+        task->cc = cc();
+
+        if (send_on)
+            task->velocity = 127;
+        else
+            task->velocity = 0;
+
+        return task;
     }
 
     return {};
@@ -280,14 +289,17 @@ std::shared_ptr<midi_message> map_out_drf::execute(std::string_view sl_value)
 /**
  * Reset the lights on the MIDI device
  */
-std::shared_ptr<midi_message> map_out_drf::reset()
+std::shared_ptr<outbound_task> map_out_drf::reset()
 {
-    std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();
-    msg->status = OFFSET_MIDI_CHANNEL_STATUS + ch();
-    msg->data = cc();
-    msg->velocity = 0;
+    std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 
-    return msg;
+    task->data_changed = true;
+
+    task->ch = ch();
+    task->cc = cc();
+    task->velocity = 0;
+
+    return task;
 }
 
 } // Namespace xmidictrl

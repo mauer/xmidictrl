@@ -67,15 +67,6 @@ int map::cc() const
 
 
 /**
- * Return the sublayer name
- */
-std::string_view map::sl() const
-{
-    return m_sl;
-}
-
-
-/**
  * Read the config
  */
 void map::read_config(toml::value &data)
@@ -83,9 +74,6 @@ void map::read_config(toml::value &data)
     // required config
     read_ch(data);
     read_cc(data);
-
-    // additional config
-    read_sl(data);
 }
 
 
@@ -165,40 +153,6 @@ void map::read_cc(toml::value &data)
         LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
     }
-}
-
-
-/**
- * Read parameter sl
- */
-void map::read_sl(toml::value &data)
-{
-    m_sl.clear();
-
-    try {
-        // read sublayer
-        if (data.contains(CFG_KEY_SL)) {
-            m_sl = data[CFG_KEY_SL].as_string();
-
-            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_SL << "' = '" << m_sl
-                      << "'" << LOG_END
-        }
-    } catch (toml::type_error &error) {
-        LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
-    }
-}
-
-
-/**
- * Check if the command is defined for the current sublayer
- */
-bool map::check_sublayer(std::string_view sl_value)
-{
-    if (sl_value != m_sl && !m_sl.empty())
-        return false;
-
-    return true;
 }
 
 } // Namespace xmidictrl

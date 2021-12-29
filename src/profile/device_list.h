@@ -25,7 +25,7 @@
 
 // XMidiCtrl
 #include "device.h"
-#include "task.h"
+#include "inbound_task.h"
 
 namespace xmidictrl {
 
@@ -34,12 +34,15 @@ public:
     explicit device_list() = default;
     ~device_list();
 
-    std::shared_ptr<device> create_device(std::string_view name, unsigned int port_in, unsigned int port_out);
+    std::shared_ptr<device> create_device(std::string_view name,
+                                          unsigned int port_in,
+                                          unsigned int port_out,
+                                          mode_out mode_out);
 
     bool open_connections();
     void close_connections();
 
-    void add_task(const std::shared_ptr<task> &event);
+    void add_inbound_task(const std::shared_ptr<inbound_task> &task);
 
     void process_inbound_events(std::string_view sl_value);
     void process_outbound_mappings(std::string_view sl_value);
@@ -50,7 +53,7 @@ public:
     unsigned int size();
 
 private:
-    std::queue<std::shared_ptr<task>> m_inbound_tasks;
+    std::queue<std::shared_ptr<inbound_task>> m_inbound_tasks;
     std::vector<std::shared_ptr<device>> m_device_list;
 };
 

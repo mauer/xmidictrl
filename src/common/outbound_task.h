@@ -15,45 +15,28 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef OUTBOUND_TASK_H
+#define OUTBOUND_TASK_H
 
 // Standard
 #include <memory>
 
-// toml11
-#include <toml.hpp>
-
 // XMidiCtrl
-#include "types.h"
-#include "xplane.h"
+#include "map_in.h"
+#include "midi_message.h"
 
 namespace xmidictrl {
 
-class map {
-public:
-    explicit map(std::shared_ptr<xplane> xplane);
-    virtual ~map() = default;
+struct outbound_task {
+    bool data_changed {false};
 
-    virtual map_type type();
+    int ch {-1};
+    int cc {-1};
+    int velocity {-1};
 
-    [[nodiscard]] int ch() const;
-    [[nodiscard]] int cc() const;
-
-    virtual void read_config(toml::value &data);
-    virtual bool check();
-
-protected:
-    void read_ch(toml::value &data);
-    void read_cc(toml::value &data);
-
-    std::shared_ptr<xplane> m_xp;
-
-private:
-    int m_ch {-1};
-    int m_cc {-1};
+    std::shared_ptr<midi_message> msg;
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_H
+#endif // OUTBOUND_TASK_H

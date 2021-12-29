@@ -83,6 +83,7 @@ const char *const CFG_KEY_LOG_MIDI = "log_midi";
 const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
+const char *const CFG_KEY_MODE_OUT = "mode_out";
 const char *const CFG_KEY_NAME = "name";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
@@ -132,19 +133,19 @@ enum class text_msg_type {
     debug = 4
 };
 
-// midi type
+// MIDI type
 enum class midi_type {
     inbound,
     outbound
 };
 
-// Midi velocity codes
+// MIDI velocity codes
 enum class midi_velocity {
     key_released = 0,
     key_pressed = 127
 };
 
-// Midi mapping types
+// MIDI mapping types
 enum class map_type {
     none,
     command,
@@ -153,6 +154,12 @@ enum class map_type {
     internal,
     push_pull,
     slider
+};
+
+// Send mode outbound
+enum class mode_out {
+    on_change,
+    permanent
 };
 
 // Window types

@@ -36,7 +36,19 @@ public:
 
     typedef std::shared_ptr<map_in> ptr;
 
+    [[nodiscard]] std::string_view sl() const;
+
+    void read_config(toml::value &data) override;
+
     virtual bool execute(midi_message &msg, std::string_view sl_value) = 0;
+
+protected:
+    void read_sl(toml::value &data);
+
+    bool check_sublayer(std::string_view sl_value);
+
+private:
+    std::string m_sl {};
 };
 
 } // Namespace xmiditrl

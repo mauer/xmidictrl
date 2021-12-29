@@ -23,7 +23,7 @@
 
 // XMidiCtrl
 #include "map.h"
-#include "midi_message.h"
+#include "outbound_task.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -36,8 +36,8 @@ public:
 
     typedef std::shared_ptr<map_out> ptr;
 
-    virtual std::shared_ptr<midi_message> execute(std::string_view sl_value) = 0;
-    virtual std::shared_ptr<midi_message> reset() = 0;
+    virtual std::shared_ptr<outbound_task> execute(mode_out mode) = 0;
+    virtual std::shared_ptr<outbound_task> reset() = 0;
 };
 
 } // Namespace xmidictrl
