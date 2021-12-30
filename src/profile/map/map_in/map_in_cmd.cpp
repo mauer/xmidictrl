@@ -69,6 +69,48 @@ std::string_view map_in_cmd::command() const
 
 
 /**
+ * Set velocity on
+ */
+void map_in_cmd::set_velocity_on(int velocity_on)
+{
+    if (velocity_on >= 0 && velocity_on <= 127)
+        m_velocity_on = velocity_on;
+    else
+        m_velocity_on = 127;
+}
+
+
+/**
+ * Return velocity on
+ */
+unsigned int map_in_cmd::velocity_on() const
+{
+    return m_velocity_on;
+}
+
+
+/**
+ * Set velocity off
+ */
+void map_in_cmd::set_velocity_off(int velocity_off)
+{
+    if (velocity_off >= 0 && velocity_off <= 127)
+        m_velocity_off = velocity_off;
+    else
+        m_velocity_off = 0;
+}
+
+
+/**
+ * Return velocity off
+ */
+unsigned int map_in_cmd::velocity_off() const
+{
+    return m_velocity_off;
+}
+
+
+/**
  * Read settings from config
  */
 void map_in_cmd::read_config(toml::value &settings)
@@ -78,6 +120,12 @@ void map_in_cmd::read_config(toml::value &settings)
 
     // read the command
     set_command(utils::toml_read_string(settings, CFG_KEY_COMMAND));
+
+    // read velocity on
+    set_velocity_on(utils::toml_read_int(settings, CFG_KEY_VELOCITY_ON, false));
+
+    // read velocity off
+    set_velocity_off(utils::toml_read_int(settings, CFG_KEY_VELOCITY_OFF, false));
 }
 
 
@@ -89,7 +137,7 @@ bool map_in_cmd::check()
     if (!map::check())
         return false;
 
-    if (m_command.empty())
+    if (command().empty())
         return false;
     else
         return true;
@@ -104,20 +152,16 @@ bool map_in_cmd::execute(midi_message &msg, std::string_view sl_value)
     if (!check_sublayer(sl_value))
         return true;
 
-    LOG_DEBUG << " --> Execute command '" << m_command << "'" << LOG_END
+    LOG_DEBUG << " --> Execute command '" << command() << "'" << LOG_END
 
-    switch (msg.velocity) {
-        case 127:
-            m_xp->cmd().begin(m_command);
-            break;
-
-        case 0:
-            m_xp->cmd().end(m_command);
-            break;
-
-        default:
-            LOG_ERROR << "Invalid midi velocity '" << msg.velocity << "'" << LOG_END
-            LOG_ERROR << " --> Supported values are '127' and '0'" << LOG_END
+    if (msg.velocity == velocity_on()) {
+        m_xp->cmd().begin(command());
+    } else if (msg.velocity == velocity_off()) {
+        m_xp->cmd().end(command());
+    } else {
+        LOG_ERROR << "Invalid MIDI velocity '" << msg.velocity << "'" << LOG_END
+        LOG_ERROR << " --> Supported values for the current mapping are '" << velocity_on() << "' and '"
+                  << velocity_off() << "'" << LOG_END
     }
 
     return true;

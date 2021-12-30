@@ -43,6 +43,12 @@ public:
     void set_command(std::string_view command);
     [[nodiscard]] std::string_view command() const;
 
+    void set_velocity_on(int velocity_on);
+    [[nodiscard]] unsigned int velocity_on() const;
+
+    void set_velocity_off(int value_off);
+    [[nodiscard]] unsigned int velocity_off() const;
+
     void read_config(toml::value &settings) override;
     bool check() override;
 
@@ -50,6 +56,9 @@ public:
 
 private:
     std::string m_command {};
+
+    unsigned int m_velocity_on {127};
+    unsigned int m_velocity_off {0};
 };
 
 } // Namespace xmidictrl

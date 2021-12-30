@@ -15,6 +15,8 @@
 + Added option to define multiple values for inbound dataref messages, e.g. toggle through autobrake settings
 + Added custom commands to bind most menu entries of XMidiCtrl to buttons and keyboard commands
 + Added threads for sending outbound messages to improve the performance
++ Velocities for button pressed/released can be defined for inbound command mappings
++ Velocities for light on/off can be defined for outbound dataref mappings
 + Improved documentation
 
 -----------------------------------------------------------------------------------------------------------------------

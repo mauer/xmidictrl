@@ -19,7 +19,7 @@ It's not required to define *value_on* and *value_off*. However, at least one of
 | Parameter    | Description                                                 |
 |--------------|-------------------------------------------------------------|
 | velocity_on  | Velocity which will be sent for an on message (Default 127) |
-| veloctiy_off | Velocity which will be sent for an off message (Default 0)  |
+| velocity_off | Velocity which will be sent for an off message (Default 0)  |
 
 ## Examples
 
