@@ -23,48 +23,6 @@
 #include "logger.h"
 #include "utils.h"
 
-#define DEF {\
-    if (!check_sublayer(sl_value))\
-        return {};\
-\
-    bool send_on = false;\
-    bool send_off = false;\
-\
-    \
-    for (auto &dataref : m_datarefs) {\
-            std:: string value = m_xp->datarefs().read(dataref);\
-\
-\
-    }\
-\
-    /* set the current values for our datarefs*/\
-    load_xp_values();\
-\
-    if (value_now != m_value_previous) {\
-        m_value_previous = value_now;\
-\
-        std::shared_ptr<midi_message> msg = std::make_shared<midi_message>();\
-\
-        msg->status = OFFSET_MIDI_CHANNEL_STATUS + ch();\
-        msg->data = cc();\
-\
-        if (!m_value_on.empty()) {\
-            if (value_now == m_value_on)\
-                msg->velocity = 127;\
-            else if (value_now == m_value_off || m_value_off.empty())\
-                msg->velocity = 0;\
-        } else {\
-            if (value_now == m_value_off)\
-                msg->velocity = 0;\
-            else if (value_now == m_value_on || m_value_on.empty())\
-                msg->velocity = 127;\
-        }\
-\
-        return msg;\
-    }\
-\
-    return {};\
-}
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------

@@ -63,7 +63,7 @@ public:
     static void midi_callback(double deltatime, std::vector<unsigned char> *message, void *userdata);
 
     void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
-    void process_outbound_mappings(std::string_view sl_value);
+    void process_outbound_mappings();
     void process_outbound_reset();
 
 private:

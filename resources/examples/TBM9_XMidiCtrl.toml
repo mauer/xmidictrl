@@ -1,13 +1,14 @@
 #----------------------------------------------------------------------------------------------------------------------
 # XMidiCtrl
 #
-# Example configuration for the Behringer X-Touch Mini MIDI controller together with the HotStart TBM 900
+# Example configuration for the Behringer X-Touch Mini MIDI controller together with the Hot Start TBM 900
 #
 # How to use:
-#   1. Copy this file into your aircraft directory and rename it to XMidiCtrl.toml
-#   2. Start X-Plane or choose with the plugin menu xmidictrl -> Reload Aircraft profile
+#   1. Copy this file into the aircraft directory of the TBM 900 and rename it to XMidiCtrl.toml
+#   2. Adjust the port_in and port_out variables
+#   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
-title   = "Settings for the HotStart TBM 900"
+title   = "Settings for the Hot Start TBM 900"
 version = "0.60"
 
 # Behringer X-Touch Mini

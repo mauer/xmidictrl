@@ -21,9 +21,6 @@
 #include <string>
 #include <utility>
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------

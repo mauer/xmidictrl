@@ -1,0 +1,182 @@
+#----------------------------------------------------------------------------------------------------------------------
+# XMidiCtrl
+#
+# Example configuration for the Behringer X-Touch Mini MIDI controller together with the Hot Start Challenger 650
+#
+# This configuration was created by Reflected Reality Simulations. Thank you very much for all your testing and work!
+#
+# More about Reflected Reality Simulations: https://www.youtube.com/c/ReflectedRealitySimulations
+#
+# How to use:
+#   1. Copy this file into the aircraft directory of the CL-650 and rename it to XMidiCtrl.toml
+#   2. Adjust the port_in and port_out variables
+#   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
+#----------------------------------------------------------------------------------------------------------------------
+
+title   = "Settings for the Hot Start Challenger 650 by Reflected Reality Simulations"
+version = "0.60"
+sl_dataref = "CL650/pilot_seat"
+
+# Behringer X-Touch Mini
+[[device]]
+name       = "Behringer X-Touch Mini"
+port_in    = 0
+port_out   = 1
+mapping_in = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer A
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Slider
+  { ch = 11, cc = 0,  type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
+
+  # Encoders
+  { ch = 11, cc = 1, type = "enc", command_up = "CL650/DCP/1/baro_up", command_down = "CL650/DCP/1/baro_down" },
+  { ch = 11, cc = 2, type = "enc", command_up = "CL650/FCP/crs1_up", command_down = "CL650/FCP/crs1_down" },
+  { ch = 11, cc = 3, type = "enc", command_up = "CL650/FCP/vs_pitch_down", command_down = "CL650/FCP/vs_pitch_up" },
+  { ch = 11, cc = 4, type = "enc", command_up = "CL650/FCP/speed_up", command_down = "CL650/FCP/speed_down" },
+  { ch = 11, cc = 5, type = "enc", command_up = "CL650/FCP/hdg_up", command_down = "CL650/FCP/hdg_down" },
+  { ch = 11, cc = 6, type = "enc", command_up = "CL650/FCP/alt_up", command_down = "CL650/FCP/alt_down" },
+  { ch = 11, cc = 7, type = "enc", command_up = "CL650/FCP/crs2_up", command_down = "CL650/FCP/crs2_down" },
+  { ch = 11, cc = 8, type = "enc", command_up = "CL650/DCP/2/baro_up", command_down = "CL650/DCP/2/baro_down" },
+
+  # Encoder Buttons
+  { ch = 11, cc = 9, type = "cmd", command = "CL650/DCP/1/baro_push" },
+  { ch = 11, cc = 10, type = "cmd", command = "CL650/FCP/crs1_push" },
+  { ch = 11, cc = 12, type = "cmd", command = "CL650/FCP/ias_mach" },
+  { ch = 11, cc = 13, type = "cmd", command = "CL650/FCP/hdg_sync" },
+  { ch = 11, cc = 14, type = "cmd", command = "CL650/FCP/alt_cancel" },
+  { ch = 11, cc = 15, type = "cmd", command = "CL650/FCP/crs2_push" },
+  { ch = 11, cc = 16, type = "cmd", command = "CL650/DCP/2/baro_push" },
+
+  # Buttons Upper Row
+  { ch = 11, cc = 17, type = "pnp", command_push = "CL650/glareshield/ATS", command_pull = "CL650/glareshield/N2_SYNC"},
+  { ch = 11, cc = 18, type = "cmd", command = "CL650/DCP/1/nav_src" },
+  { ch = 11, cc = 19, type = "cmd", command = "CL650/FCP/vs_mode" },
+  { ch = 11, cc = 20, type = "cmd", command = "CL650/FCP/flc_mode" },
+  { ch = 11, cc = 21, type = "cmd", command = "CL650/FCP/hdg_mode" },
+  { ch = 11, cc = 22, type = "cmd", command = "CL650/FCP/alt_mode" },
+  { ch = 11, cc = 23, type = "cmd", command = "CL650/DCP/2/nav_src" },
+  { ch = 11, cc = 24, type = "pnp", command_push = "CL650/FCP/ap_eng", command_pull = "CL650/FCP/xfr"},
+
+  # Buttons Lower Row
+  { ch = 11, cc = 25, type = "cmd", command = "CL650/glareshield/master_warn_L" },
+  { ch = 11, cc = 26, type = "cmd", command = "CL650/FCP/fd1" },
+  { ch = 11, cc = 27, type = "cmd", command = "CL650/FCP/vnav_mode"},
+  { ch = 11, cc = 28, type = "cmd", command = "CL650/FCP/appr_mode"},
+  { ch = 11, cc = 29, type = "cmd", command = "CL650/FCP/nav_mode"},
+  { ch = 11, cc = 30, type = "cmd", command = "CL650/FCP/bc_mode"},
+  { ch = 11, cc = 31, type = "cmd", command = "CL650/FCP/fd2"},
+  { ch = 11, cc = 32, type = "cmd", command = "CL650/glareshield/master_warn_R" },
+  
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer B
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Encoders
+  { ch = 11, cc = 51, sl = "0", type = "enc", command_up = "CL650/DCP/1/menu_adv_up", command_down = "CL650/DCP/1/menu_adv_down" },
+  { ch = 11, cc = 52, sl = "0", type = "enc", command_up = "CL650/DCP/1/menu_data_up", command_down = "CL650/DCP/1/menu_data_down" },
+  { ch = 11, cc = 53, sl = "0", type = "enc", command_up = "CL650/DCP/1/tilt_up", command_down = "CL650/DCP/1/tilt_down" },
+  { ch = 11, cc = 54, sl = "0", type = "enc", command_up = "CL650/DCP/1/range_up", command_down = "CL650/DCP/1/range_down" },
+  
+  { ch = 11, cc = 55, sl = "0", type = "enc", command_up = "CL650/CCP/1/menu_adv_up", command_down = "CL650/CCP/1/menu_adv_down" },
+  { ch = 11, cc = 56, sl = "0", type = "enc", command_up = "CL650/CCP/1/menu_data_up", command_down = "CL650/CCP/1/menu_data_down" },
+  { ch = 11, cc = 57, sl = "0", type = "enc", command_up = "CL650/CCP/1/radio_adv_up", command_down = "CL650/CCP/1/radio_adv_down" },
+  { ch = 11, cc = 58, sl = "0", type = "enc", command_up = "CL650/CCP/1/radio_data_up", command_down = "CL650/CCP/1/radio_data_down" },
+  
+  { ch = 11, cc = 51, sl = "1", type = "enc", command_up = "CL650/DCP/2/menu_adv_up", command_down = "CL650/DCP/2/menu_adv_down" },
+  { ch = 11, cc = 52, sl = "1", type = "enc", command_up = "CL650/DCP/2/menu_data_up", command_down = "CL650/DCP/2/menu_data_down" },
+  { ch = 11, cc = 53, sl = "1", type = "enc", command_up = "CL650/DCP/2/tilt_up", command_down = "CL650/DCP/2/tilt_down" },
+  { ch = 11, cc = 54, sl = "1", type = "enc", command_up = "CL650/DCP/2/range_up", command_down = "CL650/DCP/2/range_down" },
+  
+  { ch = 11, cc = 55, sl = "1", type = "enc", command_up = "CL650/CCP/2/menu_adv_up", command_down = "CL650/CCP/2/menu_adv_down" },
+  { ch = 11, cc = 56, sl = "1", type = "enc", command_up = "CL650/CCP/2/menu_data_up", command_down = "CL650/CCP/2/menu_data_down" },
+  { ch = 11, cc = 57, sl = "1", type = "enc", command_up = "CL650/CCP/2/radio_adv_up", command_down = "CL650/CCP/2/radio_adv_down" },
+  { ch = 11, cc = 58, sl = "1", type = "enc", command_up = "CL650/CCP/2/radio_data_up", command_down = "CL650/CCP/2/radio_data_down" },
+   
+  # Encoder Buttons
+  { ch = 11, cc = 59, sl = "0", type = "cmd", command = "CL650/DCP/1/menu_push" },
+  { ch = 11, cc = 60, sl = "0", type = "cmd", command = "CL650/DCP/1/menu_push" },
+  { ch = 11, cc = 61, sl = "0", type = "cmd", command = "CL650/DCP/1/tilt_auto" },
+  { ch = 11, cc = 62, sl = "0", type = "cmd", command = "CL650/DCP/1/tilt_auto" },
+  
+  { ch = 11, cc = 63, sl = "0", type = "cmd", command = "CL650/CCP/1/menu_push" },
+  { ch = 11, cc = 64, sl = "0", type = "cmd", command = "CL650/CCP/1/menu_push" },
+  { ch = 11, cc = 65, sl = "0", type = "cmd", command = "CL650/CCP/1/radio_push" },
+  { ch = 11, cc = 66, sl = "0", type = "pnp", command_push = "CL650/CCP/1/radio_push", command_pull = "CL650/CCP/1/atc" },
+  
+  { ch = 11, cc = 59, sl = "1", type = "cmd", command = "CL650/DCP/2/menu_push" },
+  { ch = 11, cc = 60, sl = "1", type = "cmd", command = "CL650/DCP/2/menu_push" },
+  { ch = 11, cc = 61, sl = "1", type = "cmd", command = "CL650/DCP/2/tilt_auto" },
+  { ch = 11, cc = 62, sl = "1", type = "cmd", command = "CL650/DCP/2/tilt_auto" },
+  
+  { ch = 11, cc = 63, sl = "1", type = "cmd", command = "CL650/CCP/2/menu_push" },
+  { ch = 11, cc = 64, sl = "1", type = "cmd", command = "CL650/CCP/2/menu_push" },
+  { ch = 11, cc = 65, sl = "1", type = "cmd", command = "CL650/CCP/2/radio_push" },
+  { ch = 11, cc = 66, sl = "1", type = "pnp", command_push = "CL650/CCP/2/radio_push", command_pull = "CL650/CCP/2/atc" },
+
+  # Buttons Upper Row
+  { ch = 11, cc = 67, sl = "0", type = "cmd", command = "CL650/DCP/1/menu" },
+  { ch = 11, cc = 68, sl = "0", type = "cmd", command = "CL650/DCP/1/esc" },
+  { ch = 11, cc = 69, sl = "0", type = "cmd", command = "CL650/DCP/1/brg_src" },
+  { ch = 11, cc = 70, sl = "0", type = "cmd", command = "CL650/DCP/1/refs" },
+  
+  { ch = 11, cc = 71, sl = "0", type = "cmd", command = "CL650/CCP/1/upr_menu" },
+  { ch = 11, cc = 72, sl = "0", type = "cmd", command = "CL650/CCP/1/esc" },
+  { ch = 11, cc = 73, sl = "0", type = "cmd", command = "CL650/CCP/1/chart" },
+  { ch = 11, cc = 74, sl = "0", type = "pnp", command_push = "CL650/CCP/1/freq", command_pull = "CL650/CCP/1/radio" },
+  
+  { ch = 11, cc = 67, sl = "1", type = "cmd", command = "CL650/DCP/2/menu" },
+  { ch = 11, cc = 68, sl = "1", type = "cmd", command = "CL650/DCP/2/esc" },
+  { ch = 11, cc = 69, sl = "1", type = "cmd", command = "CL650/DCP/2/brg_src" },
+  { ch = 11, cc = 70, sl = "1", type = "cmd", command = "CL650/DCP/2/refs" },
+  
+  { ch = 11, cc = 71, sl = "1", type = "cmd", command = "CL650/CCP/2/upr_menu" },
+  { ch = 11, cc = 72, sl = "1", type = "cmd", command = "CL650/CCP/2/esc" },
+  { ch = 11, cc = 73, sl = "1", type = "cmd", command = "CL650/CCP/2/chart" },
+  { ch = 11, cc = 74, sl = "1", type = "pnp", command_push = "CL650/CCP/2/freq", command_pull = "CL650/CCP/2/radio" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 75, sl = "0", type = "cmd", command = "CL650/DCP/1/frmt" },
+  { ch = 11, cc = 76, sl = "0", type = "cmd", command = "CL650/DCP/1/tfc" },
+  { ch = 11, cc = 77, sl = "0", type = "cmd", command = "CL650/DCP/1/tr_wx" },
+  { ch = 11, cc = 78, sl = "0", type = "cmd", command = "CL650/DCP/1/rdr_menu" },
+  
+  { ch = 11, cc = 79, sl = "0", type = "cmd", command = "CL650/CCP/1/lwr_menu" },
+  { ch = 11, cc = 80, sl = "0", type = "cmd", command = "CL650/CCP/1/mem1" },
+  { ch = 11, cc = 81, sl = "0", type = "cmd", command = "CL650/CCP/1/mem2" },
+  { ch = 11, cc = 82, sl = "0", type = "cmd", command = "CL650/CCP/1/mem3" },
+
+  { ch = 11, cc = 75, sl = "1", type = "cmd", command = "CL650/DCP/2/frmt" },
+  { ch = 11, cc = 76, sl = "1", type = "cmd", command = "CL650/DCP/2/tfc" },
+  { ch = 11, cc = 77, sl = "1", type = "cmd", command = "CL650/DCP/2/tr_wx" },
+  { ch = 11, cc = 78, sl = "1", type = "cmd", command = "CL650/DCP/2/rdr_menu" },
+  
+  { ch = 11, cc = 79, sl = "1", type = "cmd", command = "CL650/CCP/2/lwr_menu" },
+  { ch = 11, cc = 80, sl = "1", type = "cmd", command = "CL650/CCP/2/mem1" },
+  { ch = 11, cc = 81, sl = "1", type = "cmd", command = "CL650/CCP/2/mem2" },
+  { ch = 11, cc = 82, sl = "1", type = "cmd", command = "CL650/CCP/2/mem3" },
+  
+]
+
+mapping_out = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer A
+  #--------------------------------------------------------------------------------------------------------------------
+  
+  # Buttons Upper Row
+  { ch = 11, cc = 17, type = "drf", dataref = ["CL650/lamps/glareshield/ats_L", "CL650/lamps/glareshield/ats_R"], value_off = "0" },
+  { ch = 11, cc = 19, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/vs_1", "CL650/lamps/glareshield/FCP/vs_2"], value_off = "0" },
+  { ch = 11, cc = 20, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/flc_1", "CL650/lamps/glareshield/FCP/flc_2"], value_off = "0" },
+  { ch = 11, cc = 21, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/hdg_1", "CL650/lamps/glareshield/FCP/hdg_2"], value_off = "0" },
+  { ch = 11, cc = 22, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/alt_1", "CL650/lamps/glareshield/FCP/alt_2"], value_off = "0" },
+  { ch = 11, cc = 24, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/ap_eng_1", "CL650/lamps/glareshield/FCP/ap_eng_2"], value_off = "0" },
+  
+  # Buttons Lower Row
+  { ch = 11, cc = 25, type = "drf", dataref = ["CL650/lamps/glareshield/master_warn_L", "CL650/lamps/glareshield/master_caut_L"], value_off = "0" },
+  { ch = 11, cc = 27, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/vnav_1", "CL650/lamps/glareshield/FCP/vnav_2"], value_off = "0" },
+  { ch = 11, cc = 28, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/appr_1", "CL650/lamps/glareshield/FCP/appr_2"], value_off = "0" },
+  { ch = 11, cc = 29, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/nav_1", "CL650/lamps/glareshield/FCP/nav_2"], value_off = "0" },
+  { ch = 11, cc = 30, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/bc_1", "CL650/lamps/glareshield/FCP/bc_2"], value_off = "0" },
+  { ch = 11, cc = 32, type = "drf", dataref = ["CL650/lamps/glareshield/master_warn_R", "CL650/lamps/glareshield/master_caut_R"], value_off = "0" },
+] 

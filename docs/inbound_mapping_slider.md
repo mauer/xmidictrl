@@ -7,9 +7,9 @@ next version. Right now you can map three commands to a slider, which will be ex
 
 ## Required Parameters
 
-| Parameter    | Description                                                          |
-|--------------|----------------------------------------------------------------------|
-| command_up   | Command which will be executed when the slider is right at the top   |
+| Parameter    | Description                                                           |
+|--------------|-----------------------------------------------------------------------|
+| command_up   | Command which will be executed when the slider is right at the top    |
 | command_down | Command which will be executed when the slider is right at the bottom |
 
 ## Optional Parameters

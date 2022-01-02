@@ -1,7 +1,7 @@
 # Inbound Mappings
 
-Incoming MIDI messages can be mapped to one more multiple functions. Easiest way is to map a button to a simple X-Plane 
-command. However, most advanced options are possible, such as changing datarefs.
+Incoming MIDI messages can be mapped to one more multiple functions. Easiest way is to map a button to a single X-Plane 
+command. However, more advanced options are possible, such as changing datarefs.
 
 All incoming mappings are defined for each MIDI device individually with the parameter **mapping_in**
 
@@ -52,11 +52,11 @@ The following mapping types are supported:
 
 | Mapping Type |   Name    | Description and usage                                                            |
 |:------------:|:---------:|----------------------------------------------------------------------------------|
-| cmd          |  Command  | Executes a X-Plane command                                                       |
-| pnp          | Push&pull | Simulates a Push & pull button, which can execute two different commands         |   
-| drf          |  Dataref  | Toggles a given Dataref between two values                                       |
-| enc          |  Encoder  | Executes different commands for up/down and fast up/fast down                    |
-| sld          |  Slider   | Executes up to three different commands, depending on the location of the slider |
+|     cmd      |  Command  | Executes a X-Plane command                                                       |
+|     pnp      | Push&pull | Simulates a Push & pull button, which can execute two different commands         |   
+|     drf      |  Dataref  | Toggles a given Dataref between two values                                       |
+|     enc      |  Encoder  | Executes different commands for up/down and fast up/fast down                    |
+|     sld      |  Slider   | Executes up to three different commands, depending on the location of the slider |
 
 ### Multi-Map
 

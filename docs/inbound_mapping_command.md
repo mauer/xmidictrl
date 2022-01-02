@@ -8,8 +8,8 @@ returns to the map screen.
 
 ## Required Parameters
 
-| Parameter | Description                                          |
-|-----------|------------------------------------------------------|
+| Parameter | Description                                |
+|-----------|--------------------------------------------|
 | command   | Defines the X-Plane command to be executed |
 
 ## Optional Parameters

@@ -12,6 +12,7 @@
   * [FAQ](faq.md)
 
 * **Mappings**
+  * [Devices](device.md) 
   * [Inbound Mappings](inbound_mapping.md)
       * [Commands](inbound_mapping_command.md)
       * [DataRefs](inbound_mapping_dataref.md)

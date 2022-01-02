@@ -26,7 +26,6 @@
 #include "map_in_cmd.h"
 #include "map_in_drf.h"
 #include "map_in_enc.h"
-#include "map_in_int.h"
 #include "map_in_pnp.h"
 #include "map_in_sld.h"
 #include "map_out_drf.h"

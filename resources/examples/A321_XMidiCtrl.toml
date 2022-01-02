@@ -4,12 +4,12 @@
 # Example configuration for the Behringer X-Touch Mini MIDI controller together with the ToLiss Airbus A321
 #
 # How to use:
-#   1. Copy this file into your aircraft directory and rename it to XMidiCtrl.toml
+#   1. Copy this file into your aircraft directory of the ToLiss Airbus A321 and rename it to XMidiCtrl.toml
 #   2. Adjust the port_in and port_out variables
-#   3. Start X-Plane or execute from the plugin menu XMidiCtrl -> Reload Aircraft Profile
+#   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
 title   = "Settings for the ToLiss Airbus A321"
-version = "0.50"
+version = "0.60"
 
 # Behringer X-Touch Mini
 [[device]]

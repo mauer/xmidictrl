@@ -23,6 +23,7 @@
 // XMidiCtrl
 #include "device_list.h"
 #include "logger.h"
+#include "map_in_cmd.h"
 #include "map_in_pnp.h"
 #include "utils.h"
 
@@ -268,10 +269,12 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                     add_task = true;
 
             } else if (mapping->type() == map_type::command) {
+                std::shared_ptr<map_in_cmd> cmd = std::static_pointer_cast<map_in_cmd>(mapping);
+
                 // lock the current control change for outgoing messages
-                if (msg->velocity == 127)
+                if (msg->velocity == cmd->velocity_on())
                     m_ch_cc_locked.insert(utils::ch_cc(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data));
-                else if (msg->velocity == 0)
+                else if (msg->velocity == cmd->velocity_off())
                     m_ch_cc_locked.erase(utils::ch_cc(msg->status - OFFSET_MIDI_CHANNEL_STATUS, msg->data));
 
                 add_task = true;
@@ -295,7 +298,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
 /**
  * Process all outbound midi mappings
  */
-void device::process_outbound_mappings(std::string_view sl_value)
+void device::process_outbound_mappings()
 {
     if (m_mode_out == mode_out::permanent) {
         if (m_time_sent != time_point::min()) {
@@ -307,15 +310,17 @@ void device::process_outbound_mappings(std::string_view sl_value)
     }
 
     for (auto &mapping: m_map_out) {
-        if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc())))
+        if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc()))) {
+            LOG_DEBUG << "LOCKED!!!!" << LOG_END
             continue;
+        }
 
         std::shared_ptr<outbound_task> task = mapping.second->execute(m_mode_out);
 
         if (task == nullptr)
             continue;
 
-        if (task->cc > -1 && m_midi_out != nullptr && m_midi_out->isPortOpen())
+        if (m_midi_out != nullptr && m_midi_out->isPortOpen())
             add_outbound_task(task);
     }
 
@@ -335,7 +340,7 @@ void device::process_outbound_reset()
         if (task == nullptr)
             continue;
 
-        if (task->cc > -1 && m_midi_out != nullptr && m_midi_out->isPortOpen())
+        if (m_midi_out != nullptr && m_midi_out->isPortOpen())
             add_outbound_task(task);
     }
 }
@@ -361,15 +366,16 @@ void device::create_outbound_thread()
 
 
 /**
- * Process all outbound tasks in the queueu
+ * Process all outbound tasks in the queue
  */
 void device::process_outbound_tasks()
 {
-    while (!m_exit_outbound_thread) {
+    while (!m_exit_outbound_thread.load()) {
         // wait for a task to be added to the queue
         std::shared_ptr<outbound_task> task;
         {
             std::unique_lock<std::mutex> lock(m_outbound_mutex);
+
             while (m_outbound_tasks.empty())
                 m_new_outbound_task.wait(lock);
 
@@ -389,10 +395,12 @@ void device::process_outbound_tasks()
             try {
                 m_midi_out->sendMessage(&midi_out);
             } catch (const RtMidiError &error) {
-                LOG_ERROR << "MIDI Device '" << m_name << "' :: " << error.what() << LOG_END;
+                LOG_ERROR << "MIDI device '" << m_name << "' :: " << error.what() << LOG_END;
             }
         }
     }
+
+    LOG_DEBUG << "Exit outbound thread" << LOG_END
 }
 
 
@@ -416,7 +424,7 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
     if (task->data_changed) {
         logger::instance().post_midi_message(task->msg);
 
-        LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
+        LOG_DEBUG << "DCT Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
                   << "Status = '" << task->msg->status << "', Data = '" << task->msg->data << "', Velocity = '"
                   << task->msg->velocity << "'" << LOG_END
     }

@@ -18,7 +18,6 @@
 #include "data.h"
 
 // Standard
-#include <sstream>
 #include <string>
 
 // XMidiCtrl

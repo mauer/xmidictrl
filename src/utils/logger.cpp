@@ -143,7 +143,7 @@ void logger::post_midi_message(const std::shared_ptr<midi_message> &msg)
         log_msg->time = utils::time_to_string(msg->time);
         log_msg->type = utils::midi_msg_type_as_text(msg->type);
 
-        log_msg->port = msg->port;
+        log_msg->port = static_cast<int>(msg->port);
 
         log_msg->status = msg->status;
         log_msg->data = msg->data;

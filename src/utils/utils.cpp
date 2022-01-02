@@ -20,7 +20,6 @@
 // Standard
 #include <ctime>
 #include <filesystem>
-#include <utility>
 
 // XMidiCtrl
 #include "logger.h"

@@ -20,9 +20,6 @@
 // Standard
 #include <string>
 
-// X-Plane Environment
-#include "logger.h"
-
 // XMidiCtrl
 #include "plugin.h"
 

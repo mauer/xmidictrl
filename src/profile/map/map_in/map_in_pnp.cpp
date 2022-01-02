@@ -166,7 +166,7 @@ bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
                     m_xp->cmd().end(m_command_pull);
                     break;
 
-                default:
+                case command_type::none:
                     break;
             }
 

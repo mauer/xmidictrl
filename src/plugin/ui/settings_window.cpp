@@ -19,7 +19,6 @@
 #include <string>
 
 // XMidiCtrl
-#include "logger.h"
 #include "settings_window.h"
 #include "utils.h"
 

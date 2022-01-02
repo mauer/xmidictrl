@@ -148,7 +148,7 @@ void device_list::process_outbound_mappings(std::string_view sl_value)
 {
     for (auto const &device: m_device_list) {
         if (device != nullptr)
-            device->process_outbound_mappings(sl_value);
+            device->process_outbound_mappings();
     }
 }
 

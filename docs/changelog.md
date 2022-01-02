@@ -18,6 +18,7 @@
 + Velocities for button pressed/released can be defined for inbound command mappings
 + Velocities for light on/off can be defined for outbound dataref mappings
 + Improved documentation
++ Added example configuration for Hot Start CL-650, created by Reflected Reality Simulations
 
 -----------------------------------------------------------------------------------------------------------------------
 

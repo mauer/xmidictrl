@@ -30,11 +30,11 @@ struct midi_log_msg {
     std::string time {};
     std::string type {};
 
-    unsigned int port {};
+    int port {-1};
 
-    unsigned int status {};
-    unsigned int data {};
-    unsigned int velocity {};
+    unsigned int status {0};
+    unsigned int data {0};
+    unsigned int velocity {0};
 };
 
 } // Namespace xmidictrl
