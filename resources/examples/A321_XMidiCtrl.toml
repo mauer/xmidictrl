@@ -30,7 +30,7 @@ mapping_in = [
   { ch = 11, cc = 6, type = "enc", command_up = "sim/autopilot/altitude_up", command_down = "sim/autopilot/altitude_down" },
   { ch = 11, cc = 7, type = "enc", command_up = "sim/autopilot/vertical_speed_up", command_down = "sim/autopilot/vertical_speed_down" },
 
-  # encoder Buttons
+  # encoder_cmd Buttons
   { ch = 11, cc = 10, type = "cmd", command = "toliss_airbus/dispcommands/CaptCstrPushButton" },
   { ch = 11, cc = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },
   { ch = 11, cc = 12, type = "pnp", command_push = "toliss_airbus/spd_pull", command_pull = "toliss_airbus/spd_push" },

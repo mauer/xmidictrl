@@ -9,7 +9,7 @@ toml11
 [![License](https://img.shields.io/github/license/ToruNiina/toml11.svg?style=flat)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1209136.svg)](https://doi.org/10.5281/zenodo.1209136)
 
-toml11 is a C++11 (or later) header-only toml parser/encoder depending only on C++ standard library.
+toml11 is a C++11 (or later) header-only toml parser/encoder_cmd depending only on C++ standard library.
 
 - It is compatible to the latest version of [TOML v1.0.0](https://toml.io/en/v1.0.0).
 - It is one of the most TOML standard compliant libraries, tested with [the language agnostic test suite for TOML parsers by BurntSushi](https://github.com/BurntSushi/toml-test).

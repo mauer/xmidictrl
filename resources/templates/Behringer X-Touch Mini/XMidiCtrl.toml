@@ -25,7 +25,7 @@ version = "0.60"
 #          developer. You can define a value of the on and off state.
 #          Example: { ch = 11 , cc = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" }
 #
-#   enc -> Mapping for an encoder (knob). You can define a command for up (right turn) and down (left turn). In
+#   enc -> Mapping for an encoder_cmd (knob). You can define a command for up (right turn) and down (left turn). In
 #          addition, it's possible to define command for fast up and down, if the knob was turned rather fast. This can
 #          be useful in some aircraft. Normally, defining up and down should be sufficient.
 #          Example: { ch = 11, cc = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }

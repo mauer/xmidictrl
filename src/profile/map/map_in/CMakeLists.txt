@@ -23,6 +23,7 @@ set(MAP_IN_SRC
         ${CMAKE_CURRENT_LIST_DIR}/map_in_cmd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in_drf.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in_enc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_end.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in_int.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in_list.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in_pnp.cpp

@@ -84,6 +84,10 @@ const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
 const char *const CFG_KEY_MODE_OUT = "mode_out";
+const char *const CFG_KEY_MODIFIER_DOWN = "modifier_down";
+const char *const CFG_KEY_MODIFIER_FAST_DOWN = "modifier_fast_down";
+const char *const CFG_KEY_MODIFIER_FAST_UP = "modifier_fast_up";
+const char *const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char *const CFG_KEY_NAME = "name";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
@@ -102,7 +106,8 @@ const char *const CFG_KEY_VERSION = "version";
 // Mapping Types as strings
 const char *const CFG_MAPTYPE_COMMAND = "cmd";
 const char *const CFG_MAPTYPE_DATAREF = "drf";
-const char *const CFG_MAPTYPE_ENCODER = "enc";
+const char *const CFG_MAPTYPE_ENCODER_CMD = "enc";
+const char *const CFG_MAPTYPE_ENCODER_DRF = "end";
 const char *const CFG_MAPTYPE_INTERNAL = "int";
 const char *const CFG_MAPTYPE_PUSH_PULL = "pnp";
 const char *const CFG_MAPTYPE_SLIDER = "sld";
@@ -152,7 +157,8 @@ enum class map_type {
     none,
     command,
     dataref,
-    encoder,
+    encoder_cmd,
+    encoder_drf,
     internal,
     push_pull,
     slider

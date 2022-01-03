@@ -26,6 +26,7 @@
 #include "map_in_cmd.h"
 #include "map_in_drf.h"
 #include "map_in_enc.h"
+#include "map_in_end.h"
 #include "map_in_pnp.h"
 #include "map_in_sld.h"
 #include "map_out_drf.h"
@@ -383,21 +384,25 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     mapping = std::make_shared<map_in_drf>(m_xp);
                     break;
 
-                case map_type::slider:
-                    mapping = std::make_shared<map_in_sld>(m_xp);
+                case map_type::encoder_cmd:
+                    mapping = std::make_shared<map_in_enc>(m_xp);
+                    break;
+
+                case map_type::encoder_drf:
+                    mapping = std::make_shared<map_in_end>(m_xp);
+                    break;
+
+                case map_type::internal:
+                    LOG_WARN << "Device " << dev_no << " :: Mapping " << map_no
+                             << " :: Mapping type 'int' is currently unsupported" << LOG_END
                     break;
 
                 case map_type::push_pull:
                     mapping = std::make_shared<map_in_pnp>(m_xp);
                     break;
 
-                case map_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(m_xp);
-                    break;
-
-                case map_type::internal:
-                    LOG_WARN << "Device " << dev_no << " :: Mapping " << map_no
-                             << " :: Mapping type 'int' is currently unsupported" << LOG_END
+                case map_type::slider:
+                    mapping = std::make_shared<map_in_sld>(m_xp);
                     break;
 
                 case map_type::none:
@@ -508,7 +513,7 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
 /**
  * Translate a type string to an enum value
  */
-map_type profile::translateMapTypeStr(std::string_view typeStr)
+map_type profile::translate_map_type(std::string_view typeStr)
 {
     map_type mapType = map_type::none;
 
@@ -520,8 +525,10 @@ map_type profile::translateMapTypeStr(std::string_view typeStr)
         mapType = map_type::dataref;
     else if (typeStr == CFG_MAPTYPE_PUSH_PULL)
         mapType = map_type::push_pull;
-    else if (typeStr == CFG_MAPTYPE_ENCODER)
-        mapType = map_type::encoder;
+    else if (typeStr == CFG_MAPTYPE_ENCODER_CMD)
+        mapType = map_type::encoder_cmd;
+    else if (typeStr == CFG_MAPTYPE_ENCODER_DRF)
+        mapType = map_type::encoder_drf;
     else if (typeStr == CFG_MAPTYPE_INTERNAL)
         mapType = map_type::internal;
 
@@ -544,7 +551,7 @@ map_type profile::read_mapping_type(toml::value &settings)
                       << LOG_END
 
             // get the mapping type
-            type = translateMapTypeStr(type_str);
+            type = translate_map_type(type_str);
         } else {
             LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
             LOG_ERROR << " --> Parameter '" << CFG_KEY_TYPE << "' is missing" << LOG_END
@@ -558,4 +565,4 @@ map_type profile::read_mapping_type(toml::value &settings)
     return type;
 }
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl

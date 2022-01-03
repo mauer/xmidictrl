@@ -46,7 +46,7 @@ map_in_enc::map_in_enc(std::shared_ptr<xplane> xp)
  */
 map_type map_in_enc::type()
 {
-    return map_type::encoder;
+    return map_type::encoder_cmd;
 };
 
 

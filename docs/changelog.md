@@ -26,7 +26,7 @@
 
 + Reduced plugin size for the Microsoft Windows platform
 + Corrected spelling error in A321 example
-+ Corrected encoder example of XMidiCtrl.toml file for the Behringer X-Touch Mini
++ Corrected encoder_cmd example of XMidiCtrl.toml file for the Behringer X-Touch Mini
 + Enabled multiple mappings for the same control change
 + Enhanced the general logging
 + Enhanced mapping options for sliders (up, middle, down)

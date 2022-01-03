@@ -159,6 +159,35 @@ int utils::toml_read_int(toml::value &settings, std::string_view name, bool mand
 
 
 /**
+ * Read the value of a float
+ */
+float utils::toml_read_float(toml::value &settings, std::string_view name, bool mandatory)
+{
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_read_float --> name is empty" << LOG_END
+        return 0.0f;
+    }
+
+    float value = 0.0f;
+
+    try {
+        // read dataref
+        if (toml_contains(settings, name, mandatory)) {
+            value = static_cast<float>(settings[name.data()].as_floating());
+            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                      << value << "'" << LOG_END
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return value;
+}
+
+
+/**
  * Return the text of a text message type
  */
 std::string utils::text_msg_type_as_text(text_msg_type type)
