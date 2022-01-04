@@ -63,6 +63,7 @@ const char *const MENUITEM_PROFILE_WINDOW = "PROFILE_WINDOW";
 const char *const COMMAND_MESSAGE_WINDOW = "MESSAGES_WINDOW";
 const char *const COMMAND_PROFILE_WINDOW = "PROFILE_WINDOW";
 const char *const COMMAND_RELOAD_PROFILE = "RELOAD_PROFILE";
+const char *const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";

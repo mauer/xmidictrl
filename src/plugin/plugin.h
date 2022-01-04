@@ -55,11 +55,22 @@ public:
     void show_settings_window();
     void show_about_window();
 
+    int sublayer();
+    void set_sublayer(int value);
+
+    void toggle_sublayer();
+
 private:
     void process_flight_loop(float elapsed_me, float elapsed_sim, int counter);
 
+    void create_datarefs();
+    void remove_datarefs();
+
     void create_commands();
     void remove_commands();
+
+    static int read_drf_sublayer(void *inRefcon);
+    static void write_drf_sublayer(void *inRefcon, int inValue);
 
     static int command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon);
 
@@ -74,10 +85,17 @@ private:
     std::shared_ptr<settings> m_settings;
     std::shared_ptr<profile> m_profile;
 
+    // references for custom datarefs
+    XPLMDataRef m_drf_sublayer {nullptr};
+
     // references for custom commands
     XPLMCommandRef m_cmd_show_messages {nullptr};
     XPLMCommandRef m_cmd_show_profile {nullptr};
     XPLMCommandRef m_cmd_reload_profile {nullptr};
+    XPLMCommandRef m_cmd_toggle_sublayer {nullptr};
+
+    // internal sublayer number
+    int m_sublayer;
 
     // list of all plugin windows
     std::map<window_type, std::shared_ptr<xplane_window>> m_windows;

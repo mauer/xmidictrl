@@ -119,7 +119,8 @@ void plugin::enable()
     // create all required menu entries
     m_menu->create_menu();
 
-    // create the custom commands
+    // create the custom datarefs and commands
+    create_datarefs();
     create_commands();
 
     // register flight loop
@@ -148,8 +149,9 @@ void plugin::disable()
     // remove the menu entries
     m_menu->remove_menu();
 
-    // remove the commands
+    // remove the custom datarefs and commands
     remove_commands();
+    remove_datarefs();
 
     // destroy the flight loop
     if (m_flight_loop_id != nullptr) {
@@ -232,11 +234,70 @@ void plugin::show_about_window()
 }
 
 
+/**
+ * Return the current sublayer
+ */
+int plugin::sublayer()
+{
+    return m_sublayer;
+}
+
+
+/**
+ * Set the current sublayer
+ */
+void plugin::set_sublayer(int value)
+{
+    m_sublayer = value;
+}
+
+
+/**
+ * Toggle the sublayer between 0 and 1
+ */
+void plugin::toggle_sublayer()
+{
+    if (m_sublayer == 1)
+        m_sublayer = 0;
+    else
+        m_sublayer = 1;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create custom datarefs
+ */
+void plugin::create_datarefs()
+{
+    m_drf_sublayer = XPLMRegisterDataAccessor("xmidictrl/sublayer",
+                                              xplmType_Int,
+                                              1,
+                                              read_drf_sublayer, write_drf_sublayer,
+                                              nullptr, nullptr,
+                                              nullptr, nullptr,
+                                              nullptr, nullptr,
+                                              nullptr, nullptr,
+                                              nullptr, nullptr,
+                                              this, this );
+
+    m_xp->datarefs().write("xmidictrl/sublayer", "0");
+}
+
+
+/**
+ * Remove custom datarefs
+ */
+void plugin::remove_datarefs()
+{
+    XPLMUnregisterDataAccessor(m_drf_sublayer);
+}
+
 
 /**
  * Create customs commands
@@ -260,6 +321,13 @@ void plugin::create_commands()
                                command_handler,
                                1,
                                (void *) COMMAND_RELOAD_PROFILE);
+
+    m_cmd_toggle_sublayer = XPLMCreateCommand("xmidictrl/toggle_sublayer",
+                                              "Toggle the sublayer stored in DataRef xmidictrl/sublayer between 0 and 1");
+    XPLMRegisterCommandHandler(m_cmd_toggle_sublayer,
+                               command_handler,
+                               1,
+                               (void *) COMMAND_TOGGLE_SUBLAYER);
 }
 
 
@@ -271,9 +339,39 @@ void plugin::remove_commands()
     XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, nullptr);
+    XPLMUnregisterCommandHandler(m_cmd_toggle_sublayer, command_handler, 0, nullptr);
 }
 
 
+/**
+ * Read handler for dataref xmidictrl/sublayer
+ */
+int plugin::read_drf_sublayer(void *inRefcon)
+{
+    if (inRefcon != nullptr) {
+        auto instance = static_cast<plugin *>(inRefcon);
+        return instance->sublayer();
+    }
+
+    return 0;
+}
+
+
+/**
+ * Write handler for dataref xmidictrl/sublayer
+ */
+void plugin::write_drf_sublayer(void *inRefcon, int inValue)
+{
+    if (inRefcon != nullptr) {
+        auto instance = static_cast<plugin *>(inRefcon);
+        instance->set_sublayer(inValue);
+    }
+}
+
+
+/**
+ * Handler for custom commands
+ */
 int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon)
 {
     if (phase != xplm_CommandEnd)
@@ -285,6 +383,8 @@ int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void
         plugin::instance().show_profile_window();
     else if (!strcmp((const char *) refcon, COMMAND_RELOAD_PROFILE))
         plugin::instance().load_profile();
+    else if (!strcmp((const char *) refcon, COMMAND_TOGGLE_SUBLAYER))
+        plugin::instance().toggle_sublayer();
 
     // disable further processing by X-Plane.
     return 0;
