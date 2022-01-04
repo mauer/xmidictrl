@@ -144,9 +144,16 @@ int utils::toml_read_int(toml::value &settings, std::string_view name, bool mand
     try {
         // read dataref
         if (toml_contains(settings, name, mandatory)) {
-            value = static_cast<int>(settings[name.data()].as_integer());
-            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
-                      << value << "'" << LOG_END
+            if (settings[name.data()].is_integer()) {
+                value = static_cast<float>(settings[name.data()].as_integer());
+
+                LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                          << value << "'" << LOG_END
+            } else {
+                LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str()
+                          << LOG_END
+                LOG_ERROR << " --> Parameter '" << name << "' is not numeric" << LOG_END
+            }
         }
     } catch (toml::type_error &error) {
         LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
@@ -173,9 +180,22 @@ float utils::toml_read_float(toml::value &settings, std::string_view name, bool 
     try {
         // read dataref
         if (toml_contains(settings, name, mandatory)) {
-            value = static_cast<float>(settings[name.data()].as_floating());
-            LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
-                      << value << "'" << LOG_END
+            if (settings[name.data()].is_floating()) {
+                value = static_cast<float>(settings[name.data()].as_floating());
+
+                LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                          << value << "'" << LOG_END
+            } else if (settings[name.data()].is_integer()) {
+                value = static_cast<float>(settings[name.data()].as_integer());
+
+                LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                          << value << "'" << LOG_END
+
+            } else {
+                LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str()
+                          << LOG_END
+                LOG_ERROR << " --> Parameter '" << name << "' is not numeric" << LOG_END
+            }
         }
     } catch (toml::type_error &error) {
         LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
@@ -297,7 +317,8 @@ log_level utils::log_level_from_code(std::string_view code)
 /**
  * Return the outbound mode for a given integer
  */
-mode_out utils::mode_out_from_int(int mode) {
+mode_out utils::mode_out_from_int(int mode)
+{
     if (mode == 1)
         return mode_out::on_change;
     else

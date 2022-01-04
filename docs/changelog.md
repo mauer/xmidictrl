@@ -19,6 +19,8 @@
 + Velocities for light on/off can be defined for outbound dataref mappings
 + Improved documentation
 + Added example configuration for Hot Start CL-650, created by Reflected Reality Simulations
++ Added new option to map an encoder to a dataref instead of commands
++ Added new option to map a slider to a dataref instead of commands
 
 -----------------------------------------------------------------------------------------------------------------------
 

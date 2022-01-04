@@ -38,6 +38,15 @@ public:
 
     map_type type() override;
 
+    void set_dataref(std::string_view dataref);
+    [[nodiscard]] std::string_view dataref() const;
+
+    void set_value_min(float value);
+    float value_min() const;
+
+    void set_value_max(float value);
+    float value_max() const;
+
     void set_command_up(std::string_view command);
     [[nodiscard]] std::string_view command_up() const;
 
@@ -53,6 +62,10 @@ public:
     bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
+    std::string m_dataref {};
+    float m_value_min {0.0f};
+    float m_value_max {1.0f};
+
     std::string m_command_up {};
     std::string m_command_middle {};
     std::string m_command_down {};
