@@ -107,8 +107,7 @@ const char *const CFG_KEY_VERSION = "version";
 // Mapping Types as strings
 const char *const CFG_MAPTYPE_COMMAND = "cmd";
 const char *const CFG_MAPTYPE_DATAREF = "drf";
-const char *const CFG_MAPTYPE_ENCODER_CMD = "enc";
-const char *const CFG_MAPTYPE_ENCODER_DRF = "end";
+const char *const CFG_MAPTYPE_ENCODER = "enc";
 const char *const CFG_MAPTYPE_INTERNAL = "int";
 const char *const CFG_MAPTYPE_PUSH_PULL = "pnp";
 const char *const CFG_MAPTYPE_SLIDER = "sld";
@@ -158,8 +157,7 @@ enum class map_type {
     none,
     command,
     dataref,
-    encoder_cmd,
-    encoder_drf,
+    encoder,
     internal,
     push_pull,
     slider

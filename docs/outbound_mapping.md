@@ -39,5 +39,5 @@ The following mapping types are supported:
 
 | Mapping Type |  Name   | Description and usage                                         |
 |:------------:|:-------:|---------------------------------------------------------------|
-|     drf      | DataRef | Reads the DataRef value and sends a MIDI message if necessary |
+|     drf      | Dataref | Reads the dataref value and sends a MIDI message if necessary |
 

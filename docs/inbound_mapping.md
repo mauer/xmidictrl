@@ -56,7 +56,7 @@ The following mapping types are supported:
 |     pnp      |     Push&pull     | Simulates a Push & pull button, which can execute two different commands         |   
 |     drf      |      Dataref      | Toggles a given Dataref between two values                                       |
 |     enc      | Encoder (Command) | Executes different commands for up/down and fast up/fast down                    |
-|     end      | Encoder (DataRef) | Binds a DataRef for up/down and fast up/fast down                                |
+|     end      | Encoder (Dataref) | Binds a Dataref for up/down and fast up/fast down                                |
 |     sld      |      Slider       | Executes up to three different commands, depending on the location of the slider |
 
 ### Multi-Map

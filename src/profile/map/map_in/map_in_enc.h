@@ -38,6 +38,21 @@ public:
 
     map_type type() override;
 
+    void set_dataref(std::string_view dataref);
+    [[nodiscard]] std::string_view dataref() const;
+
+    void set_modifier_up(float modifier);
+    [[nodiscard]] float modifier_up() const;
+
+    void set_modifier_down(float modifier);
+    [[nodiscard]] float modifier_down() const;
+
+    void set_modifier_fast_up(float modifier);
+    [[nodiscard]] float modifier_fast_up() const;
+
+    void set_modifier_fast_down(float modifier);
+    [[nodiscard]] float modifier_fast_down() const;
+
     void set_command_up(std::string_view command_up);
     [[nodiscard]] std::string_view command_up() const;
 
@@ -56,6 +71,14 @@ public:
     bool execute(midi_message &midi_event, std::string_view sl_value) override;
 
 private:
+    std::string m_dataref {};
+
+    float m_modifier_up {0.0f};
+    float m_modifier_down {0.0f};
+
+    float m_modifier_fast_up {0.0f};
+    float m_modifier_fast_down {0.0f};
+
     std::string m_command_up {};
     std::string m_command_down {};
 

@@ -26,7 +26,6 @@
 #include "map_in_cmd.h"
 #include "map_in_drf.h"
 #include "map_in_enc.h"
-#include "map_in_end.h"
 #include "map_in_pnp.h"
 #include "map_in_sld.h"
 #include "map_out_drf.h"
@@ -384,12 +383,8 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     mapping = std::make_shared<map_in_drf>(m_xp);
                     break;
 
-                case map_type::encoder_cmd:
+                case map_type::encoder:
                     mapping = std::make_shared<map_in_enc>(m_xp);
-                    break;
-
-                case map_type::encoder_drf:
-                    mapping = std::make_shared<map_in_end>(m_xp);
                     break;
 
                 case map_type::internal:
@@ -513,26 +508,24 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
 /**
  * Translate a type string to an enum value
  */
-map_type profile::translate_map_type(std::string_view typeStr)
+map_type profile::translate_map_type(std::string_view type_str)
 {
-    map_type mapType = map_type::none;
+    map_type type = map_type::none;
 
-    if (typeStr == CFG_MAPTYPE_COMMAND)
-        mapType = map_type::command;
-    else if (typeStr == CFG_MAPTYPE_SLIDER)
-        mapType = map_type::slider;
-    else if (typeStr == CFG_MAPTYPE_DATAREF)
-        mapType = map_type::dataref;
-    else if (typeStr == CFG_MAPTYPE_PUSH_PULL)
-        mapType = map_type::push_pull;
-    else if (typeStr == CFG_MAPTYPE_ENCODER_CMD)
-        mapType = map_type::encoder_cmd;
-    else if (typeStr == CFG_MAPTYPE_ENCODER_DRF)
-        mapType = map_type::encoder_drf;
-    else if (typeStr == CFG_MAPTYPE_INTERNAL)
-        mapType = map_type::internal;
+    if (type_str == CFG_MAPTYPE_COMMAND)
+        type = map_type::command;
+    else if (type_str == CFG_MAPTYPE_SLIDER)
+        type = map_type::slider;
+    else if (type_str == CFG_MAPTYPE_DATAREF)
+        type = map_type::dataref;
+    else if (type_str == CFG_MAPTYPE_PUSH_PULL)
+        type = map_type::push_pull;
+    else if (type_str == CFG_MAPTYPE_ENCODER)
+        type = map_type::encoder;
+    else if (type_str == CFG_MAPTYPE_INTERNAL)
+        type = map_type::internal;
 
-    return mapType;
+    return type;
 }
 
 

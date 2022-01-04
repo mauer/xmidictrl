@@ -37,10 +37,12 @@ public:
     ~data();
 
     bool read(std::string_view name, std::string &value);
+    bool read(std::string_view name, float &value);
     bool read(std::string_view name, std::vector<float> &values);
     bool read(std::string_view name, std::vector<int> &values);
 
     bool write(std::string_view name, std::string_view value);
+    bool write(std::string_view name, float value);
 
     bool toggle(std::string_view name, std::string_view value_on, std::string_view value_off);
 

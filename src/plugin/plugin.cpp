@@ -323,7 +323,7 @@ void plugin::create_commands()
                                (void *) COMMAND_RELOAD_PROFILE);
 
     m_cmd_toggle_sublayer = XPLMCreateCommand("xmidictrl/toggle_sublayer",
-                                              "Toggle the sublayer stored in DataRef xmidictrl/sublayer between 0 and 1");
+                                              "Toggle dataref 'xmidictrl/sublayer' between 0 and 1");
     XPLMRegisterCommandHandler(m_cmd_toggle_sublayer,
                                command_handler,
                                1,

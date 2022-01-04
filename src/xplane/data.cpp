@@ -110,6 +110,59 @@ bool data::read(std::string_view name, std::string &value)
 
 
 /**
+ * Read a numeric dataref
+ */
+bool data::read(std::string_view name, float &value)
+{
+    value = 0.0f;
+
+    data_item *item = retrieve_data(name);
+
+    if (item == nullptr)
+        return false;
+
+    // check the dataref type
+    if (item->type & xplmType_Int) {
+        int i = read_int(item);
+        value = static_cast<float>(i);
+
+        return true;
+
+    } else if (item->type & xplmType_Float) {
+        value = read_float(item);
+
+        return true;
+
+    } else if (item->type & xplmType_Double) {
+        double d = read_double(item);
+        value = static_cast<double>(d);
+
+        return true;
+
+    } else if (item->type & xplmType_Data) {
+        LOG_ERROR << "Dataref '" << name.data() << "' is not numeric" << LOG_END
+        return false;
+
+    } else if (item->type & xplmType_IntArray) {
+        LOG_ERROR << "Unsupported type 'IntArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+
+    } else if (item->type & xplmType_FloatArray) {
+        LOG_ERROR << "Unsupported type 'FloatArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+
+    } else if (item->type & xplmType_Unknown) {
+        LOG_ERROR << "Could not determine type for dataref '" << name.data() << "'" << LOG_END
+        return false;
+
+    } else {
+        LOG_ERROR << "Unknown type '" << item->type << "' for dataref '" << name.data() << "'" << LOG_END
+        return false;
+    }
+}
+
+
+/**
  * Read a dataref as float array
  */
 bool data::read(std::string_view name, std::vector<float> &values)
@@ -180,6 +233,49 @@ bool data::write(std::string_view name, std::string_view value)
     } else if (item->type & xplmType_Data) {
         write_byte(item, value);
         return true;
+    } else if (item->type & xplmType_IntArray) {
+        LOG_ERROR << "Unsupported type 'IntArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else if (item->type & xplmType_FloatArray) {
+        LOG_ERROR << "Unsupported type 'FloatArray' of dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else if (item->type & xplmType_Unknown) {
+        LOG_ERROR << "Could not determine type for dataref '" << name.data() << "'" << LOG_END
+        return false;
+    } else {
+        LOG_ERROR << "Unknown type '" << item->type << "' for dataref '" << name.data() << "'" << LOG_END
+        return false;
+    }
+}
+
+
+/**
+ * Write an value to a numeric dataref
+ */
+bool data::write(std::string_view name, float value)
+{
+    data_item *item = retrieve_data(name);
+
+    if (item == nullptr)
+        return false;
+
+    if (!item->writeable) {
+        LOG_ERROR << "Dataref '" << name.data() << "' is not writeable" << LOG_END
+        return false;
+    }
+
+    if (item->type & xplmType_Int) {
+        write_int(item, static_cast<int>(value));
+        return true;
+    } else if (item->type & xplmType_Float) {
+        write_float(item, value);
+        return true;
+    } else if (item->type & xplmType_Double) {
+        write_double(item, static_cast<double>(value));
+        return true;
+    } else if (item->type & xplmType_Data) {
+        LOG_ERROR << "Dataref '" << name.data() << "' is not numeric" << LOG_END
+        return false;
     } else if (item->type & xplmType_IntArray) {
         LOG_ERROR << "Unsupported type 'IntArray' of dataref '" << name.data() << "'" << LOG_END
         return false;
