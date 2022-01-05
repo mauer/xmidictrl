@@ -173,7 +173,7 @@ void plugin::disable()
  */
 void plugin::load_profile()
 {
-    if (!m_profile->load() && m_profile->has_errors()) {
+    if (!m_profile->load() || m_profile->has_errors()) {
         if (m_settings->show_messages())
             show_messages_window();
     }

@@ -17,9 +17,6 @@
 
 #include "device.h"
 
-// Standard
-#include <thread>
-
 // XMidiCtrl
 #include "device_list.h"
 #include "logger.h"
@@ -157,6 +154,7 @@ void device::close_connections()
                   << LOG_END
 
         m_exit_outbound_thread.store(true);
+        m_new_outbound_task.notify_one();
 
         m_outbound_thread->join();
         m_outbound_thread = nullptr;
@@ -310,10 +308,8 @@ void device::process_outbound_mappings()
     }
 
     for (auto &mapping: m_map_out) {
-        if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc()))) {
-            LOG_DEBUG << "LOCKED!!!!" << LOG_END
+        if (m_ch_cc_locked.contains(utils::ch_cc(mapping.second->ch(), mapping.second->cc())))
             continue;
-        }
 
         std::shared_ptr<outbound_task> task = mapping.second->execute(m_mode_out);
 
@@ -376,8 +372,19 @@ void device::process_outbound_tasks()
         {
             std::unique_lock<std::mutex> lock(m_outbound_mutex);
 
-            while (m_outbound_tasks.empty())
-                m_new_outbound_task.wait(lock);
+            while (m_outbound_tasks.empty()) {
+                m_new_outbound_task.wait_for(lock, std::chrono::seconds(10));
+
+                if (m_exit_outbound_thread.load()) {
+                    LOG_DEBUG << "Exit outbound thread is enabled (wait loop)" << LOG_END
+                    break;
+                }
+            }
+
+            if (m_exit_outbound_thread.load()) {
+                LOG_DEBUG << "Exit outbound thread is enabled (task loop)" << LOG_END
+                continue;
+            }
 
             if (m_outbound_tasks.empty())
                 continue;
@@ -409,6 +416,12 @@ void device::process_outbound_tasks()
  */
 void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
 {
+    if (m_exit_outbound_thread.load()) {
+        LOG_DEBUG << "Outbound message rejected, as outbound thread is going to terminate" << LOG_END
+        return;
+    }
+
+
     task->msg = std::make_shared<midi_message>();
 
     task->msg->time = std::chrono::system_clock::now();

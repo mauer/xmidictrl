@@ -71,7 +71,7 @@ void settings::set_logging_level(log_level level)
 log_level settings::logging_level()
 {
     std::string level = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
-                                                      utils::log_level_as_code(log_level::warn));
+                                                      utils::log_level_as_code(log_level::info));
     return utils::log_level_from_code(level);
 }
 

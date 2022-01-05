@@ -167,7 +167,7 @@ void map_in_sld::read_config(toml::value &settings)
     map_in::read_config(settings);
 
     // check if dataref was defined
-    if (utils::toml_contains(settings, CFG_KEY_DATAREF)) {
+    if (utils::toml_contains(settings, CFG_KEY_DATAREF, false)) {
         LOG_DEBUG << " --> Use 'dataref' mode for slider mapping" << LOG_END
 
         // read dataref

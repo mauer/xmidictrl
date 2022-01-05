@@ -91,7 +91,7 @@ bool profile::load()
         m_sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
 
         if (!m_sl_dataref.empty())
-            LOG_INFO << "SubLayer Mode is active" << LOG_END
+            LOG_INFO << "Sublayer mode is active" << LOG_END
 
         create_device_list();
     } else {
@@ -548,11 +548,13 @@ map_type profile::read_mapping_type(toml::value &settings)
         } else {
             LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
             LOG_ERROR << " --> Parameter '" << CFG_KEY_TYPE << "' is missing" << LOG_END
+            m_errors_found = true;
         }
     } catch (toml::type_error &error) {
         LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
         LOG_ERROR << "Line " << settings.location().line() << " :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END
+        m_errors_found = true;
     }
 
     return type;
