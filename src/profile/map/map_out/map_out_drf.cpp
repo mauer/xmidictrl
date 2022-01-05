@@ -204,6 +204,11 @@ bool map_out_drf::check()
     if (m_value_on.empty() && m_value_off.empty())
         return false;
 
+    for (auto dataref : m_datarefs) {
+        if (!m_xp->datarefs().check(dataref))
+            return false;
+    }
+
     return true;
 }
 

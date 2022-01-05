@@ -36,16 +36,20 @@ public:
     explicit settings(std::shared_ptr<xplane> xp);
     ~settings() override;
 
-    typedef std::shared_ptr<settings> ptr;
-
     void set_logging_level(log_level level);
-    log_level logging_level();
+    log_level logging_level() const;
 
     void set_log_midi(bool enabled);
-    bool log_midi();
+    bool log_midi() const;
 
     void set_show_messages(bool enabled);
-    bool show_messages();
+    bool show_messages() const;
+
+    void set_max_text_messages(int number);
+    int max_text_messages() const;
+
+    void set_max_midi_messages(int number);
+    int max_midi_messages() const;
 
     void save_settings();
 

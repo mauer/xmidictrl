@@ -40,6 +40,9 @@ private:
     bool m_log_midi;
     bool m_show_messages;
 
+    int m_max_text_messages;
+    int m_max_midi_messages;
+
     std::string m_path_xplane;
     std::string m_path_plugin;
     std::string m_path_preferences;

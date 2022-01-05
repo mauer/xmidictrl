@@ -36,6 +36,8 @@ public:
     data() = default;
     ~data();
 
+    bool check(std::string_view name);
+
     bool read(std::string_view name, std::string &value);
     bool read(std::string_view name, float &value);
     bool read(std::string_view name, std::vector<float> &values);

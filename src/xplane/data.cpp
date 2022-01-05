@@ -45,6 +45,20 @@ data::~data()
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Check if a dataref is valid
+ */
+bool data::check(std::string_view name)
+{
+    data_item *item = retrieve_data(name);
+
+    if (item == nullptr)
+        return false;
+    else
+        return true;
+}
+
+
+/**
  * Read a dataref
  */
 bool data::read(std::string_view name, std::string &value)
@@ -490,12 +504,18 @@ void data::toggle_int(const data_item *item, std::string_view value_on, std::str
     // read current value
     int value = read_int(item);
 
-    if (value == std::stoi(value_on.data())) {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        write_int(item, std::stoi(value_off.data()));
-    } else {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        write_int(item, std::stoi(value_on.data()));
+    try {
+        if (value == std::stoi(value_on.data())) {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
+            write_int(item, std::stoi(value_off.data()));
+        } else {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
+            write_int(item, std::stoi(value_on.data()));
+        }
+    } catch (std::invalid_argument &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
+    } catch (std::out_of_range &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
     }
 }
 
@@ -508,12 +528,18 @@ void data::toggle_float(const data_item *item, std::string_view value_on, std::s
     // read current value
     float value = read_float(item);
 
-    if (value == std::stof(value_on.data())) {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        write_float(item, std::stof(value_off.data()));
-    } else {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        write_float(item, std::stof(value_on.data()));
+    try {
+        if (value == std::stof(value_on.data())) {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
+            write_float(item, std::stof(value_off.data()));
+        } else {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
+            write_float(item, std::stof(value_on.data()));
+        }
+    } catch (std::invalid_argument &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
+    } catch (std::out_of_range &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
     }
 }
 
@@ -526,12 +552,18 @@ void data::toggle_double(const data_item *item, std::string_view value_on, std::
     // read current value
     double value = read_double(item);
 
-    if (value == std::stod(value_on.data())) {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
-        write_double(item, std::stod(value_off.data()));
-    } else {
-        LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
-        write_double(item, std::stod(value_on.data()));
+    try {
+        if (value == std::stod(value_on.data())) {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_off.data() << "'" << LOG_END
+            write_double(item, std::stod(value_off.data()));
+        } else {
+            LOG_DEBUG << "Set dataref '" << item->name << "' to value '" << value_on.data() << "'" << LOG_END
+            write_double(item, std::stod(value_on.data()));
+        }
+    } catch (std::invalid_argument &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
+    } catch (std::out_of_range &ex) {
+        LOG_DEBUG << ex.what() << LOG_END
     }
 }
 

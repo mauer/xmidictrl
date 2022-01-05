@@ -69,7 +69,10 @@ void map_in_drf::read_config(toml::value &settings)
         m_value_on = utils::toml_read_string(settings, CFG_KEY_VALUE_ON);
 
         // read value off
-        m_value_off = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+        if (utils::toml_contains(settings, CFG_KEY_VALUE_OFF, false))
+            m_value_off = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+        else
+            m_value_off = m_value_on;
     } else {
         m_value_on.clear();
         m_value_off.clear();
@@ -86,6 +89,9 @@ bool map_in_drf::check()
         return false;
 
     if (m_dataref.empty())
+        return false;
+
+    if (!m_xp->datarefs().check(m_dataref))
         return false;
 
     if (m_values.empty() && (m_value_on.empty() && m_value_off.empty()))

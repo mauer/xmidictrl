@@ -68,7 +68,7 @@ void settings::set_logging_level(log_level level)
 /**
  * Return the active log level
  */
-log_level settings::logging_level()
+log_level settings::logging_level() const
 {
     std::string level = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
                                                       utils::log_level_as_code(log_level::info));
@@ -88,7 +88,7 @@ void settings::set_log_midi(bool enabled)
 /**
  * Return if midi logging is active
  */
-bool settings::log_midi()
+bool settings::log_midi() const
 {
     return toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
 }
@@ -106,9 +106,45 @@ void settings::set_show_messages(const bool enabled)
 /**
  * Return if the messages dialog should be displayed in case of error
  */
-bool settings::show_messages()
+bool settings::show_messages() const
 {
     return toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+}
+
+
+/**
+ * Sets the max number of text messages to be logged
+ */
+void settings::set_max_text_messages(int number)
+{
+    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = number;
+}
+
+
+/**
+ * Return the max number of text messages to be logged
+ */
+int settings::max_text_messages() const
+{
+    return toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 500);
+}
+
+
+/**
+ * Sets the max number of midi messages to be logged
+ */
+void settings::set_max_midi_messages(int number)
+{
+    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = number;
+}
+
+
+/**
+ * Return the max number of midi messages to be logged
+ */
+int settings::max_midi_messages() const
+{
+    return toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 500);
 }
 
 

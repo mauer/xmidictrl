@@ -437,7 +437,7 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
     if (task->data_changed) {
         logger::instance().post_midi_message(task->msg);
 
-        LOG_DEBUG << "DCT Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
+        LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
                   << "Status = '" << task->msg->status << "', Data = '" << task->msg->data << "', Velocity = '"
                   << task->msg->velocity << "'" << LOG_END
     }

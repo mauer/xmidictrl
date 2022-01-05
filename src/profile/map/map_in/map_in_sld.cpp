@@ -203,6 +203,9 @@ bool map_in_sld::check()
 
     if (!dataref().empty()) {
         // dataref mode
+        if (!m_xp->datarefs().check(dataref()))
+            return false;
+
         if (m_value_min < m_value_max)
             return true;
         else

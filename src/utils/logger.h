@@ -19,6 +19,7 @@
 #define LOGGER_H
 
 // Standard
+#include <deque>
 #include <fstream>
 #include <memory>
 #include <string_view>
@@ -77,8 +78,8 @@ private:
 
     std::ofstream m_stream;
 
-	std::vector<std::shared_ptr<text_log_msg>> m_text_messages;
-    std::vector<std::shared_ptr<midi_log_msg>> m_midi_messages;
+	std::deque<std::shared_ptr<text_log_msg>> m_text_messages;
+    std::deque<std::shared_ptr<midi_log_msg>> m_midi_messages;
 };
 
 } // Namespace xmidictrl

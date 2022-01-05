@@ -278,6 +278,9 @@ bool map_in_enc::check()
 
     if (!dataref().empty()) {
         // dataref mode
+        if (!m_xp->datarefs().check(dataref()))
+            return false;
+
         if (modifier_up() == 0.0f && modifier_down() == 0.0f && modifier_fast_up() == 0.0f && modifier_fast_down() == 0.0f)
             return false;
         else

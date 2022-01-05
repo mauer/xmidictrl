@@ -102,6 +102,11 @@ void logger::post_text_message(const std::shared_ptr<text_message> &msg)
     log_msg->type = utils::text_msg_type_as_text(msg->type);
     log_msg->text = msg->text;
 
+    if (m_settings != nullptr) {
+        while (m_text_messages.size() >= m_settings->max_text_messages())
+            m_text_messages.pop_front();
+    }
+
     m_text_messages.push_back(log_msg);
 
     // write message to log file
@@ -148,6 +153,11 @@ void logger::post_midi_message(const std::shared_ptr<midi_message> &msg)
         log_msg->status = msg->status;
         log_msg->data = msg->data;
         log_msg->velocity = msg->velocity;
+
+        if (m_settings != nullptr) {
+            while (m_midi_messages.size() >= m_settings->max_midi_messages())
+                m_midi_messages.pop_front();
+        }
 
         m_midi_messages.push_back(log_msg);
     }

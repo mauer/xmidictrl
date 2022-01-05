@@ -39,6 +39,9 @@ settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_
     m_log_midi = m_settings->log_midi();
     m_show_messages = m_settings->show_messages();
 
+    m_max_text_messages = m_settings->max_text_messages();
+    m_max_midi_messages = m_settings->max_midi_messages();
+
     m_path_xplane = xp->xplane_path();
     m_path_plugin = xp->plugin_path();
     m_path_preferences = xp->preferences_path();
@@ -96,9 +99,15 @@ void settings_window::create_widgets()
         ImGui::EndCombo();
     }
 
+    ImGui::SameLine(500);
+    ImGui::SliderInt("Max. number of text messages", &m_max_text_messages, 10, 5000);
     ImGui::NewLine();
 
     ImGui::Checkbox("Log inbound and outbound MIDI messages", &m_log_midi);
+    ImGui::SameLine(500);
+    ImGui::SliderInt("Max. number of MIDI messages", &m_max_midi_messages, 10, 5000);
+    ImGui::NewLine();
+
     ImGui::Checkbox("Show message dialog in case of errors", &m_show_messages);
 
     ImGui::NewLine();
@@ -128,6 +137,10 @@ void settings_window::create_widgets()
     if (ImGui::Button("Save Settings")) {
         m_settings->set_logging_level(m_log_level);
         m_settings->set_log_midi(m_log_midi);
+
+        m_settings->set_max_text_messages(m_max_text_messages);
+        m_settings->set_max_midi_messages(m_max_midi_messages);
+
         m_settings->set_show_messages(m_show_messages);
 
         m_settings->save_settings();

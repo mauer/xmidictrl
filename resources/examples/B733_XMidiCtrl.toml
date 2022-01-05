@@ -131,8 +131,8 @@ mapping_out = [
   #--------------------------------------------------------------------------------------------------------------------
   
   # Encoder Buttons
-  { ch = 11, cc = 14, type = "drf", dataref = "ixeg/733/MCP/mcp_alt_hold_ann", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 15, type = "drf", dataref = "ixeg/733/MCP/mcp_vs_ann", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 6, type = "drf", dataref = "ixeg/733/MCP/mcp_alt_hold_ann", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 7, type = "drf", dataref = "ixeg/733/MCP/mcp_vs_ann", value_on = "1", value_off = "0" },
 
   # Buttons Upper Row
   { ch = 11, cc = 17, type = "drf", dataref = "ixeg/733/clock/clock_et_pt_act", value_on = "1", value_off = "0" },
