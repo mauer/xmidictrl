@@ -168,14 +168,14 @@ int utils::toml_read_int(toml::value &settings, std::string_view name, bool mand
 /**
  * Read the value of a float
  */
-float utils::toml_read_float(toml::value &settings, std::string_view name, bool mandatory)
+float utils::toml_read_float(toml::value &settings, std::string_view name, bool mandatory, float fallback)
 {
     if (name.empty()) {
         LOG_ERROR << "Internal error (toml_read_float --> name is empty" << LOG_END
-        return 0.0f;
+        return fallback;
     }
 
-    float value = 0.0f;
+    float value = fallback;
 
     try {
         // read dataref

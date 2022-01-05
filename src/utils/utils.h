@@ -39,7 +39,10 @@ public:
                                                            std::string_view name,
                                                            bool mandatory = true);
     static int toml_read_int(toml::value &settings, std::string_view name, bool mandatory = true);
-    static float toml_read_float(toml::value &settings, std::string_view name, bool mandatory = true);
+    static float toml_read_float(toml::value &settings,
+                                 std::string_view name,
+                                 bool mandatory = true,
+                                 float fallback = 0.0f);
 
     static std::string text_msg_type_as_text(text_msg_type type);
     static std::string midi_msg_type_as_text(midi_type type);

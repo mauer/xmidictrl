@@ -19,8 +19,12 @@
 + Velocities for light on/off can be defined for outbound dataref mappings
 + Improved documentation
 + Added example configuration for Hot Start CL-650, created by Reflected Reality Simulations
++ Added example configuration for Hot Start TBM 900
++ Added example configuration for IXEG 737-300
 + Added new option to map an encoder to a dataref instead of commands
 + Added new option to map a slider to a dataref instead of commands
++ New option to limit the number of messages to be shown in the messages window (for performance reasons)
++ Added a Linux version of the plugin
 
 -----------------------------------------------------------------------------------------------------------------------
 

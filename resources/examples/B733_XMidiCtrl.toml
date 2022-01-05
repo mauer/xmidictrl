@@ -60,7 +60,12 @@ mapping_in = [
   # Buttons Lower Row
   { ch = 11, cc = 25, type = "drf", dataref = "ixeg/733/caution/caution_reset_act", value_on = "1" },
   { ch = 11, cc = 25, type = "drf", dataref = "ixeg/733/caution/caution_reset_act", value_on = "0" },
-  { ch = 11, cc = 26, type = "cmd", command = "ixeg/733/ehsi/wxr_toggle_pilot" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_ap_rst_act", value_on = "1" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_ap_rst_act", value_on = "0" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_at_rst_act", value_on = "1" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_at_rst_act", value_on = "0" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_fmc_rst_act", value_on = "1" },
+  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/caution/caution_fmc_rst_act", value_on = "0" },
   { ch = 11, cc = 27, type = "cmd", command = "ixeg/733/autopilot/N1_mode_toggle" },
   { ch = 11, cc = 28, type = "cmd", command = "ixeg/733/autopilot/LVLCHG_mode_toggle" },
   { ch = 11, cc = 29, type = "cmd", command = "ixeg/733/autopilot/VORLOC_mode_toggle" },
@@ -108,16 +113,7 @@ mapping_in = [
   # Buttons Lower Row
   { ch = 11, cc = 75, type = "drf", dataref = "ixeg/733/caution/caution_recall_act", value_on = "1" },
   { ch = 11, cc = 75, type = "drf", dataref = "ixeg/733/caution/caution_recall_act", value_on = "0" },
-  
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_ap_rst_act", value_on = "1" },
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_ap_rst_act", value_on = "0" },
-
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_at_rst_act", value_on = "1" },
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_at_rst_act", value_on = "0" },
-
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_fmc_rst_act", value_on = "1" },
-  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/caution/caution_fmc_rst_act", value_on = "0" },
-
+  { ch = 11, cc = 76, type = "cmd", command = "ixeg/733/ehsi/wxr_toggle_pilot" },
   { ch = 11, cc = 77, type = "drf", dataref = "ixeg/733/wxr/wxr_disp_terrain_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 78, type = "cmd", command = "ixeg/733/ehsi/voradf_toggle_pilot" },
   { ch = 11, cc = 79, type = "cmd", command = "ixeg/733/ehsi/navaid_toggle_pilot" },
@@ -146,7 +142,6 @@ mapping_out = [
   
   # Buttons Lower Row
   { ch = 11, cc = 25, type = "drf", dataref = "ixeg/733/bleedair/caution_master_ann", value_off = "0" },
-  { ch = 11, cc = 26, type = "drf", dataref = "ixeg/733/ehsi/ehsi_wxr_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 27, type = "drf", dataref = "ixeg/733/MCP/mcp_n1_ann", value_on = "1", value_off = "0" },
   { ch = 11, cc = 28, type = "drf", dataref = "ixeg/733/MCP/mcp_level_change_ann", value_on = "1", value_off = "0" },
   { ch = 11, cc = 29, type = "drf", dataref = "ixeg/733/MCP/mcp_vor_loc_ann", value_on = "1", value_off = "0" },
@@ -173,6 +168,7 @@ mapping_out = [
   { ch = 11, cc = 74, type = "drf", dataref = "ixeg/733/xpdr/xpdr_mode_act", value_on = "4" },
   
   # Buttons Lower Row
+  { ch = 11, cc = 76, type = "drf", dataref = "ixeg/733/ehsi/ehsi_wxr_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 78, type = "drf", dataref = "ixeg/733/ehsi/ehsi_voradf_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 79, type = "drf", dataref = "ixeg/733/ehsi/ehsi_navaid_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 80, type = "drf", dataref = "ixeg/733/ehsi/ehsi_arpt_pt_act", value_on = "1", value_off = "0" },

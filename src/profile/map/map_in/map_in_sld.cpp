@@ -174,10 +174,10 @@ void map_in_sld::read_config(toml::value &settings)
         set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
 
         // read value min
-        set_value_min(utils::toml_read_float(settings, CFG_KEY_VALUE_MIN, false));
+        set_value_min(utils::toml_read_float(settings, CFG_KEY_VALUE_MIN, false, 0.0f));
 
         // read value max
-        set_value_max(utils::toml_read_float(settings, CFG_KEY_VALUE_MAX, false));
+        set_value_max(utils::toml_read_float(settings, CFG_KEY_VALUE_MAX, false, 1.0f));
     } else {
         LOG_DEBUG << " --> Use 'command' mode for slider mapping" << LOG_END
 
