@@ -6,6 +6,7 @@
 ## Version 0.61
 
 + Fixed small mapping error in IXEG 737-300 example
++ Fixed debug message for Push&Pull End command, as it was logging the pull instead of the push command
 
 ##  VERSION 0.60
 
