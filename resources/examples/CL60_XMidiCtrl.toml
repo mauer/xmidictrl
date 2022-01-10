@@ -28,7 +28,7 @@ mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
 
   # Slider
-  { ch = 11, cc = 0, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
+  { ch = 11, cc = 0, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_down = "sim/flight_controls/landing_gear_down" },
 
   # Encoders
   { ch = 11, cc = 1, type = "enc", command_up = "CL650/DCP/1/baro_up", command_down = "CL650/DCP/1/baro_down" },
@@ -74,7 +74,7 @@ mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
 
   # Slider
-  { ch = 11, cc = 50, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
+  { ch = 11, cc = 50, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_down = "sim/flight_controls/landing_gear_down" },
 
   # Encoders
   { ch = 11, cc = 51, sl = "0", type = "enc", command_up = "CL650/DCP/1/menu_adv_up", command_down = "CL650/DCP/1/menu_adv_down" },
