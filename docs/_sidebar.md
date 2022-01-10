@@ -21,6 +21,10 @@
       * [Sliders](inbound_mapping_slider.md)
   * [Outbound Mappings](outbound_mapping.md)
       * [Datarefs](outbound_mapping_dataref.md)
+
+* **MIDI Devices**
+  * [Behringer X-Touch Mini](behringer_xtouch_mini.md)
+  
 * **Advanced Options**
   * [Aircraft Profiles](profile.md)  
   * [Sublayers](sublayers.md)

@@ -78,7 +78,7 @@ PLUGIN_API void XPluginDisable(void)
  */
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void *inParam)
 {
-    LOG_DEBUG << "Message received from X-Plane :: " << inMsg << LOG_END
+    LOG_DEBUG << "Message '" << inMsg << "' received from X-Plane" <<  LOG_END
 
     switch (inMsg) {
         //case XPLM_MSG_PLANE_LOADED:
