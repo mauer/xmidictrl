@@ -9,7 +9,8 @@
 + Fixed debug message for Push&Pull End command, as it was logging the pull instead of the push command
 + Don't show messages window if no aircraft profile was found
 + Improved mapping for Hot Start Challenger 650 (ISI Baro instead of FO Baro)
-+ Changed loading event for aircraft profiles to prevent dataref error with the Hot Start Challenger 650
++ Changed load event for aircraft profiles to prevent dataref error with the Hot Start Challenger 650
++ Internal refactoring for better code readability
 
 -----------------------------------------------------------------------------------------------------------------------
 

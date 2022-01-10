@@ -5,6 +5,12 @@
 The mapping for an Encoder (knob) can use X-Plane commands or a dataref. If you define commands and a dataref, the
 dataref will be used.
 
+## Encoder Mode
+
+The plugin supports two encoder modes: *relative* and *range*. If your MIDI device sends a velocity between 0 and 127
+when encoders are turned you have to select *range*. Relative mode is the preferred settings as it send different values
+depending how fast the encoder was turned. However, not all MIDI devices support this mode.
+
 ## Commands Mapping
 
 You can define a command for up (right turn) and down (left turn). In addition, it's possible to define commands for 
@@ -20,10 +26,10 @@ be sufficient in most cases.
 
 ### Optional Parameters
 
-| Parameter         | Description                                                                    |
-|-------------------|--------------------------------------------------------------------------------|
-| command_fast_up   | Command which will be executed when the knob is turned quite fast to the right |
-| command_fast_down | Command which will be executed when the knob is turned quite fast to the left  |
+| Parameter         | Description                                                                                          |
+|-------------------|------------------------------------------------------------------------------------------------------|
+| command_fast_up   | Command which will be executed when the knob is turned quite fast to the right (relative mode, only) |
+| command_fast_down | Command which will be executed when the knob is turned quite fast to the left  (relative mode, only) |
 
 ### Examples
 
@@ -55,16 +61,17 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 
 ### Optional Parameters
 
-| Parameter          | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| modifier_fast_up   | Modifier which will be used when the knob is turned quite fast to the right |
-| modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  |
+| Parameter          | Description                                                                                       |
+|--------------------|---------------------------------------------------------------------------------------------------|
+| mode               | range / relative, depending on your MIDI device (default is relative)                             |
+| modifier_fast_up   | Modifier which will be used when the knob is turned quite fast to the right (relative mode, only) |
+| modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  (relative mode, only) |
 
 ### Examples
 
 ```
-{ ch = 11, cc = 1,  type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02 }
+{ ch = 11, cc = 1, mode = "range", type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02 }
 
-{ ch = 11, cc = 4,  type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02, modifier_fast_up = 0.20, modifier_fast_down = -0.20 }
+{ ch = 11, cc = 4, mode = "relative", type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02, modifier_fast_up = 0.20, modifier_fast_down = -0.20 }
 ```
 *The examples above change the altimeter bug for the pilot in the IXEG 737-300.*
