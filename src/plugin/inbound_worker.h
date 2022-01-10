@@ -15,28 +15,33 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MIDI_MESSAGE_H
-#define MIDI_MESSAGE_H
+#ifndef INBOUND_WORKER_H
+#define INBOUND_WORKER_H
 
 // Standard
-#include <chrono>
+#include <memory>
+#include <queue>
+
+// X-Plane SDK
 
 // XMidiCtrl
-#include "types.h"
+#include "inbound_task.h"
 
 namespace xmidictrl {
 
-struct midi_message {
-    time_point time {time_point::min()};
-    msg_direction type {msg_direction::inbound};
+class inbound_worker {
+public:
+    inbound_worker();
+    ~inbound_worker();
 
-    unsigned int port {0};
+    void add_task(const std::shared_ptr<inbound_task> &task);
 
-    unsigned int status {0};
-    unsigned int data {0};
-    unsigned int velocity {0};
+    void process(std::string_view sl_value);
+
+private:
+    std::queue<std::shared_ptr<inbound_task>> m_tasks;
 };
 
 } // Namespace xmidictrl
 
-#endif // MIDI_MESSAGE_H
+#endif // INBOUND_WORKER_H

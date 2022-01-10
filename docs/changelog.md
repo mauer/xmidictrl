@@ -3,6 +3,16 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 0.61
+
++ Fixed small mapping error in IXEG 737-300 example
++ Fixed debug message for Push&Pull End command, as it was logging the pull instead of the push command
++ Don't show messages window if no aircraft profile was found
++ Improved mapping for Hot Start Challenger 650 (ISI Baro instead of FO Baro)
++ Changed loading event for aircraft profiles to prevent dataref error with the Hot Start Challenger 650
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 0.60
 
 + Changed mapping error in profile for ZIBO 737-800 (CC 11 -> DH)

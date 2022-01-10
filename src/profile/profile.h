@@ -52,6 +52,8 @@ public:
     std::string get_filename_aircraft_path();
     std::string get_filename_profiles_path(bool icao, bool author);
 
+    [[nodiscard]] std::string_view sl_dataref() const;
+
     void process();
 
 private:

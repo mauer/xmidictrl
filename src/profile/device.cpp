@@ -22,6 +22,7 @@
 #include "logger.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
+#include "plugin.h"
 #include "utils.h"
 
 namespace xmidictrl {
@@ -33,13 +34,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(std::string_view name,
-               unsigned int port_in,
-               unsigned int port_out,
-               mode_out mode_out,
-               std::shared_ptr<device_list> device_list)
-    : m_device_list(std::move(device_list)),
-      m_name(name),
+device::device(std::string_view name, unsigned int port_in, unsigned int port_out, mode_out mode_out)
+    : m_name(name),
       m_port_in(port_in),
       m_port_out(port_out),
       m_mode_out(mode_out)
@@ -193,7 +189,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         msg->time = std::chrono::system_clock::now();
 
         msg->port = m_port_in;
-        msg->type = midi_type::inbound;
+        msg->type = msg_direction::inbound;
 
         msg->status = static_cast<int>(message->at(0));
         msg->data = static_cast<int>(message->at(1));
@@ -286,7 +282,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                 t->msg = msg;
                 t->map = mapping;
 
-                m_device_list->add_inbound_task(t);
+                plugin::instance().add_inbound_task(t);
             }
         }
     }
@@ -421,12 +417,11 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
         return;
     }
 
-
     task->msg = std::make_shared<midi_message>();
 
     task->msg->time = std::chrono::system_clock::now();
     task->msg->port = m_port_out;
-    task->msg->type = midi_type::outbound;
+    task->msg->type = msg_direction::outbound;
 
     task->msg->status = OFFSET_MIDI_CHANNEL_STATUS + task->ch;
     task->msg->data = task->cc;

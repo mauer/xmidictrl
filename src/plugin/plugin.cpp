@@ -19,7 +19,6 @@
 
 // XMidiCtrl
 #include "about_window.h"
-#include "config.h"
 #include "devices_window.h"
 #include "logger.h"
 #include "messages_window.h"
@@ -54,6 +53,9 @@ plugin::plugin()
 
     // create the aircraft profile
     m_profile = std::make_shared<profile>(m_xp);
+
+    // create the inbound worker
+    m_worker = std::make_unique<inbound_worker>();
 }
 
 
@@ -105,6 +107,16 @@ float plugin::callback_flight_loop(float elapsed_me, float elapsed_sim, int coun
  */
 void plugin::process_flight_loop(float elapsed_me, float elapsed_sim, int counter)
 {
+    std::string sl_value {};
+
+    // are sublayers active?
+    if (!m_profile->sl_dataref().empty())
+        m_xp->datarefs().read(m_profile->sl_dataref(), sl_value);
+
+    // process inbound tasks
+    m_worker->process(sl_value);
+
+    // process outbound tasks
     m_profile->process();
 }
 
@@ -173,7 +185,9 @@ void plugin::disable()
  */
 void plugin::load_profile()
 {
-    if (!m_profile->load() || m_profile->has_errors()) {
+    m_profile->load();
+
+    if (m_profile->has_errors()) {
         if (m_settings->show_messages())
             show_messages_window();
     }
@@ -186,6 +200,16 @@ void plugin::load_profile()
 void plugin::close_profile()
 {
     m_profile->close();
+}
+
+
+/**
+ * Add an inbound task to the worker
+ */
+void plugin::add_inbound_task(std::shared_ptr<inbound_task> task)
+{
+    if (m_worker != nullptr)
+        m_worker->add_task(task);
 }
 
 

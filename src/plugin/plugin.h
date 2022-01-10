@@ -25,6 +25,7 @@
 #include "XPLMProcessing.h"
 
 // XMidiCtrl
+#include "inbound_worker.h"
 #include "menu.h"
 #include "profile.h"
 #include "settings.h"
@@ -48,6 +49,8 @@ public:
 
     void load_profile();
     void close_profile();
+
+    void add_inbound_task(std::shared_ptr<inbound_task> task);
 
     void show_messages_window();
     void show_devices_window();
@@ -84,6 +87,8 @@ private:
 
     std::shared_ptr<settings> m_settings;
     std::shared_ptr<profile> m_profile;
+
+    std::unique_ptr<inbound_worker> m_worker;
 
     // references for custom datarefs
     XPLMDataRef m_drf_sublayer {nullptr};

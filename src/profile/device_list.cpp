@@ -52,7 +52,7 @@ std::shared_ptr<device> device_list::create_device(std::string_view name,
                                                    unsigned int port_out,
                                                    mode_out mode_out)
 {
-    std::shared_ptr<device> dev = std::make_shared<device>(name, port_in, port_out, mode_out, shared_from_this());
+    std::shared_ptr<device> dev = std::make_shared<device>(name, port_in, port_out, mode_out);
     m_device_list.push_back(dev);
 
     return dev;
@@ -91,60 +91,9 @@ void device_list::close_connections()
 
 
 /**
- * Add a task to be executed
- */
-void device_list::add_inbound_task(const std::shared_ptr<inbound_task> &task)
-{
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-
-    LOG_DEBUG << " --> Task added to queue" << LOG_END
-
-    m_inbound_tasks.push(task);
-}
-
-
-/**
- * Process inbound events
- */
-void device_list::process_inbound_events(std::string_view sl_value)
-{
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-
-    std::queue<std::shared_ptr<inbound_task>> temp_list;
-
-    // process the midi inbound queue for each midi device
-    while (!m_inbound_tasks.empty()) {
-        std::shared_ptr<inbound_task> t = m_inbound_tasks.front();
-
-        if (t == nullptr || t->map == nullptr)
-            continue;
-
-        // perform the action related to the mapping
-        if (!t->map->execute(*t->msg, sl_value)) {
-            // store in temp list
-            temp_list.push(t);
-        }
-
-        // delete entry from list
-        m_inbound_tasks.pop();
-    }
-
-    // add temp tasks to queue again, will be executed in next flight loop
-    while (!temp_list.empty()) {
-        std::shared_ptr<inbound_task> t = temp_list.front();
-        m_inbound_tasks.push(t);
-
-        temp_list.pop();
-    }
-}
-
-
-/**
  * Process the midi outbound mappings
  */
-void device_list::process_outbound_mappings(std::string_view sl_value)
+void device_list::process_outbound_mappings()
 {
     for (auto const &device: m_device_list) {
         if (device != nullptr)

@@ -32,6 +32,9 @@ namespace xmidictrl {
 // Colour for Values im ImGui
 #define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
 
+// MIDI unsigned int none
+const unsigned int MIDI_NONE(555);
+
 // Interval of flight loop
 const int FLIGHTLOOP_INTERVAL(-1.0);
 
@@ -86,6 +89,7 @@ const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
 const char *const CFG_KEY_MAX_MIDI_MESSAGES = "max_midi_messages";
 const char *const CFG_KEY_MAX_TEXT_MESSAGES = "max_text_messages";
+const char *const CFG_KEY_MODE = "mode";
 const char *const CFG_KEY_MODE_OUT = "mode_out";
 const char *const CFG_KEY_MODIFIER_DOWN = "modifier_down";
 const char *const CFG_KEY_MODIFIER_FAST_DOWN = "modifier_fast_down";
@@ -144,8 +148,8 @@ enum class text_msg_type {
     debug = 4
 };
 
-// MIDI type
-enum class midi_type {
+// Message direction
+enum class msg_direction {
     inbound,
     outbound
 };
@@ -171,6 +175,12 @@ enum class map_type {
 enum class mode_out {
     on_change,
     permanent
+};
+
+// Encoder mode
+enum class encoder_mode {
+    relative,
+    range
 };
 
 // Window types

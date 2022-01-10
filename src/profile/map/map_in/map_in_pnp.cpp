@@ -113,7 +113,7 @@ void map_in_pnp::set_time_released()
  */
 void map_in_pnp::read_config(toml::value &settings)
 {
-    LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'pnp'" << LOG_END
+    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'pnp'" << LOG_END
     map_in::read_config(settings);
 
     // read command push
@@ -162,7 +162,7 @@ bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
                     break;
 
                 case command_type::pull:
-                    LOG_DEBUG << " --> End pull command '" << m_command_push << "'" << LOG_END
+                    LOG_DEBUG << " --> End pull command '" << m_command_pull << "'" << LOG_END
                     m_xp->cmd().end(m_command_pull);
                     break;
 

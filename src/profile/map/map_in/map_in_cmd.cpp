@@ -115,7 +115,7 @@ unsigned int map_in_cmd::velocity_off() const
  */
 void map_in_cmd::read_config(toml::value &settings)
 {
-    LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'cmd'" << LOG_END
+    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'cmd'" << LOG_END
     map_in::read_config(settings);
 
     // read the command

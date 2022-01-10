@@ -163,7 +163,7 @@ std::string_view map_in_sld::command_down() const
  */
 void map_in_sld::read_config(toml::value &settings)
 {
-    LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'sld'" << LOG_END
+    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'sld'" << LOG_END
     map_in::read_config(settings);
 
     // check if dataref was defined

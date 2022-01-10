@@ -55,7 +55,7 @@ map_type map_in_drf::type()
  */
 void map_in_drf::read_config(toml::value &settings)
 {
-    LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
+    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
     map_in::read_config(settings);
 
     // read dataref

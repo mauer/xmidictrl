@@ -45,13 +45,14 @@ public:
                                  float fallback = 0.0f);
 
     static std::string text_msg_type_as_text(text_msg_type type);
-    static std::string midi_msg_type_as_text(midi_type type);
+    static std::string midi_msg_type_as_text(msg_direction type);
 
     static std::string log_level_as_text(log_level level);
     static std::string log_level_as_code(log_level level);
     static log_level log_level_from_code(std::string_view code);
 
     static mode_out mode_out_from_int(int mode);
+    static encoder_mode encoder_mode_from_code(std::string_view mode);
 
     static std::string time_to_string(time_point time);
     static std::string ch_cc(unsigned int ch, unsigned int cc);

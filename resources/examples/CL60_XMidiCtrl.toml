@@ -14,7 +14,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 
 title   = "Settings for the Hot Start Challenger 650 by Reflected Reality Simulations"
-version = "0.60"
+version = "0.61"
 sl_dataref = "CL650/pilot_seat"
 
 # Behringer X-Touch Mini
@@ -28,7 +28,7 @@ mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
 
   # Slider
-  { ch = 11, cc = 0,  type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
+  { ch = 11, cc = 0, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
 
   # Encoders
   { ch = 11, cc = 1, type = "enc", command_up = "CL650/DCP/1/baro_up", command_down = "CL650/DCP/1/baro_down" },
@@ -38,7 +38,7 @@ mapping_in = [
   { ch = 11, cc = 5, type = "enc", command_up = "CL650/FCP/hdg_up", command_down = "CL650/FCP/hdg_down" },
   { ch = 11, cc = 6, type = "enc", command_up = "CL650/FCP/alt_up", command_down = "CL650/FCP/alt_down" },
   { ch = 11, cc = 7, type = "enc", command_up = "CL650/FCP/crs2_up", command_down = "CL650/FCP/crs2_down" },
-  { ch = 11, cc = 8, type = "enc", command_up = "CL650/DCP/2/baro_up", command_down = "CL650/DCP/2/baro_down" },
+  { ch = 11, cc = 8, type = "enc", command_up = "CL650/ISI/baro_up", command_down = "CL650/ISI/baro_down" },
 
   # Encoder Buttons
   { ch = 11, cc = 9, type = "cmd", command = "CL650/DCP/1/baro_push" },
@@ -47,7 +47,7 @@ mapping_in = [
   { ch = 11, cc = 13, type = "cmd", command = "CL650/FCP/hdg_sync" },
   { ch = 11, cc = 14, type = "cmd", command = "CL650/FCP/alt_cancel" },
   { ch = 11, cc = 15, type = "cmd", command = "CL650/FCP/crs2_push" },
-  { ch = 11, cc = 16, type = "cmd", command = "CL650/DCP/2/baro_push" },
+  { ch = 11, cc = 16, type = "cmd", command = "CL650/ISI/std" },
 
   # Buttons Upper Row
   { ch = 11, cc = 17, type = "pnp", command_push = "CL650/glareshield/ATS", command_pull = "CL650/glareshield/N2_SYNC"},
@@ -72,6 +72,9 @@ mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
+
+  # Slider
+  { ch = 11, cc = 50, type = "sld", command_up = "sim/flight_controls/landing_gear_up", command_middle = "", command_down = "sim/flight_controls/landing_gear_down" },
 
   # Encoders
   { ch = 11, cc = 51, sl = "0", type = "enc", command_up = "CL650/DCP/1/menu_adv_up", command_down = "CL650/DCP/1/menu_adv_down" },

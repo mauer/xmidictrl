@@ -177,22 +177,19 @@ std::string profile::get_filename_profiles_path(bool icao, bool author)
 }
 
 
+std::string_view profile::sl_dataref() const
+{
+    return m_sl_dataref;
+}
+
+
 /**
  * Process all mappings
  */
 void profile::process()
 {
-    std::string sl_value {};
-
-    // are the sublayers active?
-    if (!m_sl_dataref.empty())
-        m_xp->datarefs().read(m_sl_dataref, sl_value);
-
-    // process midi inbound events
-    m_device_list->process_inbound_events(sl_value);
-
     // process midi outbound mappings
-    m_device_list->process_outbound_mappings(sl_value);
+    m_device_list->process_outbound_mappings();
 }
 
 

@@ -29,7 +29,7 @@
 
 namespace xmidictrl {
 
-class device_list : public std::enable_shared_from_this<device_list> {
+class device_list {
 public:
     explicit device_list() = default;
     ~device_list();
@@ -42,18 +42,13 @@ public:
     bool open_connections();
     void close_connections();
 
-    void add_inbound_task(const std::shared_ptr<inbound_task> &task);
-
-    void process_inbound_events(std::string_view sl_value);
-    void process_outbound_mappings(std::string_view sl_value);
-
+    void process_outbound_mappings();
     void process_outbound_reset();
 
     void clear();
     unsigned int size();
 
 private:
-    std::queue<std::shared_ptr<inbound_task>> m_inbound_tasks;
     std::vector<std::shared_ptr<device>> m_device_list;
 };
 

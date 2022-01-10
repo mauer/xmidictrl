@@ -38,6 +38,9 @@ public:
 
     map_type type() override;
 
+    void set_mode(encoder_mode mode);
+    encoder_mode mode() const;
+
     void set_dataref(std::string_view dataref);
     [[nodiscard]] std::string_view dataref() const;
 
@@ -68,9 +71,16 @@ public:
     void read_config(toml::value &settings) override;
     bool check() override;
 
-    bool execute(midi_message &midi_event, std::string_view sl_value) override;
+    bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
+    bool execute_dataref(midi_message &msg);
+    bool execute_command(midi_message &msg);
+
+    encoder_mode m_mode {encoder_mode::relative};
+
+    unsigned int m_velocity_prev {MIDI_NONE};
+
     std::string m_dataref {};
 
     float m_modifier_up {0.0f};

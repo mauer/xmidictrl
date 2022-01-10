@@ -236,13 +236,13 @@ std::string utils::text_msg_type_as_text(text_msg_type type)
 /**
  * Return the text of a midi message type
  */
-std::string utils::midi_msg_type_as_text(midi_type type)
+std::string utils::midi_msg_type_as_text(msg_direction type)
 {
     switch (type) {
-        case midi_type::inbound:
+        case msg_direction::inbound:
             return "Inbound";
 
-        case midi_type::outbound:
+        case msg_direction::outbound:
             return "Outbound";
     }
 
@@ -323,6 +323,18 @@ mode_out utils::mode_out_from_int(int mode)
         return mode_out::on_change;
     else
         return mode_out::permanent;
+}
+
+
+/**
+ * Return the encoder mode for a given string
+ */
+encoder_mode utils::encoder_mode_from_code(std::string_view mode)
+{
+    if (mode == "range")
+        return encoder_mode::range;
+    else
+        return encoder_mode::relative;
 }
 
 

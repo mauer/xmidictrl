@@ -47,7 +47,7 @@ class device_list;
 
 class device {
 public:
-    device(std::string_view name, unsigned int port_in, unsigned int port_out, mode_out mode_out, std::shared_ptr<device_list> device_list);
+    device(std::string_view name, unsigned int port_in, unsigned int port_out, mode_out mode_out);
     ~device();
 
     // no copying or copy assignments are allowed
@@ -71,8 +71,6 @@ private:
     void process_outbound_tasks();
 
     void add_outbound_task(const std::shared_ptr<outbound_task> &task);
-
-    std::shared_ptr<device_list> m_device_list;
 
     std::string m_name;
     unsigned int m_port_in;
