@@ -11,6 +11,7 @@
 + Improved mapping for Hot Start Challenger 650 (ISI Baro instead of FO Baro)
 + Changed load event for aircraft profiles to prevent dataref error with the Hot Start Challenger 650
 + Internal refactoring for better code readability
++ Added new mapping mode for encoders (range instead of relative)
 
 -----------------------------------------------------------------------------------------------------------------------
 
