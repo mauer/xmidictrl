@@ -17,6 +17,9 @@
 
 #include "inbound_worker.h"
 
+// Standard
+#include <mutex>
+
 // XMidiCtrl
 #include "logger.h"
 
