@@ -41,7 +41,7 @@ otherwise velocity 0 will be used.*
 otherwise velocity 127 will be used.*
 
 ```
-{ ch = 11, cc = 50, type = "drf", dataref = ["sim/pilot/caution_light" "sim/copilot/caution_light"], value_on = "1" }
+{ ch = 11, cc = 50, type = "drf", dataref = ["sim/pilot/caution_light", "sim/copilot/caution_light"], value_on = "1" }
 ```
 *Will send a MIDI message with velocity 127 for Channel 11 and Control Change 50 if on of the two datarefs has a value equal to 1.
 A MIDI message with velocity 0 will be sent when both datarefs are not equal 1 anymore.*

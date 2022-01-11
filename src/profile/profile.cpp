@@ -78,7 +78,7 @@ bool profile::load()
 
     if (filename.empty()) {
         LOG_INFO << "No profile found for current aircraft" << LOG_END
-        return false;
+        return true;
     }
 
     LOG_INFO << "Aircraft Profile '" << filename << "' found" << LOG_END
