@@ -206,17 +206,15 @@ bool map_in_sld::check()
         if (!m_xp->datarefs().check(dataref()))
             return false;
 
-        if (m_value_min < m_value_max)
-            return true;
-        else
+        if (value_min() == value_max())
             return false;
     } else {
         // command mode
         if (m_command_up.empty() && m_command_down.empty())
             return false;
-        else
-            return true;
     }
+
+    return true;
 }
 
 
