@@ -47,11 +47,28 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # link required dependencies
 if (WIN32)
+    if (MINGW)
+        target_link_libraries(${PROJECT_NAME} mingw_stdthreads)
+    endif()
     target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 rtmidi winmm xpsdk imgui)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/win_x64")
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} "-F${PROJECT_SOURCE_DIR}/lib/xpsdk/Libraries/Mac -framework XPLM")
+    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation REQUIRED)
+    find_library(Cocoa_LIBRARY Cocoa REQUIRED)
+    find_library(Security_LIBRARY Security REQUIRED)
+    find_library(GSS_LIBRARY GSS REQUIRED)
+    find_library(OpenGL_LIBRARY OpenGL REQUIRED)
+    # Link OS X core system libraries.
+    target_link_libraries(${PROJECT_NAME} ${CORE_FOUNDATION_LIBRARY} ${Cocoa_LIBRARY} ${Security_LIBRARY} ${GSS_LIBRARY} ${OpenGL_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} toml11 rtmidi xpsdk imgui)
+    target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-no_weak_imports")
+
+    # Restrict set of symbols exported from the plugin to the ones required by XPLM:
+    # target_link_options(${PROJECT_NAME} PRIVATE "-exported_symbols_list ${CMAKE_SOURCE_DIR}/src/xmidictrl.sym_mac")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/mac_x64")
 elseif (UNIX)
     target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 rtmidi xpsdk imgui)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/lin_x64")
 endif ()
 
 # Set output properties for X-Plane standards

@@ -28,6 +28,12 @@ set(RTMIDI_BUILD_TESTING OFF)
 
 add_definitions(-DTARGET_OS_IPHONE=0)
 
+# Teach MingW std::threads
+if (MINGW)
+    option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
+    add_subdirectory(mingw-std-threads)
+endif()
+
 if (WIN32)
     set(RTMIDI_API_WINMM ON)
     set(RTMIDI_API_JACK OFF)

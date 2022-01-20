@@ -132,7 +132,7 @@ void menu::show_documentation()
 #if IBM
     ShellExecute(nullptr, nullptr, linkChar.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #elif LIN
-    system((std::string("xdg-open '") + linkChar + "'").c_str());
+    if (system((std::string("xdg-open '") + linkChar + "'").c_str())) {}
 #endif
 }
 
@@ -147,7 +147,7 @@ void menu::show_support()
 #if IBM
     ShellExecute(nullptr, nullptr, linkChar.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 #elif LIN
-    system((std::string("xdg-open '") + linkChar + "'").c_str());
+    if (system((std::string("xdg-open '") + linkChar + "'").c_str())) {}
 #endif
 }
 
