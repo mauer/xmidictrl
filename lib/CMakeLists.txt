@@ -25,6 +25,7 @@ message("-- Configuring build scripts for RtMidi")
 # Configre RtMidi
 set(RTMIDI_BUILD_STATIC_LIBS ON)
 set(RTMIDI_BUILD_TESTING OFF)
+set(TARGET_OS_IPHONE 0)
 
 if (WIN32)
     set(RTMIDI_API_WINMM ON)
