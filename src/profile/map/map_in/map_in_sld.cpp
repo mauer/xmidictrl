@@ -242,15 +242,32 @@ bool map_in_sld::execute(midi_message &msg, std::string_view sl_value)
         // command mode
         if (msg.velocity <= 10) {
             LOG_DEBUG << " --> Execute command '" << m_command_down << "'" << LOG_END
-            m_xp->cmd().execute(m_command_down);
+
+            if (m_command_down != m_command_prev)
+                m_xp->cmd().execute(m_command_down);
+
+            m_command_prev = m_command_down;
+
         } else if (msg.velocity >= 117) {
             LOG_DEBUG << " --> Execute command '" << m_command_up << "'" << LOG_END
-            m_xp->cmd().execute(m_command_up);
+
+            if (m_command_up != m_command_prev)
+                m_xp->cmd().execute(m_command_up);
+
+            m_command_prev = m_command_up;
+
         } else if (msg.velocity >= 50 && msg.velocity <= 70) {
             if (!m_command_middle.empty()) {
                 LOG_DEBUG << " --> Execute command '" << m_command_middle << "'" << LOG_END
-                m_xp->cmd().execute(m_command_middle);
+
+                if (m_command_middle != m_command_prev)
+                    m_xp->cmd().execute(m_command_middle);
+
+                m_command_prev = m_command_middle;
             }
+        } else {
+            // clear previous command
+            m_command_prev.clear();
         }
     }
 

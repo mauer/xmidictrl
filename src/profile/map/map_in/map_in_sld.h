@@ -66,6 +66,8 @@ private:
     float m_value_min {0.0f};
     float m_value_max {1.0f};
 
+    std::string m_command_prev {};
+
     std::string m_command_up {};
     std::string m_command_middle {};
     std::string m_command_down {};

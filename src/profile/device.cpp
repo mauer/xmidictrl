@@ -399,6 +399,12 @@ void device::process_outbound_tasks()
                 m_midi_out->sendMessage(&midi_out);
             } catch (const RtMidiError &error) {
                 LOG_ERROR << "MIDI device '" << m_name << "' :: " << error.what() << LOG_END;
+
+                // stop sending outbound messages
+                LOG_ERROR << "Connection to MIDI device lost, stop sending outbound messages" << LOG_END
+
+                m_midi_out->closePort();
+                m_exit_outbound_thread.store(true);
             }
         }
     }

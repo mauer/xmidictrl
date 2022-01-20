@@ -23,9 +23,9 @@ XMidiCtrl does not log directly in the **Log.txt** of X-Plane. Instead, it's usi
 I included a template for the *Behringer X-Touch Mini* in the **templates** folder of the installation package. This 
 template includes an example mapping and further information about the supported mapping options. I have also included 
 my hardware configuration of the *Behringer X-Touch Mini* in the same folder. You can apply those settings using the 
-*X-Touch Config Tool* from Behringer.
+*X-Touch Editor* from Behringer.
 
-To use the template file, simply copy it into your aircraft folder and start adding commands or datarefs for your 
+To use the template file, simply copy it into your aircraft folder and start adding commands and/or datarefs for your 
 buttons and encoders.
 
 ## Usage
@@ -44,6 +44,10 @@ I have included examples of my profiles in the **examples** folder.
 ## Documentation
 
 A detailed documentation of the plugin and all mapping options can be found [here](https://mauer.github.io/xmidictrl/#/).
+
+## Support
+
+If you need support or want to chat about the plugin then please visit the official support [forum](https://forums.x-pilot.com/forums/forum/274-xmidictrl/).
 
 ## Thanks
 

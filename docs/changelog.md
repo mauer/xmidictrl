@@ -5,7 +5,10 @@
 
 ##  VERSION 0.62
 
-+ Sliders can have reversed axis now by swapping value_min / value_mix (e.g. value_min = "1", value_max = "0")
++ Sliders can now be defined with a reversed axis by swapping value_min / value_mix (e.g. value_min = "1", value_max = "0")
++ If the connection to a MIDI device is lost, processing outbound messages will be stopped
++ Added new menu item for official support forum
++ Adjusted readme file
 
 -----------------------------------------------------------------------------------------------------------------------
 

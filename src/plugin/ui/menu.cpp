@@ -67,6 +67,7 @@ void menu::create_menu()
     XPLMAppendMenuSeparator(m_menu_id);
 
     XPLMAppendMenuItem(m_menu_id, "Documentation", (void *) MENUITEM_SHOW_DOCUMENTATION, 0);
+    XPLMAppendMenuItem(m_menu_id, "Support", (void *) MENUITEM_SHOW_SUPPORT, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
@@ -114,6 +115,8 @@ void menu::event_handler(void *in_menu_ref, void *in_item_ref)
         plugin::instance().show_settings_window();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
         show_documentation();
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
+        show_support();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_ABOUT_WINDOW))
         plugin::instance().show_about_window();
 }
@@ -133,5 +136,19 @@ void menu::show_documentation()
 #endif
 }
 
+
+/**
+ * Open the plugin support forum
+ */
+void menu::show_support()
+{
+    std::string linkChar = "https://forums.x-pilot.com/forums/forum/274-xmidictrl/";
+
+#if IBM
+    ShellExecute(nullptr, nullptr, linkChar.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+#elif LIN
+    (void) system((std::string("xdg-open '") + linkChar + "'").c_str());
+#endif
+}
 
 } // Namespace XMidiCtrl

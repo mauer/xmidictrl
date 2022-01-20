@@ -41,6 +41,7 @@ private:
     static void event_handler(void *in_menu_ref, void *in_item_ref);
 
     static void show_documentation();
+    static void show_support();
 
     int m_menu_container = -1;
     XPLMMenuID m_menu_id = nullptr;

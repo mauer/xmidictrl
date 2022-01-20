@@ -193,6 +193,8 @@ void profile::process()
 }
 
 
+
+
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
@@ -220,32 +222,28 @@ std::string profile::get_profile_filename()
     filename = get_filename_aircraft_path();
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
-    if (std::filesystem::exists(filename)) {
+    if (std::filesystem::exists(filename))
         return filename;
-    }
 
     // 2. check if there is a profile in the profile directory including the author and ICAO
     filename = get_filename_profiles_path(true, true);
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
-    if (std::filesystem::exists(filename)) {
+    if (std::filesystem::exists(filename))
         return filename;
-    }
 
     // 3. check if there is a profile in the profile directory including the ICAO
     filename = get_filename_profiles_path(true, false);
 
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
-    if (std::filesystem::exists(filename)) {
+    if (std::filesystem::exists(filename))
         return filename;
-    }
 
     // 4. check for the default profile
     filename = get_filename_profiles_path(false, false);
     LOG_DEBUG << " --> Search for aircraft profile '" << filename << "'" << LOG_END
-    if (std::filesystem::exists(filename)) {
+    if (std::filesystem::exists(filename))
         return filename;
-    }
 
     // nothing found, return an empty string
     return {};
@@ -421,7 +419,7 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             } else {
                 LOG_ERROR << "Line " << settings[map_no].location().line() << " :: "
                           << settings[map_no].location().line_str() << LOG_END
-                LOG_ERROR << " --> Parameters incomplete" << LOG_END
+                LOG_ERROR << " --> Parameters incomplete or incorrect" << LOG_END
 
                 m_errors_found = true;
             }
@@ -487,7 +485,8 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
             if (mapping->check())
                 device->add_outbound_map(mapping);
             else {
-                LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Parameters incomplete" << LOG_END
+                LOG_ERROR << "Device " << dev_no << " :: Mapping " << map_no << " :: Parameters incomplete or incorrect"
+                          << LOG_END
 
                 m_errors_found = true;
             }
