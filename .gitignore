@@ -3,5 +3,6 @@ cmake-build-debug/
 cmake-build-release/
 .idea/
 .vscode/
+package/
 xmidictrl.code-workspace
 

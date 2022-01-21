@@ -15,7 +15,6 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-
 message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -38,7 +37,7 @@ message("---- Directory: src")
 # Source and header files
 set(XMIDICTRL_SRC
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
-        )
+   )
 
 target_sources(${PROJECT_NAME} PRIVATE ${XMIDICTRL_SRC})
 
@@ -47,12 +46,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # link required dependencies
 if (WIN32)
+    message("Build for Windows Platform")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/win_64")
     if (MINGW)
         target_link_libraries(${PROJECT_NAME} mingw_stdthreads)
     endif()
     target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 rtmidi winmm xpsdk imgui)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/win_x64")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/win_x64")
+    message("Output directory: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 elseif (APPLE)
+    message("Build for Apple Platform")
     find_library(CORE_FOUNDATION_LIBRARY CoreFoundation REQUIRED)
     find_library(Cocoa_LIBRARY Cocoa REQUIRED)
     find_library(Security_LIBRARY Security REQUIRED)
@@ -65,10 +68,13 @@ elseif (APPLE)
 
     # Restrict set of symbols exported from the plugin to the ones required by XPLM:
     # target_link_options(${PROJECT_NAME} PRIVATE "-exported_symbols_list ${CMAKE_SOURCE_DIR}/src/xmidictrl.sym_mac")
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/mac_x64")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/mac_x64")
 elseif (UNIX)
+    message("Build for Linux Platform")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_64")
     target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 rtmidi xpsdk imgui)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/lin_x64")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_x64")
+    message("Output directory: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 endif ()
 
 # Set output properties for X-Plane standards
