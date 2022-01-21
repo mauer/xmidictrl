@@ -39,7 +39,7 @@ endif()
 if (WIN32)
     target_link_libraries(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/Libraries/Win/XPLM_64.lib)
 elseif (APPLE)
-    target_link_libraries(xpsdk INTERFACE ${CMAKE_CURRENT_LIST_DIR}/xpsdk/Libraries/Mac/ -framework XPLM)
+    target_link_libraries(xpsdk INTERFACE "-F${CMAKE_CURRENT_LIST_DIR}/xpsdk/Libraries/Mac -framework XPLM")
 endif()
 
 

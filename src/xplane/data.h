@@ -22,6 +22,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <string>
 
 // X-Plane SDK
 #include "XPLMDataAccess.h"
