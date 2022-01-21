@@ -51,9 +51,10 @@ jobs:
         run: ctest -C ${{env.BUILD_TYPE}}
 
       - uses: actions/upload-artifact@v2
+        if: runner.os == 'Linux'
         with:
           name: binaries
-          path: ${{github.workspace}}/build/*.xpl
+          path: ${{github.workspace}}/lin_64/*.xpl
           if-no-files-found: error
 
   package:
@@ -67,7 +68,7 @@ jobs:
         if: runner.os == 'Linux'
         with:
           name: binaries
-          path: XMidiCtrl/win_64
+          path: XMidiCtrl/lin_64
 
       - uses: actions/upload-artifact@v2
         with:
