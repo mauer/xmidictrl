@@ -16,7 +16,7 @@ If you "just want to build" then
 2. `cd docker`
 3. `make`
 
-During the very first invocaton this can take several minutes
+During the very first invocation this can take several minutes
 as the two(!) involved Docker images are downloaded for the first time.
 Subsequent builds will run in a matter of seconds.
 
@@ -51,21 +51,6 @@ The image was originally built using the Dockerfile provided
 as `Dockerfile_Focal_Original`, which takes up to an hour
 to fully build from scratch as most software listed above
 is actually build from sources.
-
-### Linux on Ubuntu 18.04 Bionic Beaver
-
-The targets `lin-bionic` is built based on the Docker image
-[`twinfan/bionic-lin-compile-env`](https://hub.docker.com/r/twinfan/bionic-lin-compile-env). It is provided for backwards compatibility
-as Ubuntu 18.04 is still a popular base for user installations.
-
-That image only contains
-
-- Ubuntu 18.04 as base image
-- CMake 3.19
-- standard Ubuntu compile toolchain based on gcc 7.5
-
-The image was originally built using the Dockerfile provided
-s `Dockerfile_Bionic_Original`.
 
 ### Shared Traits
 

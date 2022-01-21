@@ -29,4 +29,20 @@ within the **preferences** folder:
 ../X-Plane 11/Output/preferences/XMidiCtrl
 ```
 
-I have chosen this method to keep the update process nice and simple.
+# MacOS Security Warning
+Please bear in mind that this plugin is not officially signed by Apple Inc., which will likely raise a security popup 
+the first time you run X-Plane after the plugin installation.
+
+The message will be something like:
+`"XMidiCtrl.xpl" cannot be opened because the developer cannot be verified.`
+
+**To solve this:**
+* Click `Cancel`. The plugin will not load this time. 
+* Now, open you macOS system settings and go to `Security & Privacy`, page `General`. You will see a note saying that 
+_XMidiCtrl_ was blocked.
+* Click on the provided `Allow Anyway` button. 
+* Restart X-Plane. 
+* You will now see a different security warning: `macOS cannot verify the developer of "XMidiCtrl.xpl". Are you sure you want to open it?`
+* Click Open. X-Plane and the XMidiCtrl plugin will now load.
+
+From now on, X-Plane and XMidiCtrl will start just fine. You will need to repeat this procedure only with the next plugin update.

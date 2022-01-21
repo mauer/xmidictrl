@@ -10,6 +10,7 @@
 + Added new menu item for official support forum
 + Added support for Mac, many thanks to TwinFan (LiveTraffic) for his help!
 + Adjusted readme file
++ Added support for reading and writing datarefs, use format sim/cockpit/switches[2]
 
 -----------------------------------------------------------------------------------------------------------------------
 

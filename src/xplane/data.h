@@ -52,21 +52,32 @@ public:
 private:
     data_item *retrieve_data(std::string_view name);
 
+    static int get_index(std::string_view name);
+
     static int read_int(const data_item *item);
     static float read_float(const data_item *item);
     static double read_double(const data_item *item);
     static std::string read_byte(const data_item *item);
 
+    static float read_float_array(const data_item *item, int index);
+    static std::vector<float> read_float_array(const data_item *item);
+
+    static int read_int_array(const data_item *item, int index);
+    static std::vector<int> read_int_array(const data_item *item);
+
     static void write_int(const data_item *item, int value);
+    static void write_int_array(const data_item *item, int index, int value);
+
     static void write_float(const data_item *item, float value);
+    static void write_float_array(const data_item *item, int index, float value);
+
     static void write_double(const data_item *item, double value);
     static void write_byte(const data_item *item, std::string_view value);
 
-    static std::vector<float> read_float_array(const data_item *item);
-    static std::vector<int> read_int_array(const data_item *item);
-
     static void toggle_int(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static void toggle_int_array(const data_item *item, int index, std::string_view value_on, std::string_view value_off);
     static void toggle_float(const data_item *item, std::string_view value_on, std::string_view value_off);
+    static void toggle_float_array(const data_item *item, int index, std::string_view value_on, std::string_view value_off);
     static void toggle_double(const data_item *item, std::string_view value_on, std::string_view value_off);
     static void toggle_byte(const data_item *item, std::string_view value_on, std::string_view value_off);
 

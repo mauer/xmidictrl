@@ -19,6 +19,13 @@
 message("-- Configuring build scripts for toml11")
 add_subdirectory(toml11)
 
+# Teach MinGW std::threads
+message("-- Configuring build scripts for mingw-std-threads")
+if (MINGW)
+    option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
+    add_subdirectory(mingw-std-threads)
+endif()
+
 # Add RtMidi for accessing MIDI devices
 message("-- Configuring build scripts for RtMidi")
 
@@ -26,12 +33,9 @@ message("-- Configuring build scripts for RtMidi")
 set(RTMIDI_BUILD_STATIC_LIBS ON)
 set(RTMIDI_BUILD_TESTING OFF)
 
-add_definitions(-DTARGET_OS_IPHONE=0)
-
-# Teach MingW std::threads
-if (MINGW)
-    option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
-    add_subdirectory(mingw-std-threads)
+# Disable build for iPhone
+if (APPLE)
+    add_definitions(-DTARGET_OS_IPHONE=0)
 endif()
 
 if (WIN32)
