@@ -11,6 +11,8 @@
 + Added support for Mac, many thanks to TwinFan (LiveTraffic) for his help!
 + Adjusted readme file
 + Added support for reading and writing datarefs, use format sim/cockpit/switches[2]
++ Included printable overlay for A321 example
++ Included template for Behringer X-Touch Mini overlay
 
 -----------------------------------------------------------------------------------------------------------------------
 

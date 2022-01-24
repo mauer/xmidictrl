@@ -26,7 +26,8 @@
   * [Behringer X-Touch Mini](behringer_xtouch_mini.md)
   
 * **Advanced Options**
-  * [Aircraft Profiles](profile.md)  
+  * [Aircraft Profiles](profile.md)
+  * [Dataref Arrays](dataref_arrays.md)
   * [Sublayers](sublayers.md)
 
 * [Changelog](changelog.md)

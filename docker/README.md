@@ -17,13 +17,12 @@ If you "just want to build" then
 3. `make`
 
 During the very first invocation this can take several minutes
-as the two(!) involved Docker images are downloaded for the first time.
+as the involved Docker image is downloaded for the first time.
 Subsequent builds will run in a matter of seconds.
 
 Find results in
 
 - `build-lin`
-- `build-lin-bionic`
 - `build-mac`
 - `build-win`
 
@@ -55,8 +54,7 @@ is actually build from sources.
 ### Shared Traits
 
 The `Makefile` directs the `lin`, `mac`, `win`, and `bash_focal` targets
-to the `focal-win-mac-lin-compile-env` docker image, and the remaining
-`lin-bionic` and `bash_bionic` targets to the `bionic-lin-compile-env`.
+to the `focal-win-mac-lin-compile-env` docker image.
 
 On first launch, the local docker images are built
 
@@ -70,6 +68,6 @@ launches the docker container, this script is executed inside the
 container and triggers off the actual build process by calling `cmake`
 and `ninja`.
 
-The make targets `bash_focal` resp. `bash_bionic` launch the docker
-container with the entrypoint `bash` instead of the build script,
-so that you can interactively work with the container.
+The make targets `bash_focal` launches the docker container with the 
+entrypoint `bash` instead of the build script, so that you can interactively 
+work with the container.
