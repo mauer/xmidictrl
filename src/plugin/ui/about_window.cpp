@@ -58,7 +58,7 @@ void about_window::create_widgets()
     ImGui::TextUnformatted("Copyright (c) 2021-2022 by Marco Auer");
     ImGui::NewLine();
     ImGui::TextUnformatted(XMIDICTRL_NAME " has been released under the GNU Affero General Public License");
-    ImGui::TextUnformatted(" in hope that it will be useful, but without any warranty.");
+    ImGui::TextUnformatted("in hope that it will be useful, but without any warranty.");
     ImGui::NewLine();
     ImGui::Separator();
     ImGui::NewLine();

@@ -115,7 +115,7 @@ void menu::event_handler(void *in_menu_ref, void *in_item_ref)
         plugin::instance().show_settings_window();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
         show_documentation();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
+    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_SUPPORT))
         show_support();
     else if (!strcmp((const char *) in_item_ref, MENUITEM_ABOUT_WINDOW))
         plugin::instance().show_about_window();

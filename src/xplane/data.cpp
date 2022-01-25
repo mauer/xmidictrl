@@ -545,7 +545,7 @@ void data::write_byte(const data_item *item, std::string_view value)
  */
 float data::read_float_array(const data_item *item, int index)
 {
-    float value;
+    float value = 0.0f;
 
     if (index > -1)
         XPLMGetDatavf(item->dataref, &value, index, 1);
@@ -561,7 +561,7 @@ float data::read_float_array(const data_item *item, int index)
  */
 std::vector<float> data::read_float_array(const data_item *item)
 {
-    std::vector<float> values;
+    std::vector<float> values {};
 
     int size = XPLMGetDatavf(item->dataref, nullptr, 0, 0);
 
@@ -593,7 +593,7 @@ int data::read_int_array(const data_item *item, int index)
  */
 std::vector<int> data::read_int_array(const data_item *item)
 {
-    std::vector<int> values;
+    std::vector<int> values {};
 
     values.resize(XPLMGetDatavi(item->dataref, nullptr, 0, 0));
     XPLMGetDatavi(item->dataref, &values[0], 0, static_cast<int>(values.size()));
