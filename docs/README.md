@@ -11,7 +11,7 @@ Other midi devices should work, as long as they send MIDI Control Change (CC) me
 
 ## Supported Operating Systems
 
-This version supports Microsoft Windows.
+This version supports Microsoft Windows, Linux and macOS.
 
 ## Logging
 
