@@ -20,8 +20,8 @@ message("-- Configuring build scripts for toml11")
 add_subdirectory(toml11)
 
 # Teach MinGW std::threads
-message("-- Configuring build scripts for mingw-std-threads")
 if (MINGW)
+    message("-- Configuring build scripts for mingw-std-threads")
     option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
     add_subdirectory(mingw-std-threads)
 endif()
@@ -32,6 +32,7 @@ message("-- Configuring build scripts for RtMidi")
 # Configre RtMidi
 set(RTMIDI_BUILD_STATIC_LIBS ON)
 set(RTMIDI_BUILD_TESTING OFF)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 # Disable build for iPhone
 if (APPLE)

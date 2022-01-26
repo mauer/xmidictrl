@@ -1,4 +1,4 @@
-platforms=win mac lin #lin-bionic
+platforms=win mac lin
 container_focal=xmidictrl-compile-env
 
 all: $(platforms)
