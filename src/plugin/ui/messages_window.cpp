@@ -148,13 +148,14 @@ void messages_window::create_tab_midi_msg()
 
         ImGui::BeginChild("TEXT_TABLE");
 
-        ImGui::BeginTable("tableMidiMessages", 7, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
+        ImGui::BeginTable("tableMidiMessages", 8, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
         ImGui::TableSetupColumn("Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
+        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 100);
         ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Control Change", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 100);
         ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
@@ -170,22 +171,31 @@ void messages_window::create_tab_midi_msg()
             ImGui::Text("%s", msg->time.c_str());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->type.c_str());
+            ImGui::Text("%s", msg->direction.c_str());
 
             ImGui::TableNextColumn();
             ImGui::Text("%i", msg->port);
 
             ImGui::TableNextColumn();
-            ImGui::Text("%i", msg->status - OFFSET_MIDI_CHANNEL_STATUS);
+            ImGui::Text("%s", msg->type.c_str());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%i", msg->data);
+            if (msg->channel != MIDI_NONE)
+                ImGui::Text("%i", msg->channel);
 
             ImGui::TableNextColumn();
-            ImGui::Text("%i", msg->velocity);
+            if (msg->data != MIDI_NONE)
+                ImGui::Text("%i", msg->data);
 
             ImGui::TableNextColumn();
-            ImGui::Text("Status = %i, Data = %i, Velocity = %i", msg->status, msg->data, msg->velocity);
+            if (msg->velocity != MIDI_NONE)
+                ImGui::Text("%i", msg->velocity);
+
+            ImGui::TableNextColumn();
+            if (msg->velocity != MIDI_NONE)
+                ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status, msg->data, msg->velocity);
+            else
+                ImGui::Text("Status = %i | Data 1 = %i", msg->status, msg->data);
         }
 
         ImGui::EndTable();

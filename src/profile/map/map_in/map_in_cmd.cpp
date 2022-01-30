@@ -73,10 +73,10 @@ std::string_view map_in_cmd::command() const
  */
 void map_in_cmd::set_velocity_on(int velocity_on)
 {
-    if (velocity_on >= 0 && velocity_on <= 127)
+    if (velocity_on >= MIDI_VELOCITY_MIN && velocity_on <= MIDI_VELOCITY_MAX)
         m_velocity_on = velocity_on;
     else
-        m_velocity_on = 127;
+        m_velocity_on = MIDI_VELOCITY_MAX;
 }
 
 
@@ -94,7 +94,7 @@ unsigned int map_in_cmd::velocity_on() const
  */
 void map_in_cmd::set_velocity_off(int velocity_off)
 {
-    if (velocity_off >= 0 && velocity_off <= 127)
+    if (velocity_off >= MIDI_VELOCITY_MIN && velocity_off <= MIDI_VELOCITY_MAX)
         m_velocity_off = velocity_off;
     else
         m_velocity_off = 0;

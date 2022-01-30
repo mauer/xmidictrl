@@ -27,8 +27,7 @@
 
 namespace xmidictrl {
 
-typedef std::multimap<std::string, map_out::ptr>::iterator map_out_itr;
-typedef std::pair<map_out_itr, map_out_itr> map_out_pair;
+typedef std::vector<std::shared_ptr<map_out>>::iterator map_out_itr;
 
 class map_out_list {
 public:
@@ -36,7 +35,6 @@ public:
     ~map_out_list();
 
     void add(const std::shared_ptr<map_out>& map);
-    map_out_pair get(int ch, int cc);
 
     map_out_itr begin();
     map_out_itr end();
@@ -44,7 +42,7 @@ public:
     unsigned int size();
 
 protected:
-    std::multimap<std::string, map_out::ptr> m_list;
+    std::vector<std::shared_ptr<map_out>> m_list;
 };
 
 } // Namespace xmidictrl

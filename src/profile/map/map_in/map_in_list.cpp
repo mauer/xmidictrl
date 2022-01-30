@@ -18,6 +18,7 @@
 #include "map_in_list.h"
 
 // XMidiCtrl
+#include "logger.h"
 #include "utils.h"
 
 namespace xmidictrl {
@@ -44,18 +45,18 @@ map_in_list::~map_in_list()
 /**
  * Add a new mapping
  */
-void map_in_list::add(const std::shared_ptr<map_in>& map)
+void map_in_list::add(const std::shared_ptr<map_in> &map)
 {
-    m_list.insert({utils::ch_cc(map->ch(), map->cc()), map});
+    m_list.insert({map->get_key(), map});
 }
 
 
 /**
- * Retrieve the mapping for a control change
+ * Retrieve all mappings for a given key
  */
-map_in_pair map_in_list::get(const unsigned int ch, const unsigned int cc)
+map_in_pair map_in_list::get(const std::string &key)
 {
-    return m_list.equal_range(utils::ch_cc(ch, cc));
+    return m_list.equal_range(key);
 }
 
 

@@ -34,8 +34,7 @@ namespace xmidictrl {
  */
 map_out_drf::map_out_drf(std::shared_ptr<xplane> xp)
     : map_out(std::move(xp))
-{
-}
+{}
 
 
 /**
@@ -44,6 +43,11 @@ map_out_drf::map_out_drf(std::shared_ptr<xplane> xp)
 map_out_drf::~map_out_drf()
 {
     m_datarefs.clear();
+
+    m_xp_values.clear();
+
+    m_values_on.clear();
+    m_values_off.clear();
 }
 
 
@@ -82,38 +86,38 @@ void map_out_drf::set_dataref(std::vector<std::string> dataref)
 
 
 /**
- * Set value on
+ * Set values on
  */
-void map_out_drf::set_value_on(std::string_view value_on)
+void map_out_drf::set_values_on(const std::set<std::string> &values)
 {
-    m_value_on = value_on;
+    m_values_on = values;
 }
 
 
 /**
  * Return value on
  */
-std::string_view map_out_drf::value_on() const
+std::set<std::string> map_out_drf::values_on() const
 {
-    return m_value_on;
+    return m_values_on;
 }
 
 
 /**
- * Set value off
+ * Set values off
  */
-void map_out_drf::set_value_off(std::string_view value_off)
+void map_out_drf::set_values_off(const std::set<std::string> &values)
 {
-    m_value_off = value_off;
+    m_values_off = values;
 }
 
 
 /**
  * Return value off
  */
-std::string_view map_out_drf::value_off() const
+std::set<std::string> map_out_drf::values_off() const
 {
-    return m_value_off;
+    return m_values_off;
 }
 
 
@@ -122,10 +126,10 @@ std::string_view map_out_drf::value_off() const
  */
 void map_out_drf::set_velocity_on(int velocity_on)
 {
-    if (velocity_on >= 0 && velocity_on <= 127)
+    if (velocity_on >= MIDI_VELOCITY_MIN && velocity_on <= MIDI_VELOCITY_MAX)
         m_velocity_on = velocity_on;
     else
-        m_velocity_on = 127;
+        m_velocity_on = MIDI_VELOCITY_MAX;
 }
 
 
@@ -143,10 +147,10 @@ unsigned int map_out_drf::velocity_on() const
  */
 void map_out_drf::set_velocity_off(int velocity_off)
 {
-    if (velocity_off >= 0 && velocity_off <= 127)
+    if (velocity_off >= MIDI_VELOCITY_MIN && velocity_off <= MIDI_VELOCITY_MAX)
         m_velocity_off = velocity_off;
     else
-        m_velocity_off = 0;
+        m_velocity_off = MIDI_VELOCITY_MIN;
 }
 
 
@@ -171,16 +175,36 @@ void map_out_drf::read_config(toml::value &settings)
     if (utils::toml_contains(settings, CFG_KEY_DATAREF)) {
         // check if single value or array
         if (settings[CFG_KEY_DATAREF].is_array())
-            set_dataref(utils::toml_read_string_array(settings, CFG_KEY_DATAREF));
+            set_dataref(utils::toml_read_str_vector_array(settings, CFG_KEY_DATAREF));
         else
             set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
     }
 
-    // read value on
-    set_value_on(utils::toml_read_string(settings, CFG_KEY_VALUE_ON, false));
+    // read values on
+    if (utils::toml_is_array(settings, CFG_KEY_VALUE_ON)) {
+        set_values_on(utils::toml_read_str_set_array(settings, CFG_KEY_VALUE_ON, false));
+    } else {
+        std::set<std::string> list;
+        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_ON, false);
 
-    // read value off
-    set_value_off(utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false));
+        if (!value.empty())
+            list.insert(value);
+
+        set_values_on(list);
+    }
+
+    // read values off
+    if (utils::toml_is_array(settings, CFG_KEY_VALUE_OFF)) {
+        set_values_off(utils::toml_read_str_set_array(settings, CFG_KEY_VALUE_OFF, false));
+    } else {
+        std::set<std::string> list;
+        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+
+        if (!value.empty())
+            list.insert(value);
+
+        set_values_off(list);
+    }
 
     // read velocity on
     set_velocity_on(utils::toml_read_int(settings, CFG_KEY_VELOCITY_ON, false));
@@ -201,10 +225,10 @@ bool map_out_drf::check()
     if (m_datarefs.empty())
         return false;
 
-    if (m_value_on.empty() && m_value_off.empty())
+    if (m_values_on.empty() && m_values_off.empty())
         return false;
 
-    for (auto dataref : m_datarefs) {
+    for (const auto &dataref: m_datarefs) {
         if (!m_xp->datarefs().check(dataref))
             return false;
     }
@@ -222,9 +246,9 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
 
     bool send_msg = false;
     bool send_on = false;
-    int send_off = 0;
+    char send_off = 0;
 
-    // if one value has been changed, all other values have to be checked
+    // if one value has been changed, all other values have to be checked as well
     for (auto &dataref: m_datarefs) {
         // get the current value from X-Plane
         std::string value_current;
@@ -260,17 +284,17 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
         std::string value_current = m_xp_values[dataref];
 
         // value_on has been defined
-        if (!m_value_on.empty()) {
-            if (value_current == m_value_on) {
+        if (!m_values_on.empty()) {
+            if (m_values_on.find(value_current) != m_values_on.end()) {
                 send_on = true;
                 break;
-            } else if (value_current == m_value_off || m_value_off.empty()) {
+            } else if (m_values_off.find(value_current) != m_values_off.end() || m_values_off.empty()) {
                 send_off++;
             }
         } else {
-            if (value_current == m_value_off) {
+            if (m_values_off.find(value_current) != m_values_off.end()) {
                 send_off++;
-            } else if (value_current == m_value_on || m_value_on.empty()) {
+            } else if (m_values_on.find(value_current) != m_values_on.end() || m_values_on.empty()) {
                 send_on = true;
                 break;
             }
@@ -282,8 +306,29 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
 
         task->data_changed = changed;
 
+        switch (data_type()) {
+            case map_data_type::control_change:
+                task->type = midi_msg_type::control_change;
+                break;
+
+            case map_data_type::note:
+                if (send_on)
+                    task->type = midi_msg_type::note_on;
+                else
+                    task->type = midi_msg_type::note_off;
+                break;
+
+            case map_data_type::program_change:
+                task->type = midi_msg_type::program_change;
+                break;
+
+            case map_data_type::none:
+                task->type = midi_msg_type::none;
+                break;
+        }
+
         task->ch = ch();
-        task->cc = cc();
+        task->data = data();
 
         if (send_on)
             task->velocity = m_velocity_on;
@@ -306,9 +351,28 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 
     task->data_changed = true;
 
+    switch (data_type()) {
+        case map_data_type::control_change:
+            task->type = midi_msg_type::control_change;
+            break;
+
+        case map_data_type::note:
+            task->type = midi_msg_type::note_off;
+            break;
+
+        case map_data_type::program_change:
+            task->type = midi_msg_type::program_change;
+            break;
+
+        case map_data_type::none:
+            task->type = midi_msg_type::none;
+            break;
+    }
+
     task->ch = ch();
-    task->cc = cc();
-    task->velocity = 0;
+    task->data = data();
+
+    task->velocity = MIDI_VELOCITY_MIN;
 
     return task;
 }

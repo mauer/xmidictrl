@@ -35,8 +35,8 @@ public:
     explicit map_in_list() = default;
     ~map_in_list();
 
-    void add(const std::shared_ptr<map_in>& map);
-    map_in_pair get(unsigned int ch, unsigned int cc);
+    void add(const std::shared_ptr<map_in> &map);
+    map_in_pair get(const std::string &key);
 
     map_in_itr begin();
     map_in_itr end();

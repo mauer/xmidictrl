@@ -36,10 +36,6 @@
 
 namespace xmidictrl {
 
-//XPLMDataRef xplane_window::m_modelviewMatrixRef = nullptr;
-//XPLMDataRef xplane_window::m_viewportRef = nullptr;
-//XPLMDataRef xplane_window::m_projectionMatrixRef = nullptr;
-
 //---------------------------------------------------------------------------------------------------------------------
 //   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
@@ -52,16 +48,6 @@ xplane_window::xplane_window(std::shared_ptr<xplane> xp, int width, int height, 
       m_width(width),
       m_height(height)
 {
-    // Set global variables
-    //if (m_modelviewMatrixRef == nullptr)
-    //    m_modelviewMatrixRef = XPLMFindDataRef("sim/graphics/view/modelview_matrix");
-
-    //if (m_viewportRef == nullptr)
-    //    m_viewportRef = XPLMFindDataRef("sim/graphics/view/viewport");
-
-    //if (m_projectionMatrixRef == nullptr)
-    //    m_projectionMatrixRef = XPLMFindDataRef("sim/graphics/view/projection_matrix");
-
     // create window in X-Plane, but don't show it yet
     create_window(translucent);
 }
@@ -93,15 +79,7 @@ void xplane_window::multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> 
     dst[2] = v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + v[3] * m[14];
     dst[3] = v[0] * m[3] + v[1] * m[7] + v[2] * m[11] + v[3] * m[15];
 }
-/*
-void xplane_window::multi_matrix_vec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4])
-{
-    dst[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
-    dst[1] = v[0] * m[1] + v[1] * m[5] + v[2] * m[9] + v[3] * m[13];
-    dst[2] = v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + v[3] * m[14];
-    dst[3] = v[0] * m[3] + v[1] * m[7] + v[2] * m[11] + v[3] * m[15];
-}
-*/
+
 
 /**
  * Return the window ID
@@ -156,8 +134,6 @@ bool xplane_window::is_visible() const
 
 
 
-
-
 //---------------------------------------------------------------------------------------------------------------------
 //   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
@@ -183,9 +159,9 @@ bool xplane_window::on_right_click(int x, int y, XPLMMouseStatus status)
 /**
  * On key pressed event
  */
-void xplane_window::on_key(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus)
+void xplane_window::on_key(char key, XPLMKeyFlags flags, char virtual_key, bool losing_focus)
 {
-    if (losingFocus) {
+    if (losing_focus) {
         return;
     }
 }
@@ -320,14 +296,10 @@ void xplane_window::update_matrices()
     m_xp->datarefs().read("sim/graphics/view/modelview_matrix", m_modelview);
     m_xp->datarefs().read("sim/graphics/view/projection_matrix", m_projection);
     m_xp->datarefs().read("sim/graphics/view/viewport", m_viewport);
-
-    //XPLMGetDatavf(m_modelviewMatrixRef, m_modelView, 0, 16);
-    //XPLMGetDatavf(m_projectionMatrixRef, m_projection, 0, 16);
-    //XPLMGetDatavi(m_viewportRef, m_viewport, 0, 4);
 }
 
 
-void xplane_window::boxels_to_native(int x, int y, int &outX, int &outY)
+void xplane_window::boxels_to_native(int x, int y, int &out_x, int &out_y)
 {
     GLfloat boxelPos[4] = {(GLfloat) x, (GLfloat) y, 0, 1};
     GLfloat eye[4], ndc[4];
@@ -338,8 +310,8 @@ void xplane_window::boxels_to_native(int x, int y, int &outX, int &outY)
     ndc[0] *= ndc[3];
     ndc[1] *= ndc[3];
 
-    outX = static_cast<int>((ndc[0] * 0.5f + 0.5f) * m_viewport[2] + m_viewport[0]);
-    outY = static_cast<int>((ndc[1] * 0.5f + 0.5f) * m_viewport[3] + m_viewport[1]);
+    out_x = static_cast<int>((ndc[0] * 0.5f + 0.5f) * m_viewport[2] + m_viewport[0]);
+    out_y = static_cast<int>((ndc[1] * 0.5f + 0.5f) * m_viewport[3] + m_viewport[1]);
 }
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl

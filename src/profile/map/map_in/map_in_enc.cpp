@@ -385,12 +385,12 @@ bool map_in_enc::execute_dataref(midi_message &msg)
         }
 
         switch (msg.velocity) {
-            case 0:
+            case MIDI_VELOCITY_MIN:
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_down() << "'" << LOG_END
                 value = value + modifier_down();
                 break;
 
-            case 127:
+            case MIDI_VELOCITY_MAX:
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_up() << "'" << LOG_END
                 value = value + modifier_up();
 
@@ -446,12 +446,12 @@ bool map_in_enc::execute_command(midi_message &msg)
     } else {
         // range mode
         switch (msg.velocity) {
-            case 0:
+            case MIDI_VELOCITY_MIN:
                 LOG_DEBUG << " --> Execute command '" << command_down() << "'" << LOG_END
                 m_xp->cmd().execute(command_down());
                 break;
 
-            case 127:
+            case MIDI_VELOCITY_MAX:
                 LOG_DEBUG << " --> Execute command '" << command_up() << "'" << LOG_END
                 m_xp->cmd().execute(command_up());
                 break;

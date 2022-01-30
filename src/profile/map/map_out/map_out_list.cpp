@@ -46,16 +46,7 @@ map_out_list::~map_out_list()
  */
 void map_out_list::add(const std::shared_ptr<map_out>& map)
 {
-    m_list.insert({utils::ch_cc(map->ch(), map->cc()), map});
-}
-
-
-/**
- * Retrieve the mapping for a control change
- */
-map_out_pair map_out_list::get(const int ch, const int cc)
-{
-    return m_list.equal_range(utils::ch_cc(ch, cc));
+    m_list.push_back(map);
 }
 
 

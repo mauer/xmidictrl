@@ -33,10 +33,10 @@
 
 // OpenGL
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+    #include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
 #endif
 
 // X-Plane SDK
@@ -56,7 +56,6 @@ public:
 
     typedef std::shared_ptr<xplane_window> ptr;
 
-    //static void multi_matrix_vec4f(GLfloat dst[4], const GLfloat m[16], const GLfloat v[4]);
     static void multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> &m, const GLfloat v[4]);
 
     XPLMWindowID window_id();
@@ -71,13 +70,13 @@ public:
     bool hasKeyboardFocus();
     void requestKeyboardFocus(bool request);
 
-    void boxels_to_native(int x, int y, int &outX, int &outY);
+    void boxels_to_native(int x, int y, int &out_x, int &out_y);
 
- protected:
+protected:
     virtual void on_draw() = 0;
     virtual bool on_click(int x, int y, XPLMMouseStatus status);
     virtual bool on_right_click(int x, int y, XPLMMouseStatus status);
-    virtual void on_key(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus);
+    virtual void on_key(char key, XPLMKeyFlags flags, char virtual_key, bool losing_focus);
     virtual XPLMCursorStatus on_cursor(int x, int y);
     virtual bool on_mouse_wheel(int x, int y, int wheel, int clicks);
 
@@ -85,7 +84,7 @@ public:
 
     std::shared_ptr<xplane> m_xp;
 
- private:
+private:
     void create_window(bool translucent);
 
     XPLMWindowID m_window_id {nullptr};
@@ -93,19 +92,12 @@ public:
     int m_width;
     int m_height;
 
-    //static XPLMDataRef m_modelviewMatrixRef;
-    //static XPLMDataRef m_viewportRef;
-    //static XPLMDataRef m_projectionMatrixRef;
-
-    //float m_modelView[16]{};
-    //float m_projection[16]{};
-    //int m_viewport[4]{};
     std::vector<float> m_modelview {};
     std::vector<float> m_projection {};
 
     std::vector<int> m_viewport {};
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
 #endif // XPLANE_WINDOW_H

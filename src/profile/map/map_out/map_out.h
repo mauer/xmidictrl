@@ -34,8 +34,6 @@ public:
     explicit map_out(std::shared_ptr<xplane> xp);
     ~map_out() override = default;
 
-    typedef std::shared_ptr<map_out> ptr;
-
     virtual std::shared_ptr<outbound_task> execute(mode_out mode) = 0;
     virtual std::shared_ptr<outbound_task> reset() = 0;
 };

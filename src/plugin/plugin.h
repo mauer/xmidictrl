@@ -100,7 +100,7 @@ private:
     XPLMCommandRef m_cmd_toggle_sublayer {nullptr};
 
     // internal sublayer number
-    int m_sublayer;
+    int m_sublayer {0};
 
     // list of all plugin windows
     std::map<window_type, std::shared_ptr<xplane_window>> m_windows;

@@ -64,6 +64,36 @@ bool utils::toml_contains(toml::value &settings, std::string_view name, bool man
 
 
 /**
+ * Check if the given key is an array
+ */
+bool utils::toml_is_array(toml::value &settings, std::string_view name)
+{
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_is_array --> name is empty" << LOG_END
+        return false;
+    }
+
+    try {
+        // read dataref
+        if (settings.contains(name.data())) {
+            if (settings[name.data()].is_array())
+                return true;
+            else
+                return false;
+        } else {
+            return false;
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return false;
+}
+
+
+/**
  * Read the value of a string parameter
  */
 std::string utils::toml_read_string(toml::value &settings, std::string_view name, bool mandatory)
@@ -93,11 +123,48 @@ std::string utils::toml_read_string(toml::value &settings, std::string_view name
 
 
 /**
- * Read the values of a string array
+ * Read the values of a string array and return as set
  */
-std::vector<std::string> utils::toml_read_string_array(toml::value &settings,
-                                                       std::string_view name,
-                                                       bool mandatory)
+std::set<std::string> utils::toml_read_str_set_array(toml::value &settings,
+                                                     std::string_view name,
+                                                     bool mandatory)
+{
+    if (name.empty()) {
+        LOG_ERROR << "Internal error (toml_read_string --> name is empty" << LOG_END
+        return {};
+    }
+
+    std::set<std::string> list;
+
+    try {
+        // read dataref array
+        if (toml_contains(settings, name, mandatory) && (settings[name.data()].is_array())) {
+            for (int i = 0; i < settings[name.data()].size(); i++) {
+                std::string value = settings[name.data()][i].as_string();
+
+                LOG_DEBUG << " --> Line " << settings.location().line() << " :: Parameter '" << name << "' = '"
+                          << value << "'" << LOG_END
+
+                if (!value.empty())
+                    list.insert(value);
+            }
+        }
+    } catch (toml::type_error &error) {
+        LOG_ERROR << "Line " << settings.location().line() << " :: " << settings.location().line_str() << LOG_END
+        LOG_ERROR << " --> Error reading mapping" << LOG_END
+        LOG_ERROR << error.what() << LOG_END
+    }
+
+    return list;
+}
+
+
+/**
+ * Read the values of a string array and return as vector
+ */
+std::vector<std::string> utils::toml_read_str_vector_array(toml::value &settings,
+                                                        std::string_view name,
+                                                        bool mandatory)
 {
     if (name.empty()) {
         LOG_ERROR << "Internal error (toml_read_string --> name is empty" << LOG_END
@@ -116,7 +183,7 @@ std::vector<std::string> utils::toml_read_string_array(toml::value &settings,
                           << value << "'" << LOG_END
 
                 if (!value.empty())
-                    list.emplace_back(value);
+                    list.push_back(value);
             }
         }
     } catch (toml::type_error &error) {
@@ -204,49 +271,6 @@ float utils::toml_read_float(toml::value &settings, std::string_view name, bool 
     }
 
     return value;
-}
-
-
-/**
- * Return the text of a text message type
- */
-std::string utils::text_msg_type_as_text(text_msg_type type)
-{
-    switch (type) {
-        case text_msg_type::all:
-            return "All";
-
-        case text_msg_type::error:
-            return "Error";
-
-        case text_msg_type::warn:
-            return "Warning";
-
-        case text_msg_type::info:
-            return "Information";
-
-        case text_msg_type::debug:
-            return "Debug";
-    }
-
-    return {"Debug"};
-}
-
-
-/**
- * Return the text of a midi message type
- */
-std::string utils::midi_msg_type_as_text(msg_direction type)
-{
-    switch (type) {
-        case msg_direction::inbound:
-            return "Inbound";
-
-        case msg_direction::outbound:
-            return "Outbound";
-    }
-
-    return "Unknown";
 }
 
 
@@ -355,11 +379,14 @@ std::string utils::time_to_string(time_point time)
 
 
 /**
- * Return MIDI channel and control change as combined string
+ * Create a unique key for mappings
  */
-std::string utils::ch_cc(const unsigned int ch, const unsigned int cc)
+std::string utils::create_map_key(const unsigned char ch, std::string_view type_code, const unsigned char data)
 {
-    return std::to_string(ch) + "_" + std::to_string(cc);
+    std::stringstream ss;
+    ss << static_cast<int>(ch) << type_code << static_cast<int>(data);
+
+    return ss.str();
 }
 
 

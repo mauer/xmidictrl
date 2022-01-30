@@ -3,6 +3,13 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 0.63
+
++ Added support for note and program change midi messages
++ Enhanced mapping for outbound messages (value arrays)
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 0.62
 
 + Sliders can now be defined with a reversed axis by swapping value_min / value_mix (e.g. value_min = "1", value_max = "0")

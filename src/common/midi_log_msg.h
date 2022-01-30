@@ -28,13 +28,17 @@ namespace xmidictrl {
 
 struct midi_log_msg {
     std::string time {};
+    std::string direction {};
+
+    unsigned int port {0};
+
     std::string type {};
 
-    int port {-1};
+    unsigned char channel {MIDI_NONE};
 
-    unsigned int status {0};
-    unsigned int data {0};
-    unsigned int velocity {0};
+    unsigned char status {MIDI_NONE};
+    unsigned char data {MIDI_NONE};
+    unsigned char velocity {MIDI_NONE};
 };
 
 } // Namespace xmidictrl

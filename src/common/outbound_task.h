@@ -30,11 +30,12 @@ namespace xmidictrl {
 struct outbound_task {
     bool data_changed {false};
 
-    unsigned int ch {0};
-    unsigned int cc {0};
-    unsigned int velocity {0};
+    midi_msg_type type {midi_msg_type::none};
 
-    std::shared_ptr<midi_message> msg;
+    unsigned char ch {MIDI_NONE};
+    unsigned char data {MIDI_NONE};
+
+    unsigned char velocity {MIDI_NONE};
 };
 
 } // Namespace xmidictrl

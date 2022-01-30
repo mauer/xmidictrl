@@ -37,21 +37,26 @@ public:
 
     virtual map_type type();
 
-    [[nodiscard]] int ch() const;
-    [[nodiscard]] int cc() const;
+    [[nodiscard]] unsigned char ch() const;
+    [[nodiscard]] map_data_type data_type() const;
+    [[nodiscard]] unsigned char data() const;
+
+    std::string get_key();
 
     virtual void read_config(toml::value &data);
     virtual bool check();
 
 protected:
     void read_ch(toml::value &data);
-    void read_cc(toml::value &data);
+    void read_data(toml::value &data);
 
     std::shared_ptr<xplane> m_xp;
 
 private:
-    int m_ch {-1};
-    int m_cc {-1};
+    unsigned char m_ch {MIDI_NONE};
+
+    map_data_type m_data_type {map_data_type::none};
+    unsigned char m_data {MIDI_NONE};
 };
 
 } // Namespace xmidictrl

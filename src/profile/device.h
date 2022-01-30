@@ -63,6 +63,7 @@ public:
     static void midi_callback(double deltatime, std::vector<unsigned char> *message, void *userdata);
 
     void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
+
     void process_outbound_mappings();
     void process_outbound_reset();
 
@@ -91,7 +92,7 @@ private:
     std::atomic<bool> m_exit_outbound_thread {false};
     std::mutex m_outbound_mutex;
 
-    std::queue<std::shared_ptr<outbound_task>> m_outbound_tasks;
+    std::queue<std::shared_ptr<midi_message>> m_outbound_msg;
     std::set<std::string> m_ch_cc_locked;
 };
 

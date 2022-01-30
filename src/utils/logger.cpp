@@ -99,7 +99,7 @@ void logger::post_text_message(const std::shared_ptr<text_message> &msg)
     // add message to internal list
     std::shared_ptr<text_log_msg> log_msg = std::make_shared<text_log_msg>();
     log_msg->time = msg->time;
-    log_msg->type = utils::text_msg_type_as_text(msg->type);
+    log_msg->type = msg->get_type_text();
     log_msg->text = msg->text;
 
     if (m_settings != nullptr) {
@@ -145,10 +145,14 @@ void logger::post_midi_message(const std::shared_ptr<midi_message> &msg)
     if (m_settings->log_midi()) {
         std::shared_ptr<midi_log_msg> log_msg = std::make_shared<midi_log_msg>();
 
-        log_msg->time = utils::time_to_string(msg->time);
-        log_msg->type = utils::midi_msg_type_as_text(msg->type);
+        log_msg->time = utils::time_to_string(msg->time).c_str();
+        log_msg->direction = msg->direction_text().c_str();
 
-        log_msg->port = static_cast<int>(msg->port);
+        log_msg->port = msg->port;
+
+        log_msg->type = msg->get_type_text();
+
+        log_msg->channel = msg->get_channel();
 
         log_msg->status = msg->status;
         log_msg->data = msg->data;

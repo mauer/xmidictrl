@@ -28,6 +28,29 @@ struct text_message {
     std::string time;
     text_msg_type type;
     std::string text;
+
+    // Return the message type as text
+    [[nodiscard]] std::string get_type_text() const
+    {
+        switch (type) {
+            case text_msg_type::all:
+                return "All";
+
+            case text_msg_type::error:
+                return "Error";
+
+            case text_msg_type::warn:
+                return "Warning";
+
+            case text_msg_type::info:
+                return "Information";
+
+            case text_msg_type::debug:
+                return "Debug";
+        }
+
+        return "<unknown>>";
+    }
 };
 
 } // Namespace xmidictrl

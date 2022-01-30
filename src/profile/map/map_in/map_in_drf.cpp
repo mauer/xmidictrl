@@ -62,8 +62,9 @@ void map_in_drf::read_config(toml::value &settings)
     m_dataref = utils::toml_read_string(settings, CFG_KEY_DATAREF);
 
     // check if a values array has been defined
-    m_values = utils::toml_read_string_array(settings, CFG_KEY_VALUES, false);
+    m_values = utils::toml_read_str_vector_array(settings, CFG_KEY_VALUES, false);
 
+    // TODO: Do we really need m_value_on and m_value_off anymore?
     if (m_values.empty()) {
         // read value on
         m_value_on = utils::toml_read_string(settings, CFG_KEY_VALUE_ON);

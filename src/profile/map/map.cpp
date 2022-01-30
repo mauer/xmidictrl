@@ -29,7 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(std::shared_ptr<xplane> xplane) : m_xp(std::move(xplane))
+map::map(std::shared_ptr<xplane> xplane)
+    : m_xp(std::move(xplane))
 {}
 
 
@@ -51,18 +52,56 @@ map_type map::type()
 /**
  * Return the chanel number
  */
-int map::ch() const
+unsigned char map::ch() const
 {
     return m_ch;
 }
 
 
 /**
- * Return the control change number
+ * Return the data type
  */
-int map::cc() const
+map_data_type map::data_type() const
 {
-    return m_cc;
+    return m_data_type;
+}
+
+
+/**
+ * Return the data number
+ */
+unsigned char map::data() const
+{
+    return m_data;
+}
+
+
+/**
+ * Return a string containing channel, type and data
+ */
+std::string map::get_key()
+{
+    std::string type_code;
+
+    switch (m_data_type) {
+        case map_data_type::control_change:
+            type_code = KEY_CONTROL_CHANGE;
+            break;
+
+        case map_data_type::note:
+            type_code = KEY_NOTE;
+            break;
+
+        case map_data_type::program_change:
+            type_code = KEY_PROGRAM_CHANGE;
+            break;
+
+        default:
+            type_code = "";
+            break;
+    }
+
+    return utils::create_map_key(ch(), type_code, data());
 }
 
 
@@ -73,7 +112,7 @@ void map::read_config(toml::value &data)
 {
     // required config
     read_ch(data);
-    read_cc(data);
+    read_data(data);
 }
 
 
@@ -82,7 +121,7 @@ void map::read_config(toml::value &data)
  */
 bool map::check()
 {
-    if (m_ch >= 1 && m_cc >= 0)
+    if (m_ch != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
         return true;
     else
         return false;
@@ -105,7 +144,7 @@ void map::read_ch(toml::value &data)
     try {
         // read channel
         if (data.contains(CFG_KEY_CH)) {
-            m_ch = static_cast<int>( data[CFG_KEY_CH].as_integer());
+            m_ch = static_cast<unsigned char>( data[CFG_KEY_CH].as_integer());
 
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CH << "' = '" << m_ch
                       << "'" << LOG_END
@@ -124,31 +163,43 @@ void map::read_ch(toml::value &data)
 
 
 /**
- * Read parameter cc
+ * Read parameter data
  */
-void map::read_cc(toml::value &data)
+void map::read_data(toml::value &data)
 {
-    m_cc = -1;
+    m_data = MIDI_NONE;
+    m_data_type = map_data_type::none;
 
     try {
         // read control change
         if (data.contains(CFG_KEY_CC)) {
-            m_cc = static_cast<int>( data[CFG_KEY_CC].as_integer());
+            m_data = static_cast<unsigned char>( data[CFG_KEY_CC].as_integer());
+            m_data_type = map_data_type::control_change;
 
-            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' = '" << m_cc
+            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' = '" << m_data
                       << "'" << LOG_END
         } else if (data.contains(CFG_KEY_CC_DEPRECATED)) {
-            m_cc = static_cast<int>( data[CFG_KEY_CC_DEPRECATED].as_integer());
+            m_data = static_cast<unsigned char>( data[CFG_KEY_CC_DEPRECATED].as_integer());
+            m_data_type = map_data_type::control_change;
 
             LOG_WARN << " --> Line " << data.location().line() << "  :: Parameter '" << CFG_KEY_CC_DEPRECATED
                      << "' is deprecated, please rename it to '" << CFG_KEY_CC << "'" << LOG_END
 
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC_DEPRECATED << "' = '"
-                      << m_cc << "'" << LOG_END
+                      << m_data << "'" << LOG_END
+        } else if (data.contains(CFG_KEY_NOTE)) {
+            m_data = static_cast<unsigned char>( data[CFG_KEY_NOTE].as_integer());
+            m_data_type = map_data_type::note;
+
+            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_NOTE << "' = '"
+                      << m_data
+                      << "'" << LOG_END
         } else {
-            LOG_ERROR << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' is missing"
+            LOG_ERROR << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' or "
+                      << "Paramater '" << CFG_KEY_NOTE << "' is missing"
                       << LOG_END
         }
+
     } catch (toml::type_error &error) {
         LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
         LOG_ERROR << error.what() << LOG_END

@@ -33,13 +33,14 @@ namespace xmidictrl {
 #define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
 
 // MIDI unsigned int none
-const unsigned int MIDI_NONE(555);
+const unsigned char MIDI_NONE(255);
+
+const unsigned char MIDI_VELOCITY_MIN(0);
+
+const unsigned char MIDI_VELOCITY_MAX(127);
 
 // Interval of flight loop
 const int FLIGHTLOOP_INTERVAL(-1.0);
-
-// Offset for midi channel status
-const int OFFSET_MIDI_CHANNEL_STATUS(175);
 
 // Name of the aircraft profile file
 const char *const FILENAME_PROFILE = "XMidiCtrl.toml";
@@ -52,6 +53,12 @@ const char *const SETTINGS_FILE_SUFFIX = "_Settings.toml";
 
 // Profiles directory name
 const char *const PROFILES_DIRECTORY_NAME = "Profiles";
+
+// Keys for mappings and MIDI message types
+const char *const KEY_CONTROL_CHANGE = "CC";
+const char *const KEY_NOTE = "NT";
+const char *const KEY_PITCH_BEND = "PB";
+const char *const KEY_PROGRAM_CHANGE = "PM";
 
 // Menu items
 const char *const MENUITEM_ABOUT_WINDOW = "ABOUT_WINDOW";
@@ -97,6 +104,7 @@ const char *const CFG_KEY_MODIFIER_FAST_DOWN = "modifier_fast_down";
 const char *const CFG_KEY_MODIFIER_FAST_UP = "modifier_fast_up";
 const char *const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char *const CFG_KEY_NAME = "name";
+const char *const CFG_KEY_NOTE = "note";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
 const char *const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";
@@ -129,7 +137,6 @@ const char *const CFG_MAPTYPE_SLIDER = "sld";
 //---------------------------------------------------------------------------------------------------------------------
 
 // time point
-//using time_point = std::chrono::time_point<std::chrono::system_clock>;
 using time_point = std::chrono::system_clock::time_point;
 
 // Log levels
@@ -155,6 +162,18 @@ enum class msg_direction {
     outbound
 };
 
+// MIDI message type
+enum class midi_msg_type {
+    aftertouch,
+    channel_pressure,
+    control_change,
+    note_off,
+    note_on,
+    pitch_bend,
+    program_change,
+    none
+};
+
 // MIDI velocity codes
 enum class midi_velocity {
     key_released = 0,
@@ -170,6 +189,14 @@ enum class map_type {
     internal,
     push_pull,
     slider
+};
+
+// Mapping data type
+enum class map_data_type {
+    none,
+    control_change,
+    note,
+    program_change
 };
 
 // Send mode outbound

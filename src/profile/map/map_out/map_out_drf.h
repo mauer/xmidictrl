@@ -19,6 +19,7 @@
 #define MAP_OUT_DRF_H
 
 // Standard
+#include <set>
 #include <string>
 #include <string_view>
 
@@ -41,11 +42,11 @@ public:
     void set_dataref(std::string_view dataref);
     void set_dataref(std::vector<std::string> dataref);
 
-    void set_value_on(std::string_view value_on);
-    [[nodiscard]] std::string_view value_on() const;
+    void set_values_on(const std::set<std::string>& values);
+    [[nodiscard]] std::set<std::string> values_on() const;
 
-    void set_value_off(std::string_view value_off);
-    [[nodiscard]] std::string_view value_off() const;
+    void set_values_off(const std::set<std::string>& valuees);
+    [[nodiscard]] std::set<std::string> values_off() const;
 
     void set_velocity_on(int velocity_on);
     [[nodiscard]] unsigned int velocity_on() const;
@@ -63,8 +64,8 @@ private:
     std::vector<std::string> m_datarefs {};
     std::map<std::string, std::string> m_xp_values {};
 
-    std::string m_value_on {};
-    std::string m_value_off {};
+    std::set<std::string> m_values_on {};
+    std::set<std::string> m_values_off {};
 
     unsigned int m_velocity_on {127};
     unsigned int m_velocity_off {0};

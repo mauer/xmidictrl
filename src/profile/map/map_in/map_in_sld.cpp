@@ -229,12 +229,12 @@ bool map_in_sld::execute(midi_message &msg, std::string_view sl_value)
     if (!dataref().empty()) {
         // dataref mode
         float value = 0.0f;
-        if (msg.velocity == 0)
+        if (msg.velocity == MIDI_VELOCITY_MIN)
             value = m_value_min;
-        else if (msg.velocity == 127)
+        else if (msg.velocity == MIDI_VELOCITY_MAX)
             value = m_value_max;
         else
-            value = ((m_value_max - m_value_min) * (msg.velocity / 127.0f)) + m_value_min;
+            value = ((m_value_max - m_value_min) * (static_cast<float>(msg.velocity) / 127.0f)) + m_value_min;
 
         LOG_DEBUG << " --> Set dataref '" << m_dataref << "' to value '" << value << "'" << LOG_END
         m_xp->datarefs().write(m_dataref, value);
