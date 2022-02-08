@@ -225,23 +225,11 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
             }
 
             case midi_msg_type::control_change:
+            case midi_msg_type::note_off:
+            case midi_msg_type::note_on:
+            case midi_msg_type::pitch_bend:
+            case midi_msg_type::program_change:
                 break;
-
-            case midi_msg_type::note_off: {
-                break;
-            }
-
-            case midi_msg_type::note_on: {
-                break;
-            }
-
-            case midi_msg_type::pitch_bend: {
-                return;
-            }
-
-            case midi_msg_type::program_change: {
-                return;
-            }
 
             case midi_msg_type::none: {
                 return;
@@ -471,7 +459,12 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
             msg->status = (int) (0x80 | (task->ch - 1));
             break;
 
+        case midi_msg_type::pitch_bend:
+            msg->status = (int) (0xe0 | (task->ch - 1));
+            break;
+
         case midi_msg_type::program_change:
+            msg->status = (int) (0xc0 | (task->ch - 1));
             break;
 
         default:

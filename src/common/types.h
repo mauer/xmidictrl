@@ -198,6 +198,7 @@ enum class map_data_type {
     none,
     control_change,
     note,
+    pitch_bend,
     program_change
 };
 

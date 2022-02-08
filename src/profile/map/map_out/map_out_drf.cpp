@@ -318,6 +318,10 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
                     task->type = midi_msg_type::note_off;
                 break;
 
+            case map_data_type::pitch_bend:
+                task->type = midi_msg_type::pitch_bend;
+                break;
+
             case map_data_type::program_change:
                 task->type = midi_msg_type::program_change;
                 break;
@@ -358,6 +362,10 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 
         case map_data_type::note:
             task->type = midi_msg_type::note_off;
+            break;
+
+        case map_data_type::pitch_bend:
+            task->type = midi_msg_type::pitch_bend;
             break;
 
         case map_data_type::program_change:
