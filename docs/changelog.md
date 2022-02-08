@@ -5,7 +5,7 @@
 
 ##  VERSION 0.63
 
-+ Added support for note and program change midi messages
++ Added support for note, pitch bend and program change midi messages
 + Enhanced mapping for outbound messages (value arrays)
 
 -----------------------------------------------------------------------------------------------------------------------

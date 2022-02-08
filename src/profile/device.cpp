@@ -228,32 +228,22 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                 break;
 
             case midi_msg_type::note_off: {
-                //LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid MIDI type" << LOG_END
-                //LOG_ERROR << " --> 'Note Off' messages are not supported" << LOG_END
                 break;
             }
 
             case midi_msg_type::note_on: {
-                //LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid MIDI type" << LOG_END
-                //LOG_ERROR << " --> 'Note On' messages are not supported" << LOG_END
                 break;
             }
 
             case midi_msg_type::pitch_bend: {
-                LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid MIDI type" << LOG_END
-                LOG_ERROR << " --> 'Pitch Bend' messages are not supported" << LOG_END
                 return;
             }
 
             case midi_msg_type::program_change: {
-                LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Invalid MIDI type" << LOG_END
-                LOG_ERROR << " --> 'Program Change' messages are not supported" << LOG_END
                 return;
             }
 
             case midi_msg_type::none: {
-                LOG_ERROR << "Inbound message on port '" << m_port_in << "' :: Could not determine the MIDI "
-                          << "message type from byte 1: '" << msg->status << "'" << LOG_END
                 return;
             }
         }
