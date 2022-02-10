@@ -58,25 +58,28 @@ void map_in_drf::read_config(toml::value &settings)
     LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
     map_in::read_config(settings);
 
+    // read mode
+    m_mode = utils::dataref_mode_from_code(utils::toml_read_string(settings, CFG_KEY_MODE, false));
+
     // read dataref
     m_dataref = utils::toml_read_string(settings, CFG_KEY_DATAREF);
 
     // check if a values array has been defined
     m_values = utils::toml_read_str_vector_array(settings, CFG_KEY_VALUES, false);
 
-    // TODO: Do we really need m_value_on and m_value_off anymore?
     if (m_values.empty()) {
         // read value on
-        m_value_on = utils::toml_read_string(settings, CFG_KEY_VALUE_ON);
+        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_ON);
+
+        if (!value.empty())
+            m_values.push_back(value);
 
         // read value off
         if (utils::toml_contains(settings, CFG_KEY_VALUE_OFF, false))
-            m_value_off = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
-        else
-            m_value_off = m_value_on;
-    } else {
-        m_value_on.clear();
-        m_value_off.clear();
+            value = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+
+        if (!value.empty())
+            m_values.push_back(value);
     }
 }
 
@@ -95,7 +98,10 @@ bool map_in_drf::check()
     if (!m_xp->datarefs().check(m_dataref))
         return false;
 
-    if (m_values.empty() && (m_value_on.empty() && m_value_off.empty()))
+    if (m_values.empty())
+        return false;
+
+    if (m_mode == dataref_mode::momentary && m_values.size() != 2)
         return false;
 
     return true;
@@ -110,10 +116,21 @@ bool map_in_drf::execute(midi_message &msg, std::string_view sl_value)
     if (!check_sublayer(sl_value))
         return true;
 
+    // if toggle mode then only process key pressed event
+    if (m_mode == dataref_mode::toggle && msg.velocity != MIDI_VELOCITY_MAX)
+        return true;
+
     LOG_DEBUG << " --> Change dataref '" << m_dataref << "'" << LOG_END
 
-    if (m_values.empty()) {
-        m_xp->datarefs().toggle(m_dataref, m_value_on, m_value_off);
+    if (m_values.size() == 2) {
+        if (m_mode == dataref_mode::momentary) {
+            if (msg.velocity == MIDI_VELOCITY_MAX)
+                m_xp->datarefs().write(m_dataref, m_values[0]);
+            else
+                m_xp->datarefs().write(m_dataref, m_values[1]);
+        } else {
+            m_xp->datarefs().toggle(m_dataref, m_values[0], m_values[1]);
+        }
     } else {
         // get current value
         std::string value;

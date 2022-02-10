@@ -45,12 +45,11 @@ public:
     bool execute(midi_message &msg, std::string_view sl_value) override;
 
 private:
+    dataref_mode m_mode {dataref_mode::toggle};
+
     std::string m_dataref {};
 
     std::vector<std::string> m_values {};
-
-    std::string m_value_on {};
-    std::string m_value_off {};
 };
 
 } // Namespace xmidictrl

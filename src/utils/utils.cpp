@@ -351,6 +351,18 @@ mode_out utils::mode_out_from_int(int mode)
 
 
 /**
+ * Return the dataref mode for a given string
+ */
+dataref_mode utils::dataref_mode_from_code(std::string_view mode)
+{
+    if (mode == "momentary")
+        return dataref_mode::momentary;
+    else
+        return dataref_mode::toggle;
+}
+
+
+/**
  * Return the encoder mode for a given string
  */
 encoder_mode utils::encoder_mode_from_code(std::string_view mode)

@@ -54,6 +54,9 @@ public:
     static log_level log_level_from_code(std::string_view code);
 
     static mode_out mode_out_from_int(int mode);
+
+    // move directly into mapping classes
+    static dataref_mode dataref_mode_from_code(std::string_view mode);
     static encoder_mode encoder_mode_from_code(std::string_view mode);
 
     static std::string time_to_string(time_point time);

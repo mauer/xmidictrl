@@ -208,6 +208,12 @@ enum class mode_out {
     permanent
 };
 
+// Dataref mode
+enum class dataref_mode {
+    toggle,
+    momentary
+};
+
 // Encoder mode
 enum class encoder_mode {
     relative,

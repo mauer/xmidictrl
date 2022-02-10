@@ -271,11 +271,6 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                         break;
                 }
 
-            } else if (mapping->type() == map_type::dataref) {
-                // for dataref changes, we will only process the event with key pressed (velocity == 127)
-                if (msg->velocity == MIDI_VELOCITY_MAX)
-                    add_task = true;
-
             } else if (mapping->type() == map_type::command) {
                 std::shared_ptr<map_in_cmd> cmd = std::static_pointer_cast<map_in_cmd>(mapping);
 
