@@ -39,7 +39,7 @@ public:
     map_type type() override;
 
     void set_mode(encoder_mode mode);
-    encoder_mode mode() const;
+    [[nodiscard]] encoder_mode mode() const;
 
     void set_dataref(std::string_view dataref);
     [[nodiscard]] std::string_view dataref() const;

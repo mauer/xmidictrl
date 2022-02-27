@@ -43,7 +43,7 @@ public:
 private:
     XPLMCommandRef find_command_ref(std::string_view cmd);
 
-    std::map<std::string, XPLMCommandRef> m_command_cache;
+    std::map<std::string, XPLMCommandRef> m_command_cache {};
 };
 
 } // Namespace xmidictrl

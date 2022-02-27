@@ -49,7 +49,7 @@ public:
     unsigned int size();
 
 private:
-    std::vector<std::shared_ptr<device>> m_device_list;
+    std::vector<std::shared_ptr<device>> m_device_list {};
 };
 
 } // Namespace xmidictrl

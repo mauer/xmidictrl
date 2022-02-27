@@ -70,8 +70,8 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 ### Examples
 
 ```
-{ ch = 11, cc = 1, mode = "range", type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02 }
+{ ch = 11, cc = 1, mode = "range", type = "enc", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02 }
 
-{ ch = 11, cc = 4, mode = "relative", type = "end", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02, modifier_fast_up = 0.20, modifier_fast_down = -0.20 }
+{ ch = 11, cc = 4, mode = "relative", type = "enc", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02, modifier_fast_up = 0.20, modifier_fast_down = -0.20 }
 ```
 *The examples above change the altimeter bug for the pilot in the IXEG 737-300.*

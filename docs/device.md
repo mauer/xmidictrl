@@ -1,14 +1,17 @@
 # Devices
 
-You can define several MIDI devices in your profile. Each device needs several parameters, such as port in/out and
-of course some mappings.
+You can define several MIDI devices in your profile. Each device needs several parameters, such as ports and of course 
+some mappings.
 
 # Required Parameters
 
-| Parameter | Description                         |
-|-----------|-------------------------------------|
-| port_in   | Port for the inbound MIDI messages  |
-| port_out  | Port for the outbound MIDI messages |
+| Parameter | Description                                                                            |
+|-----------|----------------------------------------------------------------------------------------|
+| port_in   | Port for inbound MIDI messages (only required if inbound mappings have been defined)   |
+| port_out  | Port for outbound MIDI messages (only required if outbound mappings have been defined) |
+
+> You have to define at least port_in or port_out. This depends on your MIDI device and mappings. If you don't plan to
+> send any MIDI messages to your device then there is no need to define an outbound port.
 
 # Optional Parameters
 

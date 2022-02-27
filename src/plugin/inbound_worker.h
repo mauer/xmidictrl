@@ -39,7 +39,7 @@ public:
     void process(std::string_view sl_value);
 
 private:
-    std::queue<std::shared_ptr<inbound_task>> m_tasks;
+    std::queue<std::shared_ptr<inbound_task>> m_tasks {};
 };
 
 } // Namespace xmidictrl

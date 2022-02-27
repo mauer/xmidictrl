@@ -81,7 +81,7 @@ private:
     static void toggle_double(const data_item *item, std::string_view value_on, std::string_view value_off);
     static void toggle_byte(const data_item *item, std::string_view value_on, std::string_view value_off);
 
-    std::map<std::string, std::unique_ptr<data_item>> m_data_cache;
+    std::map<std::string, std::unique_ptr<data_item>> m_data_cache {};
 };
 
 } // Namespace xmidictrl

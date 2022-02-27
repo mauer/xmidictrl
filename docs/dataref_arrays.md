@@ -1,6 +1,6 @@
 # Dataref Arrays
 
-XMidiCtrl support Dataref arrays, as well. You can use arrays in all mappings that support Datarefs. When using an array 
+XMidiCtrl support Dataref arrays. You can use arrays in all mappings that support Datarefs. When using an array 
 you have to specify the index for the required item.
 
 The syntax for using an array would be: 

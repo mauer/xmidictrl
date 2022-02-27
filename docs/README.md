@@ -1,22 +1,27 @@
-# MIDI Controller plugin for X-Plane
+# MIDI Controller plugin for X-Plane 11.50+
 
-XMidiCtrl is a plugin for X-Plane 11 and allows you to connect MIDI devices to commands and datarefs without the
+XMidiCtrl is a plugin for X-Plane 11 and allows the connection of MIDI devices to commands and datarefs without the
 need of additional software.
 
 The following devices are officially supported:
 
 * Behringer X Touch Mini
 
-Other midi devices should work, as long as they send MIDI Control Change (CC) messages.
+The following devices are known to work:
+
+* Behringer BCR2000
+* Loupedeck Live
+
+Most MIDI controllers should work, as long as they can send and receive standard MIDI messages.
 
 ## Supported Operating Systems
 
-This version supports Microsoft Windows, Linux and macOS.
+This version supports Microsoft Windows 10/11, Ubuntu Linux 20.04 and macOS 10.15+.
 
 ## Logging
 
-XMidiCtrl does not log directly in the **Log.txt** of X-Plane. Instead, it's using an own log file called
-**XMidiCtrl_log.txt**. It's located in your X-Plane base folder.
+XMidiCtrl does not log directly in the **Log.txt** of X-Plane. Instead, it's using its own logfile called
+**XMidiCtrl_log.txt**. The logfile gets written into the X-Plane base folder.
 
 ## Templates
 

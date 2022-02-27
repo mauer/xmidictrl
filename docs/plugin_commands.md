@@ -1,7 +1,7 @@
 # Plugin Commands
 
 XMidiCtrl adds a few custom commands to X-Plane, that allow you to bind certain functions of the plugin to joystick
-buttons and keyboard events.
+buttons or keyboard events.
 
 ## Custom Commands
 

@@ -8,6 +8,7 @@
 + Added support for note, pitch bend and program change midi messages
 + Enhanced mapping for outbound messages (value arrays)
 + Added new mode (momentary) for inbound dataref mappings
++ Improved documentation
 
 -----------------------------------------------------------------------------------------------------------------------
 
