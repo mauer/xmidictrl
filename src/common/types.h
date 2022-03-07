@@ -56,9 +56,9 @@ const char *const PROFILES_DIRECTORY_NAME = "Profiles";
 
 // Keys for mappings and MIDI message types
 const char *const KEY_CONTROL_CHANGE = "CC";
-const char *const KEY_NOTE = "NT";
-const char *const KEY_PITCH_BEND = "PB";
-const char *const KEY_PROGRAM_CHANGE = "PM";
+const char *const KEY_NOTE = "NOTE";
+const char *const KEY_PITCH_BEND = "PITCH";
+const char *const KEY_PROGRAM_CHANGE = "PRGCHG";
 
 // Menu items
 const char *const MENUITEM_ABOUT_WINDOW = "ABOUT_WINDOW";

@@ -2,3 +2,4 @@
  + Support for other MIDI types
  + Refactor menu handling
  + Add value_min and value_max to encoder mapping (dataref)
+ + Display errors and midi messages in different orders

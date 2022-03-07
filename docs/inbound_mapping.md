@@ -43,8 +43,23 @@ The following variables are required for each mapping.
 | Variable | Description                       |
 |----------|-----------------------------------|
 | ch       | MIDI Channel (Default Value = 11) |
-| cc       | Control Change No Number          |
 | sl       | Sublayer (optional)               |
+
+
+## MIDI Type
+
+Each mapping must specify the type of the incoming MIDI message. XMidiCtrl can process Control Change, Program Change, 
+Pitch Bend and Note On/Off messages.
+
+A mapping must contains exactly one of the following variables.
+
+| Variable | Description              |
+|----------|--------------------------|
+| cc       | Control Change No Number |
+| note     | Note On/Off Number       |
+| pitch    | Pitch Bend Number        |
+| prgchg   | Program Change Number    |
+
 
 ## Mapping Types
 

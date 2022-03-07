@@ -9,6 +9,7 @@
 + Enhanced mapping for outbound messages (value arrays)
 + Added new mode (momentary) for inbound dataref mappings
 + Improved documentation
++ Fixed mapping problem in ZIBO Boeing 738 example
 
 -----------------------------------------------------------------------------------------------------------------------
 

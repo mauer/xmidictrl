@@ -84,6 +84,10 @@ std::string map::get_key()
     std::string type_code;
 
     switch (m_data_type) {
+        case map_data_type::none:
+            type_code = "";
+            break;
+
         case map_data_type::control_change:
             type_code = KEY_CONTROL_CHANGE;
             break;
@@ -92,12 +96,12 @@ std::string map::get_key()
             type_code = KEY_NOTE;
             break;
 
-        case map_data_type::program_change:
-            type_code = KEY_PROGRAM_CHANGE;
+        case map_data_type::pitch_bend:
+            type_code = KEY_PITCH_BEND;
             break;
 
-        default:
-            type_code = "";
+        case map_data_type::program_change:
+            type_code = KEY_PROGRAM_CHANGE;
             break;
     }
 
@@ -195,19 +199,19 @@ void map::read_data(toml::value &data)
                       << m_data << "'" << LOG_END
         } else if (data.contains(CFG_KEY_PITCH_BEND)) {
             m_data = static_cast<unsigned char>( data[CFG_KEY_PITCH_BEND].as_integer());
-            m_data_type = map_data_type::note;
+            m_data_type = map_data_type::pitch_bend;
 
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_PITCH_BEND << "' = '"
                       << m_data << "'" << LOG_END
         } else if (data.contains(CFG_KEY_PROGRAM_CHANGE)) {
             m_data = static_cast<unsigned char>( data[CFG_KEY_PROGRAM_CHANGE].as_integer());
-            m_data_type = map_data_type::note;
+            m_data_type = map_data_type::program_change;
 
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_PROGRAM_CHANGE
                       << "' = '" << m_data << "'" << LOG_END
         } else {
             LOG_ERROR << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' or "
-                      << "Paramater '" << CFG_KEY_NOTE << "' is missing"
+                      << "Parameter '" << CFG_KEY_NOTE << "' is missing"
                       << LOG_END
         }
 

@@ -37,7 +37,7 @@ mapping_in = [
 
   # Encoder Buttons
   { ch = 11, cc = 9,  type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/rst_press" },
-  { ch = 11, cc = 10, type = "pnp", command_push = "laminar/B738/EFIS_control/capt/push_button/std_press", command_pull = "FlyWithLua/B738/toggle_baro_in_hpa" },
+  { ch = 11, cc = 10, type = "cmd", command = "laminar/B738/EFIS_control/capt/push_button/std_press" },
   { ch = 11, cc = 11, type = "cmd", command = "laminar/B738/autopilot/flight_director_toggle" },
   { ch = 11, cc = 12, type = "cmd", command = "laminar/B738/autopilot/spd_interv" },
   { ch = 11, cc = 13, type = "cmd", command = "laminar/B738/autopilot/hdg_sel_press" },
