@@ -26,10 +26,6 @@ if (MINGW)
     add_subdirectory(mingw-std-threads)
 endif()
 
-# Add fmt library
-message("-- Configuring buildscripts for fmtlib")
-add_subdirectory(fmt)
-
 # Add RtMidi for accessing MIDI devices
 message("-- Configuring build scripts for RtMidi")
 

@@ -44,7 +44,7 @@ public:
     void error(std::string_view text, ...);
 
 private:
-    void create_message(text_msg_type type, std::string_view text, std::va_list args);
+    void create_message(text_msg_type type, std::string_view text, va_list args);
 
     std::shared_ptr<message_handler> m_parent;
 };

@@ -17,9 +17,6 @@
 
 #include "message_handler.h"
 
-// fmtlib
-#include <fmt/core.h>
-
 // XMidiCtrl
 #include "logger.h"
 
@@ -73,7 +70,7 @@ void message_handler::debug(std::string_view text, ...)
 
 void message_handler::info(std::string_view text, ...)
 {
-    va_list args;
+    std::va_list args;
     va_start(args, text);
 
     create_message(text_msg_type::info, text, args);
@@ -84,7 +81,7 @@ void message_handler::info(std::string_view text, ...)
 
 void message_handler::warn(std::string_view text, ...)
 {
-    va_list args;
+    std::va_list args;
     va_start(args, text);
 
     create_message(text_msg_type::warn, text, args);
@@ -95,7 +92,7 @@ void message_handler::warn(std::string_view text, ...)
 
 void message_handler::error(std::string_view text, ...)
 {
-    va_list args;
+    std::va_list args;
     va_start(args, text);
 
     create_message(text_msg_type::error, text, args);
@@ -104,30 +101,30 @@ void message_handler::error(std::string_view text, ...)
 }
 
 
-void message_handler::create_message(const text_msg_type type, std::string_view text, std::va_list args)
+void message_handler::create_message(const text_msg_type type, std::string_view text, va_list args)
 {
-    char msg_text[8129];
-    vsnprintf(msg_text, sizeof(msg_text), text.data(), args);
+    std::vector<char> formatted_text(std::vsnprintf(nullptr, 0, text.data(), args) + 1);
+    std::vsnprintf(formatted_text.data(), formatted_text.size(), text.data(), args);
 
     switch (type) {
         case text_msg_type::debug:
-            LOG_DEBUG << msg_text << LOG_END
+            LOG_DEBUG << formatted_text.data() << LOG_END
             break;
 
         case text_msg_type::info:
-            LOG_INFO << msg_text << LOG_END
+            LOG_INFO << formatted_text.data() << LOG_END
             break;
 
         case text_msg_type::warn:
-            LOG_WARN << msg_text << LOG_END
+            LOG_WARN << formatted_text.data() << LOG_END
             break;
 
         case text_msg_type::error:
-            LOG_ERROR << msg_text << LOG_END
+            LOG_ERROR << formatted_text.data() << LOG_END
             break;
 
         case text_msg_type::all:
-            LOG_ALL << msg_text << LOG_END
+            LOG_ALL << formatted_text.data() << LOG_END
             break;
     }
 }
