@@ -45,7 +45,7 @@ struct is_streamable<
     enable_if_t<
         std::is_arithmetic<T>::value || std::is_array<T>::value ||
         std::is_pointer<T>::value || std::is_same<T, char8_type>::value ||
-        std::is_convertible<T, fmt::basic_string_view<Char>>::value ||
+        std::is_same<T, std::basic_string<Char>>::value ||
         std::is_same<T, std_string_view<Char>>::value ||
         (std::is_convertible<T, int>::value && !std::is_enum<T>::value)>>
     : std::false_type {};
@@ -78,33 +78,25 @@ void format_value(buffer<Char>& buf, const T& value,
   output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
   buf.try_resize(buf.size());
 }
-}  // namespace detail
 
 // Formats an object of type T that has an overloaded ostream operator<<.
-template <typename Char>
-struct basic_ostream_formatter : formatter<basic_string_view<Char>, Char> {
-  template <typename T, typename OutputIt>
-  auto format(const T& value, basic_format_context<OutputIt, Char>& ctx) const
+template <typename T, typename Char>
+struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
+    : private formatter<basic_string_view<Char>, Char> {
+  using formatter<basic_string_view<Char>, Char>::parse;
+
+  template <typename OutputIt>
+  auto format(const T& value, basic_format_context<OutputIt, Char>& ctx)
       -> OutputIt {
     auto buffer = basic_memory_buffer<Char>();
     format_value(buffer, value, ctx.locale());
     return formatter<basic_string_view<Char>, Char>::format(
         {buffer.data(), buffer.size()}, ctx);
   }
-};
 
-using ostream_formatter = basic_ostream_formatter<char>;
-
-namespace detail {
-
-// Formats an object of type T that has an overloaded ostream operator<<.
-template <typename T, typename Char>
-struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
-    : basic_ostream_formatter<Char> {
-  using basic_ostream_formatter<Char>::format;
   // DEPRECATED!
   template <typename OutputIt>
-  auto format(const T& value, basic_printf_context<OutputIt, Char>& ctx) const
+  auto format(const T& value, basic_printf_context<OutputIt, Char>& ctx)
       -> OutputIt {
     auto buffer = basic_memory_buffer<Char>();
     format_value(buffer, value, ctx.locale());
@@ -115,8 +107,7 @@ struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
 
 FMT_MODULE_EXPORT
 template <typename Char>
-void vprint(std::basic_ostream<Char>& os,
-            basic_string_view<type_identity_t<Char>> format_str,
+void vprint(std::basic_ostream<Char>& os, basic_string_view<Char> format_str,
             basic_format_args<buffer_context<type_identity_t<Char>>> args) {
   auto buffer = basic_memory_buffer<Char>();
   detail::vformat_to(buffer, format_str, args);
@@ -133,19 +124,12 @@ void vprint(std::basic_ostream<Char>& os,
   \endrst
  */
 FMT_MODULE_EXPORT
-template <typename... T>
-void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
-  vprint(os, fmt, fmt::make_format_args(args...));
+template <typename S, typename... Args,
+          typename Char = enable_if_t<detail::is_string<S>::value, char_t<S>>>
+void print(std::basic_ostream<Char>& os, const S& format_str, Args&&... args) {
+  vprint(os, to_string_view(format_str),
+         fmt::make_args_checked<Args...>(format_str, args...));
 }
-
-FMT_MODULE_EXPORT
-template <typename... Args>
-void print(std::wostream& os,
-           basic_format_string<wchar_t, type_identity_t<Args>...> fmt,
-           Args&&... args) {
-  vprint(os, fmt, fmt::make_format_args<buffer_context<wchar_t>>(args...));
-}
-
 FMT_END_NAMESPACE
 
 #endif  // FMT_OSTREAM_H_

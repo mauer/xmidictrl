@@ -4,7 +4,7 @@ set(TEST_MAIN_SRC test-main.cc gtest-extra.cc gtest-extra.h util.cc)
 add_library(test-main STATIC ${TEST_MAIN_SRC})
 target_include_directories(test-main PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
-target_link_libraries(test-main gtest fmt)
+target_link_libraries(test-main gtest)
 
 include(CheckCXXCompilerFlag)
 
@@ -127,6 +127,9 @@ if (NOT MSVC_STATIC_RUNTIME)
   target_link_libraries(posix-mock-test gtest)
   if (FMT_PEDANTIC)
     target_compile_options(posix-mock-test PRIVATE ${PEDANTIC_COMPILE_FLAGS})
+  endif ()
+  if (HAVE_STRTOD_L)
+    target_compile_definitions(posix-mock-test PRIVATE FMT_LOCALE)
   endif ()
   add_test(NAME posix-mock-test COMMAND posix-mock-test)
   add_fmt_test(os-test)
