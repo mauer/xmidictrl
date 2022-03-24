@@ -27,13 +27,14 @@
 
 // XMidiCtrl
 #include "map_in.h"
+#include "message_handler.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
 
 class map_in_sld : public map_in {
 public:
-    explicit map_in_sld(std::shared_ptr<xplane> xp);
+    explicit map_in_sld(xplane *xp);
     ~map_in_sld() override = default;
 
     map_type type() override;
@@ -56,10 +57,10 @@ public:
     void set_command_down(std::string_view command);
     [[nodiscard]] std::string_view command_down() const;
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &data) override;
     bool check() override;
 
-    bool execute(midi_message &msg, std::string_view sl_value) override;
+    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
 
 private:
     std::string m_dataref {};

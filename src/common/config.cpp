@@ -32,9 +32,10 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(std::shared_ptr<xplane> xp)
-    : m_xp(std::move(xp))
-{}
+config::config(xplane *xp)
+    : m_xp(xp)
+{
+}
 
 
 
@@ -67,7 +68,7 @@ bool config::load(std::string_view filename)
         // load config file
         m_config = toml::parse(filename.data());
         m_filename = filename;
-        
+
         LOG_DEBUG << "File '" << m_filename << "' loaded successfully" << LOG_END
     } catch (const toml::syntax_error &error) {
         LOG_ERROR << "Error parsing file '" << filename.data() << "'" << LOG_END

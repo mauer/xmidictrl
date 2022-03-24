@@ -18,8 +18,7 @@
 #include "map_in_sld.h"
 
 // XMidiCtrl
-#include "logger.h"
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -30,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_sld::map_in_sld(std::shared_ptr<xplane> xp)
-    : map_in(std::move(xp))
+map_in_sld::map_in_sld(xplane *xp)
+    : map_in(xp)
 {}
 
 
@@ -161,34 +160,36 @@ std::string_view map_in_sld::command_down() const
 /**
  * Read settings from config
  */
-void map_in_sld::read_config(toml::value &settings)
+void map_in_sld::read_config(message_handler *messages, toml::value &data)
 {
-    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'sld'" << LOG_END
-    map_in::read_config(settings);
+    messages->debug(" --> Line %i :: Read settings for type 'sld'", data.location().line());
+    map_in::read_config(messages, data);
+
+    toml_utils utils(messages);
 
     // check if dataref was defined
-    if (utils::toml_contains(settings, CFG_KEY_DATAREF, false)) {
-        LOG_DEBUG << " --> Use 'dataref' mode for slider mapping" << LOG_END
+    if (utils.contains(data, CFG_KEY_DATAREF, false)) {
+        messages->debug(" --> Use 'dataref' mode for slider mapping");
 
         // read dataref
-        set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
+        set_dataref(utils.read_string(data, CFG_KEY_DATAREF));
 
         // read value min
-        set_value_min(utils::toml_read_float(settings, CFG_KEY_VALUE_MIN, false, 0.0f));
+        set_value_min(utils.read_float(data, CFG_KEY_VALUE_MIN, false, 0.0f));
 
         // read value max
-        set_value_max(utils::toml_read_float(settings, CFG_KEY_VALUE_MAX, false, 1.0f));
+        set_value_max(utils.read_float(data, CFG_KEY_VALUE_MAX, false, 1.0f));
     } else {
-        LOG_DEBUG << " --> Use 'command' mode for slider mapping" << LOG_END
+        messages->debug(" --> Use 'command' mode for slider mapping");
 
         // read command up
-        set_command_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_UP));
+        set_command_up(utils.read_string(data, CFG_KEY_COMMAND_UP));
 
         // read command middle
-        set_command_middle(utils::toml_read_string(settings, CFG_KEY_COMMAND_MIDDLE, false));
+        set_command_middle(utils.read_string(data, CFG_KEY_COMMAND_MIDDLE, false));
 
         // read command down
-        set_command_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_DOWN));
+        set_command_down(utils.read_string(data, CFG_KEY_COMMAND_DOWN));
     }
 }
 
@@ -221,7 +222,7 @@ bool map_in_sld::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_sld::execute(midi_message &msg, std::string_view sl_value)
+bool map_in_sld::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
 {
     if (!check_sublayer(sl_value))
         return true;
@@ -229,36 +230,36 @@ bool map_in_sld::execute(midi_message &msg, std::string_view sl_value)
     if (!dataref().empty()) {
         // dataref mode
         float value = 0.0f;
-        if (msg.velocity == MIDI_VELOCITY_MIN)
+        if (msg.data_2 == MIDI_VELOCITY_MIN)
             value = m_value_min;
-        else if (msg.velocity == MIDI_VELOCITY_MAX)
+        else if (msg.data_2 == MIDI_VELOCITY_MAX)
             value = m_value_max;
         else
-            value = ((m_value_max - m_value_min) * (static_cast<float>(msg.velocity) / 127.0f)) + m_value_min;
+            value = ((m_value_max - m_value_min) * (static_cast<float>(msg.data_2) / 127.0f)) + m_value_min;
 
-        LOG_DEBUG << " --> Set dataref '" << m_dataref << "' to value '" << value << "'" << LOG_END
+        messages->debug(" --> Set dataref '%s' to value '%f'", m_dataref.c_str(), value);
         m_xp->datarefs().write(m_dataref, value);
     } else {
         // command mode
-        if (msg.velocity <= 10) {
-            LOG_DEBUG << " --> Execute command '" << m_command_down << "'" << LOG_END
+        if (msg.data_2 <= 10) {
+            messages->debug(" --> Execute command '%s'", m_command_down.c_str());
 
             if (m_command_down != m_command_prev)
                 m_xp->cmd().execute(m_command_down);
 
             m_command_prev = m_command_down;
 
-        } else if (msg.velocity >= 117) {
-            LOG_DEBUG << " --> Execute command '" << m_command_up << "'" << LOG_END
+        } else if (msg.data_2 >= 117) {
+            messages->debug(" --> Execute command '%s'", m_command_up.c_str());
 
             if (m_command_up != m_command_prev)
                 m_xp->cmd().execute(m_command_up);
 
             m_command_prev = m_command_up;
 
-        } else if (msg.velocity >= 50 && msg.velocity <= 70) {
+        } else if (msg.data_2 >= 50 && msg.data_2 <= 70) {
             if (!m_command_middle.empty()) {
-                LOG_DEBUG << " --> Execute command '" << m_command_middle << "'" << LOG_END
+                messages->debug(" --> Execute command '%s'", m_command_middle.c_str());
 
                 if (m_command_middle != m_command_prev)
                     m_xp->cmd().execute(m_command_middle);

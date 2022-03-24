@@ -21,14 +21,12 @@
 // Standard
 #include <memory>
 #include <map>
+#include <vector>
 
 // XMidiCtrl
 #include "map_in.h"
 
 namespace xmidictrl {
-
-typedef std::multimap<std::string, map_in::ptr>::iterator map_in_itr;
-typedef std::pair<map_in_itr, map_in_itr> map_in_pair;
 
 class map_in_list {
 public:
@@ -36,15 +34,12 @@ public:
     ~map_in_list();
 
     void add(const std::shared_ptr<map_in> &map);
-    map_in_pair get(const std::string &key);
-
-    map_in_itr begin();
-    map_in_itr end();
+    std::vector<std::shared_ptr<map_in>> find(const std::string &key);
 
     unsigned int size();
 
 protected:
-    std::multimap<std::string, map_in::ptr> m_list;
+    std::multimap<std::string, std::shared_ptr<map_in>> m_list {};
 };
 
 } // Namespace xmidictrl

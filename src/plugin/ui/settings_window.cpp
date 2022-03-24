@@ -32,7 +32,7 @@ namespace xmidictrl {
  * Constructor
  */
 settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_ptr<settings> set)
-    : ImGuiWindow(xp, 1000, 450),
+    : ImGuiWindow(xp, 1000, 550),
       m_settings(std::move(set))
 {
     m_log_level = m_settings->logging_level();
@@ -41,6 +41,8 @@ settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_
 
     m_max_text_messages = m_settings->max_text_messages();
     m_max_midi_messages = m_settings->max_midi_messages();
+
+    m_common_profile = m_settings->common_profile();
 
     m_path_xplane = xp->xplane_path();
     m_path_plugin = xp->plugin_path();
@@ -113,6 +115,15 @@ void settings_window::create_widgets()
     ImGui::NewLine();
     ImGui::NewLine();
 
+    ImGui::Text("GENERAL SETTINGS");
+    ImGui::Separator();
+    ImGui::NewLine();
+
+    ImGui::Checkbox("Use common aircraft profile", &m_common_profile);
+
+    ImGui::NewLine();
+    ImGui::NewLine();
+
     ImGui::Text("PATHS");
     ImGui::Separator();
     ImGui::NewLine();
@@ -142,6 +153,8 @@ void settings_window::create_widgets()
         m_settings->set_max_midi_messages(m_max_midi_messages);
 
         m_settings->set_show_messages(m_show_messages);
+
+        m_settings->set_common_profile(m_common_profile);
 
         m_settings->save_settings();
     }

@@ -31,16 +31,17 @@ namespace xmidictrl {
 
 class config {
 public:
-    explicit config(std::shared_ptr<xplane> xp);
+    explicit config(xplane *xp);
     virtual ~config() = default;
 
     bool load(std::string_view filename);
     virtual void close();
 
+
 protected:
     toml::value m_config {};
 
-    std::shared_ptr<xplane> m_xp;
+    xplane *m_xp;
 
 private:
     std::string m_filename {};

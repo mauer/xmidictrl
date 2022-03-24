@@ -28,6 +28,7 @@
 // XMidiCtrl
 #include "map.h"
 #include "map_in.h"
+#include "message_handler.h"
 #include "midi_message.h"
 #include "xplane.h"
 
@@ -35,7 +36,7 @@ namespace xmidictrl {
 
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(std::shared_ptr<xplane> xp);
+    explicit map_in_cmd(xplane *xp);
     ~map_in_cmd() override = default;
 
     map_type type() override;
@@ -49,10 +50,10 @@ public:
     void set_velocity_off(int value_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &data) override;
     bool check() override;
 
-    bool execute(midi_message &msg, std::string_view sl_value) override;
+    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
 
 private:
     std::string m_command {};

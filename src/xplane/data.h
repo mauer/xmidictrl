@@ -35,7 +35,7 @@ namespace xmidictrl {
 class data {
 public:
     data() = default;
-    ~data();
+    ~data() = default;
 
     bool check(std::string_view name);
 

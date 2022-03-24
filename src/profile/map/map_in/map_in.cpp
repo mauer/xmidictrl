@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in::map_in(std::shared_ptr<xplane> xp)
-    : map(std::move(xp))
+map_in::map_in(xplane *xp)
+    : map(xp)
 {}
 
 
@@ -52,12 +52,12 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(toml::value &data)
+void map_in::read_config(message_handler *messages, toml::value &data)
 {
-    map::read_config(data);
+    map::read_config(messages, data);
 
     // additional config
-    read_sl(data);
+    read_sublayer(data);
 }
 
 
@@ -70,7 +70,7 @@ void map_in::read_config(toml::value &data)
 /**
  * Read parameter sl
  */
-void map_in::read_sl(toml::value &data)
+void map_in::read_sublayer(toml::value &data)
 {
     m_sl.clear();
 

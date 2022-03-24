@@ -33,7 +33,7 @@ namespace xmidictrl {
 
 class map_in_enc : public map_in {
 public:
-    explicit map_in_enc(std::shared_ptr<xplane> xp);
+    explicit map_in_enc(xplane *xp);
     ~map_in_enc() override = default;
 
     map_type type() override;
@@ -68,10 +68,10 @@ public:
     void set_command_fast_down(std::string_view command_fast_down);
     [[nodiscard]] std::string_view command_fast_down() const;
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &data) override;
     bool check() override;
 
-    bool execute(midi_message &msg, std::string_view sl_value) override;
+    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
 
 private:
     bool execute_dataref(midi_message &msg);
@@ -88,6 +88,12 @@ private:
 
     float m_modifier_fast_up {0.0f};
     float m_modifier_fast_down {0.0f};
+
+    bool m_value_min_defined {false};
+    bool m_value_max_defined {false};
+
+    float m_value_min {0.0f};
+    float m_value_max {0.0f};
 
     std::string m_command_up {};
     std::string m_command_down {};

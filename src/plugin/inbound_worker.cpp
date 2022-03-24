@@ -26,21 +26,14 @@
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
+//   CONSTRUCTOR & DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Constructor
  */
-inbound_worker::inbound_worker()
-{
-}
-
-
-/**
- * Destructor
- */
-inbound_worker::~inbound_worker()
+inbound_worker::inbound_worker(message_handler *messages)
+    : m_messages(messages)
 {
 }
 
@@ -50,7 +43,6 @@ inbound_worker::~inbound_worker()
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Add a task to be executed
@@ -84,7 +76,7 @@ void inbound_worker::process(std::string_view sl_value)
             continue;
 
         // perform the action related to the mapping
-        if (!t->map->execute(*t->msg, sl_value)) {
+        if (!t->map->execute(m_messages, *t->msg, sl_value)) {
             // store in temp list
             temp_list.push(t);
         }
@@ -101,13 +93,5 @@ void inbound_worker::process(std::string_view sl_value)
         temp_list.pop();
     }
 }
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PRIVATE
-//---------------------------------------------------------------------------------------------------------------------
-
 
 } // Mamespace xmidictrl

@@ -26,8 +26,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out::map_out(std::shared_ptr<xplane> xp)
-    : map(std::move(xp))
-{}
+map_out::map_out(xplane *xp)
+    : map(xp)
+{
+}
 
 } // Namespace xmidictrl

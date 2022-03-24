@@ -32,7 +32,7 @@ mapping_in = [
 
   # encoder_cmd Buttons
   { ch = 11, cc = 10, type = "cmd", command = "toliss_airbus/dispcommands/CaptCstrPushButton" },
-  { ch = 11, cc = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },
+  { channel = 11, cc = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },
   { ch = 11, cc = 12, type = "pnp", command_push = "toliss_airbus/spd_pull", command_pull = "toliss_airbus/spd_push" },
   { ch = 11, cc = 13, type = "pnp", command_push = "AirbusFBW/PushHDGSel", command_pull = "AirbusFBW/PullHDGSel" },
   { ch = 11, cc = 14, type = "pnp", command_push = "AirbusFBW/PushAltitude", command_pull = "AirbusFBW/PullAltitude" },

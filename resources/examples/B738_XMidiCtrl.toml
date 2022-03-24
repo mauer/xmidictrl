@@ -74,7 +74,7 @@ mapping_in = [
 
   # Encoders
   { ch = 11, cc = 51, type = "enc", command_up = "laminar/B738/pfd/dh_pilot_up", command_down = "laminar/B738/pfd/dh_pilot_up" },
-  { ch = 11, cc = 52, type = "enc", command_up = "laminar/B738/pilot/barometer_up", command_down = "laminar/B738/pilot/barometer_down" },
+  { channel = 11, cc = 52, type = "enc", command_up = "laminar/B738/pilot/barometer_up", command_down = "laminar/B738/pilot/barometer_down" },
   { ch = 11, cc = 53, type = "enc", command_up = "laminar/B738/autopilot/course_pilot_up", command_down = "laminar/B738/autopilot/course_pilot_dn" },
   { ch = 11, cc = 54, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down" },
   { ch = 11, cc = 55, type = "enc", command_up = "laminar/B738/autopilot/heading_up", command_down = "laminar/B738/autopilot/heading_dn" },

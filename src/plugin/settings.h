@@ -26,6 +26,7 @@
 
 // XMidiCtrl
 #include "config.h"
+#include "message_handler.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -33,23 +34,26 @@ namespace xmidictrl {
 
 class settings : public config {
 public:
-    explicit settings(std::shared_ptr<xplane> xp);
-    ~settings() override;
+    settings(xplane *xp);
+    ~settings() override = default;
 
     void set_logging_level(log_level level);
-    log_level logging_level() const;
+    [[nodiscard]] log_level logging_level() const;
 
     void set_log_midi(bool enabled);
-    bool log_midi() const;
+    [[nodiscard]] bool log_midi() const;
 
     void set_show_messages(bool enabled);
-    bool show_messages() const;
+    [[nodiscard]] bool show_messages() const;
 
     void set_max_text_messages(int number);
-    int max_text_messages() const;
+    [[nodiscard]] int max_text_messages() const;
 
     void set_max_midi_messages(int number);
-    int max_midi_messages() const;
+    [[nodiscard]] int max_midi_messages() const;
+
+    void set_common_profile(bool enabled);
+    [[nodiscard]] bool common_profile() const;
 
     void save_settings();
 

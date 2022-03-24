@@ -93,7 +93,7 @@ private:
     std::mutex m_outbound_mutex;
 
     std::queue<std::shared_ptr<midi_message>> m_outbound_msg;
-    std::set<std::string> m_ch_cc_locked;
+    std::set<std::string> m_outbound_locked;
 };
 
 } // Namespace xmidictrl

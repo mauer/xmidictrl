@@ -15,34 +15,40 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INBOUND_WORKER_H
-#define INBOUND_WORKER_H
+#ifndef MESSAGE_HANDLER_H
+#define MESSAGE_HANDLER_H
 
 // Standard
+#include <cstdarg>
 #include <memory>
-#include <queue>
+#include <string>
+#include <string_view>
 
 // XMidiCtrl
-#include "inbound_task.h"
-#include "message_handler.h"
+#include "types.h"
 
 namespace xmidictrl {
 
-class inbound_worker {
+class message_handler {
 public:
-    inbound_worker(message_handler *messages);
-    ~inbound_worker() = default;
+    explicit message_handler(std::shared_ptr<message_handler> parent = nullptr);
+    ~message_handler() = default;
 
-    void add_task(const std::shared_ptr<inbound_task> &task);
+    void clear();
 
-    void process(std::string_view sl_value);
+    bool has_errors();
+
+    void debug(std::string_view text, ...);
+    void info(std::string_view text, ...);
+    void warn(std::string_view text, ...);
+    void error(std::string_view text, ...);
 
 private:
-    message_handler *m_messages;
+    void create_message(text_msg_type type, std::string_view text, std::va_list args);
 
-    std::queue<std::shared_ptr<inbound_task>> m_tasks {};
+    std::shared_ptr<message_handler> m_parent;
 };
 
 } // Namespace xmidictrl
 
-#endif // INBOUND_WORKER_H
+#endif // MESSAGE_HANDLER_H

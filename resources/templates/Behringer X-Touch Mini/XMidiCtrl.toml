@@ -98,7 +98,7 @@ mapping_in = [
   { ch = 11, cc = 2,  type = "enc", command_up = "", command_down = "" },
   { ch = 11, cc = 3,  type = "enc", command_up = "", command_down = "" },
   { ch = 11, cc = 4,  type = "enc", command_up = "", command_down = "" },
-  { ch = 11, cc = 5,  type = "enc", command_up = "", command_down = "" },
+  { channel = 11, cc = 5,  type = "enc", command_up = "", command_down = "" },
   { ch = 11, cc = 6,  type = "enc", command_up = "", command_down = "" },
   { ch = 11, cc = 7,  type = "enc", command_up = "", command_down = "" },
   { ch = 11, cc = 8,  type = "enc", command_up = "", command_down = "" },

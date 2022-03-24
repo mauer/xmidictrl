@@ -25,6 +25,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "message_handler.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -32,28 +33,28 @@ namespace xmidictrl {
 
 class map {
 public:
-    explicit map(std::shared_ptr<xplane> xplane);
+    explicit map(xplane *xp);
     virtual ~map() = default;
 
     virtual map_type type();
 
-    [[nodiscard]] unsigned char ch() const;
+    [[nodiscard]] unsigned char channel() const;
     [[nodiscard]] map_data_type data_type() const;
     [[nodiscard]] unsigned char data() const;
 
     std::string get_key();
 
-    virtual void read_config(toml::value &data);
+    virtual void read_config(message_handler *messages, toml::value &data);
     virtual bool check();
 
 protected:
-    void read_ch(toml::value &data);
-    void read_data(toml::value &data);
+    void read_channel(message_handler *messages, toml::value &data);
+    void read_data(message_handler *messages, toml::value &data);
 
-    std::shared_ptr<xplane> m_xp;
+    xplane *m_xp;
 
 private:
-    unsigned char m_ch {MIDI_NONE};
+    unsigned char m_channel {MIDI_NONE};
 
     map_data_type m_data_type {map_data_type::none};
     unsigned char m_data {MIDI_NONE};

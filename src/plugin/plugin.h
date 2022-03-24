@@ -27,6 +27,7 @@
 // XMidiCtrl
 #include "inbound_worker.h"
 #include "menu.h"
+#include "message_handler.h"
 #include "profile.h"
 #include "settings.h"
 #include "types.h"
@@ -50,7 +51,7 @@ public:
     void load_profile();
     void close_profile();
 
-    void add_inbound_task(std::shared_ptr<inbound_task> task);
+    void add_inbound_task(const std::shared_ptr<inbound_task>& task);
 
     void show_messages_window();
     void show_devices_window();
@@ -58,7 +59,7 @@ public:
     void show_settings_window();
     void show_about_window();
 
-    int sublayer();
+    [[nodiscard]] int sublayer() const;
     void set_sublayer(int value);
 
     void toggle_sublayer();
@@ -72,14 +73,16 @@ private:
     void create_commands();
     void remove_commands();
 
-    static int read_drf_sublayer(void *inRefcon);
-    static void write_drf_sublayer(void *inRefcon, int inValue);
+    static int read_drf_sublayer(void *refcon);
+    static void write_drf_sublayer(void *refcon, int value);
 
     static int command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon);
 
-    void create_window(window_type windowType);
+    void create_window(window_type type);
 
     XPLMFlightLoopID m_flight_loop_id {nullptr};
+
+    std::shared_ptr<message_handler> m_plugin_msg;
 
     std::shared_ptr<xplane> m_xp;
 

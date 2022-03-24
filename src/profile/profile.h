@@ -30,6 +30,8 @@
 #include "config.h"
 #include "device_list.h"
 #include "map.h"
+#include "message_handler.h"
+#include "settings.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -37,7 +39,9 @@ namespace xmidictrl {
 
 class profile : public config {
 public:
-    explicit profile(xplane::ptr xplane);
+    explicit profile(xplane *xp,
+                     std::shared_ptr<message_handler> messages,
+                     std::shared_ptr<settings> settings);
     ~profile() override;
 
     bool load();
@@ -59,7 +63,7 @@ public:
 private:
     void clear();
 
-    std::string get_profile_filename();
+    std::string find_profile();
 
     void create_device_list();
 
@@ -69,12 +73,14 @@ private:
     static map_type translate_map_type(std::string_view type_str);
     map_type read_mapping_type(toml::value &settings);
 
+    std::shared_ptr<settings> m_settings;
+
+    std::unique_ptr<message_handler> m_profile_msg;
     std::shared_ptr<device_list> m_device_list;
 
     std::string m_sl_dataref {};
 
     std::string m_filename {};
-    bool m_errors_found {false};
 };
 
 } // Namespace xmidictrl

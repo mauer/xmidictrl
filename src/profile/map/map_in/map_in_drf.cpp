@@ -19,7 +19,7 @@
 
 // XMidiCtrl
 #include "logger.h"
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -30,8 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(std::shared_ptr<xplane> xp)
-    : map_in(std::move(xp))
+map_in_drf::map_in_drf(xplane *xp)
+    : map_in(xp)
 {}
 
 
@@ -53,30 +53,32 @@ map_type map_in_drf::type()
 /**
  * Read settings from config
  */
-void map_in_drf::read_config(toml::value &settings)
+void map_in_drf::read_config(message_handler *messages, toml::value &data)
 {
-    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
-    map_in::read_config(settings);
+    LOG_DEBUG << " --> Line " << data.location().line() << " :: Read settings for type 'drf'" << LOG_END
+    map_in::read_config(messages, data);
+
+    toml_utils utils(messages);
 
     // read mode
-    m_mode = utils::dataref_mode_from_code(utils::toml_read_string(settings, CFG_KEY_MODE, false));
+    m_mode = utils::dataref_mode_from_code(utils.read_string(data, CFG_KEY_MODE, false));
 
     // read dataref
-    m_dataref = utils::toml_read_string(settings, CFG_KEY_DATAREF);
+    m_dataref = utils.read_string(data, CFG_KEY_DATAREF);
 
     // check if a values array has been defined
-    m_values = utils::toml_read_str_vector_array(settings, CFG_KEY_VALUES, false);
+    m_values = utils.read_str_vector_array(data, CFG_KEY_VALUES, false);
 
     if (m_values.empty()) {
         // read value on
-        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_ON);
+        std::string value = utils.read_string(data, CFG_KEY_VALUE_ON);
 
         if (!value.empty())
             m_values.push_back(value);
 
         // read value off
-        if (utils::toml_contains(settings, CFG_KEY_VALUE_OFF, false))
-            value = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+        if (utils.contains(data, CFG_KEY_VALUE_OFF, false))
+            value = utils.read_string(data, CFG_KEY_VALUE_OFF, false);
 
         if (!value.empty())
             m_values.push_back(value);
@@ -111,20 +113,20 @@ bool map_in_drf::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_drf::execute(midi_message &msg, std::string_view sl_value)
+bool map_in_drf::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
 {
     if (!check_sublayer(sl_value))
         return true;
 
     // if toggle mode then only process key pressed event
-    if (m_mode == dataref_mode::toggle && msg.velocity != MIDI_VELOCITY_MAX)
+    if (m_mode == dataref_mode::toggle && msg.data_2 != MIDI_VELOCITY_MAX)
         return true;
 
     LOG_DEBUG << " --> Change dataref '" << m_dataref << "'" << LOG_END
 
     if (m_values.size() == 2) {
         if (m_mode == dataref_mode::momentary) {
-            if (msg.velocity == MIDI_VELOCITY_MAX)
+            if (msg.data_2 == MIDI_VELOCITY_MAX)
                 m_xp->datarefs().write(m_dataref, m_values[0]);
             else
                 m_xp->datarefs().write(m_dataref, m_values[1]);

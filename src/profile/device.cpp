@@ -198,17 +198,17 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         msg->direction = msg_direction::inbound;
 
         msg->status = message->at(0);
-        msg->data = message->at(1);
+        msg->data_1 = message->at(1);
 
         if (message->size() > 2)
-            msg->velocity = message->at(2);
+            msg->data_2 = message->at(2);
 
         // add the midi message to the internal message list (for logging)
         logger::instance().post_midi_message(msg);
 
         LOG_DEBUG << "Inbound message from device '" << m_name << "' on port '" << m_port_in << "' :: "
-                  << "Status = '" << msg->status << "', Data = '" << msg->data << "', Data Velocity = '"
-                  << msg->velocity << "'" << LOG_END
+                  << "Status = '" << msg->status << "', Data 1 = '" << msg->data_1 << "', Data 2 = '"
+                  << msg->data_2 << "'" << LOG_END
 
         // check midi type
         switch (msg->get_type()) {
@@ -237,11 +237,9 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
         }
 
         // check for a mapping
-        auto mappings = m_map_in.get(msg->get_key());
+        auto mappings = m_map_in.find(msg->get_key());
 
-        for (auto it = mappings.first; it != mappings.second; it++) {
-            auto mapping = it->second;
-
+        for (auto &mapping: mappings) {
             LOG_DEBUG << " --> Mapping found" << LOG_END
 
             bool add_task = false;
@@ -249,7 +247,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
             // for push and pull we have to wait until the command has ended
             if (mapping->type() == map_type::push_pull) {
                 // TODO: Move into mapping object (e.g. set_times)
-                switch (msg->velocity) {
+                switch (msg->data_2) {
                     case MIDI_VELOCITY_MAX: {
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
                         pnp->set_time_received();
@@ -266,7 +264,7 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
                     }
 
                     default:
-                        LOG_WARN << "Invalid MIDI velocity '" << msg->velocity << "' for a Push&Pull mapping"
+                        LOG_WARN << "Invalid MIDI velocity '" << msg->data_2 << "' for a Push&Pull mapping"
                                  << LOG_END
                         break;
                 }
@@ -274,12 +272,11 @@ void device::process_inbound_message(double deltatime, std::vector<unsigned char
             } else if (mapping->type() == map_type::command) {
                 std::shared_ptr<map_in_cmd> cmd = std::static_pointer_cast<map_in_cmd>(mapping);
 
-                // lock the current control change for outgoing messages
-                // TODO: Lock it for other messages types, as well
-                if (msg->velocity == cmd->velocity_on())
-                    m_ch_cc_locked.insert(msg->get_key());
-                else if (msg->velocity == cmd->velocity_off())
-                    m_ch_cc_locked.erase(msg->get_key());
+                // lock the current channel and midi type for outgoing messages
+                if (msg->data_2 == cmd->velocity_on())
+                    m_outbound_locked.insert(msg->get_key());
+                else if (msg->data_2 == cmd->velocity_off())
+                    m_outbound_locked.erase(msg->get_key());
 
                 add_task = true;
             } else {
@@ -314,7 +311,7 @@ void device::process_outbound_mappings()
     }
 
     for (auto &mapping: m_map_out) {
-        if (m_ch_cc_locked.contains(mapping->get_key())) {
+        if (m_outbound_locked.contains(mapping->get_key())) {
             LOG_DEBUG << "Locked: " << mapping->get_key() << LOG_END
             continue;
         }
@@ -404,8 +401,8 @@ void device::process_outbound_tasks()
         if (msg != nullptr) {
             std::vector<unsigned char> midi_out;
             midi_out.push_back(msg->status);
-            midi_out.push_back(msg->data);
-            midi_out.push_back(msg->velocity);
+            midi_out.push_back(msg->data_1);
+            midi_out.push_back(msg->data_2);
 
             try {
                 m_midi_out->sendMessage(&midi_out);
@@ -467,8 +464,8 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
 
     }
 
-    msg->data = task->data;
-    msg->velocity = task->velocity;
+    msg->data_1 = task->data;
+    msg->data_2 = task->velocity;
 
     // add message for internal list, but only if the dataref value has been changed, otherwise the logging will
     // increase very quickly
@@ -476,8 +473,8 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &task)
         logger::instance().post_midi_message(msg);
 
         LOG_DEBUG << "Outbound message for device '" << m_name << " on port '" << m_port_out << "' :: "
-                  << "Status = '" << msg->status << "', Data 1 = '" << msg->data << "', Data 2 = '"
-                  << msg->velocity << "'" << LOG_END
+                  << "Status = '" << msg->status << "', Data 1 = '" << msg->data_1 << "', Data 2 = '"
+                  << msg->data_2 << "'" << LOG_END
     }
 
     std::lock_guard<std::mutex> lock(m_outbound_mutex);

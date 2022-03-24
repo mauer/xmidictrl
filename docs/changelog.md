@@ -3,13 +3,15 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
-##  VERSION 0.63
+##  VERSION 0.70
 
 + Added support for note, pitch bend and program change midi messages
 + Enhanced mapping for outbound messages (value arrays)
 + Added new mode (momentary) for inbound dataref mappings
 + Improved documentation
 + Fixed mapping problem in ZIBO Boeing 738 example
++ Added new paramaters value_min and value_max for encoder dataref mappings
++ Added option to disable the common aircraft profile
 
 -----------------------------------------------------------------------------------------------------------------------
 

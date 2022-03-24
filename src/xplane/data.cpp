@@ -26,21 +26,6 @@
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Destructor
- */
-data::~data()
-{
-    m_data_cache.clear();
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -306,7 +291,7 @@ bool data::write(std::string_view name, float value)
         LOG_ERROR << "Dataref '" << name.data() << "' is not numeric" << LOG_END
         return false;
     } else if (item->type & xplmType_IntArray) {
-        write_int_array(item, get_index(name), value);
+        write_int_array(item, get_index(name), static_cast<int>(value));
         return true;
     } else if (item->type & xplmType_FloatArray) {
         write_float_array(item, get_index(name), value);
@@ -407,7 +392,7 @@ data_item *data::retrieve_data(std::string_view name)
         m_data_cache.emplace(dataref_name, std::move(item));
     }
 
-    return m_data_cache.at(dataref_name.c_str()).get();
+    return m_data_cache.at(dataref_name).get();
 }
 
 

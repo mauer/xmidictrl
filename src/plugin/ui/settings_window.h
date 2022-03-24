@@ -40,6 +40,8 @@ private:
     bool m_log_midi;
     bool m_show_messages;
 
+    bool m_common_profile;
+
     int m_max_text_messages;
     int m_max_midi_messages;
 

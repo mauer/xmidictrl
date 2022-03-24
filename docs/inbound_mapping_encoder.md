@@ -8,8 +8,8 @@ dataref will be used.
 ## Encoder Mode
 
 The plugin supports two encoder modes: *relative* and *range*. If your MIDI device sends a velocity between 0 and 127
-when encoders are turned you have to select *range*. Relative mode is the preferred settings as it send different values
-depending how fast the encoder was turned. However, not all MIDI devices support this mode.
+when encoders are turned you have to select *range*. Relative mode is the preferred settings as it sends different 
+values in relation to the speed the encoder was turned. However, not all MIDI devices support this mode.
 
 ## Commands Mapping
 
@@ -66,6 +66,8 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 | mode               | range / relative, depending on your MIDI device (default is relative)                             |
 | modifier_fast_up   | Modifier which will be used when the knob is turned quite fast to the right (relative mode, only) |
 | modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  (relative mode, only) |
+| value_min          | Minimum value                                                                                     |
+| value_max          | Maximum value                                                                                     |
 
 ### Examples
 

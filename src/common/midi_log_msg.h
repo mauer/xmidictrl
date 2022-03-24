@@ -37,8 +37,8 @@ struct midi_log_msg {
     unsigned char channel {MIDI_NONE};
 
     unsigned char status {MIDI_NONE};
-    unsigned char data {MIDI_NONE};
-    unsigned char velocity {MIDI_NONE};
+    unsigned char data_1 {MIDI_NONE};
+    unsigned char data_2 {MIDI_NONE};
 };
 
 } // Namespace xmidictrl

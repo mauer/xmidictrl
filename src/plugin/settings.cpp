@@ -34,19 +34,14 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(std::shared_ptr<xplane> xp) : config(std::move(xp))
+settings::settings(xplane *xp)
+    : config(xp)
 {
     // build name for general settings file
 
     if (!load(get_settings_filename()))
         LOG_WARN << " --> Will use default settings" << LOG_END
 }
-
-
-/**
- * Destructor
- */
-settings::~settings() = default;
 
 
 
@@ -71,7 +66,7 @@ void settings::set_logging_level(log_level level)
 log_level settings::logging_level() const
 {
     std::string level = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
-                                                      utils::log_level_as_code(log_level::info));
+                                                   utils::log_level_as_code(log_level::info));
     return utils::log_level_from_code(level);
 }
 
@@ -145,6 +140,24 @@ void settings::set_max_midi_messages(int number)
 int settings::max_midi_messages() const
 {
     return toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 500);
+}
+
+
+/**
+ * Sets if the common profile is enabled
+ */
+void settings::set_common_profile(bool enabled)
+{
+    m_config[CFG_KEY_COMMON_PROFILE] = enabled;
+}
+
+
+/**
+ * Return if the common profile is enabled
+ */
+bool settings::common_profile() const
+{
+    return toml::find_or<int>(m_config, CFG_KEY_COMMON_PROFILE, true);
 }
 
 

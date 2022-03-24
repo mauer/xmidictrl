@@ -26,6 +26,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "message_handler.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -33,21 +34,21 @@ namespace xmidictrl {
 
 class utils {
 public:
-    static bool toml_contains(toml::value &settings, std::string_view name, bool mandatory = true);
-    static bool toml_is_array(toml::value &settings, std::string_view name);
+    //static bool toml_contains(toml::value &settings, std::string_view name, bool mandatory = true);
+    //static bool toml_is_array(toml::value &settings, std::string_view name);
 
-    static std::string toml_read_string(toml::value &settings, std::string_view name, bool mandatory = true);
-    static std::set<std::string> toml_read_str_set_array(toml::value &settings,
-                                                         std::string_view name,
-                                                         bool mandatory = true);
-    static std::vector<std::string> toml_read_str_vector_array(toml::value &settings,
-                                                           std::string_view name,
-                                                           bool mandatory = true);
-    static int toml_read_int(toml::value &settings, std::string_view name, bool mandatory = true);
-    static float toml_read_float(toml::value &settings,
-                                 std::string_view name,
-                                 bool mandatory = true,
-                                 float fallback = 0.0f);
+    //static std::string toml_read_string(toml::value &settings, std::string_view name, bool mandatory = true);
+    //static std::set<std::string> toml_read_str_set_array(toml::value &settings,
+    //                                                     std::string_view name,
+    //                                                     bool mandatory = true);
+    //static std::vector<std::string> toml_read_str_vector_array(toml::value &settings,
+    //                                                       std::string_view name,
+    //                                                       bool mandatory = true);
+    //static int toml_read_int(toml::value &settings, std::string_view name, bool mandatory = true);
+    //static float toml_read_float(toml::value &settings,
+    //                             std::string_view name,
+    //                             bool mandatory = true,
+    //                             float fallback = 0.0f);
 
     static std::string log_level_as_text(log_level level);
     static std::string log_level_as_code(log_level level);
@@ -63,7 +64,7 @@ public:
 
     static std::string create_map_key(const unsigned char ch, std::string_view type_code, const unsigned char data);
 
-    static bool create_preference_folders(const std::shared_ptr<xplane> &xp);
+    static bool create_preference_folders(xplane *xp);
 };
 
 } // Namespace xmidictrl

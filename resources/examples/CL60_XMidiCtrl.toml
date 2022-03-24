@@ -180,6 +180,6 @@ mapping_out = [
   { ch = 11, cc = 27, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/vnav_1", "CL650/lamps/glareshield/FCP/vnav_2"], value_off = "0" },
   { ch = 11, cc = 28, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/appr_1", "CL650/lamps/glareshield/FCP/appr_2"], value_off = "0" },
   { ch = 11, cc = 29, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/nav_1", "CL650/lamps/glareshield/FCP/nav_2"], value_off = "0" },
-  { ch = 11, cc = 30, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/bc_1", "CL650/lamps/glareshield/FCP/bc_2"], value_off = "0" },
+  { channel = 11, cc = 30, type = "drf", dataref = ["CL650/lamps/glareshield/FCP/bc_1", "CL650/lamps/glareshield/FCP/bc_2"], value_off = "0" },
   { ch = 11, cc = 32, type = "drf", dataref = ["CL650/lamps/glareshield/master_warn_R", "CL650/lamps/glareshield/master_caut_R"], value_off = "0" },
 ] 

@@ -21,7 +21,7 @@
 
 // XMidiCtrl
 #include "logger.h"
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -32,8 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out_drf::map_out_drf(std::shared_ptr<xplane> xp)
-    : map_out(std::move(xp))
+map_out_drf::map_out_drf(xplane *xp)
+    : map_out(xp)
 {}
 
 
@@ -166,26 +166,28 @@ unsigned int map_out_drf::velocity_off() const
 /**
  * Read settings from config
  */
-void map_out_drf::read_config(toml::value &settings)
+void map_out_drf::read_config(message_handler *messages, toml::value &settings)
 {
-    LOG_DEBUG << "Line " << settings.location().line() << " :: Read settings for type 'drf'" << LOG_END
-    map::read_config(settings);
+    messages->debug("Line %i :: Read settings for type 'drf'", settings.location().line());
+    map::read_config(messages, settings);
+
+    toml_utils utils(messages);
 
     // read dataref
-    if (utils::toml_contains(settings, CFG_KEY_DATAREF)) {
+    if (utils.contains(settings, CFG_KEY_DATAREF)) {
         // check if single value or array
         if (settings[CFG_KEY_DATAREF].is_array())
-            set_dataref(utils::toml_read_str_vector_array(settings, CFG_KEY_DATAREF));
+            set_dataref(utils.read_str_vector_array(settings, CFG_KEY_DATAREF));
         else
-            set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
+            set_dataref(utils.read_string(settings, CFG_KEY_DATAREF));
     }
 
     // read values on
-    if (utils::toml_is_array(settings, CFG_KEY_VALUE_ON)) {
-        set_values_on(utils::toml_read_str_set_array(settings, CFG_KEY_VALUE_ON, false));
+    if (utils.is_array(settings, CFG_KEY_VALUE_ON)) {
+        set_values_on(utils.read_str_set_array(settings, CFG_KEY_VALUE_ON, false));
     } else {
         std::set<std::string> list;
-        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_ON, false);
+        std::string value = utils.read_string(settings, CFG_KEY_VALUE_ON, false);
 
         if (!value.empty())
             list.insert(value);
@@ -194,11 +196,11 @@ void map_out_drf::read_config(toml::value &settings)
     }
 
     // read values off
-    if (utils::toml_is_array(settings, CFG_KEY_VALUE_OFF)) {
-        set_values_off(utils::toml_read_str_set_array(settings, CFG_KEY_VALUE_OFF, false));
+    if (utils.is_array(settings, CFG_KEY_VALUE_OFF)) {
+        set_values_off(utils.read_str_set_array(settings, CFG_KEY_VALUE_OFF, false));
     } else {
         std::set<std::string> list;
-        std::string value = utils::toml_read_string(settings, CFG_KEY_VALUE_OFF, false);
+        std::string value = utils.read_string(settings, CFG_KEY_VALUE_OFF, false);
 
         if (!value.empty())
             list.insert(value);
@@ -207,10 +209,10 @@ void map_out_drf::read_config(toml::value &settings)
     }
 
     // read velocity on
-    set_velocity_on(utils::toml_read_int(settings, CFG_KEY_VELOCITY_ON, false));
+    set_velocity_on(utils.read_int(settings, CFG_KEY_VELOCITY_ON, false));
 
     // read velocity off
-    set_velocity_off(utils::toml_read_int(settings, CFG_KEY_VELOCITY_OFF, false));
+    set_velocity_off(utils.read_int(settings, CFG_KEY_VELOCITY_OFF, false));
 }
 
 
@@ -331,7 +333,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
                 break;
         }
 
-        task->ch = ch();
+        task->ch = channel();
         task->data = data();
 
         if (send_on)
@@ -377,7 +379,7 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
             break;
     }
 
-    task->ch = ch();
+    task->ch = channel();
     task->data = data();
 
     task->velocity = MIDI_VELOCITY_MIN;

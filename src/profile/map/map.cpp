@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(std::shared_ptr<xplane> xplane)
-    : m_xp(std::move(xplane))
+map::map(xplane *xp)
+    : m_xp(xp)
 {}
 
 
@@ -52,9 +52,9 @@ map_type map::type()
 /**
  * Return the chanel number
  */
-unsigned char map::ch() const
+unsigned char map::channel() const
 {
-    return m_ch;
+    return m_channel;
 }
 
 
@@ -105,18 +105,18 @@ std::string map::get_key()
             break;
     }
 
-    return utils::create_map_key(ch(), type_code, data());
+    return utils::create_map_key(m_channel, type_code, m_data);
 }
 
 
 /**
  * Read the config
  */
-void map::read_config(toml::value &data)
+void map::read_config(message_handler *messages, toml::value &data)
 {
     // required config
-    read_ch(data);
-    read_data(data);
+    read_channel(messages, data);
+    read_data(messages, data);
 }
 
 
@@ -125,7 +125,7 @@ void map::read_config(toml::value &data)
  */
 bool map::check()
 {
-    if (m_ch != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
+    if (m_channel != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
         return true;
     else
         return false;
@@ -139,29 +139,25 @@ bool map::check()
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read parameter ch
+ * Read parameter channel
  */
-void map::read_ch(toml::value &data)
+void map::read_channel(message_handler *messages, toml::value &data)
 {
-    m_ch = 11; // default channel 11
+    m_channel = 11; // default channel 11
 
     try {
         // read channel
         if (data.contains(CFG_KEY_CH)) {
-            m_ch = static_cast<unsigned char>( data[CFG_KEY_CH].as_integer());
+            m_channel = static_cast<unsigned char>( data[CFG_KEY_CH].as_integer());
 
-            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CH << "' = '" << m_ch
-                      << "'" << LOG_END
+            messages->debug(" --> Line %i :: Parameter '%s' = '%i'", data.location().line(), CFG_KEY_CH, m_channel);
         } else {
-            LOG_INFO << " --> Line " << data.location().line() << " Parameter '" << CFG_KEY_CH << "' is missing, "
-                     << "will use default channel '11'" << LOG_END
-
-            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CH << "' = '" << m_ch
-                      << "' (Default Value)" << LOG_END
+            messages->info(" --> Line %i :: Parameter '%s' is missing, will use default channel '11'", data.location().line(), CFG_KEY_CH);
+            messages->debug(" --> Line %i :: Parameter '%s' = '%i' (Default Value)", data.location().line(), CFG_KEY_CH, m_channel);
         }
     } catch (toml::type_error &error) {
-        LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
+        messages->error(" --> Line %i :: Error reading mapping", data.location().line());
+        messages->error(error.what());
     }
 }
 
@@ -169,7 +165,7 @@ void map::read_ch(toml::value &data)
 /**
  * Read parameter data
  */
-void map::read_data(toml::value &data)
+void map::read_data(message_handler *messages, toml::value &data)
 {
     m_data = MIDI_NONE;
     m_data_type = map_data_type::none;
@@ -198,11 +194,11 @@ void map::read_data(toml::value &data)
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_NOTE << "' = '"
                       << m_data << "'" << LOG_END
         } else if (data.contains(CFG_KEY_PITCH_BEND)) {
-            m_data = static_cast<unsigned char>( data[CFG_KEY_PITCH_BEND].as_integer());
+            m_data = 0;   // fixed value for pitch bend messages
             m_data_type = map_data_type::pitch_bend;
 
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_PITCH_BEND << "' = '"
-                      << m_data << "'" << LOG_END
+                      << m_data << "' (fixed value for pitch bend)" << LOG_END
         } else if (data.contains(CFG_KEY_PROGRAM_CHANGE)) {
             m_data = static_cast<unsigned char>( data[CFG_KEY_PROGRAM_CHANGE].as_integer());
             m_data_type = map_data_type::program_change;
@@ -210,9 +206,7 @@ void map::read_data(toml::value &data)
             LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_PROGRAM_CHANGE
                       << "' = '" << m_data << "'" << LOG_END
         } else {
-            LOG_ERROR << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_CC << "' or "
-                      << "Parameter '" << CFG_KEY_NOTE << "' is missing"
-                      << LOG_END
+            LOG_ERROR << " --> Line " << data.location().line() << " :: Parameter for MIDI type is missing" << LOG_END
         }
 
     } catch (toml::type_error &error) {

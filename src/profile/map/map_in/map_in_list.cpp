@@ -54,27 +54,16 @@ void map_in_list::add(const std::shared_ptr<map_in> &map)
 /**
  * Retrieve all mappings for a given key
  */
-map_in_pair map_in_list::get(const std::string &key)
+std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &key)
 {
-    return m_list.equal_range(key);
-}
+    std::vector<std::shared_ptr<map_in>> result {};
 
+    auto search_result = m_list.equal_range(key);
 
-/**
- * Return the begin iterator
- */
-map_in_itr map_in_list::begin()
-{
-    return m_list.begin();
-}
+    for (auto it = search_result.first; it != search_result.second; it++)
+        result.push_back(it->second);
 
-
-/**
- * Return the end iterator
- */
-map_in_itr map_in_list::end()
-{
-    return m_list.end();
+    return result;
 }
 
 

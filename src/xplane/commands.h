@@ -30,10 +30,8 @@ namespace xmidictrl {
 
 class commands {
 public:
-	commands();
-    ~commands();
-
-    typedef std::shared_ptr<commands> ptr;
+	commands() = default;
+    ~commands() = default;
 
     void begin(std::string_view cmd);
     void end(std::string_view cmd);

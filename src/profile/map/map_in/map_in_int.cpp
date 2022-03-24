@@ -26,8 +26,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_int::map_in_int(std::shared_ptr<xplane> xp, std::string_view command)
-    : map_in(std::move(xp)),
+map_in_int::map_in_int(xplane *xp, std::string_view command)
+    : map_in(xp),
       m_command(command)
 {}
 
@@ -65,7 +65,7 @@ bool map_in_int::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_int::execute(midi_message &msg, std::string_view sl_value)
+bool map_in_int::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
 {
     if (!check_sublayer(sl_value))
         return true;

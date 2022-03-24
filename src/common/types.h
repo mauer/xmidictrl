@@ -58,7 +58,7 @@ const char *const PROFILES_DIRECTORY_NAME = "Profiles";
 const char *const KEY_CONTROL_CHANGE = "CC";
 const char *const KEY_NOTE = "NOTE";
 const char *const KEY_PITCH_BEND = "PITCH";
-const char *const KEY_PROGRAM_CHANGE = "PRGCHG";
+const char *const KEY_PROGRAM_CHANGE = "PRG";
 
 // Menu items
 const char *const MENUITEM_ABOUT_WINDOW = "ABOUT_WINDOW";
@@ -79,7 +79,7 @@ const char *const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";
 const char *const CFG_KEY_CC_DEPRECATED = "CC";
-const char *const CFG_KEY_CH = "ch";
+const char *const CFG_KEY_CH = "channel";
 const char *const CFG_KEY_COMMAND = "command";
 const char *const CFG_KEY_COMMAND_DOWN = "command_down";
 const char *const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
@@ -88,6 +88,7 @@ const char *const CFG_KEY_COMMAND_MIDDLE = "command_middle";
 const char *const CFG_KEY_COMMAND_PULL = "command_pull";
 const char *const CFG_KEY_COMMAND_PUSH = "command_push";
 const char *const CFG_KEY_COMMAND_UP = "command_up";
+const char *const CFG_KEY_COMMON_PROFILE = "common_profile";
 const char *const CFG_KEY_DATAREF = "dataref";
 const char *const CFG_KEY_DEVICE = "device";
 const char *const CFG_KEY_LOG_LEVEL = "logging_level";
@@ -105,8 +106,8 @@ const char *const CFG_KEY_MODIFIER_FAST_UP = "modifier_fast_up";
 const char *const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char *const CFG_KEY_NAME = "name";
 const char *const CFG_KEY_NOTE = "note";
-const char *const CFG_KEY_PITCH_BEND = "pb";
-const char *const CFG_KEY_PROGRAM_CHANGE = "pc";
+const char *const CFG_KEY_PITCH_BEND = "pitch";
+const char *const CFG_KEY_PROGRAM_CHANGE = "prg";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
 const char *const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";

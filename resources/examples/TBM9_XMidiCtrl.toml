@@ -88,7 +88,7 @@ mapping_in = [
   #{ ch = 11, cc = 62, type = "cmd", command = "" },
   #{ ch = 11, cc = 63, type = "cmd", command = "" },
   { ch = 11, cc = 64, type = "cmd", command = "sim/GPS/g1000n3_cursor" },
-  { ch = 11, cc = 65, type = "cmd", command = "sim/GPS/g1000n3_ent" },
+  { channel = 11, cc = 65, type = "cmd", command = "sim/GPS/g1000n3_ent" },
   { ch = 11, cc = 66, type = "cmd", command = "sim/GPS/g1000n1_cvol" },
 
   # Buttons Upper Row

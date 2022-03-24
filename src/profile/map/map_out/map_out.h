@@ -31,7 +31,7 @@ namespace xmidictrl {
 
 class map_out : public map {
 public:
-    explicit map_out(std::shared_ptr<xplane> xp);
+    explicit map_out(xplane *xp);
     ~map_out() override = default;
 
     virtual std::shared_ptr<outbound_task> execute(mode_out mode) = 0;

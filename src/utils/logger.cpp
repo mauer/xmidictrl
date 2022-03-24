@@ -146,17 +146,17 @@ void logger::post_midi_message(const std::shared_ptr<midi_message> &msg)
         std::shared_ptr<midi_log_msg> log_msg = std::make_shared<midi_log_msg>();
 
         log_msg->time = utils::time_to_string(msg->time).c_str();
-        log_msg->direction = msg->direction_text().c_str();
+        log_msg->direction = msg->direction_as_text().c_str();
 
         log_msg->port = msg->port;
 
-        log_msg->type = msg->get_type_text();
+        log_msg->type = msg->get_type_as_text();
 
         log_msg->channel = msg->get_channel();
 
         log_msg->status = msg->status;
-        log_msg->data = msg->data;
-        log_msg->velocity = msg->velocity;
+        log_msg->data_1 = msg->data_1;
+        log_msg->data_2 = msg->data_2;
 
         if (m_settings != nullptr) {
             while (m_midi_messages.size() >= m_settings->max_midi_messages())

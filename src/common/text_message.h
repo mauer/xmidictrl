@@ -47,9 +47,10 @@ struct text_message {
 
             case text_msg_type::debug:
                 return "Debug";
-        }
 
-        return "<unknown>>";
+            default:
+                return "<unknown>";
+        }
     }
 };
 

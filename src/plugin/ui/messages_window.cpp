@@ -184,18 +184,18 @@ void messages_window::create_tab_midi_msg()
                 ImGui::Text("%i", msg->channel);
 
             ImGui::TableNextColumn();
-            if (msg->data != MIDI_NONE)
-                ImGui::Text("%i", msg->data);
+            if (msg->data_1 != MIDI_NONE)
+                ImGui::Text("%i", msg->data_1);
 
             ImGui::TableNextColumn();
-            if (msg->velocity != MIDI_NONE)
-                ImGui::Text("%i", msg->velocity);
+            if (msg->data_2 != MIDI_NONE)
+                ImGui::Text("%i", msg->data_2);
 
             ImGui::TableNextColumn();
-            if (msg->velocity != MIDI_NONE)
-                ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status, msg->data, msg->velocity);
+            if (msg->data_2 != MIDI_NONE)
+                ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status, msg->data_1, msg->data_2);
             else
-                ImGui::Text("Status = %i | Data 1 = %i", msg->status, msg->data);
+                ImGui::Text("Status = %i | Data 1 = %i", msg->status, msg->data_1);
         }
 
         ImGui::EndTable();

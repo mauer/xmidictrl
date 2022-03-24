@@ -34,15 +34,15 @@ namespace xmidictrl {
 
 class map_in_drf : public map_in {
 public:
-    explicit map_in_drf(std::shared_ptr<xplane> xp);
+    explicit map_in_drf(xplane *xp);
     ~map_in_drf() override = default;
 
     map_type type() override;
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &data) override;
     bool check() override;
 
-    bool execute(midi_message &msg, std::string_view sl_value) override;
+    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
 
 private:
     dataref_mode m_mode {dataref_mode::toggle};

@@ -38,11 +38,14 @@ namespace xmidictrl {
  */
 plugin::plugin()
 {
+    // create the main message handler for the plugin
+    m_plugin_msg = std::make_shared<message_handler>();
+
     // create the integration to X-Plane
     m_xp = std::make_shared<xplane>();
 
     // load general settings
-    m_settings = std::make_shared<settings>(m_xp);
+    m_settings = std::make_shared<settings>(m_xp.get());
 
     // initialize our logging instance
     logger::instance().init(m_xp->xplane_path(), m_settings);
@@ -52,10 +55,10 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the aircraft profile
-    m_profile = std::make_shared<profile>(m_xp);
+    m_profile = std::make_shared<profile>(m_xp.get(), m_plugin_msg, m_settings);
 
     // create the inbound worker
-    m_worker = std::make_unique<inbound_worker>();
+    m_worker = std::make_unique<inbound_worker>(m_plugin_msg.get());
 }
 
 
@@ -149,7 +152,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    utils::create_preference_folders(m_xp);
+    utils::create_preference_folders(m_xp.get());
 }
 
 
@@ -204,7 +207,7 @@ void plugin::close_profile()
 /**
  * Add an inbound task to the worker
  */
-void plugin::add_inbound_task(std::shared_ptr<inbound_task> task)
+void plugin::add_inbound_task(const std::shared_ptr<inbound_task> &task)
 {
     if (m_worker != nullptr)
         m_worker->add_task(task);
@@ -259,7 +262,7 @@ void plugin::show_about_window()
 /**
  * Return the current sublayer
  */
-int plugin::sublayer()
+int plugin::sublayer() const
 {
     return m_sublayer;
 }
@@ -306,7 +309,7 @@ void plugin::create_datarefs()
                                               nullptr, nullptr,
                                               nullptr, nullptr,
                                               nullptr, nullptr,
-                                              this, this );
+                                              this, this);
 
     m_xp->datarefs().write("xmidictrl/sublayer", "0");
 }
@@ -368,10 +371,10 @@ void plugin::remove_commands()
 /**
  * Read handler for dataref xmidictrl/sublayer
  */
-int plugin::read_drf_sublayer(void *inRefcon)
+int plugin::read_drf_sublayer(void *refcon)
 {
-    if (inRefcon != nullptr) {
-        auto instance = static_cast<plugin *>(inRefcon);
+    if (refcon != nullptr) {
+        auto instance = static_cast<plugin *>(refcon);
         return instance->sublayer();
     }
 
@@ -382,11 +385,11 @@ int plugin::read_drf_sublayer(void *inRefcon)
 /**
  * Write handler for dataref xmidictrl/sublayer
  */
-void plugin::write_drf_sublayer(void *inRefcon, int inValue)
+void plugin::write_drf_sublayer(void *refcon, int value)
 {
-    if (inRefcon != nullptr) {
-        auto instance = static_cast<plugin *>(inRefcon);
-        instance->set_sublayer(inValue);
+    if (refcon != nullptr) {
+        auto instance = static_cast<plugin *>(refcon);
+        instance->set_sublayer(value);
     }
 }
 
@@ -416,13 +419,13 @@ int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void
 /**
  * Create and returns windows
  */
-void plugin::create_window(window_type windowType)
+void plugin::create_window(window_type type)
 {
     std::shared_ptr<xplane_window> window;
 
     // check if the window is already created
     try {
-        window = m_windows.at(windowType);
+        window = m_windows.at(type);
         window->show();
         return;
     } catch (std::out_of_range &) {
@@ -430,7 +433,7 @@ void plugin::create_window(window_type windowType)
     }
 
     // looks like we have to create it
-    switch (windowType) {
+    switch (type) {
         case window_type::about_window:
             window = std::make_shared<about_window>(m_xp);
             break;
@@ -453,7 +456,7 @@ void plugin::create_window(window_type windowType)
     }
 
     if (window)
-        m_windows.emplace(windowType, window);
+        m_windows.emplace(type, window);
 }
 
 } // Mamespace xmidictrl

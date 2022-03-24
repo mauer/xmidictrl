@@ -33,8 +33,6 @@ public:
     xplane();
     ~xplane() = default;
 
-    typedef std::shared_ptr<xplane> ptr;
-
     XPLMPluginID plugin_id();
 
     std::string_view plugin_path();

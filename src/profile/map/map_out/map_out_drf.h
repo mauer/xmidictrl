@@ -34,7 +34,7 @@ namespace xmidictrl {
 
 class map_out_drf : public map_out {
 public:
-    explicit map_out_drf(std::shared_ptr<xplane> xp);
+    explicit map_out_drf(xplane *xp);
     ~map_out_drf() override;
 
     map_type type() override;
@@ -54,7 +54,7 @@ public:
     void set_velocity_off(int value_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &settings) override;
     bool check() override;
 
     std::shared_ptr<outbound_task> execute(mode_out mode) override;

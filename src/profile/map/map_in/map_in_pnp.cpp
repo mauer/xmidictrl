@@ -19,7 +19,7 @@
 
 // XMidiCtrl
 #include "logger.h"
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -30,8 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_pnp::map_in_pnp(std::shared_ptr<xplane> xp)
-    : map_in(std::move(xp))
+map_in_pnp::map_in_pnp(xplane *xp)
+    : map_in(xp)
 {}
 
 
@@ -111,16 +111,18 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(toml::value &settings)
+void map_in_pnp::read_config(message_handler *messages, toml::value &data)
 {
-    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'pnp'" << LOG_END
-    map_in::read_config(settings);
+    messages->debug(" --> Line %i :: Read settings for type 'pnp'", data.location().line());
+    map_in::read_config(messages, data);
+
+    toml_utils utils(messages);
 
     // read command push
-    set_command_push(utils::toml_read_string(settings, CFG_KEY_COMMAND_PUSH));
+    set_command_push(utils.read_string(data, CFG_KEY_COMMAND_PUSH));
 
     // read command pull
-    set_command_pull(utils::toml_read_string(settings, CFG_KEY_COMMAND_PULL));
+    set_command_pull(utils.read_string(data, CFG_KEY_COMMAND_PULL));
 }
 
 
@@ -142,7 +144,7 @@ bool map_in_pnp::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_pnp::execute(midi_message &msg, std::string_view sl_value)
+bool map_in_pnp::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
 {
     if (!check_sublayer(sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)

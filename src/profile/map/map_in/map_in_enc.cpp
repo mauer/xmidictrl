@@ -19,7 +19,7 @@
 
 // XMidiCtrl
 #include "logger.h"
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -30,8 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_enc::map_in_enc(std::shared_ptr<xplane> xp)
-    : map_in(std::move(xp))
+map_in_enc::map_in_enc(xplane *xp)
+    : map_in(xp)
 {}
 
 
@@ -245,46 +245,60 @@ std::string_view map_in_enc::command_fast_down() const
 /**
  * Read settings from config
  */
-void map_in_enc::read_config(toml::value &settings)
+void map_in_enc::read_config(message_handler *messages, toml::value &data)
 {
-    LOG_DEBUG << " --> Line " << settings.location().line() << " :: Read settings for type 'enc'" << LOG_END
-    map_in::read_config(settings);
+    messages->debug(" --> Line %i :: Read settings for type 'enc'", data.location().line());
+    map_in::read_config(messages, data);
+
+    toml_utils utils(messages);
 
     // read the mode
-    set_mode(utils::encoder_mode_from_code(utils::toml_read_string(settings, CFG_KEY_MODE, false)));
+    set_mode(utils::encoder_mode_from_code(utils.read_string(data, CFG_KEY_MODE, false)));
 
     // check if dataref was defined
-    if (utils::toml_contains(settings, CFG_KEY_DATAREF, false)) {
-        LOG_DEBUG << " --> Use 'dataref' mode for encoder mapping" << LOG_END
+    if (utils.contains(data, CFG_KEY_DATAREF, false)) {
+        messages->debug(" --> Use 'dataref' mode for encoder mapping");
 
         // read dataref
-        set_dataref(utils::toml_read_string(settings, CFG_KEY_DATAREF));
+        set_dataref(utils.read_string(data, CFG_KEY_DATAREF));
 
         // read modifier up
-        set_modifier_up(utils::toml_read_float(settings, CFG_KEY_MODIFIER_UP));
+        set_modifier_up(utils.read_float(data, CFG_KEY_MODIFIER_UP));
 
         // read modifier down
-        set_modifier_down(utils::toml_read_float(settings, CFG_KEY_MODIFIER_DOWN));
+        set_modifier_down(utils.read_float(data, CFG_KEY_MODIFIER_DOWN));
 
         // read modifier fast up
-        set_modifier_fast_up(utils::toml_read_float(settings, CFG_KEY_MODIFIER_FAST_UP, false));
+        set_modifier_fast_up(utils.read_float(data, CFG_KEY_MODIFIER_FAST_UP, false));
 
         // read modifier fast down
-        set_modifier_fast_down(utils::toml_read_float(settings, CFG_KEY_MODIFIER_FAST_DOWN, false));
+        set_modifier_fast_down(utils.read_float(data, CFG_KEY_MODIFIER_FAST_DOWN, false));
+
+        // read value min
+        if (utils.contains(data, CFG_KEY_VALUE_MIN)) {
+            m_value_min = utils.read_float(data, CFG_KEY_VALUE_MIN, false);
+            m_value_min_defined = true;
+        }
+
+        // read value max
+        if (utils.contains(data, CFG_KEY_VALUE_MAX)) {
+            m_value_max = utils.read_float(data, CFG_KEY_VALUE_MAX, false);
+            m_value_max_defined = true;
+        }
     } else {
-        LOG_DEBUG << " --> Use 'command' mode for encoder mapping" << LOG_END
+        messages->debug(" --> Use 'command' mode for encoder mapping");
 
         // read command up
-        set_command_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_UP));
+        set_command_up(utils.read_string(data, CFG_KEY_COMMAND_UP));
 
         // read command down
-        set_command_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_DOWN));
+        set_command_down(utils.read_string(data, CFG_KEY_COMMAND_DOWN));
 
         // read fast command up
-        set_command_fast_up(utils::toml_read_string(settings, CFG_KEY_COMMAND_FAST_UP, false));
+        set_command_fast_up(utils.read_string(data, CFG_KEY_COMMAND_FAST_UP, false));
 
         // read fast command down
-        set_command_fast_down(utils::toml_read_string(settings, CFG_KEY_COMMAND_FAST_DOWN, false));
+        set_command_fast_down(utils.read_string(data, CFG_KEY_COMMAND_FAST_DOWN, false));
     }
 }
 
@@ -305,8 +319,11 @@ bool map_in_enc::check()
         if (modifier_up() == 0.0f && modifier_down() == 0.0f && modifier_fast_up() == 0.0f
             && modifier_fast_down() == 0.0f)
             return false;
-        else
-            return true;
+
+        if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max)
+            return false;
+
+        return true;
     } else {
         // command mode
         if (command_up().empty() && command_down().empty() && command_fast_up().empty() && command_fast_down().empty())
@@ -320,7 +337,7 @@ bool map_in_enc::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_enc::execute(midi_message &msg, std::string_view sl_value)
+bool map_in_enc::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
 {
     if (!check_sublayer(sl_value))
         return true;
@@ -347,68 +364,93 @@ bool map_in_enc::execute_dataref(midi_message &msg)
 
     // read current value
     if (!m_xp->datarefs().read(dataref(), value)) {
-        m_velocity_prev = msg.velocity;
+        m_velocity_prev = msg.data_2;
         return false;
     }
 
     if (m_mode == encoder_mode::relative) {
         // relative mode
-        if (msg.velocity < 64) {
+        if (msg.data_2 < 64) {
             // Down
-            if (msg.velocity < 61) {
+            if (msg.data_2 < 61) {
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_fast_down() << "'"
                           << LOG_END
+
                 value = value + modifier_fast_down();
             } else {
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_down() << "'"
                           << LOG_END
+
                 value = value + modifier_down();
             }
-        } else if (msg.velocity > 64) {
+
+            if (m_value_min_defined && value < m_value_min)
+                value = m_value_min;
+        } else if (msg.data_2 > 64) {
             // Up
-            if (msg.velocity > 68) {
+            if (msg.data_2 > 68) {
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_fast_up() << "'"
                           << LOG_END
+
                 value = value + modifier_fast_up();
             } else {
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_up() << "'"
                           << LOG_END
+
                 value = value + modifier_up();
             }
+
+            if (m_value_max_defined && value > m_value_max)
+                value = m_value_max;
         }
     } else {
         // range mode
         if (m_velocity_prev == MIDI_NONE) {
             // ignore first message, have to figure out first which way the knob was turned
-            m_velocity_prev = msg.velocity;
+            m_velocity_prev = msg.data_2;
             return true;
         }
 
-        switch (msg.velocity) {
+        switch (msg.data_2) {
             case MIDI_VELOCITY_MIN:
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_down() << "'" << LOG_END
                 value = value + modifier_down();
+
+                if (m_value_min_defined && value < m_value_min)
+                    value = m_value_min;
+
                 break;
 
             case MIDI_VELOCITY_MAX:
                 LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_up() << "'" << LOG_END
                 value = value + modifier_up();
 
+                if (m_value_max_defined && value > m_value_max)
+                    value = m_value_max;
+
+                break;
+
             default:
-                if ((int)(msg.velocity - m_velocity_prev) > 0) {
+                if ((int) (msg.data_2 - m_velocity_prev) > 0) {
                     LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_up() << "'"
                               << LOG_END
                     value = value + modifier_up();
+
+                    if (m_value_max_defined && value > m_value_max)
+                        value = m_value_max;
                 } else {
                     LOG_DEBUG << " --> Modify dataref '" << dataref() << "' by value '" << modifier_down() << "'"
                               << LOG_END
                     value = value + modifier_down();
+
+                    if (m_value_min_defined && value < m_value_min)
+                        value = m_value_min;
                 }
                 break;
         }
     }
 
-    m_velocity_prev = msg.velocity;
+    m_velocity_prev = msg.data_2;
 
     if (!m_xp->datarefs().write(dataref(), value))
         return false;
@@ -424,18 +466,18 @@ bool map_in_enc::execute_command(midi_message &msg)
 {
     if (m_mode == encoder_mode::relative) {
         // relative mode
-        if (msg.velocity < 64) {
+        if (msg.data_2 < 64) {
             // Down
-            if (msg.velocity < 61) {
+            if (msg.data_2 < 61) {
                 LOG_DEBUG << " --> Execute command '" << command_fast_down() << "'" << LOG_END
                 m_xp->cmd().execute(command_fast_down());
             } else {
                 LOG_DEBUG << " --> Execute command '" << command_down() << "'" << LOG_END
                 m_xp->cmd().execute(command_down());
             }
-        } else if (msg.velocity > 64) {
+        } else if (msg.data_2 > 64) {
             // Up
-            if (msg.velocity > 68) {
+            if (msg.data_2 > 68) {
                 LOG_DEBUG << " --> Execute command '" << command_fast_up() << "'" << LOG_END
                 m_xp->cmd().execute(command_fast_up());
             } else {
@@ -445,7 +487,7 @@ bool map_in_enc::execute_command(midi_message &msg)
         }
     } else {
         // range mode
-        switch (msg.velocity) {
+        switch (msg.data_2) {
             case MIDI_VELOCITY_MIN:
                 LOG_DEBUG << " --> Execute command '" << command_down() << "'" << LOG_END
                 m_xp->cmd().execute(command_down());
@@ -457,7 +499,7 @@ bool map_in_enc::execute_command(midi_message &msg)
                 break;
 
             default:
-                if ((int)(msg.velocity - m_velocity_prev) > 0) {
+                if ((int) (msg.data_2 - m_velocity_prev) > 0) {
                     LOG_DEBUG << " --> Execute command '" << command_up() << "'" << LOG_END
                     m_xp->cmd().execute(command_up());
                 } else {
@@ -467,7 +509,7 @@ bool map_in_enc::execute_command(midi_message &msg)
                 break;
         }
 
-        m_velocity_prev = msg.velocity;
+        m_velocity_prev = msg.data_2;
     }
 
     return true;

@@ -41,10 +41,8 @@ enum class command_type {
 
 class map_in_pnp : public map_in {
 public:
-    explicit map_in_pnp(xplane::ptr xp);
+    explicit map_in_pnp(xplane *xp);
     ~map_in_pnp() override = default;
-
-    typedef std::shared_ptr<map_in_pnp> ptr;
 
     map_type type() override;
 
@@ -57,10 +55,10 @@ public:
     void set_time_received();
     void set_time_released();
 
-    void read_config(toml::value &settings) override;
+    void read_config(message_handler *messages, toml::value &data) override;
     bool check() override;
 
-    bool execute(midi_message &msg, std::string_view sl_value) override;
+    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
 
 private:
     void reset();
