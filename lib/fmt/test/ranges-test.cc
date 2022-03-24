@@ -46,13 +46,11 @@ TEST(ranges_test, format_array_of_literals) {
 TEST(ranges_test, format_vector) {
   auto v = std::vector<int>{1, 2, 3, 5, 7, 11};
   EXPECT_EQ(fmt::format("{}", v), "[1, 2, 3, 5, 7, 11]");
-  EXPECT_EQ(fmt::format("{::#x}", v), "[0x1, 0x2, 0x3, 0x5, 0x7, 0xb]");
 }
 
 TEST(ranges_test, format_vector2) {
   auto v = std::vector<std::vector<int>>{{1, 2}, {3, 5}, {7, 11}};
   EXPECT_EQ(fmt::format("{}", v), "[[1, 2], [3, 5], [7, 11]]");
-  EXPECT_EQ(fmt::format("{:::#x}", v), "[[0x1, 0x2], [0x3, 0x5], [0x7, 0xb]]");
 }
 
 TEST(ranges_test, format_map) {
@@ -63,25 +61,6 @@ TEST(ranges_test, format_map) {
 TEST(ranges_test, format_set) {
   EXPECT_EQ(fmt::format("{}", std::set<std::string>{"one", "two"}),
             "{\"one\", \"two\"}");
-}
-
-namespace adl {
-struct box {
-  int value;
-};
-
-auto begin(const box& b) -> const int* {
-  return &b.value;
-}
-
-auto end(const box& b) -> const int* {
-  return &b.value + 1;
-}
-}  // namespace adl
-
-TEST(ranges_test, format_adl_begin_end) {
-  auto b = adl::box{42};
-  EXPECT_EQ(fmt::format("{}", b), "[42]");
 }
 
 TEST(ranges_test, format_pair) {
@@ -152,8 +131,8 @@ TEST(ranges_test, path_like) {
 struct string_like {
   const char* begin();
   const char* end();
-  operator fmt::string_view() const { return "foo"; }
-  operator std::string_view() const { return "foo"; }
+  explicit operator fmt::string_view() const { return "foo"; }
+  explicit operator std::string_view() const { return "foo"; }
 };
 
 TEST(ranges_test, format_string_like) {
@@ -317,7 +296,6 @@ static_assert(std::input_iterator<cpp20_only_range::iterator>);
 TEST(ranges_test, join_sentinel) {
   auto hello = zstring{"hello"};
   EXPECT_EQ(fmt::format("{}", hello), "['h', 'e', 'l', 'l', 'o']");
-  EXPECT_EQ(fmt::format("{::}", hello), "[h, e, l, l, o]");
   EXPECT_EQ(fmt::format("{}", fmt::join(hello, "_")), "h_e_l_l_o");
 }
 
@@ -383,18 +361,3 @@ TEST(ranges_test, escape_convertible_to_string_view) {
             "[\"foo\"]");
 }
 #endif  // FMT_USE_STRING_VIEW
-
-template <typename R> struct fmt_ref_view {
-  R* r;
-
-  auto begin() const -> decltype(r->begin()) { return r->begin(); }
-  auto end() const -> decltype(r->end()) { return r->end(); }
-};
-
-TEST(ranges_test, range_of_range_of_mixed_const) {
-  std::vector<std::vector<int>> v = {{1, 2, 3}, {4, 5}};
-  EXPECT_EQ(fmt::format("{}", v), "[[1, 2, 3], [4, 5]]");
-
-  fmt_ref_view<decltype(v)> r{&v};
-  EXPECT_EQ(fmt::format("{}", r), "[[1, 2, 3], [4, 5]]");
-}

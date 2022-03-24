@@ -72,10 +72,8 @@ struct explicitly_convertible_to_wstring_view {
 };
 
 TEST(xchar_test, format_explicitly_convertible_to_wstring_view) {
-  // Types explicitly convertible to wstring_view are not formattable by
-  // default because it may introduce ODR violations.
-  static_assert(
-      !fmt::is_formattable<explicitly_convertible_to_wstring_view>::value, "");
+  EXPECT_EQ(L"foo",
+            fmt::format(L"{}", explicitly_convertible_to_wstring_view()));
 }
 #endif
 
@@ -220,12 +218,6 @@ std::wostream& operator<<(std::wostream& os, streamable_enum) {
   return os << L"streamable_enum";
 }
 
-namespace fmt {
-template <>
-struct formatter<streamable_enum, wchar_t> : basic_ostream_formatter<wchar_t> {
-};
-}  // namespace fmt
-
 enum unstreamable_enum {};
 
 TEST(xchar_test, enum) {
@@ -244,14 +236,14 @@ namespace fake_qt {
 class QString {
  public:
   QString(const wchar_t* s) : s_(s) {}
-  const wchar_t* utf16() const noexcept { return s_.data(); }
-  int size() const noexcept { return static_cast<int>(s_.size()); }
+  const wchar_t* utf16() const FMT_NOEXCEPT { return s_.data(); }
+  int size() const FMT_NOEXCEPT { return static_cast<int>(s_.size()); }
 
  private:
   std::wstring s_;
 };
 
-fmt::basic_string_view<wchar_t> to_string_view(const QString& s) noexcept {
+fmt::basic_string_view<wchar_t> to_string_view(const QString& s) FMT_NOEXCEPT {
   return {s.utf16(), static_cast<size_t>(s.size())};
 }
 }  // namespace fake_qt
@@ -330,11 +322,9 @@ TEST(xchar_test, color) {
 }
 
 TEST(xchar_test, ostream) {
-#if !FMT_GCC_VERSION || FMT_GCC_VERSION >= 409
   std::wostringstream wos;
   fmt::print(wos, L"Don't {}!", L"panic");
-  EXPECT_EQ(wos.str(), L"Don't panic!");
-#endif
+  EXPECT_EQ(L"Don't panic!", wos.str());
 }
 
 TEST(xchar_test, to_wstring) { EXPECT_EQ(L"42", fmt::to_wstring(42)); }

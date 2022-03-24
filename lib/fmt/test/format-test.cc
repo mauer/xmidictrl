@@ -39,75 +39,6 @@ using testing::StrictMock;
 
 enum { buffer_size = 256 };
 
-TEST(uint128_test, ctor) {
-  using fmt::detail::uint128_fallback;
-  auto n = uint128_fallback();
-  EXPECT_EQ(n, 0);
-  n = uint128_fallback(42);
-  EXPECT_EQ(n, 42);
-  EXPECT_EQ(static_cast<uint64_t>(n), 42);
-}
-
-TEST(uint128_test, shift) {
-  auto n = fmt::detail::uint128_fallback(42);
-  n = n << 64;
-  EXPECT_EQ(static_cast<uint64_t>(n), 0);
-  n = n >> 64;
-  EXPECT_EQ(static_cast<uint64_t>(n), 42);
-  n = n << 62;
-  EXPECT_EQ(static_cast<uint64_t>(n >> 64), 0xa);
-  EXPECT_EQ(static_cast<uint64_t>(n), 0x8000000000000000);
-  n = n >> 62;
-  EXPECT_EQ(static_cast<uint64_t>(n), 42);
-}
-
-TEST(uint128_test, minus) {
-  auto n = fmt::detail::uint128_fallback(42);
-  EXPECT_EQ(n - 2, 40);
-}
-
-template <typename Float> void check_isfinite() {
-  using fmt::detail::isfinite;
-  EXPECT_TRUE(isfinite(Float(0.0)));
-  EXPECT_TRUE(isfinite(Float(42.0)));
-  EXPECT_TRUE(isfinite(Float(-42.0)));
-  EXPECT_TRUE(isfinite(Float(fmt::detail::max_value<double>())));
-  // Use double because std::numeric_limits is broken for __float128.
-  using limits = std::numeric_limits<double>;
-  EXPECT_FALSE(isfinite(Float(limits::infinity())));
-  EXPECT_FALSE(isfinite(Float(-limits::infinity())));
-  EXPECT_FALSE(isfinite(Float(limits::quiet_NaN())));
-  EXPECT_FALSE(isfinite(Float(-limits::quiet_NaN())));
-}
-
-TEST(float_test, isfinite) {
-  check_isfinite<double>();
-#ifdef __SIZEOF_FLOAT128__
-  check_isfinite<fmt::detail::float128>();
-#endif
-}
-
-template <typename Float> void check_isnan() {
-  using fmt::detail::isnan;
-  EXPECT_FALSE(isnan(Float(0.0)));
-  EXPECT_FALSE(isnan(Float(42.0)));
-  EXPECT_FALSE(isnan(Float(-42.0)));
-  EXPECT_FALSE(isnan(Float(fmt::detail::max_value<double>())));
-  // Use double because std::numeric_limits is broken for __float128.
-  using limits = std::numeric_limits<double>;
-  EXPECT_FALSE(isnan(Float(limits::infinity())));
-  EXPECT_FALSE(isnan(Float(-limits::infinity())));
-  EXPECT_TRUE(isnan(Float(limits::quiet_NaN())));
-  EXPECT_TRUE(isnan(Float(-limits::quiet_NaN())));
-}
-
-TEST(float_test, isnan) {
-  check_isnan<double>();
-#ifdef __SIZEOF_FLOAT128__
-  check_isnan<fmt::detail::float128>();
-#endif
-}
-
 struct uint32_pair {
   uint32_t u[2];
 };
@@ -292,9 +223,8 @@ TEST(memory_buffer_test, move_ctor_dynamic_buffer) {
   buffer.push_back('a');
   basic_memory_buffer<char, 4, std_allocator> buffer2(std::move(buffer));
   // Move should rip the guts of the first buffer.
-  EXPECT_EQ(&buffer[0], inline_buffer_ptr);
-  EXPECT_EQ(buffer.size(), 0);
-  EXPECT_EQ(std::string(&buffer2[0], buffer2.size()), "testa");
+  EXPECT_EQ(inline_buffer_ptr, &buffer[0]);
+  EXPECT_EQ("testa", std::string(&buffer2[0], buffer2.size()));
   EXPECT_GT(buffer2.capacity(), 4u);
 }
 
@@ -395,7 +325,7 @@ template <typename Allocator, size_t MaxSize>
 class max_size_allocator : public Allocator {
  public:
   using typename Allocator::value_type;
-  size_t max_size() const noexcept { return MaxSize; }
+  size_t max_size() const FMT_NOEXCEPT { return MaxSize; }
   value_type* allocate(size_t n) {
     if (n > max_size()) {
       throw std::length_error("size > max_size");
@@ -640,9 +570,6 @@ TEST(format_test, plus_sign) {
   EXPECT_THROW_MSG((void)fmt::format(runtime("{0:+}"), 42ul), format_error,
                    "format specifier requires signed argument");
   EXPECT_EQ("+42", fmt::format("{0:+}", 42ll));
-#if FMT_USE_INT128
-  EXPECT_EQ("+42", fmt::format("{0:+}", __int128_t(42)));
-#endif
   EXPECT_THROW_MSG((void)fmt::format(runtime("{0:+}"), 42ull), format_error,
                    "format specifier requires signed argument");
   EXPECT_EQ("+42", fmt::format("{0:+}", 42.0));
@@ -991,11 +918,6 @@ TEST(format_test, precision) {
   EXPECT_THAT(outputs,
               testing::Contains(fmt::format("{:.838A}", -2.14001164E+38)));
 
-  if (std::numeric_limits<long double>::digits == 64) {
-    auto ld = (std::numeric_limits<long double>::min)();
-    EXPECT_EQ(fmt::format("{:.0}", ld), "3e-4932");
-  }
-
   EXPECT_EQ("123.", fmt::format("{:#.0f}", 123.0));
   EXPECT_EQ("1.23", fmt::format("{:.02f}", 1.234));
   EXPECT_EQ("0.001", fmt::format("{:.1g}", 0.001));
@@ -1138,7 +1060,7 @@ TEST(format_test, format_short) {
 template <typename T>
 void check_unknown_types(const T& value, const char* types, const char*) {
   char format_str[buffer_size];
-  const char* special = ".0123456789L?}";
+  const char* special = ".0123456789L}";
   for (int i = CHAR_MIN; i <= CHAR_MAX; ++i) {
     char c = static_cast<char>(i);
     if (std::strchr(types, c) || std::strchr(special, c) || !c) continue;
@@ -1307,30 +1229,32 @@ TEST(format_test, format_float) {
 }
 
 TEST(format_test, format_double) {
-  EXPECT_EQ(fmt::format("{}", 0.0), "0");
+  EXPECT_EQ("0", fmt::format("{}", 0.0));
   check_unknown_types(1.2, "eEfFgGaAnL%", "double");
-  EXPECT_EQ(fmt::format("{:}", 0.0), "0");
-  EXPECT_EQ(fmt::format("{:f}", 0.0), "0.000000");
-  EXPECT_EQ(fmt::format("{:g}", 0.0), "0");
-  EXPECT_EQ(fmt::format("{:}", 392.65), "392.65");
-  EXPECT_EQ(fmt::format("{:g}", 392.65), "392.65");
-  EXPECT_EQ(fmt::format("{:G}", 392.65), "392.65");
-  EXPECT_EQ(fmt::format("{:g}", 4.9014e6), "4.9014e+06");
-  EXPECT_EQ(fmt::format("{:f}", 392.65), "392.650000");
-  EXPECT_EQ(fmt::format("{:F}", 392.65), "392.650000");
-  EXPECT_EQ(fmt::format("{:L}", 42.0), "42");
-  EXPECT_EQ(fmt::format("{:24a}", 4.2), "    0x1.0cccccccccccdp+2");
-  EXPECT_EQ(fmt::format("{:<24a}", 4.2), "0x1.0cccccccccccdp+2    ");
-  EXPECT_EQ(fmt::format("{0:e}", 392.65), "3.926500e+02");
-  EXPECT_EQ(fmt::format("{0:E}", 392.65), "3.926500E+02");
-  EXPECT_EQ(fmt::format("{0:+010.4g}", 392.65), "+0000392.6");
+  EXPECT_EQ("0", fmt::format("{:}", 0.0));
+  EXPECT_EQ("0.000000", fmt::format("{:f}", 0.0));
+  EXPECT_EQ("0", fmt::format("{:g}", 0.0));
+  EXPECT_EQ("392.65", fmt::format("{:}", 392.65));
+  EXPECT_EQ("392.65", fmt::format("{:g}", 392.65));
+  EXPECT_EQ("392.65", fmt::format("{:G}", 392.65));
+  EXPECT_EQ("4.9014e+06", fmt::format("{:g}", 4.9014e6));
+  EXPECT_EQ("392.650000", fmt::format("{:f}", 392.65));
+  EXPECT_EQ("392.650000", fmt::format("{:F}", 392.65));
+  EXPECT_EQ("42", fmt::format("{:L}", 42.0));
+  EXPECT_EQ("    0x1.0cccccccccccdp+2", fmt::format("{:24a}", 4.2));
+  EXPECT_EQ("0x1.0cccccccccccdp+2    ", fmt::format("{:<24a}", 4.2));
   char buffer[buffer_size];
+  safe_sprintf(buffer, "%e", 392.65);
+  EXPECT_EQ(buffer, fmt::format("{0:e}", 392.65));
+  safe_sprintf(buffer, "%E", 392.65);
+  EXPECT_EQ(buffer, fmt::format("{0:E}", 392.65));
+  EXPECT_EQ("+0000392.6", fmt::format("{0:+010.4g}", 392.65));
   safe_sprintf(buffer, "%a", -42.0);
-  EXPECT_EQ(fmt::format("{:a}", -42.0), buffer);
+  EXPECT_EQ(buffer, fmt::format("{:a}", -42.0));
   safe_sprintf(buffer, "%A", -42.0);
-  EXPECT_EQ(fmt::format("{:A}", -42.0), buffer);
-  EXPECT_EQ(fmt::format("{:f}", 9223372036854775807.0),
-            "9223372036854775808.000000");
+  EXPECT_EQ(buffer, fmt::format("{:A}", -42.0));
+  EXPECT_EQ("9223372036854775808.000000",
+            fmt::format("{:f}", 9223372036854775807.0));
 }
 
 TEST(format_test, precision_rounding) {
@@ -1439,9 +1363,6 @@ TEST(format_test, format_char) {
         << format_str;
   }
   EXPECT_EQ(fmt::format("{:02X}", n), fmt::format("{:02X}", 'x'));
-
-  EXPECT_EQ("\n", fmt::format("{}", '\n'));
-  EXPECT_EQ("'\\n'", fmt::format("{:?}", '\n'));
 }
 
 TEST(format_test, format_volatile_char) {
@@ -1488,43 +1409,14 @@ TEST(format_test, format_pointer) {
   EXPECT_EQ("0x0", fmt::format("{}", nullptr));
 }
 
-TEST(format_test, write_uintptr_fallback) {
-  // Test that formatting a pointer by converting it to uint128_fallback works.
-  // This is needed to support systems without uintptr_t.
-  auto s = std::string();
-  fmt::detail::write_ptr<char>(
-      std::back_inserter(s),
-      fmt::detail::bit_cast<fmt::detail::uint128_fallback>(
-          reinterpret_cast<void*>(0xface)),
-      nullptr);
-  EXPECT_EQ(s, "0xface");
-}
-
-enum class color { red, green, blue };
-
-namespace test_ns {
-enum class color { red, green, blue };
-using fmt::enums::format_as;
-}  // namespace test_ns
-
-TEST(format_test, format_enum_class) {
-  EXPECT_EQ(fmt::format("{}", fmt::underlying(color::red)), "0");
-  EXPECT_EQ(fmt::format("{}", test_ns::color::red), "0");
-}
-
 TEST(format_test, format_string) {
-  EXPECT_EQ(fmt::format("{0}", std::string("test")), "test");
-  EXPECT_EQ(fmt::format("{0}", std::string("test")), "test");
-  EXPECT_EQ(fmt::format("{:?}", std::string("test")), "\"test\"");
-  EXPECT_EQ(fmt::format("{:*^10?}", std::string("test")), "**\"test\"**");
-  EXPECT_EQ(fmt::format("{:?}", std::string("\test")), "\"\\test\"");
+  EXPECT_EQ("test", fmt::format("{0}", std::string("test")));
   EXPECT_THROW((void)fmt::format(fmt::runtime("{:x}"), std::string("test")),
                fmt::format_error);
 }
 
 TEST(format_test, format_string_view) {
   EXPECT_EQ("test", fmt::format("{}", string_view("test")));
-  EXPECT_EQ("\"t\\nst\"", fmt::format("{:?}", string_view("t\nst")));
   EXPECT_EQ("", fmt::format("{}", string_view()));
 }
 
@@ -1816,7 +1708,6 @@ TEST(format_test, compile_time_string) {
                                   "foo"_a = "foo"));
   EXPECT_EQ("", fmt::format(FMT_STRING("")));
   EXPECT_EQ("", fmt::format(FMT_STRING(""), "arg"_a = 42));
-  EXPECT_EQ("42", fmt::format(FMT_STRING("{answer}"), "answer"_a = Answer()));
 #endif
 
   (void)static_with_null;
@@ -1886,8 +1777,6 @@ TEST(format_test, named_arg_udl) {
       fmt::format("{first}{second}{first}{third}", fmt::arg("first", "abra"),
                   fmt::arg("second", "cad"), fmt::arg("third", 99)),
       udl_a);
-
-  EXPECT_EQ("42", fmt::format("{answer}", "answer"_a = Answer()));
 }
 #endif  // FMT_USE_USER_DEFINED_LITERALS
 

@@ -53,16 +53,6 @@ std::ostream& operator<<(std::ostream& os, streamable_enum) {
 
 enum unstreamable_enum {};
 
-struct empty_test {};
-std::ostream& operator<<(std::ostream& os, empty_test) { return os << ""; }
-
-namespace fmt {
-template <> struct formatter<test_string> : ostream_formatter {};
-template <> struct formatter<date> : ostream_formatter {};
-template <> struct formatter<streamable_enum> : ostream_formatter {};
-template <> struct formatter<empty_test> : ostream_formatter {};
-}  // namespace fmt
-
 TEST(ostream_test, enum) {
   EXPECT_EQ("streamable_enum", fmt::format("{}", streamable_enum()));
   EXPECT_EQ("0", fmt::format("{}", unstreamable_enum()));
@@ -95,6 +85,9 @@ TEST(ostream_test, format_specs) {
   EXPECT_EQ("te", fmt::format("{0:.2}", test_string("test")));
   EXPECT_EQ("te", fmt::format("{0:.{1}}", test_string("test"), 2));
 }
+
+struct empty_test {};
+std::ostream& operator<<(std::ostream& os, empty_test) { return os << ""; }
 
 TEST(ostream_test, empty_custom_output) {
   EXPECT_EQ("", fmt::format("{}", empty_test()));
@@ -191,8 +184,6 @@ template <typename T> struct formatter<test_template<T>> : formatter<int> {
     return formatter<int>::format(2, ctx);
   }
 };
-
-template <> struct formatter<fmt_test::abc> : ostream_formatter {};
 }  // namespace fmt
 
 TEST(ostream_test, template) {
@@ -223,6 +214,41 @@ TEST(ostream_test, disable_builtin_ostream_operators) {
   EXPECT_EQ("foo", fmt::format("{}", convertible<const char*>("foo")));
 }
 
+struct explicitly_convertible_to_string_like {
+  template <typename String,
+            typename = typename std::enable_if<std::is_constructible<
+                String, const char*, size_t>::value>::type>
+  explicit operator String() const {
+    return String("foo", 3u);
+  }
+};
+
+std::ostream& operator<<(std::ostream& os,
+                         explicitly_convertible_to_string_like) {
+  return os << "bar";
+}
+
+TEST(ostream_test, format_explicitly_convertible_to_string_like) {
+  EXPECT_EQ("bar", fmt::format("{}", explicitly_convertible_to_string_like()));
+}
+
+#ifdef FMT_USE_STRING_VIEW
+struct explicitly_convertible_to_std_string_view {
+  explicit operator fmt::detail::std_string_view<char>() const {
+    return {"foo", 3u};
+  }
+};
+
+std::ostream& operator<<(std::ostream& os,
+                         explicitly_convertible_to_std_string_view) {
+  return os << "bar";
+}
+
+TEST(ostream_test, format_explicitly_convertible_to_std_string_view) {
+  EXPECT_EQ("bar", fmt::format("{}", explicitly_convertible_to_string_like()));
+}
+#endif  // FMT_USE_STRING_VIEW
+
 struct streamable_and_convertible_to_bool {
   operator bool() const { return true; }
 };
@@ -236,21 +262,6 @@ TEST(ostream_test, format_convertible_to_bool) {
   EXPECT_EQ(fmt::format("{}", streamable_and_convertible_to_bool()), "true");
 }
 
-struct streamable_and_convertible_to_string_view {
-  operator fmt::string_view() const { return "foo"; }
-};
-
-std::ostream& operator<<(std::ostream& os,
-                         streamable_and_convertible_to_string_view) {
-  return os << "bar";
-}
-
-TEST(ostream_test, format_convertible_to_string_vew) {
-  // operator<< is intentionally not used because of potential ODR violations.
-  EXPECT_EQ(fmt::format("{}", streamable_and_convertible_to_string_view()),
-            "foo");
-}
-
 struct copyfmt_test {};
 
 std::ostream& operator<<(std::ostream& os, copyfmt_test) {
@@ -258,10 +269,6 @@ std::ostream& operator<<(std::ostream& os, copyfmt_test) {
   ios.copyfmt(os);
   return os << "foo";
 }
-
-namespace fmt {
-template <> struct formatter<copyfmt_test> : ostream_formatter {};
-}  // namespace fmt
 
 TEST(ostream_test, copyfmt) {
   EXPECT_EQ("foo", fmt::format("{}", copyfmt_test()));
@@ -283,10 +290,6 @@ struct abstract {
     return os;
   }
 };
-
-namespace fmt {
-template <> struct formatter<abstract> : ostream_formatter {};
-}  // namespace fmt
 
 void format_abstract_compiles(const abstract& a) {
   fmt::format(FMT_COMPILE("{}"), a);

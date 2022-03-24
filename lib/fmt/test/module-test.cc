@@ -36,6 +36,7 @@
 #else
 #  define FMT_USE_FCNTL 0
 #endif
+#define FMT_NOEXCEPT noexcept
 #if defined(_WIN32) && !defined(__MINGW32__)
 #  define FMT_POSIX(call) _##call
 #else
@@ -193,6 +194,13 @@ TEST(module_test, wformat_args) {
   EXPECT_FALSE(no_args.get(1));
   fmt::basic_format_args args = fmt::make_wformat_args(42);
   EXPECT_TRUE(args.get(0));
+}
+
+TEST(module_test, checked_format_args) {
+  fmt::basic_format_args args = fmt::make_args_checked<int>("{}", 42);
+  EXPECT_TRUE(args.get(0));
+  fmt::basic_format_args wargs = fmt::make_args_checked<int>(L"{}", 42);
+  EXPECT_TRUE(wargs.get(0));
 }
 
 TEST(module_test, dynamic_format_args) {

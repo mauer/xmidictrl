@@ -96,6 +96,23 @@ TEST(bigint_test, multiply) {
   EXPECT_EQ("fffffffffffffffe0000000000000001", fmt::format("{}", bigmax));
 }
 
+TEST(bigint_test, accumulator) {
+  fmt::detail::accumulator acc;
+  EXPECT_EQ(acc.lower, 0);
+  EXPECT_EQ(acc.upper, 0);
+  acc.upper = 12;
+  acc.lower = 34;
+  EXPECT_EQ(static_cast<uint32_t>(acc), 34);
+  acc += 56;
+  EXPECT_EQ(acc.lower, 90);
+  acc += max_value<uint64_t>();
+  EXPECT_EQ(acc.upper, 13);
+  EXPECT_EQ(acc.lower, 89);
+  acc >>= 32;
+  EXPECT_EQ(acc.upper, 0);
+  EXPECT_EQ(acc.lower, 13 * 0x100000000);
+}
+
 TEST(bigint_test, square) {
   bigint n0(0);
   n0.square();
@@ -190,14 +207,14 @@ TEST(fp_test, get_cached_power) {
   using limits = std::numeric_limits<double>;
   for (auto exp = limits::min_exponent; exp <= limits::max_exponent; ++exp) {
     int dec_exp = 0;
-    auto power = fmt::detail::get_cached_power(exp, dec_exp);
-    bigint exact, cache(power.f);
+    auto fp = fmt::detail::get_cached_power(exp, dec_exp);
+    bigint exact, cache(fp.f);
     if (dec_exp >= 0) {
       exact.assign_pow10(dec_exp);
-      if (power.e <= 0)
-        exact <<= -power.e;
+      if (fp.e <= 0)
+        exact <<= -fp.e;
       else
-        cache <<= power.e;
+        cache <<= fp.e;
       exact.align(cache);
       cache.align(exact);
       auto exact_str = fmt::format("{}", exact);
@@ -211,9 +228,9 @@ TEST(fp_test, get_cached_power) {
         EXPECT_EQ(diff, 0);
     } else {
       cache.assign_pow10(-dec_exp);
-      cache *= power.f + 1;  // Inexact check.
+      cache *= fp.f + 1;  // Inexact check.
       exact.assign(1);
-      exact <<= -power.e;
+      exact <<= -fp.e;
       exact.align(cache);
       auto exact_str = fmt::format("{}", exact);
       auto cache_str = fmt::format("{}", cache);
@@ -226,17 +243,14 @@ TEST(fp_test, get_cached_power) {
 TEST(fp_test, dragonbox_max_k) {
   using fmt::detail::dragonbox::floor_log10_pow2;
   using float_info = fmt::detail::dragonbox::float_info<float>;
-  EXPECT_EQ(
-      fmt::detail::const_check(float_info::max_k),
-      float_info::kappa -
-          floor_log10_pow2(std::numeric_limits<float>::min_exponent -
-                           fmt::detail::num_significand_bits<float>() - 1));
+  EXPECT_EQ(fmt::detail::const_check(float_info::max_k),
+            float_info::kappa - floor_log10_pow2(float_info::min_exponent -
+                                                 float_info::significand_bits));
   using double_info = fmt::detail::dragonbox::float_info<double>;
   EXPECT_EQ(
       fmt::detail::const_check(double_info::max_k),
-      double_info::kappa -
-          floor_log10_pow2(std::numeric_limits<double>::min_exponent -
-                           fmt::detail::num_significand_bits<double>() - 1));
+      double_info::kappa - floor_log10_pow2(double_info::min_exponent -
+                                            double_info::significand_bits));
 }
 
 TEST(fp_test, get_round_direction) {
@@ -341,6 +355,14 @@ template <typename Int> void test_count_digits() {
 TEST(format_impl_test, count_digits) {
   test_count_digits<uint32_t>();
   test_count_digits<uint64_t>();
+}
+
+TEST(format_impl_test, write_fallback_uintptr) {
+  std::string s;
+  fmt::detail::write_ptr<char>(
+      std::back_inserter(s),
+      fmt::detail::fallback_uintptr(reinterpret_cast<void*>(0xface)), nullptr);
+  EXPECT_EQ(s, "0xface");
 }
 
 #ifdef _WIN32

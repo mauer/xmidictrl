@@ -1,7 +1,5 @@
-.. image:: https://user-images.githubusercontent.com/
-           576385/156254208-f5b743a9-88cf-439d-b0c0-923d53e8d551.png
-   :width: 25%
-   :alt: {fmt}
+{fmt}
+=====
 
 .. image:: https://github.com/fmtlib/fmt/workflows/linux/badge.svg
    :target: https://github.com/fmtlib/fmt/actions?query=workflow%3Alinux
@@ -28,8 +26,9 @@
 **{fmt}** is an open-source formatting library providing a fast and safe
 alternative to C stdio and C++ iostreams.
 
-If you like this project, please consider donating to one of the funds that
-help victims of the war in Ukraine: https://www.stopputin.net/.
+If you like this project, please consider donating to the BYSOL
+Foundation that helps victims of political repressions in Belarus:
+https://bysol.org/en/bs/general/.
 
 `Documentation <https://fmt.dev>`__
 
@@ -124,7 +123,7 @@ Output::
     Default format: 42s 100ms
     strftime-like format: 03:15:30
 
-**Print a container** (`run <https://godbolt.org/z/MxM1YqjE7>`_)
+**Print a container** (`run <https://godbolt.org/z/MjsY7c>`_)
 
 .. code:: c++
 
