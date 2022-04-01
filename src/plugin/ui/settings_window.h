@@ -27,7 +27,7 @@ namespace xmidictrl {
 
 class settings_window : public ImGuiWindow {
 public:
-    settings_window(const std::shared_ptr<xplane>& xp, std::shared_ptr<settings> set);
+    settings_window(text_logger *in_log, xplane *in_xp, settings *in_settings);
     ~settings_window() override = default;
 
 protected:
@@ -36,14 +36,14 @@ protected:
 private:
     std::shared_ptr<settings> m_settings;
 
-    log_level m_log_level;
+    bool m_debug_mode;
     bool m_log_midi;
     bool m_show_messages;
 
-    bool m_common_profile;
-
     int m_max_text_messages;
     int m_max_midi_messages;
+
+    bool m_common_profile;
 
     std::string m_path_xplane;
     std::string m_path_plugin;

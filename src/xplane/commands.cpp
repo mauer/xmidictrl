@@ -17,9 +17,6 @@
 
 #include "commands.h"
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -29,9 +26,9 @@ namespace xmidictrl {
 /**
  * Begin a X-Plane command
  */
-void commands::begin(std::string_view cmd)
+void commands::begin(text_logger *in_log, std::string_view in_cmd)
 {
-    XPLMCommandRef cmd_ref = find_command_ref(cmd);
+    XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
     if (cmd_ref != nullptr)
         XPLMCommandBegin(cmd_ref);
@@ -41,9 +38,9 @@ void commands::begin(std::string_view cmd)
 /**
  * End a X-Plane command
  */
-void commands::end(std::string_view cmd)
+void commands::end(text_logger *in_log, std::string_view in_cmd)
 {
-    XPLMCommandRef cmd_ref = find_command_ref(cmd);
+    XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
     if (cmd_ref != nullptr)
         XPLMCommandEnd(cmd_ref);
@@ -53,9 +50,9 @@ void commands::end(std::string_view cmd)
 /**
  * Execute a X-Plane command
  */
-void commands::execute(std::string_view cmd)
+void commands::execute(text_logger *in_log, std::string_view in_cmd)
 {
-    XPLMCommandRef cmd_ref = find_command_ref(cmd);
+    XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
     if (cmd_ref != nullptr)
         XPLMCommandOnce(cmd_ref);
@@ -71,20 +68,20 @@ void commands::execute(std::string_view cmd)
 /**
  * Get the command ref for a command string
  */
-XPLMCommandRef commands::find_command_ref(std::string_view cmd)
+XPLMCommandRef commands::find_command_ref(text_logger* in_log, std::string_view in_cmd)
 {
     XPLMCommandRef cmd_ref = nullptr;
 
     // check the cache first
     try {
-        cmd_ref = m_command_cache.at(cmd.data());
+        cmd_ref = m_command_cache.at(in_cmd.data());
     } catch (std::out_of_range const &) {
-        cmd_ref = XPLMFindCommand(cmd.data());
-        m_command_cache.emplace(cmd, cmd_ref);
+        cmd_ref = XPLMFindCommand(in_cmd.data());
+        m_command_cache.emplace(in_cmd, cmd_ref);
     }
 
     if (cmd_ref == nullptr)
-        LOG_ERROR << "Command '" << cmd.data() << "' not found" << LOG_END
+        in_log->error("Command '%s' ' not found", in_cmd.data());
 
     return cmd_ref;
 }

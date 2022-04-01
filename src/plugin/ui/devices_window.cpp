@@ -28,8 +28,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-devices_window::devices_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(std::move(xp), 700, 350)
+devices_window::devices_window(text_logger *in_log, xplane *in_xp)
+    : ImGuiWindow(in_log, in_xp, 700, 350)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - MIDI Devices");
 }

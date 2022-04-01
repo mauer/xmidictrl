@@ -53,7 +53,7 @@ namespace xmidictrl {
 
 class ImGuiWindow: public xplane_window {
 public:
-    ImGuiWindow(std::shared_ptr<xplane> xp, int width, int height, bool translucent = false);
+    ImGuiWindow(text_logger *in_log, xplane *in_xp, int in_width, int in_height, bool in_translucent = false);
     ~ImGuiWindow() override;
 
 protected:

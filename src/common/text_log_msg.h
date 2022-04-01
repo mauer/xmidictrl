@@ -26,8 +26,28 @@ namespace xmidictrl {
 // Structs
 struct text_log_msg {
     std::string time;
-    std::string type;
+    log_level level;
     std::string text;
+
+    // Return the message type as text
+    [[nodiscard]] std::string get_log_level_text() const
+    {
+        switch (level) {
+            case log_level::error:
+                return "Error";
+
+            case log_level::warn:
+                return "Warning";
+
+            case log_level::info:
+                return "Information";
+
+            case log_level::debug:
+                return "Debug";
+        }
+
+        return "<unknown>";
+    }
 };
 
 } // Namespace xmidictrl

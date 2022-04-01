@@ -28,7 +28,7 @@
 // XMidiCtrl
 #include "map.h"
 #include "map_in.h"
-#include "message_handler.h"
+#include "text_logger.h"
 #include "midi_message.h"
 #include "xplane.h"
 
@@ -36,30 +36,30 @@ namespace xmidictrl {
 
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(xplane *xp);
+    explicit map_in_cmd(xplane *in_xp);
     ~map_in_cmd() override = default;
 
     map_type type() override;
 
-    void set_command(std::string_view command);
+    void set_command(std::string_view in_command);
     [[nodiscard]] std::string_view command() const;
 
-    void set_velocity_on(int velocity_on);
+    void set_velocity_on(int in_velocity_on);
     [[nodiscard]] unsigned int velocity_on() const;
 
-    void set_velocity_off(int value_off);
+    void set_velocity_off(int in_velocity_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(message_handler *messages, toml::value &data) override;
-    bool check() override;
+    void read_config(text_logger *messages, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
     std::string m_command {};
 
-    unsigned int m_velocity_on {127};
-    unsigned int m_velocity_off {0};
+    unsigned int m_velocity_on {MIDI_VELOCITY_MAX};
+    unsigned int m_velocity_off {MIDI_VELOCITY_MIN};
 };
 
 } // Namespace xmidictrl

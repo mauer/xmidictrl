@@ -20,136 +20,74 @@
 
 // Standard
 #include <chrono>
+#include <vector>
 
 // XMidiCtrl
+#include "map.h"
+#include "text_logger.h"
 #include "types.h"
-#include "utils.h"
 
 namespace xmidictrl {
 
-struct midi_message {
-    time_point time {time_point::min()};
-    msg_direction direction {msg_direction::inbound};
+enum class midi_direction {
+    in,
+    out
+};
 
-    unsigned int port {0};
+class midi_message {
+public:
+    explicit midi_message(text_logger *in_log, midi_direction in_direction);
+    ~midi_message();
 
-    unsigned char status {MIDI_NONE};
-    unsigned char data_1 {MIDI_NONE};
-    unsigned char data_2 {MIDI_NONE};
+    text_logger *log();
 
-    // Return the direction as text
-    [[nodiscard]] std::string direction_as_text() const
-    {
-        if (direction == msg_direction::inbound)
-            return "Inbound";
-        else
-            return "Outbound";
-    }
+    void clear();
+    bool parse_message(std::vector<unsigned char> *in_msg);
+    bool check();
 
-    // Get the channel
-    [[nodiscard]] unsigned char get_channel() const
-    {
-        if ((status & 0xf0) != 0xf0)
-            return (status & 0xf) + 1;
-        else
-            return MIDI_NONE;
-    }
+    [[nodiscard]] size_t mapping_count() const;
+    std::string mappings_as_text();
+    void add_mapping(std::shared_ptr<map> in_map);
 
-    // Get the MIDI message type
-    [[nodiscard]] midi_msg_type get_type() const
-    {
-        switch (status & 0xf0) {
-            case 0xb0:
-                return midi_msg_type::control_change;
+    void set_time(time_point in_time);
+    //[[nodiscard]] time_point time() const;
+    [[nodiscard]] std::string time() const;
 
-            case 0x90:
-                return midi_msg_type::note_on;
+    void set_port(unsigned int in_port);
+    [[nodiscard]] unsigned int port() const;
 
-            case 0x80:
-                return midi_msg_type::note_off;
+    [[nodiscard]] std::string direction_as_text();
 
-            case 0xc0:
-                return midi_msg_type::program_change;
+    void set_status(unsigned char in_status);
+    [[nodiscard]] unsigned char status() const;
 
-            case 0xa0:
-                return midi_msg_type::aftertouch;
+    void set_data_1(unsigned char in_data_1);
+    [[nodiscard]] unsigned char data_1() const;
 
-            case 0xd0:
-                return midi_msg_type::channel_pressure;
+    void set_data_2(unsigned char in_data_2);
+    [[nodiscard]] unsigned char data_2() const;
 
-            case 0xe0:
-                return midi_msg_type::pitch_bend;
+    [[nodiscard]] unsigned char channel() const;
 
-            default:
-                return midi_msg_type::none;
-        }
-    }
+    [[nodiscard]] midi_msg_type type() const;
+    [[nodiscard]] std::string type_as_text() const;
+    [[nodiscard]] std::string type_as_code() const;
 
-    // Get the MIDI message type as text
-    [[nodiscard]] std::string get_type_as_text() const
-    {
-        switch (get_type()) {
-            case midi_msg_type::control_change:
-                return "Control Change";
+    [[nodiscard]] std::string key() const;
 
-            case midi_msg_type::note_on:
-                return "Note On";
+private:
+    std::unique_ptr<text_logger> m_log;
 
-            case midi_msg_type::note_off:
-                return "Note Off";
+    std::string m_time {};
+    unsigned int m_port {0};
 
-            case midi_msg_type::program_change:
-                return "Program Change";
+    midi_direction m_direction {midi_direction::in};
 
-            case midi_msg_type::aftertouch:
-                return "Aftertouch";
+    unsigned char m_status {MIDI_NONE};
+    unsigned char m_data_1 {MIDI_NONE};
+    unsigned char m_data_2 {MIDI_NONE};
 
-            case midi_msg_type::channel_pressure:
-                return "Channel Pressure";
-
-            case midi_msg_type::pitch_bend:
-                return "Pitch Bend";
-
-            default:
-                break;
-        }
-
-        return "<unknown";
-    }
-
-    // Get the MIDI message type as code
-    [[nodiscard]] std::string get_type_code() const
-    {
-        switch (get_type()) {
-            case midi_msg_type::control_change:
-                return KEY_CONTROL_CHANGE;
-
-            case midi_msg_type::note_on:
-            case midi_msg_type::note_off:
-                return KEY_NOTE;
-
-            case midi_msg_type::program_change:
-                return KEY_PROGRAM_CHANGE;
-
-            case midi_msg_type::pitch_bend:
-                return KEY_PITCH_BEND;
-
-            default:
-                break;
-        }
-
-        return "";
-    }
-
-    // Get a string containing the channel, type and data
-    [[nodiscard]] std::string get_key() const
-    {
-        // for pitch bend messages the data will be ignored, it's always 0
-        if (get_type() == midi_msg_type::pitch_bend)
-            return utils::create_map_key(get_channel(), get_type_code(), 0);
-        else
-            return utils::create_map_key(get_channel(), get_type_code(), data_1);
-    }
+    std::vector<std::shared_ptr<map>> m_mappings;
 };
 
 } // Namespace xmidictrl

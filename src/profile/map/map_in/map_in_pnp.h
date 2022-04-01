@@ -28,39 +28,40 @@
 
 // XMidiCtrl
 #include "map_in.h"
+#include "text_logger.h"
 #include "midi_message.h"
 #include "types.h"
 
 namespace xmidictrl {
 
-enum class command_type {
-    none,
-    push,
-    pull
-};
-
 class map_in_pnp : public map_in {
 public:
-    explicit map_in_pnp(xplane *xp);
+    explicit map_in_pnp(xplane *in_xp);
     ~map_in_pnp() override = default;
 
     map_type type() override;
 
-    void set_command_push(std::string_view command);
+    void set_command_push(std::string_view in_command);
     [[nodiscard]] std::string_view command_push() const;
 
-    void set_command_pull(std::string_view command);
+    void set_command_pull(std::string_view in_command);
     [[nodiscard]] std::string_view command_pull() const;
 
     void set_time_received();
     void set_time_released();
 
-    void read_config(message_handler *messages, toml::value &data) override;
-    bool check() override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
+    enum class command_type {
+        none,
+        push,
+        pull
+    };
+
     void reset();
 
     command_type m_command_type {command_type::none};

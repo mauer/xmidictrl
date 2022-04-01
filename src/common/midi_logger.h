@@ -15,34 +15,42 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INBOUND_WORKER_H
-#define INBOUND_WORKER_H
+#ifndef MIDI_LOGGER_H
+#define MIDI_LOGGER_H
 
 // Standard
+#include <deque>
 #include <memory>
-#include <queue>
 
 // XMidiCtrl
-#include "inbound_task.h"
-#include "text_logger.h"
+#include "midi_message.h"
 
 namespace xmidictrl {
 
-class inbound_worker {
+class midi_logger {
 public:
-    explicit inbound_worker(text_logger *in_log);
-    ~inbound_worker() = default;
+    explicit midi_logger() = default;
+    ~midi_logger() = default;
 
-    void add_task(const std::shared_ptr<inbound_task> &in_task);
+    void set_state(bool in_state);
+    [[nodiscard]] bool state() const;
 
-    void process(std::string_view in_sl_value);
+    void set_max_size(int in_size);
+    int max_size() const;
+
+    void clear();
+    size_t count();
+    midi_message *message(int in_index);
+
+    void add(const std::shared_ptr<midi_message>& in_msg);
 
 private:
-    text_logger *m_log;
+    bool m_state {true};
+    int  m_max_size {100};
 
-    std::queue<std::shared_ptr<inbound_task>> m_tasks {};
+    std::deque<std::shared_ptr<midi_message>> m_messages;
 };
 
 } // Namespace xmidictrl
 
-#endif // INBOUND_WORKER_H
+#endif // MIDI_LOGGER_H

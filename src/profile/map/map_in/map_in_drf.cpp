@@ -18,7 +18,7 @@
 #include "map_in_drf.h"
 
 // XMidiCtrl
-#include "logger.h"
+#include "conversions.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -30,8 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(xplane *xp)
-    : map_in(xp)
+map_in_drf::map_in_drf(xplane *in_xp)
+    : map_in(in_xp)
 {}
 
 
@@ -53,32 +53,30 @@ map_type map_in_drf::type()
 /**
  * Read settings from config
  */
-void map_in_drf::read_config(message_handler *messages, toml::value &data)
+void map_in_drf::read_config(text_logger *in_log, toml::value &in_data)
 {
-    LOG_DEBUG << " --> Line " << data.location().line() << " :: Read settings for type 'drf'" << LOG_END
-    map_in::read_config(messages, data);
-
-    toml_utils utils(messages);
+    in_log->debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
+    map_in::read_config(in_log, in_data);
 
     // read mode
-    m_mode = utils::dataref_mode_from_code(utils.read_string(data, CFG_KEY_MODE, false));
+    m_mode = conversions::dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
 
     // read dataref
-    m_dataref = utils.read_string(data, CFG_KEY_DATAREF);
+    m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
 
     // check if a values array has been defined
-    m_values = utils.read_str_vector_array(data, CFG_KEY_VALUES, false);
+    m_values = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES, false);
 
     if (m_values.empty()) {
         // read value on
-        std::string value = utils.read_string(data, CFG_KEY_VALUE_ON);
+        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
 
         if (!value.empty())
             m_values.push_back(value);
 
         // read value off
-        if (utils.contains(data, CFG_KEY_VALUE_OFF, false))
-            value = utils.read_string(data, CFG_KEY_VALUE_OFF, false);
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_OFF, false))
+            value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF, false);
 
         if (!value.empty())
             m_values.push_back(value);
@@ -89,15 +87,15 @@ void map_in_drf::read_config(message_handler *messages, toml::value &data)
 /**
  * Check the mapping
  */
-bool map_in_drf::check()
+bool map_in_drf::check(text_logger *in_log)
 {
-    if (!map::check())
+    if (!map::check(in_log))
         return false;
 
     if (m_dataref.empty())
         return false;
 
-    if (!m_xp->datarefs().check(m_dataref))
+    if (!m_xp->datarefs().check(in_log, m_dataref))
         return false;
 
     if (m_values.empty())
@@ -113,30 +111,30 @@ bool map_in_drf::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_drf::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
+bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
 {
-    if (!check_sublayer(sl_value))
+    if (!check_sublayer(in_sl_value))
         return true;
 
     // if toggle mode then only process key pressed event
-    if (m_mode == dataref_mode::toggle && msg.data_2 != MIDI_VELOCITY_MAX)
+    if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_VELOCITY_MAX)
         return true;
 
-    LOG_DEBUG << " --> Change dataref '" << m_dataref << "'" << LOG_END
+    in_msg.log()->debug(" --> Change dataref '%s'", m_dataref.c_str());
 
     if (m_values.size() == 2) {
         if (m_mode == dataref_mode::momentary) {
-            if (msg.data_2 == MIDI_VELOCITY_MAX)
-                m_xp->datarefs().write(m_dataref, m_values[0]);
+            if (in_msg.data_2() == MIDI_VELOCITY_MAX)
+                m_xp->datarefs().write(in_msg.log(), m_dataref, m_values[0]);
             else
-                m_xp->datarefs().write(m_dataref, m_values[1]);
+                m_xp->datarefs().write(in_msg.log(), m_dataref, m_values[1]);
         } else {
-            m_xp->datarefs().toggle(m_dataref, m_values[0], m_values[1]);
+            m_xp->datarefs().toggle(in_msg.log(), m_dataref, m_values[0], m_values[1]);
         }
     } else {
         // get current value
         std::string value;
-        m_xp->datarefs().read(m_dataref, value);
+        m_xp->datarefs().read(in_msg.log(), m_dataref, value);
 
         // search for the value in the values list
         auto it = std::find(m_values.begin(), m_values.end(), value);
@@ -155,7 +153,7 @@ bool map_in_drf::execute(message_handler *messages, midi_message &msg, std::stri
             value = m_values[0];
         }
 
-        m_xp->datarefs().write(m_dataref, value);
+        m_xp->datarefs().write(in_msg.log(), m_dataref, value);
     }
 
     return true;

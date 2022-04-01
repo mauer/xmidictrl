@@ -21,7 +21,6 @@
 
 // XMidiCtrl
 #include "plugin.h"
-#include "logger.h"
 
 #ifndef XPLM300
     #error This is made to be compiled against the X-Plane SDK Version 300
@@ -76,12 +75,9 @@ PLUGIN_API void XPluginDisable(void)
 /**
  * Process messages from X-Plane
  */
-PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void *inParam)
+PLUGIN_API void XPluginReceiveMessage(XPLMPluginID i_from, int in_msg, void *inParam)
 {
-    LOG_DEBUG << "Message '" << inMsg << "' received from X-Plane" <<  LOG_END
-
-    switch (inMsg) {
-        //case XPLM_MSG_PLANE_LOADED:
+    switch (in_msg) {
         case XPLM_MSG_LIVERY_LOADED:
             xmidictrl::plugin::instance().load_profile();
             break;

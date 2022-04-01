@@ -27,55 +27,56 @@
 
 // XMidiCtrl
 #include "map_in.h"
+#include "text_logger.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
 
 class map_in_enc : public map_in {
 public:
-    explicit map_in_enc(xplane *xp);
+    explicit map_in_enc(xplane *in_xp);
     ~map_in_enc() override = default;
 
     map_type type() override;
 
-    void set_mode(encoder_mode mode);
+    void set_mode(encoder_mode in_mode);
     [[nodiscard]] encoder_mode mode() const;
 
-    void set_dataref(std::string_view dataref);
+    void set_dataref(std::string_view in_dataref);
     [[nodiscard]] std::string_view dataref() const;
 
-    void set_modifier_up(float modifier);
+    void set_modifier_up(float in_modifier);
     [[nodiscard]] float modifier_up() const;
 
-    void set_modifier_down(float modifier);
+    void set_modifier_down(float in_modifier);
     [[nodiscard]] float modifier_down() const;
 
-    void set_modifier_fast_up(float modifier);
+    void set_modifier_fast_up(float in_modifier);
     [[nodiscard]] float modifier_fast_up() const;
 
-    void set_modifier_fast_down(float modifier);
+    void set_modifier_fast_down(float in_modifier);
     [[nodiscard]] float modifier_fast_down() const;
 
-    void set_command_up(std::string_view command_up);
+    void set_command_up(std::string_view in_command_up);
     [[nodiscard]] std::string_view command_up() const;
 
-    void set_command_fast_up(std::string_view command_fast_up);
+    void set_command_fast_up(std::string_view in_command_fast_up);
     [[nodiscard]] std::string_view command_fast_up() const;
 
-    void set_command_down(std::string_view command_down);
+    void set_command_down(std::string_view in_command_down);
     [[nodiscard]] std::string_view command_down() const;
 
-    void set_command_fast_down(std::string_view command_fast_down);
+    void set_command_fast_down(std::string_view in_command_fast_down);
     [[nodiscard]] std::string_view command_fast_down() const;
 
-    void read_config(message_handler *messages, toml::value &data) override;
-    bool check() override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
-    bool execute_dataref(midi_message &msg);
-    bool execute_command(midi_message &msg);
+    bool execute_dataref(midi_message &in_msg);
+    bool execute_command(midi_message &in_msg);
 
     encoder_mode m_mode {encoder_mode::relative};
 

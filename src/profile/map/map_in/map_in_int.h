@@ -26,7 +26,7 @@
 
 // XMidiCtrl
 #include "map_in.h"
-#include "message_handler.h"
+#include "text_logger.h"
 #include "midi_message.h"
 #include "types.h"
 
@@ -34,13 +34,13 @@ namespace xmidictrl {
 
 class map_in_int : public map_in {
 public:
-    explicit map_in_int(xplane *xp, std::string_view command);
+    explicit map_in_int(xplane *in_xp, std::string_view in_command);
     ~map_in_int() override = default;
 
     map_type type() override;
 
-    bool check() override;
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool check(text_logger *in_log) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
     std::string m_command {};

@@ -22,8 +22,7 @@
 #include <utility>
 
 // XMidiCtrl
-#include "logger.h"
-#include "utils.h"
+#include "conversions.h"
 
 namespace xmidictrl {
 
@@ -34,13 +33,23 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(xplane *xp)
-    : config(xp)
+settings::settings(text_logger *in_log, midi_logger *in_midi_log, xplane *in_xp)
+    : config(in_xp),
+      m_log(in_log),
+      m_midi_log(in_midi_log)
 {
     // build name for general settings file
+    if (!load_file(m_log, get_settings_filename()))
+        m_log->warn(" --> Will use default settings");
+}
 
-    if (!load(get_settings_filename()))
-        LOG_WARN << " --> Will use default settings" << LOG_END
+
+/**
+ * Destructor
+ */
+settings::~settings()
+{
+    close_file(m_log);
 }
 
 
@@ -51,32 +60,31 @@ settings::settings(xplane *xp)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Set the active log level
+ * Set if debug mode is on
  */
-void settings::set_logging_level(log_level level)
+void settings::set_debug_mode(bool in_mode)
 {
-    LOG_ALL << "Set logging level to '" << utils::log_level_as_text(level) << "'" << LOG_END
-    m_config[CFG_KEY_LOG_LEVEL] = utils::log_level_as_code(level);
+    m_config[CFG_KEY_DEBUG_MODE] = in_mode;
+    m_log->set_debug_mode(in_mode);
 }
 
 
 /**
- * Return the active log level
+ * Return if debug mode is on
  */
-log_level settings::logging_level() const
+bool settings::debug_mode() const
 {
-    std::string level = toml::find_or<std::string>(m_config, CFG_KEY_LOG_LEVEL,
-                                                   utils::log_level_as_code(log_level::info));
-    return utils::log_level_from_code(level);
+    return toml::find_or<bool>(m_config, CFG_KEY_DEBUG_MODE, false);
 }
 
 
 /**
  * Set if midi logging is active
  */
-void settings::set_log_midi(bool enabled)
+void settings::set_log_midi(bool in_enabled)
 {
-    m_config[CFG_KEY_LOG_MIDI] = enabled;
+    m_config[CFG_KEY_LOG_MIDI] = in_enabled;
+    m_midi_log->set_state(in_enabled);
 }
 
 
@@ -92,9 +100,9 @@ bool settings::log_midi() const
 /**
  * Set if the messages dialog should be displayed in case of error
  */
-void settings::set_show_messages(const bool enabled)
+void settings::set_show_messages(const bool in_enabled)
 {
-    m_config[CFG_KEY_SHOW_MSG_DIALOG] = enabled;
+    m_config[CFG_KEY_SHOW_MSG_DIALOG] = in_enabled;
 }
 
 
@@ -110,9 +118,10 @@ bool settings::show_messages() const
 /**
  * Sets the max number of text messages to be logged
  */
-void settings::set_max_text_messages(int number)
+void settings::set_max_text_messages(int in_number)
 {
-    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = number;
+    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = in_number;
+    m_log->set_max_size(in_number);
 }
 
 
@@ -128,9 +137,10 @@ int settings::max_text_messages() const
 /**
  * Sets the max number of midi messages to be logged
  */
-void settings::set_max_midi_messages(int number)
+void settings::set_max_midi_messages(int in_number)
 {
-    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = number;
+    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = in_number;
+    m_log->set_max_size(in_number);
 }
 
 
@@ -146,9 +156,9 @@ int settings::max_midi_messages() const
 /**
  * Sets if the common profile is enabled
  */
-void settings::set_common_profile(bool enabled)
+void settings::set_common_profile(bool in_enabled)
 {
-    m_config[CFG_KEY_COMMON_PROFILE] = enabled;
+    m_config[CFG_KEY_COMMON_PROFILE] = in_enabled;
 }
 
 
@@ -170,18 +180,18 @@ void settings::save_settings()
     std::string filename = get_settings_filename();
 
     if (filename.empty()) {
-        LOG_ERROR << "Could not determine file name for general settings" << LOG_END
+        m_log->error("Could not determine file name for general settings");
         return;
     }
 
     // check if our directory already exists in the preference folder
-    if (!utils::create_preference_folders(m_xp))
+    if (!conversions::create_preference_folders(m_log, m_xp))
         return;
 
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
     if (!stream.is_open()) {
-        LOG_ERROR << "Could not save general settings file '" << filename << "'" << LOG_END
+        m_log->error("Could not save general settings file '%s'", filename.c_str());
         return;
     }
 

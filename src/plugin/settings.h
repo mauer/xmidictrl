@@ -26,7 +26,8 @@
 
 // XMidiCtrl
 #include "config.h"
-#include "message_handler.h"
+#include "midi_logger.h"
+#include "text_logger.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -34,31 +35,34 @@ namespace xmidictrl {
 
 class settings : public config {
 public:
-    settings(xplane *xp);
-    ~settings() override = default;
+    explicit settings(text_logger *in_log, midi_logger *in_midi_log, xplane *in_xp);
+    ~settings() override;
 
-    void set_logging_level(log_level level);
-    [[nodiscard]] log_level logging_level() const;
+    void set_debug_mode(bool in_mode);
+    [[nodiscard]] bool debug_mode() const;
 
-    void set_log_midi(bool enabled);
+    void set_log_midi(bool in_enabled);
     [[nodiscard]] bool log_midi() const;
 
-    void set_show_messages(bool enabled);
+    void set_show_messages(bool in_enabled);
     [[nodiscard]] bool show_messages() const;
 
-    void set_max_text_messages(int number);
+    void set_max_text_messages(int in_number);
     [[nodiscard]] int max_text_messages() const;
 
-    void set_max_midi_messages(int number);
+    void set_max_midi_messages(int in_number);
     [[nodiscard]] int max_midi_messages() const;
 
-    void set_common_profile(bool enabled);
+    void set_common_profile(bool in_enabled);
     [[nodiscard]] bool common_profile() const;
 
     void save_settings();
 
 private:
     std::string get_settings_filename();
+
+    text_logger *m_log;
+    midi_logger *m_midi_log;
 };
 
 } // Namespace xmidictrl

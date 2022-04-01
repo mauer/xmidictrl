@@ -26,9 +26,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_int::map_in_int(xplane *xp, std::string_view command)
-    : map_in(xp),
-      m_command(command)
+map_in_int::map_in_int(xplane *in_xp, std::string_view in_command)
+    : map_in(in_xp),
+      m_command(in_command)
 {}
 
 
@@ -50,9 +50,9 @@ map_type map_in_int::type()
 /**
  * Check the mapping
  */
-bool map_in_int::check()
+bool map_in_int::check(text_logger *in_log)
 {
-    if (!map::check())
+    if (!map::check(in_log))
         return false;
 
     if (m_command.empty())
@@ -65,9 +65,9 @@ bool map_in_int::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_int::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
+bool map_in_int::execute( midi_message &in_msg, std::string_view in_sl_value)
 {
-    if (!check_sublayer(sl_value))
+    if (!check_sublayer(in_sl_value))
         return true;
 
     return true;

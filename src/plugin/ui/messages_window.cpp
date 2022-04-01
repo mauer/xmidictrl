@@ -20,8 +20,8 @@
 #include <utility>
 
 // XMidiCtrl
-#include "logger.h"
-#include "utils.h"
+#include "conversions.h"
+#include "midi_message.h"
 
 namespace xmidictrl {
 
@@ -32,8 +32,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-messages_window::messages_window(std::shared_ptr<xplane> xp)
-    : ImGuiWindow(std::move(xp), 1400, 700)
+messages_window::messages_window(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp)
+    : ImGuiWindow(in_text_log, in_xp, 1400, 700),
+      m_midi_log(in_midi_log)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Messages");
 }
@@ -76,15 +77,17 @@ void messages_window::create_widgets()
  */
 void messages_window::create_tab_text_msg()
 {
-    if (ImGui::BeginTabItem("Text Messages")) {
-        ImGui::Text("Logging Level:");
+    if (ImGui::BeginTabItem("General Log")) {
+        ImGui::Text("Debug Mode:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s",
-                           utils::log_level_as_text(logger::instance().logging_Level()).c_str());
+        if (m_log->debug_mode())
+            ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
+        else
+            ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
         ImGui::SameLine(ImGui::GetWindowWidth() - 150);
 
         if (ImGui::Button("Clear Messages"))
-            logger::instance().clear_text_messages();
+            m_log->clear();
 
         ImGui::NewLine();
         ImGui::Text("MESSAGES");
@@ -92,28 +95,38 @@ void messages_window::create_tab_text_msg()
 
         ImGui::BeginChild("TEXT_TABLE");
 
-        ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
-        ImGui::TableSetupColumn("Message Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
+        ImGui::BeginTable("tableTextMessages", 3,
+                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
+        ImGui::TableSetupColumn("Message Date/Time",
+                                ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort,
+                                200);
         ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
         ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        for (unsigned int i = 0; i < logger::instance().count_text_messages(); i++) {
-            auto msg = logger::instance().get_text_message(i);
+        sort_mode mode = sort_mode::descending;
+        if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
+            if (sort_specs->SpecsCount > 0) {
+                auto spec = sort_specs->Specs[0];
+                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
+                    mode = sort_mode::ascending;
+            }
+        }
 
-            if (msg == nullptr)
-                continue;
+        if (mode == sort_mode::ascending) {
+            for (unsigned int i = 0; i < m_log->count(); i++) {
+                auto msg = m_log->message(i);
 
-            ImGui::TableNextRow();
+                if (msg != nullptr)
+                    add_text_row(msg);
+            }
+        } else {
+            for (unsigned int i = m_log->count() - 1; i > 0; i--) {
+                auto msg = m_log->message(i);
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->time.c_str());
-
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->type.c_str());
-
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->text.c_str());
+                if (msg != nullptr)
+                    add_text_row(msg);
+            }
         }
 
         ImGui::EndTable();
@@ -132,7 +145,7 @@ void messages_window::create_tab_midi_msg()
         ImGui::Text("MIDI Logging:");
         ImGui::SameLine(150);
 
-        if (logger::instance().log_midi())
+        if (m_midi_log->state())
             ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
@@ -140,7 +153,7 @@ void messages_window::create_tab_midi_msg()
         ImGui::SameLine(ImGui::GetWindowWidth() - 150);
 
         if (ImGui::Button("Clear Messages"))
-            logger::instance().clear_midi_messages();
+            m_midi_log->clear();
 
         ImGui::NewLine();
         ImGui::Text("MESSAGES");
@@ -148,59 +161,137 @@ void messages_window::create_tab_midi_msg()
 
         ImGui::BeginChild("TEXT_TABLE");
 
-        ImGui::BeginTable("tableMidiMessages", 8, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
-        ImGui::TableSetupColumn("Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
-        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::BeginTable("tableMidiMessages", 10,
+                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
+        ImGui::TableSetupColumn("Date/Time",
+                                ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort,
+                                200);
+        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
         ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 100);
-        ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 100);
-        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Mappings", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Log", ImGuiTableColumnFlags_WidthFixed, 50);
         ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        for (unsigned int i = 0; i < logger::instance().count_midi_messages(); i++) {
-            auto msg = logger::instance().get_midi_message(i);
+        sort_mode mode = sort_mode::descending;
+        if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
+            if (sort_specs->SpecsCount > 0) {
+                auto spec = sort_specs->Specs[0];
+                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
+                    mode = sort_mode::ascending;
+            }
+        }
 
-            if (msg == nullptr)
-                continue;
+        if (mode == sort_mode::ascending) {
+            for (unsigned int i = 0; i < m_midi_log->count(); i++) {
+                auto msg = m_midi_log->message(i);
 
-            ImGui::TableNextRow();
+                if (msg != nullptr)
+                    add_midi_row(msg);
+            }
+        } else {
+            for (unsigned int i = m_midi_log->count() - 1; i < 0; i--) {
+                auto msg = m_midi_log->message(i);
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->time.c_str());
-
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->direction.c_str());
-
-            ImGui::TableNextColumn();
-            ImGui::Text("%i", msg->port);
-
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->type.c_str());
-
-            ImGui::TableNextColumn();
-            if (msg->channel != MIDI_NONE)
-                ImGui::Text("%i", msg->channel);
-
-            ImGui::TableNextColumn();
-            if (msg->data_1 != MIDI_NONE)
-                ImGui::Text("%i", msg->data_1);
-
-            ImGui::TableNextColumn();
-            if (msg->data_2 != MIDI_NONE)
-                ImGui::Text("%i", msg->data_2);
-
-            ImGui::TableNextColumn();
-            if (msg->data_2 != MIDI_NONE)
-                ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status, msg->data_1, msg->data_2);
-            else
-                ImGui::Text("Status = %i | Data 1 = %i", msg->status, msg->data_1);
+                if (msg != nullptr)
+                    add_midi_row(msg);
+            }
         }
 
         ImGui::EndTable();
         ImGui::EndChild();
         ImGui::EndTabItem();
+    }
+}
+
+
+/**
+ * Add a text message to the table
+ */
+void messages_window::add_text_row(text_log_msg *msg)
+{
+    ImGui::TableNextRow();
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->time.c_str());
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->get_log_level_text().c_str());
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->text.c_str());
+}
+
+
+/**
+ * Add a MIDI message to the table
+ */
+void messages_window::add_midi_row(midi_message *msg)
+{
+    ImGui::TableNextRow();
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->time().c_str());
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->direction_as_text().c_str());
+
+    ImGui::TableNextColumn();
+    ImGui::Text("%i", msg->port());
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(msg->type_as_text().c_str());
+
+    ImGui::TableNextColumn();
+    if (msg->channel() != MIDI_NONE)
+        ImGui::Text("%i", msg->channel());
+
+    ImGui::TableNextColumn();
+    if (msg->data_1() != MIDI_NONE)
+        ImGui::Text("%i", msg->data_1());
+
+    ImGui::TableNextColumn();
+    if (msg->data_2() != MIDI_NONE)
+        ImGui::Text("%i", msg->data_2());
+
+    ImGui::TableNextColumn();
+    ImGui::Text("%zu", msg->mapping_count());
+    if (msg->mapping_count() > 0) {
+        ImGui::SameLine(10);
+        info_marker(msg->mappings_as_text().c_str());
+    }
+
+    ImGui::TableNextColumn();
+    if (msg->log()->count() > 0) {
+        info_marker(msg->log()->message(0)->text.c_str());
+    }
+
+    ImGui::TableNextColumn();
+    if (msg->data_2() != MIDI_NONE)
+        ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status(), msg->data_1(), msg->data_2());
+    else
+        ImGui::Text("Status = %i | Data 1 = %i", msg->status(), msg->data_1());
+}
+
+
+/**
+ * Info marker
+ */
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+void messages_window::info_marker(std::string_view text)
+{
+    ImGui::TextDisabled("[i]");
+    if (ImGui::IsItemHovered()) {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 100.0f);
+        ImGui::TextUnformatted(text.data());
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
     }
 }
 

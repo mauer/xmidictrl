@@ -20,13 +20,14 @@
 
 // XMidiCtrl
 #include "ImGuiWindow.h"
+#include "text_logger.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
 class about_window : public ImGuiWindow {
 public:
-    explicit about_window(std::shared_ptr<xplane> xp);
+    explicit about_window(text_logger *in_log, xplane *in_xp);
     ~about_window() override = default;
 
 protected:

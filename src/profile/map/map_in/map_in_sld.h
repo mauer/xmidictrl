@@ -27,40 +27,40 @@
 
 // XMidiCtrl
 #include "map_in.h"
-#include "message_handler.h"
+#include "text_logger.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
 
 class map_in_sld : public map_in {
 public:
-    explicit map_in_sld(xplane *xp);
+    explicit map_in_sld(xplane *in_xp);
     ~map_in_sld() override = default;
 
     map_type type() override;
 
-    void set_dataref(std::string_view dataref);
+    void set_dataref(std::string_view in_dataref);
     [[nodiscard]] std::string_view dataref() const;
 
-    void set_value_min(float value);
+    void set_value_min(float in_value);
     float value_min() const;
 
-    void set_value_max(float value);
+    void set_value_max(float in_value);
     float value_max() const;
 
-    void set_command_up(std::string_view command);
+    void set_command_up(std::string_view in_command);
     [[nodiscard]] std::string_view command_up() const;
 
-    void set_command_middle(std::string_view command);
+    void set_command_middle(std::string_view in_command);
     [[nodiscard]] std::string_view command_middle() const;
 
-    void set_command_down(std::string_view command);
+    void set_command_down(std::string_view in_command);
     [[nodiscard]] std::string_view command_down() const;
 
-    void read_config(message_handler *messages, toml::value &data) override;
-    bool check() override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
     std::string m_dataref {};

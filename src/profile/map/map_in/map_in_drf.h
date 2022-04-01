@@ -28,21 +28,22 @@
 
 // XMidiCtrl
 #include "map_in.h"
+#include "text_logger.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
 
 class map_in_drf : public map_in {
 public:
-    explicit map_in_drf(xplane *xp);
+    explicit map_in_drf(xplane *in_xp);
     ~map_in_drf() override = default;
 
     map_type type() override;
 
-    void read_config(message_handler *messages, toml::value &data) override;
-    bool check() override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) override;
+    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:
     dataref_mode m_mode {dataref_mode::toggle};

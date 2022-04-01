@@ -20,9 +20,6 @@
 // Standard
 #include <filesystem>
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -32,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(xplane *xp)
-    : m_xp(xp)
+config::config(xplane *in_xp)
+    : m_xp(in_xp)
 {
 }
 
@@ -41,43 +38,43 @@ config::config(xplane *xp)
 
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Load config from a file
  */
-bool config::load(std::string_view filename)
+bool config::load_file(text_logger *in_log, std::string_view in_filename)
 {
     // just in case...
-    close();
+    close_file(in_log);
 
     // check file name
-    if (filename.empty()) {
-        LOG_ERROR << "Cannot load file, because the given filename is empty" << LOG_END
+    if (in_filename.empty()) {
+        in_log->error("Cannot load file, because the given filename is empty");
         return false;
     }
 
     // check if file exists
-    if (!std::filesystem::exists(filename)) {
-        LOG_ERROR << "File '" << filename.data() << "' not found" << LOG_END
+    if (!std::filesystem::exists(in_filename)) {
+        in_log->error("File '%s' not found", in_filename.data());
         return false;
     }
 
     try {
         // load config file
-        m_config = toml::parse(filename.data());
-        m_filename = filename;
+        m_config = toml::parse(in_filename.data());
+        m_filename = in_filename;
 
-        LOG_DEBUG << "File '" << m_filename << "' loaded successfully" << LOG_END
+        in_log->debug("File '%s' loaded successfully", m_filename.data());
     } catch (const toml::syntax_error &error) {
-        LOG_ERROR << "Error parsing file '" << filename.data() << "'" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
+        in_log->error("Error parsing file '%s'", in_filename.data());
+        in_log->error(error.what());
         return false;
 
     } catch (const std::runtime_error &error) {
-        LOG_ERROR << "Error opening file '" << filename.data() << "'" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
+        in_log->error("Error opening file '%s'", in_filename.data());
+        in_log->error(error.what());
         return false;
     }
 
@@ -88,10 +85,10 @@ bool config::load(std::string_view filename)
 /**
  * Close the current config
  */
-void config::close()
+void config::close_file(text_logger *in_log)
 {
     if (!m_filename.empty())
-        LOG_DEBUG << "File '" << m_filename << "' closed" << LOG_END
+        in_log->debug("File '%s' closed", m_filename.data());
 
     m_config = toml::value();
     m_filename.clear();

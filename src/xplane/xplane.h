@@ -25,12 +25,13 @@
 // XMidiCtrl
 #include "commands.h"
 #include "data.h"
+#include "text_logger.h"
 
 namespace xmidictrl {
 
 class xplane {
 public:
-    xplane();
+    xplane(text_logger *in_log);
     ~xplane() = default;
 
     XPLMPluginID plugin_id();
@@ -40,7 +41,7 @@ public:
     std::string_view preferences_path();
     std::string_view profiles_path();
 
-    static std::string current_aircraft_path();
+    std::string current_aircraft_path();
     std::string current_aircraft_author();
     std::string current_aircraft_icao();
     std::string current_aircraft_descr();
@@ -49,6 +50,8 @@ public:
     data &datarefs();
 
 private:
+    text_logger *m_log;
+
     XPLMPluginID m_plugin_id {-1};
 
     std::string m_xplane_path {};

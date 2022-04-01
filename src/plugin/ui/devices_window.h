@@ -29,7 +29,7 @@ namespace xmidictrl {
 
 class devices_window : public ImGuiWindow {
 public:
-    explicit devices_window(std::shared_ptr<xplane> xp);
+    explicit devices_window(text_logger *in_log, xplane *in_xp);
     ~devices_window() override;
 
 protected:

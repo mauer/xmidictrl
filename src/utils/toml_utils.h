@@ -27,33 +27,40 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "message_handler.h"
+#include "text_logger.h"
 
 namespace xmidictrl {
 
 class toml_utils {
 public:
-    toml_utils(message_handler *messages);
-    ~toml_utils() = default;
+    static bool contains(text_logger *in_log,
+                         toml::value &in_data,
+                         std::string_view in_name,
+                         bool in_mandatory = true);
+    static bool is_array(text_logger *in_log, toml::value &in_data, std::string_view in_name);
 
-    bool contains(toml::value &settings, std::string_view name, bool mandatory = true);
-    bool is_array(toml::value &settings, std::string_view name);
+    static std::string read_string(text_logger *in_log,
+                                   toml::value &in_data,
+                                   std::string_view in_name,
+                                   bool in_mandatory = true);
 
-    std::string read_string(toml::value &settings, std::string_view name, bool mandatory = true);
-    std::set<std::string> read_str_set_array(toml::value &settings,
-                                                    std::string_view name,
-                                                    bool mandatory = true);
-    std::vector<std::string> read_str_vector_array(toml::value &settings,
-                                                          std::string_view name,
-                                                          bool mandatory = true);
-    int read_int(toml::value &settings, std::string_view name, bool mandatory = true);
-    float read_float(toml::value &settings,
-                            std::string_view name,
-                            bool mandatory = true,
-                            float fallback = 0.0f);
+    static std::set<std::string> read_str_set_array(text_logger *in_log, toml::value &in_data,
+                                                    std::string_view in_name,
+                                                    bool in_mandatory = true);
 
-private:
-    message_handler *m_messages;
+    static std::vector<std::string> read_str_vector_array(text_logger *in_log, toml::value &in_data,
+                                                          std::string_view in_name,
+                                                          bool in_mandatory = true);
+
+    static int read_int(text_logger *in_log,
+                        toml::value &in_data,
+                        std::string_view in_name,
+                        bool in_mandatory = true);
+
+    static float read_float(text_logger *in_log, toml::value &in_data,
+                            std::string_view in_name,
+                            bool in_mandatory = true,
+                            float in_fallback = 0.0f);
 };
 
 } // Namespace xmidictrl

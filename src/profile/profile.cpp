@@ -28,7 +28,8 @@
 #include "map_in_pnp.h"
 #include "map_in_sld.h"
 #include "map_out_drf.h"
-#include "utils.h"
+#include "midi_logger.h"
+#include "conversions.h"
 #include "toml_utils.h"
 #include "types.h"
 
@@ -41,14 +42,18 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(xplane *xp,
-                 std::shared_ptr<message_handler> messages,
-                 std::shared_ptr<settings> settings)
-    : config(xp),
-      m_settings(std::move(settings))
+profile::profile(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp, settings *in_settings)
+    : config(in_xp),
+      m_settings(in_settings),
+      m_plugin_log(in_text_log),
+      m_midi_log(in_midi_log)
 {
-    m_profile_msg = std::make_unique<message_handler>(std::move(messages));
-    m_device_list = std::make_shared<device_list>();
+    // create my own logger for errors and warnings
+    m_profile_log = std::make_unique<text_logger>(in_text_log);
+    m_profile_log->set_debug_mode(in_text_log->debug_mode());
+    m_profile_log->set_log_info(false);
+
+    m_device_list = std::make_unique<device_list>();
 };
 
 
@@ -73,28 +78,28 @@ profile::~profile()
 bool profile::load()
 {
     // reset all messages
-    m_profile_msg->clear();
-    m_profile_msg->debug("Load aircraft profile");
+    m_profile_log->clear();
+    m_profile_log->debug("Load aircraft profile");
 
     // get the filename of the aircraft profile
     std::string filename = find_profile();
 
     if (filename.empty()) {
-        m_profile_msg->info("No profile found for current aircraft");
+        m_profile_log->info("No profile found for current aircraft");
         return true;
     }
 
-    m_profile_msg->info("Aircraft Profile '%s' found", filename.c_str());
+    m_profile_log->info("Aircraft Profile '%s' found", filename.c_str());
 
     // load the profile and create all devices with their mappings
-    if (config::load(filename)) {
+    if (load_file(m_profile_log.get(), filename)) {
         m_filename = filename;
 
         // load general settings for the profile
         m_sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
 
         if (!m_sl_dataref.empty())
-            m_profile_msg->info("Sublayer mode activated");
+            m_profile_log->info("Sublayer mode activated");
 
         create_device_list();
     } else {
@@ -115,7 +120,7 @@ void profile::close()
     m_device_list->process_outbound_reset();
 
     clear();
-    config::close();
+    close_file(m_profile_log.get());
 }
 
 
@@ -130,11 +135,20 @@ std::string_view profile::filename() const
 
 
 /**
+ * Return the log
+ */
+text_logger *profile::log()
+{
+    return m_profile_log.get();
+}
+
+
+/**
  * Returns of the profile contains any errors
  */
 bool profile::has_errors() const
 {
-    return m_profile_msg->has_errors();
+    return m_profile_log->has_errors();
 }
 
 
@@ -180,6 +194,9 @@ std::string profile::get_filename_profiles_path(bool icao, bool author)
 }
 
 
+/**
+ * Return the name of the sublayer dataref
+ */
 std::string_view profile::sl_dataref() const
 {
     return m_sl_dataref;
@@ -187,12 +204,12 @@ std::string_view profile::sl_dataref() const
 
 
 /**
- * Process all mappings
+ * Process all outbound mappings
  */
-void profile::process()
+void profile::process(text_logger *in_log)
 {
     // process midi outbound mappings
-    m_device_list->process_outbound_mappings();
+    m_device_list->process_outbound_mappings(in_log);
 }
 
 
@@ -210,7 +227,7 @@ void profile::clear()
     m_sl_dataref.clear();
     m_filename.clear();
 
-    m_profile_msg->clear();
+    m_profile_log->clear();
     m_device_list->clear();
 }
 
@@ -225,21 +242,21 @@ std::string profile::find_profile()
     // 1. check if there is a profile in the aircraft directory
     filename = get_filename_aircraft_path();
 
-    m_profile_msg->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+    m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
     // 2. check if there is a profile in the profile directory including the author and ICAO
     filename = get_filename_profiles_path(true, true);
 
-    m_profile_msg->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+    m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
     // 3. check if there is a profile in the profile directory including the ICAO
     filename = get_filename_profiles_path(true, false);
 
-    m_profile_msg->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+    m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
@@ -247,7 +264,7 @@ std::string profile::find_profile()
     if (m_settings->common_profile()) {
         filename = get_filename_profiles_path(false, false);
 
-        m_profile_msg->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+        m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
         if (std::filesystem::exists(filename))
             return filename;
     }
@@ -262,8 +279,6 @@ std::string profile::find_profile()
  */
 void profile::create_device_list()
 {
-    toml_utils utils(m_profile_msg.get());
-
     // remove all exiting devices first
     m_device_list->clear();
 
@@ -275,7 +290,7 @@ void profile::create_device_list()
         // get all devices from the profile
         auto profile_dev = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
 
-        m_profile_msg->info("%i Device(s) found in aircraft profile", profile_dev.size());
+        m_profile_log->info("%i Device(s) found in aircraft profile", profile_dev.size());
 
         // parse every device
         for (int dev_no = 0; dev_no < static_cast<int>(profile_dev.size()); dev_no++) {
@@ -287,41 +302,45 @@ void profile::create_device_list()
             // read all parameters for the current device
             toml::value settings_dev = profile_dev[dev_no];
 
-            m_profile_msg->debug("Read settings for device %i", dev_no);
+            m_profile_log->debug("Read settings for device %i", dev_no);
 
             try {
                 // name
-                name = utils.read_string(settings_dev, CFG_KEY_NAME, false);
+                name = toml_utils::read_string(m_profile_log.get(), settings_dev, CFG_KEY_NAME, false);
 
                 if (name.empty()) {
                     name = "<undefined>";
-                    m_profile_msg->warn("Device %i :: Parameter '%s' is missing", dev_no, CFG_KEY_NAME);
+                    m_profile_log->warn("Device %i :: Parameter '%s' is missing", dev_no, CFG_KEY_NAME);
                 }
 
                 // port in
-                port_in = utils.read_int(settings_dev, CFG_KEY_PORT_IN);
+                port_in = toml_utils::read_int(m_profile_log.get(), settings_dev, CFG_KEY_PORT_IN);
 
                 if (port_in < 0) {
+                    // TODO
                     //m_errors_found = true;
                     continue;
                 }
 
                 // port out
-                port_out = utils.read_int(settings_dev, CFG_KEY_PORT_OUT);
+                port_out = toml_utils::read_int(m_profile_log.get(), settings_dev, CFG_KEY_PORT_OUT);
 
                 if (port_out < 0) {
+                    // TODO
                     //m_errors_found = true;
                     continue;
                 }
 
                 // mode outbound
-                mode_out = utils::mode_out_from_int(utils.read_int(settings_dev,
-                                                                   CFG_KEY_MODE_OUT,
-                                                                   false));
+                mode_out = conversions::mode_out_from_int(toml_utils::read_int(m_profile_log.get(),
+                                                                               settings_dev,
+                                                                               CFG_KEY_MODE_OUT,
+                                                                               false));
 
                 // create device
-                std::shared_ptr<device> device = m_device_list->create_device(name, static_cast<int>(port_in),
-                                                                              static_cast<int>(port_out), mode_out);
+                std::shared_ptr<device>
+                    device = m_device_list->create_device(m_plugin_log, m_midi_log, name, static_cast<int>(port_in),
+                                                          static_cast<int>(port_out), mode_out);
 
                 if (device != nullptr) {
                     // create inbound mappings
@@ -329,31 +348,31 @@ void profile::create_device_list()
                         create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
 
                     } else if (settings_dev.contains(CFG_KEY_MAPPING)) {
-                        m_profile_msg->warn("Device %i :: Key '%s' is deprecated, please rename it to '%s'",
+                        m_profile_log->warn("Device %i :: Key '%s' is deprecated, please rename it to '%s'",
                                             dev_no,
                                             CFG_KEY_MAPPING,
                                             CFG_KEY_MAPPING_IN);
                         create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING].as_array(), device);
                     } else
-                        m_profile_msg->info("Device %i :: No inbound mappings found", dev_no);
+                        m_profile_log->info("Device %i :: No inbound mappings found", dev_no);
 
                     // create outbound mappings
                     if (settings_dev.contains(CFG_KEY_MAPPING_OUT))
                         create_outbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_OUT].as_array(), device);
                     else
-                        m_profile_msg->info("Device %i :: No outbound mappings found", dev_no);
+                        m_profile_log->info("Device %i :: No outbound mappings found", dev_no);
                 }
             } catch (const std::out_of_range &error) {
-                m_profile_msg->error("Device %i :: Error reading profile", dev_no);
-                m_profile_msg->error(error.what());
+                m_profile_log->error("Device %i :: Error reading profile", dev_no);
+                m_profile_log->error(error.what());
             } catch (toml::type_error &error) {
-                m_profile_msg->error("Device %i :: Error reading profile", dev_no);
-                m_profile_msg->error(error.what());
+                m_profile_log->error("Device %i :: Error reading profile", dev_no);
+                m_profile_log->error(error.what());
             }
         }
     } catch (std::out_of_range &error) {
-        m_profile_msg->warn("No MIDI devices found in aircraft profile");
-        m_profile_msg->warn(error.what());
+        m_profile_log->warn("No MIDI devices found in aircraft profile");
+        m_profile_log->warn(error.what());
     }
 }
 
@@ -363,13 +382,13 @@ void profile::create_device_list()
  */
 void profile::create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
 {
-    m_profile_msg->info("Device %i :: %i inbound mapping(s) found", dev_no, settings.size());
+    m_profile_log->info("Device %i :: %i inbound mapping(s) found", dev_no, settings.size());
 
     // parse each mapping entry
     for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
         std::shared_ptr<map_in> mapping;
 
-        m_profile_msg->debug("Device %i :: Read settings for mapping %i", dev_no, map_no);
+        m_profile_log->debug("Device %i :: Read settings for mapping %i", dev_no, map_no);
 
         try {
             map_type type = read_mapping_type(settings[map_no]);
@@ -389,7 +408,9 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     break;
 
                 case map_type::internal:
-                    m_profile_msg->warn("Device %i :: Mapping %i :: Mapping type 'int' is currently unsupported", dev_no, map_no);
+                    m_profile_log->warn("Device %i :: Mapping %i :: Mapping type 'int' is currently unsupported",
+                                        dev_no,
+                                        map_no);
                     break;
 
                 case map_type::push_pull:
@@ -401,29 +422,35 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     break;
 
                 case map_type::none:
-                    m_profile_msg->error("Device %i :: Mapping %i :: Invalid mapping type", dev_no, map_no);
+                    m_profile_log->error("Device %i :: Mapping %i :: Invalid mapping type", dev_no, map_no);
                     break;
             }
 
             if (mapping == nullptr) {
-                m_profile_msg->error("Line %i :: %s", settings[map_no].location().line(), settings[map_no].location().line_str().c_str());
-                m_profile_msg->error(" --> Error reading mapping");
+                m_profile_log->error("Line %i :: %s",
+                                     settings[map_no].location().line(),
+                                     settings[map_no].location().line_str().c_str());
+                m_profile_log->error(" --> Error reading mapping");
                 continue;
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(m_profile_msg.get(), settings[map_no]);
+            mapping->read_config(m_profile_log.get(), settings[map_no]);
 
-            if (mapping->check()) {
+            if (mapping->check(m_profile_log.get())) {
                 device->add_inbound_map(mapping);
             } else {
-                m_profile_msg->error("Line %i :: %s", settings[map_no].location().line(), settings[map_no].location().line_str().c_str());
-                m_profile_msg->error(" --> Parameters incomplete or incorrect");
+                m_profile_log->error("Line %i :: %s",
+                                     settings[map_no].location().line(),
+                                     settings[map_no].location().line_str().c_str());
+                m_profile_log->error(" --> Parameters incomplete or incorrect");
             }
         } catch (toml::type_error &error) {
-            m_profile_msg->error("Line %i :: %s", settings[map_no].location().line(), settings[map_no].location().line_str().c_str());
-            m_profile_msg->error(" --> Error reading config");
-            m_profile_msg->error(error.what());
+            m_profile_log->error("Line %i :: %s",
+                                 settings[map_no].location().line(),
+                                 settings[map_no].location().line_str().c_str());
+            m_profile_log->error(" --> Error reading config");
+            m_profile_log->error(error.what());
         }
     }
 }
@@ -434,13 +461,13 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
  */
 void profile::create_outbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
 {
-    m_profile_msg->info("Device %i :: %i outbound mapping(s) found", dev_no, settings.size());
+    m_profile_log->info("Device %i :: %i outbound mapping(s) found", dev_no, settings.size());
 
     // parse each mapping entry
     for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
         std::shared_ptr<map_out> mapping;
 
-        m_profile_msg->debug("Device %i :: Mapping %i :: Reading config", dev_no, map_no);
+        m_profile_log->debug("Device %i :: Mapping %i :: Reading config", dev_no, map_no);
 
         try {
             map_type type = read_mapping_type(settings[map_no]);
@@ -453,30 +480,32 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
                     break;
 
                 case map_type::internal:
-                    m_profile_msg->warn("Device %i :: Mapping %i :: Mapping type 'int' is currently unsupported", dev_no, map_no);
+                    m_profile_log->warn("Device %i :: Mapping %i :: Mapping type 'int' is currently unsupported",
+                                        dev_no,
+                                        map_no);
                     break;
 
                 default:
-                    m_profile_msg->error("Device %i :: Mapping %i :: Invalid mapping type", dev_no, map_no);
+                    m_profile_log->error("Device %i :: Mapping %i :: Invalid mapping type", dev_no, map_no);
                     break;
             }
 
             if (mapping == nullptr) {
-                m_profile_msg->error("Device %i :: Mapping %i :: Error reading config", dev_no, map_no);
+                m_profile_log->error("Device %i :: Mapping %i :: Error reading config", dev_no, map_no);
                 continue;
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(m_profile_msg.get(), settings[map_no]);
+            mapping->read_config(m_profile_log.get(), settings[map_no]);
 
-            if (mapping->check())
+            if (mapping->check(m_profile_log.get()))
                 device->add_outbound_map(mapping);
             else
-                m_profile_msg->error("Device %i :: Mapping %i :: Parameters incomplete or incorrect", dev_no, map_no);
+                m_profile_log->error("Device %i :: Mapping %i :: Parameters incomplete or incorrect", dev_no, map_no);
 
         } catch (toml::type_error &error) {
-            m_profile_msg->error("Device %i :: Mapping %i :: Error reading mapping", dev_no, map_no);
-            m_profile_msg->error(error.what());
+            m_profile_log->error("Device %i :: Mapping %i :: Error reading mapping", dev_no, map_no);
+            m_profile_log->error(error.what());
         }
     }
 }
@@ -518,18 +547,18 @@ map_type profile::read_mapping_type(toml::value &settings)
         if (settings.contains(CFG_KEY_TYPE)) {
             std::string_view type_str {settings[CFG_KEY_TYPE].as_string()};
 
-            m_profile_msg->debug(" --> Line %i :: Parameter type = '%s'", settings.location().line(), type_str.data());
+            m_profile_log->debug(" --> Line %i :: Parameter type = '%s'", settings.location().line(), type_str.data());
 
             // get the mapping type
             type = translate_map_type(type_str);
         } else {
-            m_profile_msg->error("Line %i :: %s", settings.location().line(), settings.location().line_str().c_str());
-            m_profile_msg->error(" --> Parameter '%s' is missing", CFG_KEY_TYPE);
+            m_profile_log->error("Line %i :: %s", settings.location().line(), settings.location().line_str().c_str());
+            m_profile_log->error(" --> Parameter '%s' is missing", CFG_KEY_TYPE);
         }
     } catch (toml::type_error &error) {
-        m_profile_msg->error("Line %i :: %s", settings.location().line(), settings.location().line_str().c_str());
-        m_profile_msg->error("Line %i :: Error reading mapping", settings.location().line());
-        m_profile_msg->error(error.what());
+        m_profile_log->error("Line %i :: %s", settings.location().line(), settings.location().line_str().c_str());
+        m_profile_log->error("Line %i :: Error reading mapping", settings.location().line());
+        m_profile_log->error(error.what());
     }
 
     return type;

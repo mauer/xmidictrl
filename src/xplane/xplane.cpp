@@ -21,9 +21,6 @@
 #include "XPLMPlanes.h"
 #include "XPLMPlugin.h"
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,7 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-xplane::xplane()
+xplane::xplane(text_logger *in_log)
+    : m_log(in_log)
 {
     // access to X-Plane commands
     m_commands = std::make_unique<commands>();
@@ -76,7 +74,7 @@ std::string_view xplane::plugin_path()
 
         m_plugin_path = std::string(path) + XPLMGetDirectorySeparator();
 
-        LOG_DEBUG << "Plugin Path = '" << m_plugin_path << "'" << LOG_END
+        m_log->debug("Plugin Path = '%s'", m_plugin_path.c_str());
     }
 
     return m_plugin_path;
@@ -94,7 +92,7 @@ std::string_view xplane::xplane_path()
 
         m_xplane_path = std::string(path);
 
-        LOG_DEBUG << "X-Plane Path = '" << m_xplane_path << "'" << LOG_END
+        m_log->debug("X-Plane Path = '%s'", m_xplane_path.c_str());
     }
 
     return m_xplane_path;
@@ -116,7 +114,7 @@ std::string_view xplane::preferences_path()
         m_preferences_path = std::string(path) + XPLMGetDirectorySeparator() + XMIDICTRL_NAME
                              + XPLMGetDirectorySeparator();
 
-        LOG_DEBUG << "Preferences Path = '" << m_preferences_path << "'" << LOG_END
+        m_log->debug("Preferences Path = '%s'", m_preferences_path.c_str());
     }
 
     return m_preferences_path;
@@ -131,7 +129,7 @@ std::string_view xplane::profiles_path()
     if (m_profiles_path.empty()) {
         m_profiles_path = std::string(preferences_path()) + PROFILES_DIRECTORY_NAME + "/";
 
-        LOG_DEBUG << "Profiles Path = '" << m_profiles_path << "'" << LOG_END
+        m_log->debug("Profiles Path = '%s'", m_profiles_path.c_str());
     }
 
     return m_profiles_path;
@@ -163,7 +161,7 @@ std::string xplane::current_aircraft_author()
 {
     std::string value;
 
-    if (m_datarefs->read("sim/aircraft/view/acf_author", value))
+    if (m_datarefs->read(m_log, "sim/aircraft/view/acf_author", value))
         return value;
     else {
         value.clear();
@@ -179,7 +177,7 @@ std::string xplane::current_aircraft_icao()
 {
     std::string value;
 
-    if (m_datarefs->read("sim/aircraft/view/acf_ICAO", value))
+    if (m_datarefs->read(m_log, "sim/aircraft/view/acf_ICAO", value))
         return value;
     else {
         value.clear();
@@ -195,7 +193,7 @@ std::string xplane::current_aircraft_descr()
 {
     std::string value;
 
-    if (m_datarefs->read("sim/aircraft/view/acf_descrip", value))
+    if (m_datarefs->read(m_log, "sim/aircraft/view/acf_descrip", value))
         return value;
     else {
         value.clear();

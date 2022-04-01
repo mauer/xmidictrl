@@ -18,7 +18,6 @@
 #include "map_in_pnp.h"
 
 // XMidiCtrl
-#include "logger.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -30,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_pnp::map_in_pnp(xplane *xp)
-    : map_in(xp)
+map_in_pnp::map_in_pnp(xplane *in_xp)
+    : map_in(in_xp)
 {}
 
 
@@ -53,9 +52,9 @@ map_type map_in_pnp::type()
 /**
  * Set the push command
  */
-void map_in_pnp::set_command_push(std::string_view command)
+void map_in_pnp::set_command_push(std::string_view in_command)
 {
-    m_command_push = command;
+    m_command_push = in_command;
 }
 
 
@@ -71,9 +70,9 @@ std::string_view map_in_pnp::command_push() const
 /**
  * Set the pull command
  */
-void map_in_pnp::set_command_pull(std::string_view command)
+void map_in_pnp::set_command_pull(std::string_view in_command)
 {
-    m_command_pull = command;
+    m_command_pull = in_command;
 }
 
 
@@ -111,27 +110,25 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(message_handler *messages, toml::value &data)
+void map_in_pnp::read_config(text_logger *in_log, toml::value &in_data)
 {
-    messages->debug(" --> Line %i :: Read settings for type 'pnp'", data.location().line());
-    map_in::read_config(messages, data);
-
-    toml_utils utils(messages);
+    in_log->debug(" --> Line %i :: Read settings for type 'pnp'", in_data.location().line());
+    map_in::read_config(in_log, in_data);
 
     // read command push
-    set_command_push(utils.read_string(data, CFG_KEY_COMMAND_PUSH));
+    set_command_push(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH));
 
     // read command pull
-    set_command_pull(utils.read_string(data, CFG_KEY_COMMAND_PULL));
+    set_command_pull(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL));
 }
 
 
 /**
  * Check the mapping
  */
-bool map_in_pnp::check()
+bool map_in_pnp::check(text_logger *in_log)
 {
-    if (!map::check())
+    if (!map::check(in_log))
         return false;
 
     if (m_command_push.empty() && m_command_pull.empty())
@@ -144,9 +141,9 @@ bool map_in_pnp::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_pnp::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
+bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
 {
-    if (!check_sublayer(sl_value) || m_time_received.load() == time_point::min()) {
+    if (!check_sublayer(in_sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)
         reset();
         return true;
@@ -159,13 +156,13 @@ bool map_in_pnp::execute(message_handler *messages, midi_message &msg, std::stri
         if (elapsed.count() > 0.3f) {
             switch (m_command_type) {
                 case command_type::push:
-                    LOG_DEBUG << " --> End push command '" << m_command_push << "'" << LOG_END
-                    m_xp->cmd().end(m_command_push);
+                    in_msg.log()->debug(" --> End push command '%s'", m_command_push.c_str());
+                    m_xp->cmd().end(in_msg.log(), m_command_push);
                     break;
 
                 case command_type::pull:
-                    LOG_DEBUG << " --> End pull command '" << m_command_pull << "'" << LOG_END
-                    m_xp->cmd().end(m_command_pull);
+                    in_msg.log()->debug(" --> End pull command '%s'", m_command_pull.c_str());
+                    m_xp->cmd().end(in_msg.log(), m_command_pull);
                     break;
 
                 case command_type::none:
@@ -192,13 +189,13 @@ bool map_in_pnp::execute(message_handler *messages, midi_message &msg, std::stri
     m_time_command = std::chrono::system_clock::now();
 
     if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
-        LOG_DEBUG << " --> Begin pull command '" << m_command_pull << "'" << LOG_END
+        in_msg.log()->debug(" --> Begin pull command '%s'", m_command_pull.c_str());
         m_command_type = command_type::pull;
-        m_xp->cmd().begin(m_command_pull);
+        m_xp->cmd().begin(in_msg.log(), m_command_pull);
     } else {
-        LOG_DEBUG << " --> Begin push command '" << m_command_push << "'" << LOG_END
+        in_msg.log()->debug(" --> Begin push command '%s'", m_command_push.c_str());
         m_command_type = command_type::push;
-        m_xp->cmd().begin(m_command_push);
+        m_xp->cmd().begin(in_msg.log(), m_command_push);
     }
 
     // keep the task in the queue to end the command

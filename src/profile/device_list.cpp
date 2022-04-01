@@ -20,9 +20,6 @@
 // Standard
 #include <mutex>
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -47,12 +44,15 @@ device_list::~device_list()
 /**
  * Create a new midi device
  */
-std::shared_ptr<device> device_list::create_device(std::string_view name,
-                                                   unsigned int port_in,
-                                                   unsigned int port_out,
-                                                   mode_out mode_out)
+std::shared_ptr<device> device_list::create_device(text_logger *in_text_log,
+                                                   midi_logger *in_midi_log,
+                                                   std::string_view in_name,
+                                                   unsigned int in_port_in,
+                                                   unsigned int in_port_out,
+                                                   mode_out in_mode_out)
 {
-    std::shared_ptr<device> dev = std::make_shared<device>(name, port_in, port_out, mode_out);
+    std::shared_ptr<device>
+        dev = std::make_shared<device>(in_text_log, in_midi_log, in_name, in_port_in, in_port_out, in_mode_out);
     m_device_list.push_back(dev);
 
     return dev;
@@ -93,11 +93,11 @@ void device_list::close_connections()
 /**
  * Process the midi outbound mappings
  */
-void device_list::process_outbound_mappings()
+void device_list::process_outbound_mappings(text_logger *in_log)
 {
     for (auto const &device: m_device_list) {
         if (device != nullptr)
-            device->process_outbound_mappings();
+            device->process_outbound_mappings(in_log);
     }
 }
 

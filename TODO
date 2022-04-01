@@ -1,7 +1,7 @@
- + Show errors/warning in profile window
  + Support for other MIDI types
  + Refactor menu handling
- + Add value_min and value_max to encoder mapping (dataref)
  + Display errors and midi messages in different orders
  + Display mappings and devices in profile window
  + Allow selection of different ports when loading an aircraft
+ + AND option for multiple datarefs in outbound messages
+ + Show notes in MIDI log

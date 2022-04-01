@@ -18,7 +18,7 @@
 #include "map_out_list.h"
 
 // XMidiCtrl
-#include "utils.h"
+#include "conversions.h"
 
 namespace xmidictrl {
 

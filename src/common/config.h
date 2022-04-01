@@ -25,22 +25,21 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "text_logger.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
 class config {
 public:
-    explicit config(xplane *xp);
+    explicit config(xplane *in_xp);
     virtual ~config() = default;
 
-    bool load(std::string_view filename);
-    virtual void close();
-
-
 protected:
-    toml::value m_config {};
+    bool load_file(text_logger *in_log, std::string_view in_filename);
+    void close_file(text_logger *in_log);
 
+    toml::value m_config {};
     xplane *m_xp;
 
 private:

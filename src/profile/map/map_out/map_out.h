@@ -34,7 +34,7 @@ public:
     explicit map_out(xplane *xp);
     ~map_out() override = default;
 
-    virtual std::shared_ptr<outbound_task> execute(mode_out mode) = 0;
+    virtual std::shared_ptr<outbound_task> execute(text_logger *in_log, mode_out mode) = 0;
     virtual std::shared_ptr<outbound_task> reset() = 0;
 };
 

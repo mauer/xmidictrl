@@ -27,7 +27,8 @@
 // XMidiCtrl
 #include "inbound_worker.h"
 #include "menu.h"
-#include "message_handler.h"
+#include "text_logger.h"
+#include "midi_logger.h"
 #include "profile.h"
 #include "settings.h"
 #include "types.h"
@@ -43,7 +44,7 @@ public:
 
     static plugin &instance();
 
-    static float callback_flight_loop(float elapsed_me, float elapsed_sim, int counter, void *refcon);
+    static float callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void *in_refcon);
 
     void enable();
     void disable();
@@ -51,7 +52,7 @@ public:
     void load_profile();
     void close_profile();
 
-    void add_inbound_task(const std::shared_ptr<inbound_task>& task);
+    void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
 
     void show_messages_window();
     void show_devices_window();
@@ -60,12 +61,12 @@ public:
     void show_about_window();
 
     [[nodiscard]] int sublayer() const;
-    void set_sublayer(int value);
+    void set_sublayer(int in_value);
 
     void toggle_sublayer();
 
 private:
-    void process_flight_loop(float elapsed_me, float elapsed_sim, int counter);
+    void process_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter);
 
     void create_datarefs();
     void remove_datarefs();
@@ -73,24 +74,22 @@ private:
     void create_commands();
     void remove_commands();
 
-    static int read_drf_sublayer(void *refcon);
-    static void write_drf_sublayer(void *refcon, int value);
+    static int read_drf_sublayer(void *in_refcon);
+    static void write_drf_sublayer(void *in_refcon, int in_value);
 
-    static int command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon);
+    static int command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
 
-    void create_window(window_type type);
+    void create_window(window_type in_type);
 
     XPLMFlightLoopID m_flight_loop_id {nullptr};
 
-    std::shared_ptr<message_handler> m_plugin_msg;
+    std::unique_ptr<text_logger> m_plugin_log;
+    std::unique_ptr<midi_logger> m_midi_log;
 
-    std::shared_ptr<xplane> m_xp;
-
+    std::unique_ptr<xplane> m_xp;
     std::unique_ptr<menu> m_menu;
-
-    std::shared_ptr<settings> m_settings;
-    std::shared_ptr<profile> m_profile;
-
+    std::unique_ptr<settings> m_settings;
+    std::unique_ptr<profile> m_profile;
     std::unique_ptr<inbound_worker> m_worker;
 
     // references for custom datarefs

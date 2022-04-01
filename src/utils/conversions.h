@@ -15,33 +15,40 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_LIST_H
-#define MAP_IN_LIST_H
+#ifndef CONVERSIONS_H
+#define CONVERSIONS_H
 
 // Standard
-#include <memory>
-#include <map>
-#include <vector>
+#include <set>
+#include <string>
+
+// toml11
+#include <toml.hpp>
 
 // XMidiCtrl
-#include "map_in.h"
+#include "text_logger.h"
+#include "types.h"
+#include "xplane.h"
 
 namespace xmidictrl {
 
-class map_in_list {
+class conversions {
 public:
-    explicit map_in_list() = default;
-    ~map_in_list();
+    static std::string log_level_as_text(log_level level);
 
-    void add(const std::shared_ptr<map_in> &in_map);
-    std::vector<std::shared_ptr<map_in>> find(const std::string &in_key);
+    static mode_out mode_out_from_int(int mode);
 
-    unsigned int size();
+    // move directly into mapping classes
+    static dataref_mode dataref_mode_from_code(std::string_view mode);
+    static encoder_mode encoder_mode_from_code(std::string_view mode);
 
-protected:
-    std::multimap<std::string, std::shared_ptr<map_in>> m_list {};
+    static std::string time_to_string(time_point time);
+
+    static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
+
+    static bool create_preference_folders(text_logger *in_log, xplane *in_xp);
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_IN_LIST_H
+#endif // CONVERSIONS_H

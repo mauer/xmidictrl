@@ -20,7 +20,6 @@
 #include <utility>
 
 // XMidiCtrl
-#include "logger.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -166,28 +165,26 @@ unsigned int map_out_drf::velocity_off() const
 /**
  * Read settings from config
  */
-void map_out_drf::read_config(message_handler *messages, toml::value &settings)
+void map_out_drf::read_config(text_logger *in_log, toml::value &in_data)
 {
-    messages->debug("Line %i :: Read settings for type 'drf'", settings.location().line());
-    map::read_config(messages, settings);
-
-    toml_utils utils(messages);
+    in_log->debug("Line %i :: Read settings for type 'drf'", in_data.location().line());
+    map::read_config(in_log, in_data);
 
     // read dataref
-    if (utils.contains(settings, CFG_KEY_DATAREF)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
         // check if single value or array
-        if (settings[CFG_KEY_DATAREF].is_array())
-            set_dataref(utils.read_str_vector_array(settings, CFG_KEY_DATAREF));
+        if (in_data[CFG_KEY_DATAREF].is_array())
+            set_dataref(toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_DATAREF));
         else
-            set_dataref(utils.read_string(settings, CFG_KEY_DATAREF));
+            set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
     }
 
     // read values on
-    if (utils.is_array(settings, CFG_KEY_VALUE_ON)) {
-        set_values_on(utils.read_str_set_array(settings, CFG_KEY_VALUE_ON, false));
+    if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
+        set_values_on(toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON, false));
     } else {
         std::set<std::string> list;
-        std::string value = utils.read_string(settings, CFG_KEY_VALUE_ON, false);
+        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON, false);
 
         if (!value.empty())
             list.insert(value);
@@ -196,11 +193,11 @@ void map_out_drf::read_config(message_handler *messages, toml::value &settings)
     }
 
     // read values off
-    if (utils.is_array(settings, CFG_KEY_VALUE_OFF)) {
-        set_values_off(utils.read_str_set_array(settings, CFG_KEY_VALUE_OFF, false));
+    if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
+        set_values_off(toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF, false));
     } else {
         std::set<std::string> list;
-        std::string value = utils.read_string(settings, CFG_KEY_VALUE_OFF, false);
+        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF, false);
 
         if (!value.empty())
             list.insert(value);
@@ -209,19 +206,19 @@ void map_out_drf::read_config(message_handler *messages, toml::value &settings)
     }
 
     // read velocity on
-    set_velocity_on(utils.read_int(settings, CFG_KEY_VELOCITY_ON, false));
+    set_velocity_on(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_ON, false));
 
     // read velocity off
-    set_velocity_off(utils.read_int(settings, CFG_KEY_VELOCITY_OFF, false));
+    set_velocity_off(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF, false));
 }
 
 
 /**
  * Check the mapping
  */
-bool map_out_drf::check()
+bool map_out_drf::check(text_logger *in_log)
 {
-    if (!map::check())
+    if (!map::check(in_log))
         return false;
 
     if (m_datarefs.empty())
@@ -231,7 +228,7 @@ bool map_out_drf::check()
         return false;
 
     for (const auto &dataref: m_datarefs) {
-        if (!m_xp->datarefs().check(dataref))
+        if (!m_xp->datarefs().check(in_log, dataref))
             return false;
     }
 
@@ -242,7 +239,7 @@ bool map_out_drf::check()
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
+std::shared_ptr<outbound_task> map_out_drf::execute(text_logger *in_log, const mode_out mode)
 {
     bool changed = false;
 
@@ -255,7 +252,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(const mode_out mode)
         // get the current value from X-Plane
         std::string value_current;
 
-        if (!m_xp->datarefs().read(dataref, value_current))
+        if (!m_xp->datarefs().read(in_log, dataref, value_current))
             continue;
 
         // get current value

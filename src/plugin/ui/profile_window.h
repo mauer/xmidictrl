@@ -27,14 +27,17 @@ namespace xmidictrl {
 
 class profile_window : public ImGuiWindow {
 public:
-    profile_window(std::shared_ptr<xplane> xp, std::shared_ptr<profile> prf);
+    profile_window(text_logger *in_log, xplane *in_xp, profile *in_profile);
     ~profile_window() override = default;
 
 protected:
     void create_widgets() override;
 
 private:
-    std::shared_ptr<profile> m_prf;
+    void create_tab_general();
+    void create_tab_errors_warnings();
+
+    std::shared_ptr<profile> m_profile;
 };
 
 } // Namespace xmidictrl

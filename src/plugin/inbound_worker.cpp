@@ -20,9 +20,6 @@
 // Standard
 #include <mutex>
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -32,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-inbound_worker::inbound_worker(message_handler *messages)
-    : m_messages(messages)
+inbound_worker::inbound_worker(text_logger *in_log)
+    : m_log(in_log)
 {
 }
 
@@ -47,14 +44,14 @@ inbound_worker::inbound_worker(message_handler *messages)
 /**
  * Add a task to be executed
  */
-void inbound_worker::add_task(const std::shared_ptr<inbound_task> &task)
+void inbound_worker::add_task(const std::shared_ptr<inbound_task> &in_task)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    LOG_DEBUG << " --> Task added to inbound queue" << LOG_END
+    m_log->debug(" --> Task added to inbound queue");
 
-    m_tasks.push(task);
+    m_tasks.push(in_task);
 }
 
 
@@ -70,15 +67,15 @@ void inbound_worker::process(std::string_view sl_value)
 
     // process the midi inbound queue for each midi device
     while (!m_tasks.empty()) {
-        std::shared_ptr<inbound_task> t = m_tasks.front();
+        std::shared_ptr<inbound_task> task = m_tasks.front();
 
-        if (t == nullptr || t->map == nullptr)
+        if (task == nullptr || task->map == nullptr)
             continue;
 
         // perform the action related to the mapping
-        if (!t->map->execute(m_messages, *t->msg, sl_value)) {
+        if (!task->map->execute(*task->msg, sl_value)) {
             // store in temp list
-            temp_list.push(t);
+            temp_list.push(task);
         }
 
         // delete entry from list

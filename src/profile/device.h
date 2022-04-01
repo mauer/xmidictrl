@@ -24,6 +24,7 @@
 #include <condition_variable>
 #include <map>
 #include <memory>
+#include <text_logger.h>
 #include <set>
 #include <string>
 #include <string_view>
@@ -38,6 +39,7 @@
 #include "map_in_list.h"
 #include "map_out.h"
 #include "map_out_list.h"
+#include "midi_logger.h"
 #include "outbound_task.h"
 #include "types.h"
 
@@ -47,31 +49,39 @@ class device_list;
 
 class device {
 public:
-    device(std::string_view name, unsigned int port_in, unsigned int port_out, mode_out mode_out);
+    device(text_logger *in_text_log,
+           midi_logger *in_midi_log,
+           std::string_view in_name,
+           unsigned int in_port_in,
+           unsigned int in_port_out,
+           mode_out in_mode_out);
     ~device();
 
     // no copying or copy assignments are allowed
     device(device const &) = delete;
     device &operator=(device const &) = delete;
 
-    void add_inbound_map(std::shared_ptr<map_in> &mapping);
-    void add_outbound_map(std::shared_ptr<map_out> &mapping);
+    void add_inbound_map(std::shared_ptr<map_in> &in_mapping);
+    void add_outbound_map(std::shared_ptr<map_out> &in_mapping);
 
     bool open_connections();
     void close_connections();
 
-    static void midi_callback(double deltatime, std::vector<unsigned char> *message, void *userdata);
+    static void midi_callback([[maybe_unused]] double in_deltatime, std::vector<unsigned char> *in_message, void *in_userdata);
 
-    void process_inbound_message(double deltatime, std::vector<unsigned char> *message);
+    void process_inbound_message(std::vector<unsigned char> *in_message);
 
-    void process_outbound_mappings();
+    void process_outbound_mappings(text_logger *in_log);
     void process_outbound_reset();
 
 private:
     void create_outbound_thread();
     void process_outbound_tasks();
 
-    void add_outbound_task(const std::shared_ptr<outbound_task> &task);
+    void add_outbound_task(const std::shared_ptr<outbound_task> &in_task);
+
+    text_logger *m_text_log;
+    midi_logger *m_midi_log;
 
     std::string m_name;
     unsigned int m_port_in;

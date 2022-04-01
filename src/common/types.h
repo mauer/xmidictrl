@@ -79,7 +79,7 @@ const char *const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";
 const char *const CFG_KEY_CC_DEPRECATED = "CC";
-const char *const CFG_KEY_CH = "channel";
+const char *const CFG_KEY_CH = "ch";
 const char *const CFG_KEY_COMMAND = "command";
 const char *const CFG_KEY_COMMAND_DOWN = "command_down";
 const char *const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
@@ -90,8 +90,8 @@ const char *const CFG_KEY_COMMAND_PUSH = "command_push";
 const char *const CFG_KEY_COMMAND_UP = "command_up";
 const char *const CFG_KEY_COMMON_PROFILE = "common_profile";
 const char *const CFG_KEY_DATAREF = "dataref";
+const char *const CFG_KEY_DEBUG_MODE = "debug_mode";
 const char *const CFG_KEY_DEVICE = "device";
-const char *const CFG_KEY_LOG_LEVEL = "logging_level";
 const char *const CFG_KEY_LOG_MIDI = "log_midi";
 const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
@@ -144,25 +144,10 @@ using time_point = std::chrono::system_clock::time_point;
 
 // Log levels
 enum class log_level {
-    error = 1,
-    warn = 2,
-    info = 3,
-    debug = 4
-};
-
-// Message types
-enum class text_msg_type {
-    all = 0,
-    error = 1,
-    warn = 2,
-    info = 3,
-    debug = 4
-};
-
-// Message direction
-enum class msg_direction {
-    inbound,
-    outbound
+    error,
+    warn,
+    info,
+    debug
 };
 
 // MIDI message type
@@ -175,12 +160,6 @@ enum class midi_msg_type {
     pitch_bend,
     program_change,
     none
-};
-
-// MIDI velocity codes
-enum class midi_velocity {
-    key_released = 0,
-    key_pressed = 127
 };
 
 // MIDI mapping types
@@ -219,6 +198,12 @@ enum class dataref_mode {
 enum class encoder_mode {
     relative,
     range
+};
+
+// Sorting mode
+enum class sort_mode {
+    ascending,
+    descending
 };
 
 // Window types

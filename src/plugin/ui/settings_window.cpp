@@ -20,7 +20,7 @@
 
 // XMidiCtrl
 #include "settings_window.h"
-#include "utils.h"
+#include "conversions.h"
 
 namespace xmidictrl {
 
@@ -31,11 +31,11 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_ptr<settings> set)
-    : ImGuiWindow(xp, 1000, 550),
-      m_settings(std::move(set))
+settings_window::settings_window(text_logger *in_log, xplane *in_xp, settings *in_settings)
+    : ImGuiWindow(in_log, in_xp, 1000, 550),
+      m_settings(in_settings)
 {
-    m_log_level = m_settings->logging_level();
+    m_debug_mode = m_settings->debug_mode();
     m_log_midi = m_settings->log_midi();
     m_show_messages = m_settings->show_messages();
 
@@ -44,10 +44,10 @@ settings_window::settings_window(const std::shared_ptr<xplane>& xp, std::shared_
 
     m_common_profile = m_settings->common_profile();
 
-    m_path_xplane = xp->xplane_path();
-    m_path_plugin = xp->plugin_path();
-    m_path_preferences = xp->preferences_path();
-    m_path_profiles = xp->profiles_path();
+    m_path_xplane = in_xp->xplane_path();
+    m_path_plugin = in_xp->plugin_path();
+    m_path_preferences = in_xp->preferences_path();
+    m_path_profiles = in_xp->profiles_path();
 
     set_title(std::string(XMIDICTRL_NAME) + " - Settings");
 }
@@ -69,48 +69,38 @@ void settings_window::create_widgets()
     ImGui::NewLine();
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Logging Level:");
-    ImGui::SameLine(150);
 
-    ImGui::PushItemWidth(200);
-    if (ImGui::BeginCombo("", utils::log_level_as_text(m_log_level).c_str())) {
-        if (ImGui::Selectable(utils::log_level_as_text(log_level::error).c_str(),
-                              m_log_level == log_level::error)) {
-            m_log_level = log_level::error;
-            ImGui::SetItemDefaultFocus();
+    ImGui::Checkbox("Debug Mode", &m_debug_mode);
+    if (m_debug_mode) {
+        ImGui::SameLine(500);
+        ImGui::Text("Message Limit:");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(150);
+        if (ImGui::InputInt(" Text", &m_max_text_messages, 50, 100)) {
+            if (m_max_text_messages < 1)
+                m_max_text_messages = 1;
+            else if (m_max_text_messages > 5000)
+                m_max_text_messages = 5000;
         }
-
-        if (ImGui::Selectable(utils::log_level_as_text(log_level::warn).c_str(),
-                              m_log_level == log_level::warn)) {
-            m_log_level = log_level::warn;
-            ImGui::SetItemDefaultFocus();
-        }
-
-        if (ImGui::Selectable(utils::log_level_as_text(log_level::info).c_str(),
-                              m_log_level == log_level::info)) {
-            m_log_level = log_level::info;
-            ImGui::SetItemDefaultFocus();
-        }
-
-        if (ImGui::Selectable(utils::log_level_as_text(log_level::debug).c_str(),
-                              m_log_level == log_level::debug)) {
-            m_log_level = log_level::debug;
-            ImGui::SetItemDefaultFocus();
-        }
-
-        ImGui::EndCombo();
     }
 
-    ImGui::SameLine(500);
-    ImGui::SliderInt("Max. number of text messages", &m_max_text_messages, 10, 5000);
     ImGui::NewLine();
-
     ImGui::Checkbox("Log inbound and outbound MIDI messages", &m_log_midi);
-    ImGui::SameLine(500);
-    ImGui::SliderInt("Max. number of MIDI messages", &m_max_midi_messages, 10, 5000);
-    ImGui::NewLine();
+    if (m_log_midi) {
+        ImGui::SameLine(500);
+        ImGui::Text("Message Limit:");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(150);
+        if (ImGui::InputInt(" MIDI", &m_max_midi_messages, 50, 100)) {
+            if (m_max_midi_messages < 1)
+                m_max_midi_messages = 1;
+            else if (m_max_midi_messages > 5000)
+                m_max_midi_messages = 5000;
+        }
+    }
 
-    ImGui::Checkbox("Show message dialog in case of errors", &m_show_messages);
+    ImGui::NewLine();
+    ImGui::Checkbox("Show message dialog in case of errors and warnings", &m_show_messages);
 
     ImGui::NewLine();
     ImGui::NewLine();
@@ -146,7 +136,7 @@ void settings_window::create_widgets()
 
     ImGui::NewLine();
     if (ImGui::Button("Save Settings")) {
-        m_settings->set_logging_level(m_log_level);
+        m_settings->set_debug_mode(m_debug_mode);
         m_settings->set_log_midi(m_log_midi);
 
         m_settings->set_max_text_messages(m_max_text_messages);

@@ -18,8 +18,7 @@
 #include "map_in_list.h"
 
 // XMidiCtrl
-#include "logger.h"
-#include "utils.h"
+#include "conversions.h"
 
 namespace xmidictrl {
 
@@ -45,20 +44,20 @@ map_in_list::~map_in_list()
 /**
  * Add a new mapping
  */
-void map_in_list::add(const std::shared_ptr<map_in> &map)
+void map_in_list::add(const std::shared_ptr<map_in> &in_map)
 {
-    m_list.insert({map->get_key(), map});
+    m_list.insert({in_map->get_key(), in_map});
 }
 
 
 /**
  * Retrieve all mappings for a given key
  */
-std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &key)
+std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &in_key)
 {
     std::vector<std::shared_ptr<map_in>> result {};
 
-    auto search_result = m_list.equal_range(key);
+    auto search_result = m_list.equal_range(in_key);
 
     for (auto it = search_result.first; it != search_result.second; it++)
         result.push_back(it->second);

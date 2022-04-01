@@ -23,7 +23,7 @@
 
 // XMidiCtrl
 #include "map.h"
-#include "message_handler.h"
+#include "text_logger.h"
 #include "midi_message.h"
 #include "types.h"
 #include "xplane.h"
@@ -32,19 +32,19 @@ namespace xmidictrl {
 
 class map_in : public map {
 public:
-    explicit map_in(xplane *xp);
+    explicit map_in(xplane *in_xp);
     ~map_in() override = default;
 
     [[nodiscard]] std::string_view sl() const;
 
-    void read_config(message_handler *messages, toml::value &data) override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
 
-    virtual bool execute(message_handler *messages, midi_message &msg, std::string_view sl_value) = 0;
+    virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
 
 protected:
-    void read_sublayer(toml::value &data);
+    void read_sublayer(text_logger *in_log, toml::value &in_data);
 
-    bool check_sublayer(std::string_view sl_value);
+    bool check_sublayer(std::string_view in_sl_value);
 
 private:
     std::string m_sl {};

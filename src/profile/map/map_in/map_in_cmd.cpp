@@ -20,7 +20,6 @@
 #include <utility>
 
 // XMidiCtrl
-#include "logger.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -32,8 +31,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_cmd::map_in_cmd(xplane *xp)
-    : map_in(xp)
+map_in_cmd::map_in_cmd(xplane *in_xp)
+    : map_in(in_xp)
 {}
 
 
@@ -55,9 +54,9 @@ map_type map_in_cmd::type()
 /**
  * Set the command
  */
-void map_in_cmd::set_command(std::string_view command)
+void map_in_cmd::set_command(std::string_view in_command)
 {
-    m_command = command;
+    m_command = in_command;
 }
 
 
@@ -73,10 +72,10 @@ std::string_view map_in_cmd::command() const
 /**
  * Set velocity on
  */
-void map_in_cmd::set_velocity_on(int velocity_on)
+void map_in_cmd::set_velocity_on(int in_velocity_on)
 {
-    if (velocity_on >= MIDI_VELOCITY_MIN && velocity_on <= MIDI_VELOCITY_MAX)
-        m_velocity_on = velocity_on;
+    if (in_velocity_on >= MIDI_VELOCITY_MIN && in_velocity_on <= MIDI_VELOCITY_MAX)
+        m_velocity_on = in_velocity_on;
     else
         m_velocity_on = MIDI_VELOCITY_MAX;
 }
@@ -94,12 +93,12 @@ unsigned int map_in_cmd::velocity_on() const
 /**
  * Set velocity off
  */
-void map_in_cmd::set_velocity_off(int velocity_off)
+void map_in_cmd::set_velocity_off(int in_velocity_off)
 {
-    if (velocity_off >= MIDI_VELOCITY_MIN && velocity_off <= MIDI_VELOCITY_MAX)
-        m_velocity_off = velocity_off;
+    if (in_velocity_off >= MIDI_VELOCITY_MIN && in_velocity_off <= MIDI_VELOCITY_MAX)
+        m_velocity_off = in_velocity_off;
     else
-        m_velocity_off = 0;
+        m_velocity_off = MIDI_VELOCITY_MIN;
 }
 
 
@@ -115,30 +114,28 @@ unsigned int map_in_cmd::velocity_off() const
 /**
  * Read settings from config
  */
-void map_in_cmd::read_config(message_handler *messages, toml::value &data)
+void map_in_cmd::read_config(text_logger *in_log, toml::value &in_data)
 {
-    messages->debug(" --> Line %i :: Read settings for type 'cmd'", data.location().line());
-    map_in::read_config(messages, data);
-
-    toml_utils utils(messages);
+    in_log->debug(" --> Line %i :: Read settings for type 'cmd'", in_data.location().line());
+    map_in::read_config(in_log, in_data);
 
     // read the command
-    set_command(utils.read_string(data, CFG_KEY_COMMAND));
+    set_command(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND));
 
     // read velocity on
-    set_velocity_on(utils.read_int(data, CFG_KEY_VELOCITY_ON, false));
+    set_velocity_on(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_ON, false));
 
     // read velocity off
-    set_velocity_off(utils.read_int(data, CFG_KEY_VELOCITY_OFF, false));
+    set_velocity_off(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF, false));
 }
 
 
 /**
  * Check the mapping
  */
-bool map_in_cmd::check()
+bool map_in_cmd::check(text_logger *in_log)
 {
-    if (!map::check())
+    if (!map::check(in_log))
         return false;
 
     if (command().empty())
@@ -151,21 +148,20 @@ bool map_in_cmd::check()
 /**
  * Execute the action in X-Plane
  */
-bool map_in_cmd::execute(message_handler *messages, midi_message &msg, std::string_view sl_value)
+bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
 {
-    if (!check_sublayer(sl_value))
+    if (!check_sublayer(in_sl_value))
         return true;
 
-    LOG_DEBUG << " --> Execute command '" << command() << "'" << LOG_END
+    in_msg.log()->debug(" --> Execute command '%s'", command().data());
 
-    if (msg.data_2 == velocity_on()) {
-        m_xp->cmd().begin(command());
-    } else if (msg.data_2 == velocity_off()) {
-        m_xp->cmd().end(command());
+    if (in_msg.data_2() == velocity_on()) {
+        m_xp->cmd().begin(in_msg.log(), command());
+    } else if (in_msg.data_2() == velocity_off()) {
+        m_xp->cmd().end(in_msg.log(), command());
     } else {
-        LOG_ERROR << "Invalid MIDI velocity '" << msg.data_2 << "'" << LOG_END
-        LOG_ERROR << " --> Supported values for the current mapping are '" << velocity_on() << "' and '"
-                  << velocity_off() << "'" << LOG_END
+        in_msg.log()->error("Invalid MIDI velocity '%i'", in_msg.data_2());
+        in_msg.log()->error(" --> Supported values for the current mapping are '%i' and '%io'", velocity_on(), velocity_off());
     }
 
     return true;

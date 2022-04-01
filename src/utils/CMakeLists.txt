@@ -19,9 +19,7 @@ message("---- Directory: src/utils")
 
 # Set sources
 set(UTILS_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/log_entry.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/logger.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/conversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/toml_utils.cpp
         )
 

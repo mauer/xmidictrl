@@ -30,7 +30,7 @@
 #include "config.h"
 #include "device_list.h"
 #include "map.h"
-#include "message_handler.h"
+#include "text_logger.h"
 #include "settings.h"
 #include "types.h"
 #include "xplane.h"
@@ -39,26 +39,26 @@ namespace xmidictrl {
 
 class profile : public config {
 public:
-    explicit profile(xplane *xp,
-                     std::shared_ptr<message_handler> messages,
-                     std::shared_ptr<settings> settings);
+    explicit profile(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp, settings *in_settings);
     ~profile() override;
 
     bool load();
-    void close() override;
+    void close();
 
     [[nodiscard]] std::string_view filename() const;
+
+    text_logger *log();
     [[nodiscard]] bool has_errors() const;
 
     std::string title();
     std::string version();
 
     std::string get_filename_aircraft_path();
-    std::string get_filename_profiles_path(bool icao, bool author);
+    std::string get_filename_profiles_path(bool in_icao, bool in_author);
 
     [[nodiscard]] std::string_view sl_dataref() const;
 
-    void process();
+    void process(text_logger *in_log);
 
 private:
     void clear();
@@ -67,19 +67,22 @@ private:
 
     void create_device_list();
 
-    void create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device);
-    void create_outbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device);
+    void create_inbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
+    void create_outbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
 
-    static map_type translate_map_type(std::string_view type_str);
-    map_type read_mapping_type(toml::value &settings);
+    static map_type translate_map_type(std::string_view in_type_str);
+    map_type read_mapping_type(toml::value &in_settings);
 
-    std::shared_ptr<settings> m_settings;
+    settings *m_settings;
 
-    std::unique_ptr<message_handler> m_profile_msg;
-    std::shared_ptr<device_list> m_device_list;
+    text_logger *m_plugin_log;
+    midi_logger *m_midi_log;
+
+    std::unique_ptr<text_logger> m_profile_log;
+
+    std::unique_ptr<device_list> m_device_list;
 
     std::string m_sl_dataref {};
-
     std::string m_filename {};
 };
 

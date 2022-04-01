@@ -17,9 +17,6 @@
 
 #include "map_in.h"
 
-// XMidiCtrl
-#include "logger.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -29,8 +26,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in::map_in(xplane *xp)
-    : map(xp)
+map_in::map_in(xplane *in_xp)
+    : map(in_xp)
 {}
 
 
@@ -52,12 +49,12 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(message_handler *messages, toml::value &data)
+void map_in::read_config(text_logger *in_log, toml::value &in_data)
 {
-    map::read_config(messages, data);
+    map::read_config(in_log, in_data);
 
     // additional config
-    read_sublayer(data);
+    read_sublayer(in_log, in_data);
 }
 
 
@@ -70,21 +67,20 @@ void map_in::read_config(message_handler *messages, toml::value &data)
 /**
  * Read parameter sl
  */
-void map_in::read_sublayer(toml::value &data)
+void map_in::read_sublayer(text_logger *in_log, toml::value &in_data)
 {
     m_sl.clear();
 
     try {
         // read sublayer
-        if (data.contains(CFG_KEY_SL)) {
-            m_sl = data[CFG_KEY_SL].as_string();
+        if (in_data.contains(CFG_KEY_SL)) {
+            m_sl = in_data[CFG_KEY_SL].as_string();
 
-            LOG_DEBUG << " --> Line " << data.location().line() << " :: Parameter '" << CFG_KEY_SL << "' = '" << m_sl
-                      << "'" << LOG_END
+            in_log->debug(" --> Line %i :: Parameter '%s' = '%s'", in_data.location().line(), CFG_KEY_SL, m_sl.c_str());
         }
     } catch (toml::type_error &error) {
-        LOG_ERROR << " --> Line " << data.location().line() << " :: Error reading mapping" << LOG_END
-        LOG_ERROR << error.what() << LOG_END
+        in_log->error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log->error(error.what());
     }
 }
 
@@ -92,9 +88,9 @@ void map_in::read_sublayer(toml::value &data)
 /**
  * Check if the command is defined for the current sublayer
  */
-bool map_in::check_sublayer(std::string_view sl_value)
+bool map_in::check_sublayer(std::string_view in_sl_value)
 {
-    if (sl_value != m_sl && !m_sl.empty())
+    if (in_sl_value != m_sl && !m_sl.empty())
         return false;
 
     return true;

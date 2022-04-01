@@ -20,12 +20,11 @@
 // XMidiCtrl
 #include "about_window.h"
 #include "devices_window.h"
-#include "logger.h"
 #include "messages_window.h"
 #include "profile_window.h"
 #include "settings_window.h"
 #include "version.h"
-#include "utils.h"
+#include "conversions.h"
 
 namespace xmidictrl {
 
@@ -38,27 +37,33 @@ namespace xmidictrl {
  */
 plugin::plugin()
 {
-    // create the main message handler for the plugin
-    m_plugin_msg = std::make_shared<message_handler>();
+    // create loggers
+    m_plugin_log = std::make_unique<text_logger>();
+    m_midi_log = std::make_unique<midi_logger>();
 
     // create the integration to X-Plane
-    m_xp = std::make_shared<xplane>();
+    m_xp = std::make_unique<xplane>(m_plugin_log.get());
 
     // load general settings
-    m_settings = std::make_shared<settings>(m_xp.get());
+    m_settings = std::make_unique<settings>(m_plugin_log.get(), m_midi_log.get(), m_xp.get());
 
-    // initialize our logging instance
-    logger::instance().init(m_xp->xplane_path(), m_settings);
-    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " loaded successfully" << LOG_END
+    // initialize our logging system
+    m_plugin_log->enabled_file_logging(m_xp->xplane_path());
+    m_plugin_log->set_debug_mode(m_settings->debug_mode());
+    m_plugin_log->set_max_size(m_settings->max_text_messages());
+    m_plugin_log->info("Plugin %s loaded successfully", XMIDICTRL_FULL_NAME);
+    XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " loaded successfully").data());
+
+    m_midi_log->set_max_size(m_settings->max_text_messages());
 
     // create the menu
     m_menu = std::make_unique<menu>();
 
     // create the aircraft profile
-    m_profile = std::make_shared<profile>(m_xp.get(), m_plugin_msg, m_settings);
+    m_profile = std::make_unique<profile>(m_plugin_log.get(), m_midi_log.get(), m_xp.get(), m_settings.get());
 
     // create the inbound worker
-    m_worker = std::make_unique<inbound_worker>(m_plugin_msg.get());
+    m_worker = std::make_unique<inbound_worker>(m_plugin_log.get());
 }
 
 
@@ -67,10 +72,21 @@ plugin::plugin()
  */
 plugin::~plugin()
 {
+    m_profile.reset();
+    m_menu.reset();
+    m_worker.reset();
+
     m_flight_loop_id = nullptr;
     m_windows.clear();
 
-    LOG_ALL << "Plugin " << XMIDICTRL_FULL_NAME << " unloaded successfully" << LOG_END
+    m_midi_log.reset();
+
+    m_plugin_log->info("Plugin %s unloaded successfully", XMIDICTRL_FULL_NAME);
+    m_plugin_log.reset();
+
+    m_xp.reset();
+
+    XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " unloaded successfully").data());
 }
 
 
@@ -93,12 +109,12 @@ plugin &plugin::instance()
 /**
  * Callback for the flight loop
  */
-float plugin::callback_flight_loop(float elapsed_me, float elapsed_sim, int counter, void *refcon)
+float plugin::callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void *in_refcon)
 {
     // call instance method
-    if (refcon != nullptr) {
-        auto instance = static_cast<plugin *>(refcon);
-        instance->process_flight_loop(elapsed_me, elapsed_sim, counter);
+    if (in_refcon != nullptr) {
+        auto instance = static_cast<plugin *>(in_refcon);
+        instance->process_flight_loop(in_elapsed_me, in_elapsed_sim, in_counter);
     }
 
     return FLIGHTLOOP_INTERVAL;
@@ -108,19 +124,19 @@ float plugin::callback_flight_loop(float elapsed_me, float elapsed_sim, int coun
 /**
  * Process the flight loop
  */
-void plugin::process_flight_loop(float elapsed_me, float elapsed_sim, int counter)
+void plugin::process_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter)
 {
     std::string sl_value {};
 
     // are sublayers active?
     if (!m_profile->sl_dataref().empty())
-        m_xp->datarefs().read(m_profile->sl_dataref(), sl_value);
+        m_xp->datarefs().read(m_plugin_log.get(), m_profile->sl_dataref(), sl_value);
 
     // process inbound tasks
     m_worker->process(sl_value);
 
     // process outbound tasks
-    m_profile->process();
+    m_profile->process(m_plugin_log.get());
 }
 
 
@@ -129,7 +145,7 @@ void plugin::process_flight_loop(float elapsed_me, float elapsed_sim, int counte
  */
 void plugin::enable()
 {
-    LOG_INFO << "Plugin enabled" << LOG_END
+    m_plugin_log->info("Plugin enabled");
 
     // create all required menu entries
     m_menu->create_menu();
@@ -144,15 +160,15 @@ void plugin::enable()
     m_flight_loop_id = XPLMCreateFlightLoop(&params);
 
     if (m_flight_loop_id != nullptr) {
-        LOG_DEBUG << "Flight loop registered" << LOG_END
+        m_plugin_log->debug("Flight loop registered");
 
         XPLMScheduleFlightLoop(m_flight_loop_id, FLIGHTLOOP_INTERVAL, true);
     } else {
-        LOG_ERROR << "Could not register flight loop" << LOG_END
+        m_plugin_log->error("Could not register flight loop");
     }
 
     // check if our directory already exists in the preference folder
-    utils::create_preference_folders(m_xp.get());
+    conversions::create_preference_folders(m_plugin_log.get(), m_xp.get());
 }
 
 
@@ -173,13 +189,13 @@ void plugin::disable()
         XPLMDestroyFlightLoop(m_flight_loop_id);
         m_flight_loop_id = nullptr;
 
-        LOG_DEBUG << "Flight loop destroyed" << LOG_END
+        m_plugin_log->debug("Flight loop destroyed");
     }
 
     // close current profile
     close_profile();
 
-    LOG_INFO << "Plugin disabled" << LOG_END
+    m_plugin_log->info("Plugin disabled");
 }
 
 
@@ -207,10 +223,10 @@ void plugin::close_profile()
 /**
  * Add an inbound task to the worker
  */
-void plugin::add_inbound_task(const std::shared_ptr<inbound_task> &task)
+void plugin::add_inbound_task(const std::shared_ptr<inbound_task> &in_task)
 {
     if (m_worker != nullptr)
-        m_worker->add_task(task);
+        m_worker->add_task(in_task);
 }
 
 
@@ -271,9 +287,9 @@ int plugin::sublayer() const
 /**
  * Set the current sublayer
  */
-void plugin::set_sublayer(int value)
+void plugin::set_sublayer(int in_value)
 {
-    m_sublayer = value;
+    m_sublayer = in_value;
 }
 
 
@@ -311,7 +327,7 @@ void plugin::create_datarefs()
                                               nullptr, nullptr,
                                               this, this);
 
-    m_xp->datarefs().write("xmidictrl/sublayer", "0");
+    m_xp->datarefs().write(m_plugin_log.get(), "xmidictrl/sublayer", "0");
 }
 
 
@@ -371,10 +387,10 @@ void plugin::remove_commands()
 /**
  * Read handler for dataref xmidictrl/sublayer
  */
-int plugin::read_drf_sublayer(void *refcon)
+int plugin::read_drf_sublayer(void *in_refcon)
 {
-    if (refcon != nullptr) {
-        auto instance = static_cast<plugin *>(refcon);
+    if (in_refcon != nullptr) {
+        auto instance = static_cast<plugin *>(in_refcon);
         return instance->sublayer();
     }
 
@@ -385,11 +401,11 @@ int plugin::read_drf_sublayer(void *refcon)
 /**
  * Write handler for dataref xmidictrl/sublayer
  */
-void plugin::write_drf_sublayer(void *refcon, int value)
+void plugin::write_drf_sublayer(void *in_refcon, int in_value)
 {
-    if (refcon != nullptr) {
-        auto instance = static_cast<plugin *>(refcon);
-        instance->set_sublayer(value);
+    if (in_refcon != nullptr) {
+        auto instance = static_cast<plugin *>(in_refcon);
+        instance->set_sublayer(in_value);
     }
 }
 
@@ -397,18 +413,18 @@ void plugin::write_drf_sublayer(void *refcon, int value)
 /**
  * Handler for custom commands
  */
-int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void *refcon)
+int plugin::command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon)
 {
-    if (phase != xplm_CommandEnd)
+    if (in_phase != xplm_CommandEnd)
         return 1;
 
-    if (!strcmp((const char *) refcon, COMMAND_MESSAGE_WINDOW))
+    if (!strcmp((const char *) in_refcon, COMMAND_MESSAGE_WINDOW))
         plugin::instance().show_messages_window();
-    else if (!strcmp((const char *) refcon, COMMAND_PROFILE_WINDOW))
+    else if (!strcmp((const char *) in_refcon, COMMAND_PROFILE_WINDOW))
         plugin::instance().show_profile_window();
-    else if (!strcmp((const char *) refcon, COMMAND_RELOAD_PROFILE))
+    else if (!strcmp((const char *) in_refcon, COMMAND_RELOAD_PROFILE))
         plugin::instance().load_profile();
-    else if (!strcmp((const char *) refcon, COMMAND_TOGGLE_SUBLAYER))
+    else if (!strcmp((const char *) in_refcon, COMMAND_TOGGLE_SUBLAYER))
         plugin::instance().toggle_sublayer();
 
     // disable further processing by X-Plane.
@@ -419,13 +435,13 @@ int plugin::command_handler(XPLMCommandRef command, XPLMCommandPhase phase, void
 /**
  * Create and returns windows
  */
-void plugin::create_window(window_type type)
+void plugin::create_window(window_type in_type)
 {
     std::shared_ptr<xplane_window> window;
 
     // check if the window is already created
     try {
-        window = m_windows.at(type);
+        window = m_windows.at(in_type);
         window->show();
         return;
     } catch (std::out_of_range &) {
@@ -433,30 +449,30 @@ void plugin::create_window(window_type type)
     }
 
     // looks like we have to create it
-    switch (type) {
+    switch (in_type) {
         case window_type::about_window:
-            window = std::make_shared<about_window>(m_xp);
+            window = std::make_shared<about_window>(m_plugin_log.get(), m_xp.get());
             break;
 
         case window_type::messages_window:
-            window = std::make_shared<messages_window>(m_xp);
+            window = std::make_shared<messages_window>(m_plugin_log.get(), m_midi_log.get(), m_xp.get());
             break;
 
         case window_type::devices_window:
-            window = std::make_shared<devices_window>(m_xp);
+            window = std::make_shared<devices_window>(m_plugin_log.get(), m_xp.get());
             break;
 
         case window_type::profile_window:
-            window = std::make_shared<profile_window>(m_xp, m_profile);
+            window = std::make_shared<profile_window>(m_plugin_log.get(), m_xp.get(), m_profile.get());
             break;
 
         case window_type::settings_window:
-            window = std::make_shared<settings_window>(m_xp, m_settings);
+            window = std::make_shared<settings_window>(m_plugin_log.get(), m_xp.get(), m_settings.get());
             break;
     }
 
     if (window)
-        m_windows.emplace(type, window);
+        m_windows.emplace(in_type, window);
 }
 
 } // Mamespace xmidictrl

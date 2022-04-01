@@ -54,10 +54,10 @@ public:
     void set_velocity_off(int value_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(message_handler *messages, toml::value &settings) override;
-    bool check() override;
+    void read_config(text_logger *in_log, toml::value &in_data) override;
+    bool check(text_logger *in_log) override;
 
-    std::shared_ptr<outbound_task> execute(mode_out mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger *in_log, mode_out mode) override;
     std::shared_ptr<outbound_task> reset() override;
 
 private:
