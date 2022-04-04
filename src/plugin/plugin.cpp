@@ -42,10 +42,10 @@ plugin::plugin()
     m_midi_log = std::make_unique<midi_logger>();
 
     // create the integration to X-Plane
-    m_xp = std::make_unique<xplane>(m_plugin_log.get());
+    m_xp = std::make_unique<xplane>(*m_plugin_log);
 
     // load general settings
-    m_settings = std::make_unique<settings>(m_plugin_log.get(), m_midi_log.get(), m_xp.get());
+    m_settings = std::make_unique<settings>(*m_plugin_log, *m_midi_log, *m_xp);
 
     // initialize our logging system
     m_plugin_log->enabled_file_logging(m_xp->xplane_path());
@@ -60,10 +60,10 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(m_plugin_log.get(), m_midi_log.get(), m_xp.get(), m_settings.get());
+    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
 
     // create the inbound worker
-    m_worker = std::make_unique<inbound_worker>(m_plugin_log.get());
+    m_worker = std::make_unique<inbound_worker>(*m_plugin_log);
 }
 
 
@@ -130,13 +130,13 @@ void plugin::process_flight_loop(float in_elapsed_me, float in_elapsed_sim, int 
 
     // are sublayers active?
     if (!m_profile->sl_dataref().empty())
-        m_xp->datarefs().read(m_plugin_log.get(), m_profile->sl_dataref(), sl_value);
+        m_xp->datarefs().read(*m_plugin_log, m_profile->sl_dataref(), sl_value);
 
     // process inbound tasks
     m_worker->process(sl_value);
 
     // process outbound tasks
-    m_profile->process(m_plugin_log.get());
+    m_profile->process(*m_plugin_log);
 }
 
 
@@ -168,7 +168,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    conversions::create_preference_folders(m_plugin_log.get(), m_xp.get());
+    conversions::create_preference_folders(*m_plugin_log, *m_xp);
 }
 
 
@@ -327,7 +327,7 @@ void plugin::create_datarefs()
                                               nullptr, nullptr,
                                               this, this);
 
-    m_xp->datarefs().write(m_plugin_log.get(), "xmidictrl/sublayer", "0");
+    m_xp->datarefs().write(*m_plugin_log, "xmidictrl/sublayer", "0");
 }
 
 
@@ -451,23 +451,23 @@ void plugin::create_window(window_type in_type)
     // looks like we have to create it
     switch (in_type) {
         case window_type::about_window:
-            window = std::make_shared<about_window>(m_plugin_log.get(), m_xp.get());
+            window = std::make_shared<about_window>(*m_plugin_log, *m_xp);
             break;
 
         case window_type::messages_window:
-            window = std::make_shared<messages_window>(m_plugin_log.get(), m_midi_log.get(), m_xp.get());
+            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_xp);
             break;
 
         case window_type::devices_window:
-            window = std::make_shared<devices_window>(m_plugin_log.get(), m_xp.get());
+            window = std::make_shared<devices_window>(*m_plugin_log, *m_xp);
             break;
 
         case window_type::profile_window:
-            window = std::make_shared<profile_window>(m_plugin_log.get(), m_xp.get(), m_profile.get());
+            window = std::make_shared<profile_window>(*m_plugin_log, *m_xp, *m_profile);
             break;
 
         case window_type::settings_window:
-            window = std::make_shared<settings_window>(m_plugin_log.get(), m_xp.get(), m_settings.get());
+            window = std::make_shared<settings_window>(*m_plugin_log, *m_xp, *m_settings);
             break;
     }
 

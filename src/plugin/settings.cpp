@@ -33,14 +33,14 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(text_logger *in_log, midi_logger *in_midi_log, xplane *in_xp)
+settings::settings(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp)
     : config(in_xp),
-      m_log(in_log),
+      m_text_log(in_text_log),
       m_midi_log(in_midi_log)
 {
     // build name for general settings file
-    if (!load_file(m_log, get_settings_filename()))
-        m_log->warn(" --> Will use default settings");
+    if (!load_file(m_text_log, get_settings_filename()))
+        m_text_log.warn(" --> Will use default settings");
 }
 
 
@@ -49,7 +49,7 @@ settings::settings(text_logger *in_log, midi_logger *in_midi_log, xplane *in_xp)
  */
 settings::~settings()
 {
-    close_file(m_log);
+    close_file(m_text_log);
 }
 
 
@@ -65,7 +65,7 @@ settings::~settings()
 void settings::set_debug_mode(bool in_mode)
 {
     m_config[CFG_KEY_DEBUG_MODE] = in_mode;
-    m_log->set_debug_mode(in_mode);
+    m_text_log.set_debug_mode(in_mode);
 }
 
 
@@ -84,7 +84,7 @@ bool settings::debug_mode() const
 void settings::set_log_midi(bool in_enabled)
 {
     m_config[CFG_KEY_LOG_MIDI] = in_enabled;
-    m_midi_log->set_state(in_enabled);
+    m_midi_log.set_state(in_enabled);
 }
 
 
@@ -121,7 +121,7 @@ bool settings::show_messages() const
 void settings::set_max_text_messages(int in_number)
 {
     m_config[CFG_KEY_MAX_TEXT_MESSAGES] = in_number;
-    m_log->set_max_size(in_number);
+    m_text_log.set_max_size(in_number);
 }
 
 
@@ -140,7 +140,7 @@ int settings::max_text_messages() const
 void settings::set_max_midi_messages(int in_number)
 {
     m_config[CFG_KEY_MAX_MIDI_MESSAGES] = in_number;
-    m_log->set_max_size(in_number);
+    m_text_log.set_max_size(in_number);
 }
 
 
@@ -180,18 +180,18 @@ void settings::save_settings()
     std::string filename = get_settings_filename();
 
     if (filename.empty()) {
-        m_log->error("Could not determine file name for general settings");
+        m_text_log.error("Could not determine file name for general settings");
         return;
     }
 
     // check if our directory already exists in the preference folder
-    if (!conversions::create_preference_folders(m_log, m_xp))
+    if (!conversions::create_preference_folders(m_text_log, xp()))
         return;
 
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
     if (!stream.is_open()) {
-        m_log->error("Could not save general settings file '%s'", filename.c_str());
+        m_text_log.error("Could not save general settings file '%s'", filename.c_str());
         return;
     }
 
@@ -205,7 +205,7 @@ void settings::save_settings()
  */
 std::string settings::get_settings_filename()
 {
-    std::string filename = m_xp->preferences_path().data() + std::string(XMIDICTRL_NAME) +
+    std::string filename = xp().preferences_path().data() + std::string(XMIDICTRL_NAME) +
                            std::string(SETTINGS_FILE_SUFFIX);
 
     return filename;

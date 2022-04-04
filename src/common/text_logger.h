@@ -52,6 +52,8 @@ public:
     size_t count();
     text_log_msg *message(int in_index);
 
+    std::string messages_as_text();
+
     bool has_errors() const;
     bool has_warnings() const;
 

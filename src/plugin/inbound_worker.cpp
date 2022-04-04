@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-inbound_worker::inbound_worker(text_logger *in_log)
+inbound_worker::inbound_worker(text_logger &in_log)
     : m_log(in_log)
 {
 }
@@ -49,7 +49,7 @@ void inbound_worker::add_task(const std::shared_ptr<inbound_task> &in_task)
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    m_log->debug(" --> Task added to inbound queue");
+    m_log.debug(" --> Task added to inbound queue");
 
     m_tasks.push(in_task);
 }

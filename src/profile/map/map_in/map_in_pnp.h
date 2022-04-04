@@ -36,10 +36,12 @@ namespace xmidictrl {
 
 class map_in_pnp : public map_in {
 public:
-    explicit map_in_pnp(xplane *in_xp);
+    explicit map_in_pnp(xplane &in_xp);
     ~map_in_pnp() override = default;
 
     map_type type() override;
+
+    std::string as_string() override;
 
     void set_command_push(std::string_view in_command);
     [[nodiscard]] std::string_view command_push() const;
@@ -50,8 +52,8 @@ public:
     void set_time_received();
     void set_time_released();
 
-    void read_config(text_logger *in_log, toml::value &in_data) override;
-    bool check(text_logger *in_log) override;
+    void read_config(text_logger &in_log, toml::value &in_data) override;
+    bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 

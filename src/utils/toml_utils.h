@@ -33,31 +33,34 @@ namespace xmidictrl {
 
 class toml_utils {
 public:
-    static bool contains(text_logger *in_log,
+    static bool contains(text_logger &in_log,
                          toml::value &in_data,
                          std::string_view in_name,
                          bool in_mandatory = true);
-    static bool is_array(text_logger *in_log, toml::value &in_data, std::string_view in_name);
+    static bool is_array(text_logger &in_log, toml::value &in_data, std::string_view in_name);
 
-    static std::string read_string(text_logger *in_log,
+    static std::string read_string(text_logger &in_log,
                                    toml::value &in_data,
                                    std::string_view in_name,
                                    bool in_mandatory = true);
 
-    static std::set<std::string> read_str_set_array(text_logger *in_log, toml::value &in_data,
+    static std::set<std::string> read_str_set_array(text_logger &in_log,
+                                                    toml::value &in_data,
                                                     std::string_view in_name,
                                                     bool in_mandatory = true);
 
-    static std::vector<std::string> read_str_vector_array(text_logger *in_log, toml::value &in_data,
+    static std::vector<std::string> read_str_vector_array(text_logger &in_log,
+                                                          toml::value &in_data,
                                                           std::string_view in_name,
                                                           bool in_mandatory = true);
 
-    static int read_int(text_logger *in_log,
+    static int read_int(text_logger &in_log,
                         toml::value &in_data,
                         std::string_view in_name,
                         bool in_mandatory = true);
 
-    static float read_float(text_logger *in_log, toml::value &in_data,
+    static float read_float(text_logger &in_log,
+                            toml::value &in_data,
                             std::string_view in_name,
                             bool in_mandatory = true,
                             float in_fallback = 0.0f);

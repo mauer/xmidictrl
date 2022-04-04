@@ -34,10 +34,12 @@ namespace xmidictrl {
 
 class map_in_sld : public map_in {
 public:
-    explicit map_in_sld(xplane *in_xp);
+    explicit map_in_sld(xplane &in_xp);
     ~map_in_sld() override = default;
 
     map_type type() override;
+
+    std::string as_string() override;
 
     void set_dataref(std::string_view in_dataref);
     [[nodiscard]] std::string_view dataref() const;
@@ -57,8 +59,8 @@ public:
     void set_command_down(std::string_view in_command);
     [[nodiscard]] std::string_view command_down() const;
 
-    void read_config(text_logger *in_log, toml::value &in_data) override;
-    bool check(text_logger *in_log) override;
+    void read_config(text_logger &in_log, toml::value &in_data) override;
+    bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 

@@ -26,7 +26,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in::map_in(xplane *in_xp)
+map_in::map_in(xplane &in_xp)
     : map(in_xp)
 {}
 
@@ -49,7 +49,7 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(text_logger *in_log, toml::value &in_data)
+void map_in::read_config(text_logger &in_log, toml::value &in_data)
 {
     map::read_config(in_log, in_data);
 
@@ -67,7 +67,7 @@ void map_in::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Read parameter sl
  */
-void map_in::read_sublayer(text_logger *in_log, toml::value &in_data)
+void map_in::read_sublayer(text_logger &in_log, toml::value &in_data)
 {
     m_sl.clear();
 
@@ -76,11 +76,11 @@ void map_in::read_sublayer(text_logger *in_log, toml::value &in_data)
         if (in_data.contains(CFG_KEY_SL)) {
             m_sl = in_data[CFG_KEY_SL].as_string();
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%s'", in_data.location().line(), CFG_KEY_SL, m_sl.c_str());
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%s'", in_data.location().line(), CFG_KEY_SL, m_sl.c_str());
         }
     } catch (toml::type_error &error) {
-        in_log->error(" --> Line %i :: Error reading mapping", in_data.location().line());
-        in_log->error(error.what());
+        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error(error.what());
     }
 }
 

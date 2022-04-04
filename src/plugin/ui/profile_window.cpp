@@ -33,7 +33,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile_window::profile_window(text_logger *in_log, xplane *in_xp, profile *in_profile)
+profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile)
     : ImGuiWindow(in_log, in_xp, 1200, 600),
       m_profile(in_profile)
 {
@@ -81,15 +81,15 @@ void profile_window::create_tab_general()
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_icao().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_icao().c_str());
 
         ImGui::Text("Description:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_descr().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_descr().c_str());
 
         ImGui::Text("Author:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp->current_aircraft_author().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_author().c_str());
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -100,19 +100,19 @@ void profile_window::create_tab_general()
 
         ImGui::Text("Title:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->title().data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.title().data());
 
         ImGui::Text("Version:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->version().data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.version().data());
 
         ImGui::Text("Filename:");
         ImGui::SameLine(150);
 
-        if (m_profile->filename().empty())
+        if (m_profile.filename().empty())
             ImGui::TextColored(COL_TEXT_VALUE, "<not loaded>");
         else
-            ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->filename().data());
+            ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.filename().data());
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -123,23 +123,23 @@ void profile_window::create_tab_general()
 
         ImGui::Text("Aircraft folder:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->get_filename_aircraft_path().data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path().data());
 
         ImGui::NewLine();
 
         ImGui::Text("ICAO and Author:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->get_filename_profiles_path(true, true).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(true, true).data());
 
         ImGui::Text("ICAO only:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->get_filename_profiles_path(true, false).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(true, false).data());
 
         ImGui::NewLine();
 
         ImGui::Text("Generic Profile:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile->get_filename_profiles_path(false, false).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(false, false).data());
 
         ImGui::EndTabItem();
     }
@@ -155,20 +155,20 @@ void profile_window::create_tab_errors_warnings()
         ImGui::Text("Errors found:");
         ImGui::SameLine(150);
 
-        if (m_profile->log()->has_errors())
+        if (m_profile.log().has_errors())
             ImGui::TextColored(COL_TEXT_VALUE, "Yes");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "No");
 
         ImGui::SameLine(ImGui::GetWindowWidth() - 200);
 
-        if (ImGui::Button("Reload Aircraft Profile"))
+        if (ImGui::Button("  Reload Aircraft Profile  "))
             plugin::instance().load_profile();
 
         ImGui::Text("Warnings found:");
         ImGui::SameLine(150);
 
-        if (m_profile->log()->has_warnings())
+        if (m_profile.log().has_warnings())
             ImGui::TextColored(COL_TEXT_VALUE, "Yes");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "No");
@@ -185,8 +185,8 @@ void profile_window::create_tab_errors_warnings()
         ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        for (unsigned int i = 0; i < m_profile->log()->count(); i++) {
-            auto msg = m_profile->log()->message(i);
+        for (unsigned int i = 0; i < m_profile.log().count(); i++) {
+            auto msg = m_profile.log().message(i);
 
             if (msg == nullptr)
                 continue;

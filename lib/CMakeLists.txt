@@ -26,6 +26,9 @@ if (MINGW)
     add_subdirectory(mingw-std-threads)
 endif()
 
+# Add headers for fonts
+include(${CMAKE_CURRENT_LIST_DIR}/fonts.cmake)
+
 # Add RtMidi for accessing MIDI devices
 message("-- Configuring build scripts for RtMidi")
 

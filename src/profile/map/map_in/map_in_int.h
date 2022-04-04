@@ -34,12 +34,14 @@ namespace xmidictrl {
 
 class map_in_int : public map_in {
 public:
-    explicit map_in_int(xplane *in_xp, std::string_view in_command);
+    explicit map_in_int(xplane &in_xp, std::string_view in_command);
     ~map_in_int() override = default;
 
     map_type type() override;
 
-    bool check(text_logger *in_log) override;
+    std::string as_string() override;
+
+    bool check(text_logger &in_log) override;
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 private:

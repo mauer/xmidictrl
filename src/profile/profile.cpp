@@ -42,15 +42,14 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp, settings *in_settings)
+profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings)
     : config(in_xp),
       m_settings(in_settings),
       m_plugin_log(in_text_log),
       m_midi_log(in_midi_log)
 {
     // create my own logger for errors and warnings
-    m_profile_log = std::make_unique<text_logger>(in_text_log);
-    m_profile_log->set_debug_mode(in_text_log->debug_mode());
+    m_profile_log = std::make_unique<text_logger>(&in_text_log);
     m_profile_log->set_log_info(false);
 
     m_device_list = std::make_unique<device_list>();
@@ -92,7 +91,7 @@ bool profile::load()
     m_profile_log->info("Aircraft Profile '%s' found", filename.c_str());
 
     // load the profile and create all devices with their mappings
-    if (load_file(m_profile_log.get(), filename)) {
+    if (load_file(*m_profile_log, filename)) {
         m_filename = filename;
 
         // load general settings for the profile
@@ -120,7 +119,7 @@ void profile::close()
     m_device_list->process_outbound_reset();
 
     clear();
-    close_file(m_profile_log.get());
+    close_file(*m_profile_log);
 }
 
 
@@ -137,9 +136,9 @@ std::string_view profile::filename() const
 /**
  * Return the log
  */
-text_logger *profile::log()
+text_logger &profile::log()
 {
-    return m_profile_log.get();
+    return *m_profile_log;
 }
 
 
@@ -175,7 +174,7 @@ std::string profile::version()
  */
 std::string profile::get_filename_aircraft_path()
 {
-    return m_xp->current_aircraft_path() + std::string(FILENAME_PROFILE);
+    return xp().current_aircraft_path() + std::string(FILENAME_PROFILE);
 }
 
 
@@ -185,12 +184,12 @@ std::string profile::get_filename_aircraft_path()
 std::string profile::get_filename_profiles_path(bool icao, bool author)
 {
     if (icao && author)
-        return m_xp->profiles_path().data() + m_xp->current_aircraft_author() + "_" +
-               m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+        return xp().profiles_path().data() + xp().current_aircraft_author() + "_" +
+               xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
     else if (icao)
-        return m_xp->profiles_path().data() + m_xp->current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+        return xp().profiles_path().data() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
     else
-        return m_xp->profiles_path().data() + std::string(FILENAME_PROFILE);
+        return xp().profiles_path().data() + std::string(FILENAME_PROFILE);
 }
 
 
@@ -206,7 +205,7 @@ std::string_view profile::sl_dataref() const
 /**
  * Process all outbound mappings
  */
-void profile::process(text_logger *in_log)
+void profile::process(text_logger &in_log)
 {
     // process midi outbound mappings
     m_device_list->process_outbound_mappings(in_log);
@@ -261,7 +260,7 @@ std::string profile::find_profile()
         return filename;
 
     // 4. check for the common profile (if activated)
-    if (m_settings->common_profile()) {
+    if (m_settings.common_profile()) {
         filename = get_filename_profiles_path(false, false);
 
         m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
@@ -306,7 +305,7 @@ void profile::create_device_list()
 
             try {
                 // name
-                name = toml_utils::read_string(m_profile_log.get(), settings_dev, CFG_KEY_NAME, false);
+                name = toml_utils::read_string(*m_profile_log, settings_dev, CFG_KEY_NAME, false);
 
                 if (name.empty()) {
                     name = "<undefined>";
@@ -314,7 +313,7 @@ void profile::create_device_list()
                 }
 
                 // port in
-                port_in = toml_utils::read_int(m_profile_log.get(), settings_dev, CFG_KEY_PORT_IN);
+                port_in = toml_utils::read_int(*m_profile_log, settings_dev, CFG_KEY_PORT_IN);
 
                 if (port_in < 0) {
                     // TODO
@@ -323,7 +322,7 @@ void profile::create_device_list()
                 }
 
                 // port out
-                port_out = toml_utils::read_int(m_profile_log.get(), settings_dev, CFG_KEY_PORT_OUT);
+                port_out = toml_utils::read_int(*m_profile_log, settings_dev, CFG_KEY_PORT_OUT);
 
                 if (port_out < 0) {
                     // TODO
@@ -332,7 +331,7 @@ void profile::create_device_list()
                 }
 
                 // mode outbound
-                mode_out = conversions::mode_out_from_int(toml_utils::read_int(m_profile_log.get(),
+                mode_out = conversions::mode_out_from_int(toml_utils::read_int(*m_profile_log,
                                                                                settings_dev,
                                                                                CFG_KEY_MODE_OUT,
                                                                                false));
@@ -396,15 +395,15 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::command:
-                    mapping = std::make_shared<map_in_cmd>(m_xp);
+                    mapping = std::make_shared<map_in_cmd>(xp());
                     break;
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_in_drf>(m_xp);
+                    mapping = std::make_shared<map_in_drf>(xp());
                     break;
 
                 case map_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(m_xp);
+                    mapping = std::make_shared<map_in_enc>(xp());
                     break;
 
                 case map_type::internal:
@@ -414,11 +413,11 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     break;
 
                 case map_type::push_pull:
-                    mapping = std::make_shared<map_in_pnp>(m_xp);
+                    mapping = std::make_shared<map_in_pnp>(xp());
                     break;
 
                 case map_type::slider:
-                    mapping = std::make_shared<map_in_sld>(m_xp);
+                    mapping = std::make_shared<map_in_sld>(xp());
                     break;
 
                 case map_type::none:
@@ -435,9 +434,9 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(m_profile_log.get(), settings[map_no]);
+            mapping->read_config(*m_profile_log, settings[map_no]);
 
-            if (mapping->check(m_profile_log.get())) {
+            if (mapping->check(*m_profile_log)) {
                 device->add_inbound_map(mapping);
             } else {
                 m_profile_log->error("Line %i :: %s",
@@ -476,7 +475,7 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
             switch (type) {
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_out_drf>(m_xp);
+                    mapping = std::make_shared<map_out_drf>(xp());
                     break;
 
                 case map_type::internal:
@@ -496,9 +495,9 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(m_profile_log.get(), settings[map_no]);
+            mapping->read_config(*m_profile_log, settings[map_no]);
 
-            if (mapping->check(m_profile_log.get()))
+            if (mapping->check(*m_profile_log))
                 device->add_outbound_map(mapping);
             else
                 m_profile_log->error("Device %i :: Mapping %i :: Parameters incomplete or incorrect", dev_no, map_no);

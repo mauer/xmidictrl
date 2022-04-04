@@ -152,6 +152,28 @@ text_log_msg *text_logger::message(int in_index)
 
 
 /**
+ * Return a text string of all messages
+ */
+std::string text_logger::messages_as_text()
+{
+    if (m_messages.size() == 1)
+        return {m_messages.at(0)->text};
+
+    std::string text;
+    for (auto &msg : m_messages) {
+        if (text.empty()) {
+            text = msg->text;
+        } else {
+            text.append("\n");
+            text.append(msg->text);
+        }
+    }
+
+    return text;
+}
+
+
+/**
  * Return if error messages occurred
  */
 bool text_logger::has_errors() const

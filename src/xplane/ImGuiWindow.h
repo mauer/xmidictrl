@@ -35,10 +35,11 @@
 
 // OpenGL
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+    #include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
+
 #endif
 
 // Dear ImGui
@@ -51,9 +52,9 @@
 
 namespace xmidictrl {
 
-class ImGuiWindow: public xplane_window {
+class ImGuiWindow : public xplane_window {
 public:
-    ImGuiWindow(text_logger *in_log, xplane *in_xp, int in_width, int in_height, bool in_translucent = false);
+    ImGuiWindow(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
     ~ImGuiWindow() override;
 
 protected:
@@ -70,9 +71,9 @@ private:
 
     static std::shared_ptr<ImGuiFontAtlas> m_imGuiFontAtlas;
 
-    GLuint m_fontTextureId{};
-    ImGuiContext *imGuiContext{};
-    int mLeft{}, mTop{}, mRight{}, mBottom{};
+    GLuint m_fontTextureId {};
+    ImGuiContext *imGuiContext {};
+    int mLeft {}, mTop {}, mRight {}, mBottom {};
     bool stopped = false;
 
     void buildWindow();

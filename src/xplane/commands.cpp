@@ -26,7 +26,7 @@ namespace xmidictrl {
 /**
  * Begin a X-Plane command
  */
-void commands::begin(text_logger *in_log, std::string_view in_cmd)
+void commands::begin(text_logger &in_log, std::string_view in_cmd)
 {
     XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
@@ -38,7 +38,7 @@ void commands::begin(text_logger *in_log, std::string_view in_cmd)
 /**
  * End a X-Plane command
  */
-void commands::end(text_logger *in_log, std::string_view in_cmd)
+void commands::end(text_logger &in_log, std::string_view in_cmd)
 {
     XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
@@ -50,7 +50,7 @@ void commands::end(text_logger *in_log, std::string_view in_cmd)
 /**
  * Execute a X-Plane command
  */
-void commands::execute(text_logger *in_log, std::string_view in_cmd)
+void commands::execute(text_logger &in_log, std::string_view in_cmd)
 {
     XPLMCommandRef cmd_ref = find_command_ref(in_log, in_cmd);
 
@@ -68,7 +68,7 @@ void commands::execute(text_logger *in_log, std::string_view in_cmd)
 /**
  * Get the command ref for a command string
  */
-XPLMCommandRef commands::find_command_ref(text_logger* in_log, std::string_view in_cmd)
+XPLMCommandRef commands::find_command_ref(text_logger &in_log, std::string_view in_cmd)
 {
     XPLMCommandRef cmd_ref = nullptr;
 
@@ -81,7 +81,7 @@ XPLMCommandRef commands::find_command_ref(text_logger* in_log, std::string_view 
     }
 
     if (cmd_ref == nullptr)
-        in_log->error("Command '%s' ' not found", in_cmd.data());
+        in_log.error("Command '%s' not found", in_cmd.data());
 
     return cmd_ref;
 }

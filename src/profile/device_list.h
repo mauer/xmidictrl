@@ -36,8 +36,8 @@ public:
     explicit device_list() = default;
     ~device_list();
 
-    std::shared_ptr<device> create_device(text_logger *in_text_log,
-                                          midi_logger *in_midi_log,
+    std::shared_ptr<device> create_device(text_logger &in_text_log,
+                                          midi_logger &in_midi_log,
                                           std::string_view in_name,
                                           unsigned int in_port_in,
                                           unsigned int in_port_out,
@@ -46,7 +46,7 @@ public:
     bool open_connections();
     void close_connections();
 
-    void process_outbound_mappings(text_logger *in_log);
+    void process_outbound_mappings(text_logger &in_log);
     void process_outbound_reset();
 
     void clear();

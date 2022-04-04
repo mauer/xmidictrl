@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(xplane *in_xp)
+map::map(xplane &in_xp)
     : m_xp(in_xp)
 {}
 
@@ -77,15 +77,6 @@ unsigned char map::data() const
 
 
 /**
- * Return the mapping source line
- */
-std::string_view map::source_line()
-{
-    return m_source_line;
-}
-
-
-/**
  * Return a string containing channel, type and data
  */
 std::string map::get_key()
@@ -121,11 +112,8 @@ std::string map::get_key()
 /**
  * Read the config
  */
-void map::read_config(text_logger *in_log, toml::value &in_data)
+void map::read_config(text_logger &in_log, toml::value &in_data)
 {
-    // set source line
-    m_source_line = in_data.location().line_str();
-
     // required config
     read_channel(in_log, in_data);
     read_data(in_log, in_data);
@@ -135,7 +123,7 @@ void map::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map::check(text_logger *in_log)
+bool map::check(text_logger &in_log)
 {
     if (m_channel != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
         return true;
@@ -151,9 +139,18 @@ bool map::check(text_logger *in_log)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Return the xplane framework
+ */
+xplane &map::xp() const
+{
+    return m_xp;
+}
+
+
+/**
  * Read parameter channel
  */
-void map::read_channel(text_logger *in_log, toml::value &in_data)
+void map::read_channel(text_logger &in_log, toml::value &in_data)
 {
     m_channel = 11; // default channel 11
 
@@ -162,19 +159,19 @@ void map::read_channel(text_logger *in_log, toml::value &in_data)
         if (in_data.contains(CFG_KEY_CH)) {
             m_channel = static_cast<unsigned char>( in_data[CFG_KEY_CH].as_integer());
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CH, m_channel);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CH, m_channel);
         } else {
-            in_log->info(" --> Line %i :: Parameter '%s' is missing, will use default channel '11'",
+            in_log.info(" --> Line %i :: Parameter '%s' is missing, will use default channel '11'",
+                        in_data.location().line(),
+                        CFG_KEY_CH);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i' (Default Value)",
                          in_data.location().line(),
-                         CFG_KEY_CH);
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i' (Default Value)",
-                          in_data.location().line(),
-                          CFG_KEY_CH,
-                          m_channel);
+                         CFG_KEY_CH,
+                         m_channel);
         }
     } catch (toml::type_error &error) {
-        in_log->error(" --> Line %i :: Error reading mapping", in_data.location().line());
-        in_log->error(error.what());
+        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error(error.what());
     }
 }
 
@@ -182,7 +179,7 @@ void map::read_channel(text_logger *in_log, toml::value &in_data)
 /**
  * Read parameter data
  */
-void map::read_data(text_logger *in_log, toml::value &in_data)
+void map::read_data(text_logger &in_log, toml::value &in_data)
 {
     m_data = MIDI_NONE;
     m_data_type = map_data_type::none;
@@ -193,49 +190,82 @@ void map::read_data(text_logger *in_log, toml::value &in_data)
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC].as_integer());
             m_data_type = map_data_type::control_change;
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CC, m_data);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CC, m_data);
         } else if (in_data.contains(CFG_KEY_CC_DEPRECATED)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC_DEPRECATED].as_integer());
             m_data_type = map_data_type::control_change;
 
-            in_log->warn(" --> Line %i :: Parameter '%s' is deprecated, please rename it to '%s'",
+            in_log.warn(" --> Line %i :: Parameter '%s' is deprecated, please rename it to '%s'",
+                        in_data.location().line(),
+                        CFG_KEY_CC_DEPRECATED,
+                        CFG_KEY_CC);
+
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
                          in_data.location().line(),
                          CFG_KEY_CC_DEPRECATED,
-                         CFG_KEY_CC);
-
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i'",
-                          in_data.location().line(),
-                          CFG_KEY_CC_DEPRECATED,
-                          m_data);
+                         m_data);
         } else if (in_data.contains(CFG_KEY_NOTE)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_NOTE].as_integer());
             m_data_type = map_data_type::note;
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_NOTE, m_data);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_NOTE, m_data);
         } else if (in_data.contains(CFG_KEY_PITCH_BEND)) {
             m_data = 0;   // fixed value for pitch bend messages
             m_data_type = map_data_type::pitch_bend;
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i' (fixed value for pitch bend)",
-                          in_data.location().line(),
-                          CFG_KEY_PITCH_BEND,
-                          m_data);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i' (fixed value for pitch bend)",
+                         in_data.location().line(),
+                         CFG_KEY_PITCH_BEND,
+                         m_data);
         } else if (in_data.contains(CFG_KEY_PROGRAM_CHANGE)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_PROGRAM_CHANGE].as_integer());
             m_data_type = map_data_type::program_change;
 
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%i'",
-                          in_data.location().line(),
-                          CFG_KEY_PROGRAM_CHANGE,
-                          m_data);
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
+                         in_data.location().line(),
+                         CFG_KEY_PROGRAM_CHANGE,
+                         m_data);
         } else {
-            in_log->error(" --> Line %i :: Parameter for MIDI type is missing", in_data.location().line());
+            in_log.error(" --> Line %i :: Parameter for MIDI type is missing", in_data.location().line());
         }
 
     } catch (toml::type_error &error) {
-        in_log->error(" --> Line %i :: Error reading mapping", in_data.location().line());
-        in_log->error(error.what());
+        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error(error.what());
     }
+}
+
+
+/**
+ * Return the channel and data as string
+ */
+std::string map::channel_data_as_string()
+{
+    std::stringstream ss;
+    ss << "Channel " << static_cast<int>(m_channel) << ", ";
+
+    switch (m_data_type) {
+        case map_data_type::control_change:
+            ss << "Control Change " << static_cast<int>(m_data);
+            break;
+
+        case map_data_type::note:
+            ss << "Note " << static_cast<int>(m_data);
+
+        case map_data_type::program_change:
+            ss << "Program Change "  << static_cast<int>(m_data);
+            break;
+
+        case map_data_type::pitch_bend:
+            ss << "Pitch Bend";
+            break;
+
+        case map_data_type::none:
+            ss << "<none>";
+            break;
+    }
+
+    return ss.str();
 }
 
 } // Namespace xmidictrl

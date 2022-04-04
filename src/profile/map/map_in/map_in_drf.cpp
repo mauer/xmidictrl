@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(xplane *in_xp)
+map_in_drf::map_in_drf(xplane &in_xp)
     : map_in(in_xp)
 {}
 
@@ -51,11 +51,35 @@ map_type map_in_drf::type()
 
 
 /**
+ * Return the mapping as string
+ */
+std::string map_in_drf::as_string()
+{
+    std::string map_str = " :: Dataref ::\n";
+    map_str.append("Dataref = '" + m_dataref + "'\n");
+
+    if (m_mode == dataref_mode::toggle)
+        map_str.append("Mode = 'toggle'\n");
+    else
+        map_str.append("Mode = 'momentary'\n");
+
+    map_str.append("Values = [");
+
+    for (auto &value : m_values)
+        map_str.append(" '" + value + "'");
+
+    map_str.append("]\n");
+
+    return map_str;
+}
+
+
+/**
  * Read settings from config
  */
-void map_in_drf::read_config(text_logger *in_log, toml::value &in_data)
+void map_in_drf::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log->debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
+    in_log.debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
     map_in::read_config(in_log, in_data);
 
     // read mode
@@ -87,7 +111,7 @@ void map_in_drf::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map_in_drf::check(text_logger *in_log)
+bool map_in_drf::check(text_logger &in_log)
 {
     if (!map::check(in_log))
         return false;
@@ -95,7 +119,7 @@ bool map_in_drf::check(text_logger *in_log)
     if (m_dataref.empty())
         return false;
 
-    if (!m_xp->datarefs().check(in_log, m_dataref))
+    if (!xp().datarefs().check(in_log, m_dataref))
         return false;
 
     if (m_values.empty())
@@ -120,21 +144,21 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_VELOCITY_MAX)
         return true;
 
-    in_msg.log()->debug(" --> Change dataref '%s'", m_dataref.c_str());
+    in_msg.log().debug(" --> Change dataref '%s'", m_dataref.c_str());
 
     if (m_values.size() == 2) {
         if (m_mode == dataref_mode::momentary) {
             if (in_msg.data_2() == MIDI_VELOCITY_MAX)
-                m_xp->datarefs().write(in_msg.log(), m_dataref, m_values[0]);
+                xp().datarefs().write(in_msg.log(), m_dataref, m_values[0]);
             else
-                m_xp->datarefs().write(in_msg.log(), m_dataref, m_values[1]);
+                xp().datarefs().write(in_msg.log(), m_dataref, m_values[1]);
         } else {
-            m_xp->datarefs().toggle(in_msg.log(), m_dataref, m_values[0], m_values[1]);
+            xp().datarefs().toggle(in_msg.log(), m_dataref, m_values[0], m_values[1]);
         }
     } else {
         // get current value
         std::string value;
-        m_xp->datarefs().read(in_msg.log(), m_dataref, value);
+        xp().datarefs().read(in_msg.log(), m_dataref, value);
 
         // search for the value in the values list
         auto it = std::find(m_values.begin(), m_values.end(), value);
@@ -153,7 +177,7 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
             value = m_values[0];
         }
 
-        m_xp->datarefs().write(in_msg.log(), m_dataref, value);
+        xp().datarefs().write(in_msg.log(), m_dataref, value);
     }
 
     return true;

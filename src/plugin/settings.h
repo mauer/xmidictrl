@@ -35,7 +35,7 @@ namespace xmidictrl {
 
 class settings : public config {
 public:
-    explicit settings(text_logger *in_log, midi_logger *in_midi_log, xplane *in_xp);
+    explicit settings(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp);
     ~settings() override;
 
     void set_debug_mode(bool in_mode);
@@ -61,8 +61,8 @@ public:
 private:
     std::string get_settings_filename();
 
-    text_logger *m_log;
-    midi_logger *m_midi_log;
+    text_logger &m_text_log;
+    midi_logger &m_midi_log;
 };
 
 } // Namespace xmidictrl

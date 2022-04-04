@@ -30,7 +30,7 @@ namespace xmidictrl {
 
 class inbound_worker {
 public:
-    explicit inbound_worker(text_logger *in_log);
+    explicit inbound_worker(text_logger &in_log);
     ~inbound_worker() = default;
 
     void add_task(const std::shared_ptr<inbound_task> &in_task);
@@ -38,7 +38,7 @@ public:
     void process(std::string_view in_sl_value);
 
 private:
-    text_logger *m_log;
+    text_logger &m_log;
 
     std::queue<std::shared_ptr<inbound_task>> m_tasks {};
 };

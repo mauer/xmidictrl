@@ -19,6 +19,9 @@ message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Include fonts
+include_directories(${FONTS_INCLUDEDIR})
+
 # Include the ImGui files
 include_directories(${IMGUI_INCLUDEDIR})
 

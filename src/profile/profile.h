@@ -39,7 +39,7 @@ namespace xmidictrl {
 
 class profile : public config {
 public:
-    explicit profile(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp, settings *in_settings);
+    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
     ~profile() override;
 
     bool load();
@@ -47,7 +47,7 @@ public:
 
     [[nodiscard]] std::string_view filename() const;
 
-    text_logger *log();
+    text_logger &log();
     [[nodiscard]] bool has_errors() const;
 
     std::string title();
@@ -58,7 +58,7 @@ public:
 
     [[nodiscard]] std::string_view sl_dataref() const;
 
-    void process(text_logger *in_log);
+    void process(text_logger &in_log);
 
 private:
     void clear();
@@ -73,13 +73,12 @@ private:
     static map_type translate_map_type(std::string_view in_type_str);
     map_type read_mapping_type(toml::value &in_settings);
 
-    settings *m_settings;
+    settings &m_settings;
 
-    text_logger *m_plugin_log;
-    midi_logger *m_midi_log;
+    text_logger &m_plugin_log;
+    midi_logger &m_midi_log;
 
     std::unique_ptr<text_logger> m_profile_log;
-
     std::unique_ptr<device_list> m_device_list;
 
     std::string m_sl_dataref {};

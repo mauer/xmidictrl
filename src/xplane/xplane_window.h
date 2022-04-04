@@ -52,7 +52,7 @@ namespace xmidictrl {
 
 class xplane_window {
 public:
-    xplane_window(text_logger *in_log, xplane *in_xp, int in_width, int in_height, bool in_translucent = false);
+    xplane_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
     virtual ~xplane_window();
 
     static void multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> &m, const GLfloat v[4]);
@@ -81,8 +81,8 @@ protected:
 
     void update_matrices();
 
-    text_logger *m_log;
-    xplane *m_xp;
+    text_logger &m_log;
+    xplane &m_xp;
 
 private:
     void create_window(bool translucent);

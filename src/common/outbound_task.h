@@ -36,6 +36,8 @@ struct outbound_task {
     unsigned char data {MIDI_NONE};
 
     unsigned char velocity {MIDI_NONE};
+
+    std::shared_ptr<map> map;
 };
 
 } // Namespace xmidictrl

@@ -27,14 +27,14 @@ namespace xmidictrl {
 
 class settings_window : public ImGuiWindow {
 public:
-    settings_window(text_logger *in_log, xplane *in_xp, settings *in_settings);
+    settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings);
     ~settings_window() override = default;
 
 protected:
     void create_widgets() override;
 
 private:
-    std::shared_ptr<settings> m_settings;
+    settings &m_settings;
 
     bool m_debug_mode;
     bool m_log_midi;

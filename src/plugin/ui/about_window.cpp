@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-about_window::about_window(text_logger *in_log, xplane *in_xp)
+about_window::about_window(text_logger &in_log, xplane &in_xp)
     : ImGuiWindow(in_log, in_xp, 850, 450)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - About");

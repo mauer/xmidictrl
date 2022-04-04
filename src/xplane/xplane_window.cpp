@@ -39,7 +39,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-xplane_window::xplane_window(text_logger *in_log, xplane *in_xp, int in_width, int in_height, bool in_translucent)
+xplane_window::xplane_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent)
     : m_log(in_log),
       m_xp(in_xp),
       m_width(in_width),
@@ -242,7 +242,7 @@ void xplane_window::create_window(bool translucent)
     m_window_id = XPLMCreateWindowEx(&params);
 
     if (m_window_id == nullptr) {
-        m_log->error("Could not create window in X-Plane");
+        m_log.error("Could not create window in X-Plane");
     }
 }
 
@@ -290,9 +290,9 @@ void xplane_window::requestKeyboardFocus(bool request)
 void xplane_window::update_matrices()
 {
     // Get the current modelview matrix, viewport, and projection matrix from X-Plane
-    m_xp->datarefs().read(m_log, "sim/graphics/view/modelview_matrix", m_modelview);
-    m_xp->datarefs().read(m_log, "sim/graphics/view/projection_matrix", m_projection);
-    m_xp->datarefs().read(m_log, "sim/graphics/view/viewport", m_viewport);
+    m_xp.datarefs().read(m_log, "sim/graphics/view/modelview_matrix", m_modelview);
+    m_xp.datarefs().read(m_log, "sim/graphics/view/projection_matrix", m_projection);
+    m_xp.datarefs().read(m_log, "sim/graphics/view/viewport", m_viewport);
 }
 
 

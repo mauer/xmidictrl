@@ -87,9 +87,10 @@ private:
     std::unique_ptr<midi_logger> m_midi_log;
 
     std::unique_ptr<xplane> m_xp;
-    std::unique_ptr<menu> m_menu;
     std::unique_ptr<settings> m_settings;
     std::unique_ptr<profile> m_profile;
+
+    std::unique_ptr<menu> m_menu;
     std::unique_ptr<inbound_worker> m_worker;
 
     // references for custom datarefs

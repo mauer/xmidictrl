@@ -49,8 +49,8 @@ class device_list;
 
 class device {
 public:
-    device(text_logger *in_text_log,
-           midi_logger *in_midi_log,
+    device(text_logger &in_text_log,
+           midi_logger &in_midi_log,
            std::string_view in_name,
            unsigned int in_port_in,
            unsigned int in_port_out,
@@ -71,7 +71,7 @@ public:
 
     void process_inbound_message(std::vector<unsigned char> *in_message);
 
-    void process_outbound_mappings(text_logger *in_log);
+    void process_outbound_mappings(text_logger &in_log);
     void process_outbound_reset();
 
 private:
@@ -80,8 +80,8 @@ private:
 
     void add_outbound_task(const std::shared_ptr<outbound_task> &in_task);
 
-    text_logger *m_text_log;
-    midi_logger *m_midi_log;
+    text_logger &m_text_log;
+    midi_logger &m_midi_log;
 
     std::string m_name;
     unsigned int m_port_in;

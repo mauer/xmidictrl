@@ -31,8 +31,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out_drf::map_out_drf(xplane *xp)
-    : map_out(xp)
+map_out_drf::map_out_drf(xplane &in_xp)
+    : map_out(in_xp)
 {}
 
 
@@ -63,6 +63,76 @@ map_type map_out_drf::type()
 {
     return map_type::dataref;
 };
+
+
+/**
+ * Return the mapping as string
+ */
+std::string map_out_drf::as_string()
+{
+    std::string map_str = " :: Dataref ::\n";
+
+    // Dataref
+    if (m_datarefs.size() == 1) {
+        map_str.append("Dataref = '" + m_datarefs[0] + "'\n");
+    } else {
+        map_str.append("Datarefs = [");
+
+        std::string data_str;
+        for (auto &str: m_datarefs) {
+            if (!data_str.empty())
+                data_str.append(", ");
+
+            data_str.append("'" + str + "'");
+        }
+
+        map_str.append(data_str + "]\n");
+    }
+
+    // Values on
+    if (m_values_on.size() == 1) {
+        map_str.append("Value on = '" + *m_values_on.begin() + "'\n");
+    } else if (m_values_on.size() > 1) {
+        map_str.append("Values on = [");
+
+        std::string values_str;
+        for (auto &str: m_values_on) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append("'" + str + "'");
+        }
+
+        map_str.append(values_str + "]\n");
+    }
+
+    // Values off
+    if (m_values_off.size() == 1) {
+        map_str.append("Value off = '" + *m_values_off.begin() + "'\n");
+    } else if (m_values_off.size() > 1) {
+        map_str.append("Values off = [");
+
+        std::string values_str;
+        for (auto &str: m_values_off) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append("'" + str + "'");
+        }
+
+        map_str.append(values_str + "]\n");
+    }
+
+    // Velocity on
+    if (m_velocity_on != MIDI_VELOCITY_MAX)
+        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
+
+    // Velocity off
+    if (m_velocity_off != MIDI_VELOCITY_MIN)
+        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'");
+
+    return map_str;
+}
 
 
 /**
@@ -165,9 +235,9 @@ unsigned int map_out_drf::velocity_off() const
 /**
  * Read settings from config
  */
-void map_out_drf::read_config(text_logger *in_log, toml::value &in_data)
+void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log->debug("Line %i :: Read settings for type 'drf'", in_data.location().line());
+    in_log.debug("Line %i :: Read settings for type 'drf'", in_data.location().line());
     map::read_config(in_log, in_data);
 
     // read dataref
@@ -216,7 +286,7 @@ void map_out_drf::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map_out_drf::check(text_logger *in_log)
+bool map_out_drf::check(text_logger &in_log)
 {
     if (!map::check(in_log))
         return false;
@@ -228,7 +298,7 @@ bool map_out_drf::check(text_logger *in_log)
         return false;
 
     for (const auto &dataref: m_datarefs) {
-        if (!m_xp->datarefs().check(in_log, dataref))
+        if (!xp().datarefs().check(in_log, dataref))
             return false;
     }
 
@@ -239,7 +309,7 @@ bool map_out_drf::check(text_logger *in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_drf::execute(text_logger *in_log, const mode_out mode)
+std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const mode_out mode)
 {
     bool changed = false;
 
@@ -252,7 +322,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger *in_log, const m
         // get the current value from X-Plane
         std::string value_current;
 
-        if (!m_xp->datarefs().read(in_log, dataref, value_current))
+        if (!xp().datarefs().read(in_log, dataref, value_current))
             continue;
 
         // get current value
@@ -278,7 +348,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger *in_log, const m
     if (!send_msg)
         return {};
 
-    // alright, some has been changed, let's check what we have to send out
+    // alright, some have been changed, let's check what we have to send out
     for (auto &dataref: m_datarefs) {
         std::string value_current = m_xp_values[dataref];
 
@@ -337,6 +407,9 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger *in_log, const m
             task->velocity = m_velocity_on;
         else
             task->velocity = m_velocity_off;
+
+        // add mapping to task
+        task->map = shared_from_this();
 
         return task;
     }

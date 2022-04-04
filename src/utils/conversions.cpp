@@ -118,28 +118,28 @@ std::string conversions::create_map_key(const unsigned char ch, std::string_view
 /**
  * Create all required preference folders
  */
-bool conversions::create_preference_folders(text_logger *in_log, xplane *in_xp)
+bool conversions::create_preference_folders(text_logger &in_log, xplane &in_xp)
 {
     // check preference folder
-    if (!std::filesystem::exists(in_xp->preferences_path())) {
-        in_log->info("Directory '%s' not found", in_xp->preferences_path().data());
+    if (!std::filesystem::exists(in_xp.preferences_path())) {
+        in_log.info("Directory '%s' not found", in_xp.preferences_path().data());
 
-        if (std::filesystem::create_directory(in_xp->preferences_path())) {
-            in_log->info("Directory '%s' created", in_xp->preferences_path().data());
+        if (std::filesystem::create_directory(in_xp.preferences_path())) {
+            in_log.info("Directory '%s' created", in_xp.preferences_path().data());
         } else {
-            in_log->error("Could not create directory '%s'", in_xp->preferences_path().data());
+            in_log.error("Could not create directory '%s'", in_xp.preferences_path().data());
             return false;
         }
     }
 
     // check profiles folder
-    if (!std::filesystem::exists(in_xp->profiles_path())) {
-        in_log->info("Directory '%s' not found", in_xp->profiles_path().data());
+    if (!std::filesystem::exists(in_xp.profiles_path())) {
+        in_log.info("Directory '%s' not found", in_xp.profiles_path().data());
 
-        if (std::filesystem::create_directory(in_xp->profiles_path())) {
-            in_log->info("Directory '%s' created", in_xp->profiles_path().data());
+        if (std::filesystem::create_directory(in_xp.profiles_path())) {
+            in_log.info("Directory '%s' created", in_xp.profiles_path().data());
         } else {
-            in_log->error("Could not create directory '%s'", in_xp->profiles_path().data());
+            in_log.error("Could not create directory '%s'", in_xp.profiles_path().data());
             return false;
         }
     }

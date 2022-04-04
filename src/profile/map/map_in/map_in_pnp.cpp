@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_pnp::map_in_pnp(xplane *in_xp)
+map_in_pnp::map_in_pnp(xplane &in_xp)
     : map_in(in_xp)
 {}
 
@@ -47,6 +47,19 @@ map_type map_in_pnp::type()
 {
     return map_type::push_pull;
 };
+
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_pnp::as_string()
+{
+    std::string map_str = " :: Push & Pull ::\n";
+    map_str.append("Command push = '" + m_command_push + "'\n");
+    map_str.append("Command pull = '" + m_command_pull + "'\n");
+
+    return map_str;
+}
 
 
 /**
@@ -110,9 +123,9 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(text_logger *in_log, toml::value &in_data)
+void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log->debug(" --> Line %i :: Read settings for type 'pnp'", in_data.location().line());
+    in_log.debug(" --> Line %i :: Read settings for type 'pnp'", in_data.location().line());
     map_in::read_config(in_log, in_data);
 
     // read command push
@@ -126,7 +139,7 @@ void map_in_pnp::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map_in_pnp::check(text_logger *in_log)
+bool map_in_pnp::check(text_logger &in_log)
 {
     if (!map::check(in_log))
         return false;
@@ -156,13 +169,13 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
         if (elapsed.count() > 0.3f) {
             switch (m_command_type) {
                 case command_type::push:
-                    in_msg.log()->debug(" --> End push command '%s'", m_command_push.c_str());
-                    m_xp->cmd().end(in_msg.log(), m_command_push);
+                    in_msg.log().debug(" --> End push command '%s'", m_command_push.c_str());
+                    xp().cmd().end(in_msg.log(), m_command_push);
                     break;
 
                 case command_type::pull:
-                    in_msg.log()->debug(" --> End pull command '%s'", m_command_pull.c_str());
-                    m_xp->cmd().end(in_msg.log(), m_command_pull);
+                    in_msg.log().debug(" --> End pull command '%s'", m_command_pull.c_str());
+                    xp().cmd().end(in_msg.log(), m_command_pull);
                     break;
 
                 case command_type::none:
@@ -189,13 +202,13 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
     m_time_command = std::chrono::system_clock::now();
 
     if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
-        in_msg.log()->debug(" --> Begin pull command '%s'", m_command_pull.c_str());
+        in_msg.log().debug(" --> Begin pull command '%s'", m_command_pull.c_str());
         m_command_type = command_type::pull;
-        m_xp->cmd().begin(in_msg.log(), m_command_pull);
+        xp().cmd().begin(in_msg.log(), m_command_pull);
     } else {
-        in_msg.log()->debug(" --> Begin push command '%s'", m_command_push.c_str());
+        in_msg.log().debug(" --> Begin push command '%s'", m_command_push.c_str());
         m_command_type = command_type::push;
-        m_xp->cmd().begin(in_msg.log(), m_command_push);
+        xp().cmd().begin(in_msg.log(), m_command_push);
     }
 
     // keep the task in the queue to end the command

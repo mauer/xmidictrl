@@ -36,10 +36,12 @@ namespace xmidictrl {
 
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(xplane *in_xp);
+    explicit map_in_cmd(xplane &in_xp);
     ~map_in_cmd() override = default;
 
     map_type type() override;
+
+    std::string as_string() override;
 
     void set_command(std::string_view in_command);
     [[nodiscard]] std::string_view command() const;
@@ -50,8 +52,8 @@ public:
     void set_velocity_off(int in_velocity_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(text_logger *messages, toml::value &in_data) override;
-    bool check(text_logger *in_log) override;
+    void read_config(text_logger &in_log, toml::value &in_data) override;
+    bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 

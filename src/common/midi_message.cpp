@@ -29,10 +29,11 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-midi_message::midi_message(text_logger *in_log, midi_direction in_direction)
+midi_message::midi_message(text_logger &in_log, midi_direction in_direction)
     : m_direction(in_direction)
 {
-    m_log = std::make_unique<text_logger>(in_log);
+    m_log = std::make_unique<text_logger>(&in_log);
+    m_log->set_debug_mode(in_log.debug_mode());
 }
 
 
@@ -54,9 +55,9 @@ midi_message::~midi_message()
 /**
  * Return the message log
  */
-text_logger *midi_message::log()
+text_logger &midi_message::log()
 {
-    return m_log.get();
+    return *m_log;
 }
 
 
@@ -137,29 +138,29 @@ size_t midi_message::mapping_count() const
 /**
  * Return a string containing all mapping source lines
  */
-std::string midi_message::mappings_as_text()
+std::string midi_message::mappings_as_string()
 {
     if (m_mappings.size() == 1)
-        return std::string(m_mappings.at(0)->source_line());
+        return m_mappings.at(0)->as_string();
 
-    std::string text;
-    for (auto &mapping : m_mappings) {
-        if (text.empty()) {
-            text = mapping->source_line();
+    std::string map_str;
+    for (auto &mapping: m_mappings) {
+        if (map_str.empty()) {
+            map_str = mapping->as_string();
         } else {
-            text.append("\n");
-            text.append(mapping->source_line());
+            map_str.append("\n");
+            map_str.append(mapping->as_string());
         }
     }
 
-    return text;
+    return map_str;
 }
 
 
 /**
  * Add mapping to MIDI message
  */
-void midi_message::add_mapping(std::shared_ptr<map> in_map)
+void midi_message::add_mapping(const std::shared_ptr<map> &in_map)
 {
     m_mappings.push_back(in_map);
 }
@@ -202,14 +203,11 @@ unsigned int midi_message::port() const
 
 
 /**
- * Return the direction as text
+ * Return the message direction
  */
-std::string midi_message::direction_as_text()
+midi_direction midi_message::direction() const
 {
-    if (m_direction == midi_direction::in)
-        return "IN";
-    else
-        return "OUT";
+    return m_direction;
 }
 
 

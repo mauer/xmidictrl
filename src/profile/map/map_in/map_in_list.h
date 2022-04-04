@@ -33,7 +33,7 @@ public:
     explicit map_in_list() = default;
     ~map_in_list();
 
-    void add(const std::shared_ptr<map_in> &in_map);
+    void add(std::shared_ptr<map_in> in_map);
     std::vector<std::shared_ptr<map_in>> find(const std::string &in_key);
 
     unsigned int size();

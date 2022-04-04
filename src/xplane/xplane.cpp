@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-xplane::xplane(text_logger *in_log)
+xplane::xplane(text_logger &in_log)
     : m_log(in_log)
 {
     // access to X-Plane commands
@@ -71,10 +71,11 @@ std::string_view xplane::plugin_path()
 
         // remove file name
         XPLMExtractFileAndPath(path);
+        m_plugin_path.assign(path);
 
-        m_plugin_path = std::string(path) + XPLMGetDirectorySeparator();
-
-        m_log->debug("Plugin Path = '%s'", m_plugin_path.c_str());
+        // remove subdirectory
+        std::string::size_type pos = m_plugin_path.rfind(XPLMGetDirectorySeparator());
+        m_plugin_path.erase(pos + 1);
     }
 
     return m_plugin_path;
@@ -92,7 +93,7 @@ std::string_view xplane::xplane_path()
 
         m_xplane_path = std::string(path);
 
-        m_log->debug("X-Plane Path = '%s'", m_xplane_path.c_str());
+        m_log.debug("X-Plane Path = '%s'", m_xplane_path.c_str());
     }
 
     return m_xplane_path;
@@ -113,8 +114,6 @@ std::string_view xplane::preferences_path()
 
         m_preferences_path = std::string(path) + XPLMGetDirectorySeparator() + XMIDICTRL_NAME
                              + XPLMGetDirectorySeparator();
-
-        m_log->debug("Preferences Path = '%s'", m_preferences_path.c_str());
     }
 
     return m_preferences_path;
@@ -126,11 +125,8 @@ std::string_view xplane::preferences_path()
  */
 std::string_view xplane::profiles_path()
 {
-    if (m_profiles_path.empty()) {
+    if (m_profiles_path.empty())
         m_profiles_path = std::string(preferences_path()) + PROFILES_DIRECTORY_NAME + "/";
-
-        m_log->debug("Profiles Path = '%s'", m_profiles_path.c_str());
-    }
 
     return m_profiles_path;
 }

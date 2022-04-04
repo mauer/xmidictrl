@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_sld::map_in_sld(xplane *in_xp)
+map_in_sld::map_in_sld(xplane &in_xp)
     : map_in(in_xp)
 {}
 
@@ -47,6 +47,29 @@ map_type map_in_sld::type()
 {
     return map_type::slider;
 };
+
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_sld::as_string()
+{
+    std::string map_str = " :: Slider ::\n";
+
+    if (!m_dataref.empty()) {
+        map_str.append("Dataref = '" + m_dataref + "'\n");
+        map_str.append("Value min = '" + std::to_string(m_value_min) + "\n");
+        map_str.append("Value max = '" + std::to_string(m_value_max) + "'\n");
+    } else {
+        if (!m_command_middle.empty())
+            map_str.append("Command down = '" + m_command_down + "'\nCommand middle = '" + m_command_middle +
+                           "'\nCommand up = '" + m_command_up + "'\n");
+        else
+            map_str.append("Command down = '" + m_command_down + "'\nCommand up = '" + m_command_up + "'\n");
+    }
+
+    return map_str;
+}
 
 
 /**
@@ -160,14 +183,14 @@ std::string_view map_in_sld::command_down() const
 /**
  * Read settings from config
  */
-void map_in_sld::read_config(text_logger *in_log, toml::value &in_data)
+void map_in_sld::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log->debug(" --> Line %i :: Read settings for type 'sld'", in_data.location().line());
+    in_log.debug(" --> Line %i :: Read settings for type 'sld'", in_data.location().line());
     map_in::read_config(in_log, in_data);
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
-        in_log->debug(" --> Use 'dataref' mode for slider mapping");
+        in_log.debug(" --> Use 'dataref' mode for slider mapping");
 
         // read dataref
         set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
@@ -178,7 +201,7 @@ void map_in_sld::read_config(text_logger *in_log, toml::value &in_data)
         // read value max
         set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f));
     } else {
-        in_log->debug(" --> Use 'command' mode for slider mapping");
+        in_log.debug(" --> Use 'command' mode for slider mapping");
 
         // read command up
         set_command_up(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP));
@@ -195,14 +218,14 @@ void map_in_sld::read_config(text_logger *in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map_in_sld::check(text_logger *in_log)
+bool map_in_sld::check(text_logger &in_log)
 {
     if (!map::check(in_log))
         return false;
 
     if (!dataref().empty()) {
         // dataref mode
-        if (!m_xp->datarefs().check(in_log, dataref()))
+        if (!xp().datarefs().check(in_log, dataref()))
             return false;
 
         if (value_min() == value_max())
@@ -235,32 +258,32 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
         else
             value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
 
-        in_msg.log()->debug(" --> Set dataref '%s' to value '%f'", m_dataref.c_str(), value);
-        m_xp->datarefs().write(in_msg.log(), m_dataref, value);
+        in_msg.log().debug(" --> Set dataref '%s' to value '%f'", m_dataref.c_str(), value);
+        xp().datarefs().write(in_msg.log(), m_dataref, value);
     } else {
         // command mode
         if (in_msg.data_2() <= 10) {
-            in_msg.log()->debug(" --> Execute command '%s'", m_command_down.c_str());
+            in_msg.log().debug(" --> Execute command '%s'", m_command_down.c_str());
 
             if (m_command_down != m_command_prev)
-                m_xp->cmd().execute(in_msg.log(), m_command_down);
+                xp().cmd().execute(in_msg.log(), m_command_down);
 
             m_command_prev = m_command_down;
 
         } else if (in_msg.data_2() >= 117) {
-            in_msg.log()->debug(" --> Execute command '%s'", m_command_up.c_str());
+            in_msg.log().debug(" --> Execute command '%s'", m_command_up.c_str());
 
             if (m_command_up != m_command_prev)
-                m_xp->cmd().execute(in_msg.log(), m_command_up);
+                xp().cmd().execute(in_msg.log(), m_command_up);
 
             m_command_prev = m_command_up;
 
         } else if (in_msg.data_2() >= 50 && in_msg.data_2() <= 70) {
             if (!m_command_middle.empty()) {
-                in_msg.log()->debug(" --> Execute command '%s'", m_command_middle.c_str());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_middle.c_str());
 
                 if (m_command_middle != m_command_prev)
-                    m_xp->cmd().execute(in_msg.log(), m_command_middle);
+                    xp().cmd().execute(in_msg.log(), m_command_middle);
 
                 m_command_prev = m_command_middle;
             }

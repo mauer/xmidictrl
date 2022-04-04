@@ -19,6 +19,9 @@
 
 #include <utility>
 
+// Font Awesome
+#include <IconsFontAwesome6.h>
+
 // XMidiCtrl
 #include "conversions.h"
 #include "midi_message.h"
@@ -32,7 +35,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-messages_window::messages_window(text_logger *in_text_log, midi_logger *in_midi_log, xplane *in_xp)
+messages_window::messages_window(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp)
     : ImGuiWindow(in_text_log, in_xp, 1400, 700),
       m_midi_log(in_midi_log)
 {
@@ -80,14 +83,14 @@ void messages_window::create_tab_text_msg()
     if (ImGui::BeginTabItem("General Log")) {
         ImGui::Text("Debug Mode:");
         ImGui::SameLine(150);
-        if (m_log->debug_mode())
+        if (m_log.debug_mode())
             ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
-        ImGui::SameLine(ImGui::GetWindowWidth() - 150);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 200);
 
-        if (ImGui::Button("Clear Messages"))
-            m_log->clear();
+        if (ImGui::Button("  " ICON_FA_TRASH_CAN " Clear Messages  "))
+            m_log.clear();
 
         ImGui::NewLine();
         ImGui::Text("MESSAGES");
@@ -114,18 +117,14 @@ void messages_window::create_tab_text_msg()
         }
 
         if (mode == sort_mode::ascending) {
-            for (unsigned int i = 0; i < m_log->count(); i++) {
-                auto msg = m_log->message(i);
-
-                if (msg != nullptr)
-                    add_text_row(msg);
+            for (unsigned int i = 0; i < m_log.count(); i++) {
+                auto msg = m_log.message(i);
+                add_text_row(msg);
             }
         } else {
-            for (unsigned int i = m_log->count() - 1; i > 0; i--) {
-                auto msg = m_log->message(i);
-
-                if (msg != nullptr)
-                    add_text_row(msg);
+            for (unsigned int i = m_log.count() - 1; i > 0; i--) {
+                auto msg = m_log.message(i);
+                add_text_row(msg);
             }
         }
 
@@ -145,15 +144,15 @@ void messages_window::create_tab_midi_msg()
         ImGui::Text("MIDI Logging:");
         ImGui::SameLine(150);
 
-        if (m_midi_log->state())
+        if (m_midi_log.state())
             ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 150);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 200);
 
-        if (ImGui::Button("Clear Messages"))
-            m_midi_log->clear();
+        if (ImGui::Button("  " ICON_FA_TRASH_CAN " Clear Messages  "))
+            m_midi_log.clear();
 
         ImGui::NewLine();
         ImGui::Text("MESSAGES");
@@ -187,18 +186,14 @@ void messages_window::create_tab_midi_msg()
         }
 
         if (mode == sort_mode::ascending) {
-            for (unsigned int i = 0; i < m_midi_log->count(); i++) {
-                auto msg = m_midi_log->message(i);
-
-                if (msg != nullptr)
-                    add_midi_row(msg);
+            for (unsigned int i = 0; i < m_midi_log.count(); i++) {
+                auto msg = m_midi_log.message(i);
+                add_midi_row(msg);
             }
         } else {
-            for (unsigned int i = m_midi_log->count() - 1; i < 0; i--) {
-                auto msg = m_midi_log->message(i);
-
-                if (msg != nullptr)
-                    add_midi_row(msg);
+            for (unsigned int i = m_midi_log.count() - 1; i > 0; i--) {
+                auto msg = m_midi_log.message(i);
+                add_midi_row(msg);
             }
         }
 
@@ -212,86 +207,97 @@ void messages_window::create_tab_midi_msg()
 /**
  * Add a text message to the table
  */
-void messages_window::add_text_row(text_log_msg *msg)
+void messages_window::add_text_row(text_log_msg *in_msg)
 {
     ImGui::TableNextRow();
 
     ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->time.c_str());
+    ImGui::TextUnformatted(in_msg->time.c_str());
 
     ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->get_log_level_text().c_str());
+    ImGui::TextUnformatted(in_msg->get_log_level_text().c_str());
 
     ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->text.c_str());
+    ImGui::TextUnformatted(in_msg->text.c_str());
 }
 
 
 /**
  * Add a MIDI message to the table
  */
-void messages_window::add_midi_row(midi_message *msg)
+void messages_window::add_midi_row(midi_message *in_msg)
 {
     ImGui::TableNextRow();
 
     ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->time().c_str());
+    ImGui::TextUnformatted(in_msg->time().c_str());
 
     ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->direction_as_text().c_str());
-
-    ImGui::TableNextColumn();
-    ImGui::Text("%i", msg->port());
-
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(msg->type_as_text().c_str());
-
-    ImGui::TableNextColumn();
-    if (msg->channel() != MIDI_NONE)
-        ImGui::Text("%i", msg->channel());
-
-    ImGui::TableNextColumn();
-    if (msg->data_1() != MIDI_NONE)
-        ImGui::Text("%i", msg->data_1());
-
-    ImGui::TableNextColumn();
-    if (msg->data_2() != MIDI_NONE)
-        ImGui::Text("%i", msg->data_2());
-
-    ImGui::TableNextColumn();
-    ImGui::Text("%zu", msg->mapping_count());
-    if (msg->mapping_count() > 0) {
-        ImGui::SameLine(10);
-        info_marker(msg->mappings_as_text().c_str());
-    }
-
-    ImGui::TableNextColumn();
-    if (msg->log()->count() > 0) {
-        info_marker(msg->log()->message(0)->text.c_str());
-    }
-
-    ImGui::TableNextColumn();
-    if (msg->data_2() != MIDI_NONE)
-        ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", msg->status(), msg->data_1(), msg->data_2());
+    if (in_msg->direction() == midi_direction::in)
+        draw_icon(ICON_FA_ARROW_LEFT, "Inbound");
     else
-        ImGui::Text("Status = %i | Data 1 = %i", msg->status(), msg->data_1());
+        draw_icon(ICON_FA_ARROW_RIGHT, "Outbound");
+
+    ImGui::TableNextColumn();
+    ImGui::Text("%i", in_msg->port());
+
+    ImGui::TableNextColumn();
+    ImGui::TextUnformatted(in_msg->type_as_text().c_str());
+
+    ImGui::TableNextColumn();
+    if (in_msg->channel() != MIDI_NONE)
+        ImGui::Text("%i", in_msg->channel());
+
+    ImGui::TableNextColumn();
+    if (in_msg->data_1() != MIDI_NONE)
+        ImGui::Text("%i", in_msg->data_1());
+
+    ImGui::TableNextColumn();
+    if (in_msg->data_2() != MIDI_NONE)
+        ImGui::Text("%i", in_msg->data_2());
+
+    ImGui::TableNextColumn();
+    size_t map_count = in_msg->mapping_count();
+    if (map_count == 1)
+        draw_icon(ICON_FA_CHECK, in_msg->mappings_as_string().c_str());
+    else if (map_count > 1)
+        draw_icon(ICON_FA_CHECK_DOUBLE, in_msg->mappings_as_string().c_str());
+
+    ImGui::TableNextColumn();
+    if (in_msg->log().has_errors())
+        draw_icon(ICON_FA_BAN, in_msg->log().messages_as_text().c_str());
+    else if (in_msg->log().has_warnings())
+        draw_icon(ICON_FA_TRIANGLE_EXCLAMATION, in_msg->log().messages_as_text().c_str());
+    else if (in_msg->log().count() > 0)
+        draw_icon(ICON_FA_CIRCLE_CHECK, in_msg->log().messages_as_text().c_str());
+    else if (in_msg->log().count() == 0 && map_count > 0)
+        draw_icon(ICON_FA_CIRCLE_CHECK, "");
+
+    ImGui::TableNextColumn();
+    if (in_msg->data_2() != MIDI_NONE)
+        ImGui::Text("Status = %i | Data 1 = %i | Data 2 = %i", in_msg->status(), in_msg->data_1(), in_msg->data_2());
+    else
+        ImGui::Text("Status = %i | Data 1 = %i", in_msg->status(), in_msg->data_1());
 }
 
 
 /**
- * Info marker
+ * Draw an icon with a popup text
  */
-// Helper to display a little (?) mark which shows a tooltip when hovered.
-// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
-void messages_window::info_marker(std::string_view text)
+void messages_window::draw_icon(const char *in_icon, std::string_view in_text)
 {
-    ImGui::TextDisabled("[i]");
-    if (ImGui::IsItemHovered()) {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 100.0f);
-        ImGui::TextUnformatted(text.data());
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
+    ImGui::TextUnformatted(in_icon);
+
+    if (!in_text.empty()) {
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 100.0f);
+            ImGui::TextUnformatted(in_text.data());
+            ImGui::PopTextWrapPos();
+
+            ImGui::EndTooltip();
+        }
     }
 }
 

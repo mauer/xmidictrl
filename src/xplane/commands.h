@@ -36,13 +36,13 @@ public:
 	commands() = default;
     ~commands() = default;
 
-    void begin(text_logger *in_log, std::string_view in_cmd);
-    void end(text_logger *in_log, std::string_view in_cmd);
+    void begin(text_logger &in_log, std::string_view in_cmd);
+    void end(text_logger &in_log, std::string_view in_cmd);
     
-    void execute(text_logger *in_log, std::string_view in_cmd);
+    void execute(text_logger &in_log, std::string_view in_cmd);
 
 private:
-    XPLMCommandRef find_command_ref(text_logger *in_log, std::string_view in_cmd);
+    XPLMCommandRef find_command_ref(text_logger &in_log, std::string_view in_cmd);
 
     std::map<std::string, XPLMCommandRef> m_command_cache {};
 };

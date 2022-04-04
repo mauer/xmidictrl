@@ -26,8 +26,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out::map_out(xplane *xp)
-    : map(xp)
+map_out::map_out(xplane &in_xp)
+    : map(in_xp)
 {
 }
 

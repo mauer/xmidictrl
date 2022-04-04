@@ -34,10 +34,12 @@ namespace xmidictrl {
 
 class map_out_drf : public map_out {
 public:
-    explicit map_out_drf(xplane *xp);
+    explicit map_out_drf(xplane &in_xp);
     ~map_out_drf() override;
 
     map_type type() override;
+
+    std::string as_string() override;
 
     void set_dataref(std::string_view dataref);
     void set_dataref(std::vector<std::string> dataref);
@@ -54,10 +56,10 @@ public:
     void set_velocity_off(int value_off);
     [[nodiscard]] unsigned int velocity_off() const;
 
-    void read_config(text_logger *in_log, toml::value &in_data) override;
-    bool check(text_logger *in_log) override;
+    void read_config(text_logger &in_log, toml::value &in_data) override;
+    bool check(text_logger &in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger *in_log, mode_out mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out mode) override;
     std::shared_ptr<outbound_task> reset() override;
 
 private:

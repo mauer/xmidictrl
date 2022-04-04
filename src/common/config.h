@@ -32,17 +32,20 @@ namespace xmidictrl {
 
 class config {
 public:
-    explicit config(xplane *in_xp);
+    explicit config(xplane &in_xp);
     virtual ~config() = default;
 
 protected:
-    bool load_file(text_logger *in_log, std::string_view in_filename);
-    void close_file(text_logger *in_log);
+    xplane &xp() const;
+
+    bool load_file(text_logger &in_log, std::string_view in_filename);
+    void close_file(text_logger &in_log);
 
     toml::value m_config {};
-    xplane *m_xp;
 
 private:
+    xplane &m_xp;
+
     std::string m_filename {};
 };
 

@@ -26,10 +26,13 @@ namespace xmidictrl {
 /**
  * Check if the given key is in the config
  */
-bool toml_utils::contains(text_logger *in_log, toml::value &in_data, std::string_view in_name, bool in_mandatory)
+bool toml_utils::contains(text_logger &in_log,
+                          toml::value &in_data,
+                          std::string_view in_name,
+                          bool in_mandatory)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_contains --> name is empty");
+        in_log.error("Internal error (toml_contains --> name is empty");
         return false;
     }
 
@@ -39,16 +42,16 @@ bool toml_utils::contains(text_logger *in_log, toml::value &in_data, std::string
             return true;
         } else {
             if (in_mandatory) {
-                in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-                in_log->error(" --> Parameter '%s' not found", in_name);
+                in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+                in_log.error(" --> Parameter '%s' not found", in_name.data());
             }
 
             return false;
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return false;
@@ -58,10 +61,10 @@ bool toml_utils::contains(text_logger *in_log, toml::value &in_data, std::string
 /**
  * Check if the given key is an array
  */
-bool toml_utils::is_array(text_logger *in_log, toml::value &in_data, std::string_view in_name)
+bool toml_utils::is_array(text_logger &in_log, toml::value &in_data, std::string_view in_name)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_is_array --> name is empty");
+        in_log.error("Internal error (toml_is_array --> name is empty");
         return false;
     }
 
@@ -76,9 +79,9 @@ bool toml_utils::is_array(text_logger *in_log, toml::value &in_data, std::string
             return false;
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return false;
@@ -88,13 +91,13 @@ bool toml_utils::is_array(text_logger *in_log, toml::value &in_data, std::string
 /**
  * Read the value of a string parameter
  */
-std::string toml_utils::read_string(text_logger *in_log,
+std::string toml_utils::read_string(text_logger &in_log,
                                     toml::value &in_data,
                                     std::string_view in_name,
                                     bool in_mandatory)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_read_string --> name is empty");
         return {};
     }
 
@@ -104,15 +107,15 @@ std::string toml_utils::read_string(text_logger *in_log,
         // read dataref
         if (contains(in_log, in_data, in_name, in_mandatory)) {
             value = in_data[in_name.data()].as_string();
-            in_log->debug(" --> Line %i :: Parameter '%s' = '%s'",
-                              in_data.location().line(),
-                              in_name.data(),
-                              value.c_str());
+            in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
+                          in_data.location().line(),
+                          in_name.data(),
+                          value.c_str());
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return value;
@@ -122,12 +125,13 @@ std::string toml_utils::read_string(text_logger *in_log,
 /**
  * Read the values of a string array and return as set
  */
-std::set<std::string> toml_utils::read_str_set_array(text_logger *in_log, toml::value &in_data,
+std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
+                                                     toml::value &in_data,
                                                      std::string_view in_name,
                                                      bool in_mandatory)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_read_string --> name is empty");
         return {};
     }
 
@@ -139,19 +143,19 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger *in_log, toml::
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log->debug(" --> Line %i :: Parameter '%s' = '%s'",
-                                  in_data.location().line(),
-                                  in_name,
-                                  value.c_str());
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
+                              in_data.location().line(),
+                              in_name,
+                              value.c_str());
 
                 if (!value.empty())
                     list.insert(value.data());
             }
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return list;
@@ -161,12 +165,13 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger *in_log, toml::
 /**
  * Read the values of a string array and return as vector
  */
-std::vector<std::string> toml_utils::read_str_vector_array(text_logger *in_log, toml::value &in_data,
+std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
+                                                           toml::value &in_data,
                                                            std::string_view in_name,
                                                            bool in_mandatory)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_read_string --> name is empty");
         return {};
     }
 
@@ -178,19 +183,19 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger *in_log, 
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log->debug(" --> Line %i :: Parameter '%s' = '%s'",
-                                  in_data.location().line(),
-                                  in_name,
-                                  value.c_str());
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
+                              in_data.location().line(),
+                              in_name,
+                              value.c_str());
 
                 if (!value.empty())
                     list.push_back(value);
             }
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return list;
@@ -200,10 +205,13 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger *in_log, 
 /**
  * Read the value of an integer
  */
-int toml_utils::read_int(text_logger *in_log, toml::value &in_data, std::string_view in_name, bool in_mandatory)
+int toml_utils::read_int(text_logger &in_log,
+                         toml::value &in_data,
+                         std::string_view in_name,
+                         bool in_mandatory)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_read_int --> name is empty");
+        in_log.error("Internal error (toml_read_int --> name is empty");
         return -1;
     }
 
@@ -215,22 +223,22 @@ int toml_utils::read_int(text_logger *in_log, toml::value &in_data, std::string_
             if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<float>(in_data[in_name.data()].as_integer());
 
-                in_log->debug(" --> Line %i :: Parameter '%s' = '%i'",
-                                  in_data.location().line(),
-                                  in_name.data(),
-                                  value);
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
+                              in_data.location().line(),
+                              in_name.data(),
+                              value);
             } else {
-                in_log->error("Line %i :: Parameter '%s' = '%s'",
-                                  in_data.location().line(),
-                                  in_name.data(),
-                                  in_data.location().line_str().c_str());
-                in_log->error(" --> Parameter '%s' is not numeric", in_name);
+                in_log.error("Line %i :: Parameter '%s' = '%s'",
+                              in_data.location().line(),
+                              in_name.data(),
+                              in_data.location().line_str().c_str());
+                in_log.error(" --> Parameter '%s' is not numeric", in_name);
             }
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return value;
@@ -240,10 +248,14 @@ int toml_utils::read_int(text_logger *in_log, toml::value &in_data, std::string_
 /**
  * Read the value of a float
  */
-float toml_utils::read_float(text_logger *in_log, toml::value &in_data, std::string_view in_name, bool in_mandatory, float in_fallback)
+float toml_utils::read_float(text_logger &in_log,
+                             toml::value &in_data,
+                             std::string_view in_name,
+                             bool in_mandatory,
+                             float in_fallback)
 {
     if (in_name.empty()) {
-        in_log->error("Internal error (toml_read_float --> name is empty");
+        in_log.error("Internal error (toml_read_float --> name is empty");
         return in_fallback;
     }
 
@@ -255,20 +267,20 @@ float toml_utils::read_float(text_logger *in_log, toml::value &in_data, std::str
             if (in_data[in_name.data()].is_floating()) {
                 value = static_cast<float>(in_data[in_name.data()].as_floating());
 
-                in_log->debug(" --> Line %i :: Parameter '%s' = '%f'", in_data.location().line(), in_name, value);
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%f'", in_data.location().line(), in_name, value);
             } else if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<float>(in_data[in_name.data()].as_integer());
 
-                in_log->debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), in_name, value);
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), in_name, value);
             } else {
-                in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-                in_log->error(" --> Parameter '%s' is not numeric", in_name);
+                in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+                in_log.error(" --> Parameter '%s' is not numeric", in_name);
             }
         }
     } catch (toml::type_error &error) {
-        in_log->error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-        in_log->error(" --> Error reading mapping");
-        in_log->error(error.what());
+        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
     }
 
     return value;

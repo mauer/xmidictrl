@@ -36,17 +36,17 @@ public:
     [[nodiscard]] bool state() const;
 
     void set_max_size(int in_size);
-    int max_size() const;
+    [[nodiscard]] int max_size() const;
 
     void clear();
     size_t count();
     midi_message *message(int in_index);
 
-    void add(const std::shared_ptr<midi_message>& in_msg);
+    void add(const std::shared_ptr<midi_message> &in_msg);
 
 private:
     bool m_state {true};
-    int  m_max_size {100};
+    int m_max_size {100};
 
     std::deque<std::shared_ptr<midi_message>> m_messages;
 };

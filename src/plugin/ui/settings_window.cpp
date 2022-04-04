@@ -31,23 +31,23 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings_window::settings_window(text_logger *in_log, xplane *in_xp, settings *in_settings)
+settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings)
     : ImGuiWindow(in_log, in_xp, 1000, 550),
       m_settings(in_settings)
 {
-    m_debug_mode = m_settings->debug_mode();
-    m_log_midi = m_settings->log_midi();
-    m_show_messages = m_settings->show_messages();
+    m_debug_mode = m_settings.debug_mode();
+    m_log_midi = m_settings.log_midi();
+    m_show_messages = m_settings.show_messages();
 
-    m_max_text_messages = m_settings->max_text_messages();
-    m_max_midi_messages = m_settings->max_midi_messages();
+    m_max_text_messages = m_settings.max_text_messages();
+    m_max_midi_messages = m_settings.max_midi_messages();
 
-    m_common_profile = m_settings->common_profile();
+    m_common_profile = m_settings.common_profile();
 
-    m_path_xplane = in_xp->xplane_path();
-    m_path_plugin = in_xp->plugin_path();
-    m_path_preferences = in_xp->preferences_path();
-    m_path_profiles = in_xp->profiles_path();
+    m_path_xplane = in_xp.xplane_path();
+    m_path_plugin = in_xp.plugin_path();
+    m_path_preferences = in_xp.preferences_path();
+    m_path_profiles = in_xp.profiles_path();
 
     set_title(std::string(XMIDICTRL_NAME) + " - Settings");
 }
@@ -136,17 +136,17 @@ void settings_window::create_widgets()
 
     ImGui::NewLine();
     if (ImGui::Button("Save Settings")) {
-        m_settings->set_debug_mode(m_debug_mode);
-        m_settings->set_log_midi(m_log_midi);
+        m_settings.set_debug_mode(m_debug_mode);
+        m_settings.set_log_midi(m_log_midi);
 
-        m_settings->set_max_text_messages(m_max_text_messages);
-        m_settings->set_max_midi_messages(m_max_midi_messages);
+        m_settings.set_max_text_messages(m_max_text_messages);
+        m_settings.set_max_midi_messages(m_max_midi_messages);
 
-        m_settings->set_show_messages(m_show_messages);
+        m_settings.set_show_messages(m_show_messages);
 
-        m_settings->set_common_profile(m_common_profile);
+        m_settings.set_common_profile(m_common_profile);
 
-        m_settings->save_settings();
+        m_settings.save_settings();
     }
 }
 

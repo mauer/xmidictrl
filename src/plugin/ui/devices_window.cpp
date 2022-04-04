@@ -17,7 +17,8 @@
 
 #include "devices_window.h"
 
-#include <utility>
+// Font Awesome
+#include <IconsFontAwesome6.h>
 
 namespace xmidictrl {
 
@@ -28,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-devices_window::devices_window(text_logger *in_log, xplane *in_xp)
+devices_window::devices_window(text_logger &in_log, xplane &in_xp)
     : ImGuiWindow(in_log, in_xp, 700, 350)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - MIDI Devices");
@@ -52,7 +53,7 @@ devices_window::~devices_window() = default;
  */
 void devices_window::create_widgets()
 {
-    ImGui::Text("INBOUND PORTS");
+    ImGui::Text(ICON_FA_ARROW_LEFT " INBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 
@@ -87,7 +88,7 @@ void devices_window::create_widgets()
     ImGui::NewLine();
     ImGui::NewLine();
 
-    ImGui::Text("OUTBOUND PORTS");
+    ImGui::Text(ICON_FA_ARROW_RIGHT " OUTBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 

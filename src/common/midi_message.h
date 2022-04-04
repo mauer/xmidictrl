@@ -36,18 +36,18 @@ enum class midi_direction {
 
 class midi_message {
 public:
-    explicit midi_message(text_logger *in_log, midi_direction in_direction);
+    midi_message(text_logger &in_log, midi_direction in_direction);
     ~midi_message();
 
-    text_logger *log();
+    text_logger &log();
 
     void clear();
     bool parse_message(std::vector<unsigned char> *in_msg);
     bool check();
 
     [[nodiscard]] size_t mapping_count() const;
-    std::string mappings_as_text();
-    void add_mapping(std::shared_ptr<map> in_map);
+    std::string mappings_as_string();
+    void add_mapping(const std::shared_ptr<map> &in_map);
 
     void set_time(time_point in_time);
     //[[nodiscard]] time_point time() const;
@@ -56,7 +56,7 @@ public:
     void set_port(unsigned int in_port);
     [[nodiscard]] unsigned int port() const;
 
-    [[nodiscard]] std::string direction_as_text();
+    [[nodiscard]] midi_direction direction() const;
 
     void set_status(unsigned char in_status);
     [[nodiscard]] unsigned char status() const;

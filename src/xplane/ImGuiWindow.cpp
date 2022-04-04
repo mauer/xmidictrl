@@ -31,6 +31,10 @@
 #include <cctype>
 #include <utility>
 
+// Fonts
+#include "IconsFontAwesome6.h"
+#include "fa-solid-900.inc"
+
 // X-Plane SDK
 #include <XPLMGraphics.h>
 
@@ -50,7 +54,7 @@ std::shared_ptr<ImGuiFontAtlas> ImGuiWindow::m_imGuiFontAtlas = nullptr;
 /**
  * Constructor
  */
-ImGuiWindow::ImGuiWindow(text_logger *in_log, xplane *in_xp, int in_width, int in_height, bool in_translucent)
+ImGuiWindow::ImGuiWindow(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent)
     : xplane_window(in_log, in_xp, in_width, in_height, in_translucent)
 {
     // font atlas for Dear ImGui
@@ -58,44 +62,31 @@ ImGuiWindow::ImGuiWindow(text_logger *in_log, xplane *in_xp, int in_width, int i
         m_imGuiFontAtlas = std::make_shared<ImGuiFontAtlas>();
 
         if (!m_imGuiFontAtlas->AddFontFromFileTTF("./Resources/fonts/DejaVuSans.ttf", IMGUI_FONT_SIZE))
-            in_log->warn("Error loading font 'DejaVuSans' for Dear ImGui");
+            in_log.warn("Error loading font 'DejaVuSans' for Dear ImGui");
 
         // merge icons
         ImFontConfig config;
         config.MergeMode = true;
+        config.PixelSnapH = true;
 
         static ImVector<ImWchar> icon_ranges;
         ImFontGlyphRangesBuilder builder;
-
-        builder.AddText(ICON_FA_ANGLE_DOUBLE_DOWN
-        ICON_FA_ANGLE_DOUBLE_UP
-            ICON_FA_CAMERA
-        ICON_FA_CHECK
-            ICON_FA_CHECK_CIRCLE
-        ICON_FA_CHEVRON_DOWN
-            ICON_FA_CHEVRON_UP
-        ICON_FA_CLIPBOARD_LIST
-            ICON_FA_EXCLAMATION_TRIANGLE
-        ICON_FA_EYE
-            ICON_FA_EXTERNAL_LINK_SQUARE_ALT
-        ICON_FA_FOLDER_OPEN
-            ICON_FA_INFO_CIRCLE
-        ICON_FA_LEVEL_UP_ALT
-            ICON_FA_PLANE
-        ICON_FA_QUESTION_CIRCLE
-            ICON_FA_SAVE
-        ICON_FA_SEARCH
-            ICON_FA_SLIDERS_H
-        ICON_FA_SORT
-            ICON_FA_SPINNER
-        ICON_FA_TIMES
-            ICON_FA_TRASH_ALT
-        ICON_FA_UNDO
-            ICON_FA_UPLOAD
-        ICON_FA_WINDOW_CLOSE
-            ICON_FA_WINDOW_MAXIMIZE
-        ICON_FA_WINDOW_RESTORE);
+        builder.AddText(ICON_FA_ARROW_LEFT
+                        ICON_FA_ARROW_RIGHT
+                        ICON_FA_BAN
+                        ICON_FA_TRIANGLE_EXCLAMATION
+                        ICON_FA_CIRCLE_CHECK
+                        ICON_FA_CHECK
+                        ICON_FA_CHECK_DOUBLE
+                        ICON_FA_TRASH_CAN);
         builder.BuildRanges(&icon_ranges);
+
+        if (!m_imGuiFontAtlas->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data,
+                                                              fa_solid_900_compressed_size,
+                                                              IMGUI_FONT_SIZE,
+                                                              &config,
+                                                              icon_ranges.Data))
+            in_log.warn("Error loading 'Font Awesome' for Dear ImGui");
     }
 
     // check if a font atlas was supplied
@@ -186,8 +177,8 @@ void ImGuiWindow::on_draw()
         buildWindow();
         showWindow();
     } catch (const std::exception &ex) {
-        m_log->error("Error drawing Dear ImGui window:");
-        m_log->error(ex.what());
+        m_log.error("Error drawing Dear ImGui window:");
+        m_log.error(ex.what());
         stopped = true;
     }
 

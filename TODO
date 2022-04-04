@@ -5,3 +5,5 @@
  + Allow selection of different ports when loading an aircraft
  + AND option for multiple datarefs in outbound messages
  + Show notes in MIDI log
+ + Slow mode for encoders
+ + Message on dataref change
