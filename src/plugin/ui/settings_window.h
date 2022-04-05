@@ -43,6 +43,9 @@ private:
     int m_max_text_messages;
     int m_max_midi_messages;
 
+    int m_default_text_sort;
+    int m_default_midi_sort;
+
     bool m_common_profile;
 
     std::string m_path_xplane;

@@ -23,8 +23,9 @@
 
 // XMidiCtrl
 #include "ImGuiWindow.h"
-#include "text_logger.h"
 #include "midi_logger.h"
+#include "settings.h"
+#include "text_logger.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -32,7 +33,7 @@ namespace xmidictrl {
 
 class messages_window : public ImGuiWindow {
 public:
-    messages_window(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp);
+    messages_window(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
     ~messages_window() override;
 
 protected:
@@ -42,11 +43,18 @@ private:
     void create_tab_text_msg();
     void create_tab_midi_msg();
 
-    void add_text_row(text_log_msg *in_msg);
-    void add_midi_row(midi_message *in_msg);
+    static void add_text_row(text_log_msg *in_msg);
+    static void add_midi_row(midi_message *in_msg);
 
-    void draw_icon(const char *in_icon, std::string_view in_text);
+    static void draw_icon(const char *in_icon, std::string_view in_text);
 
+    sort_mode m_text_sort_mode {sort_mode::ascending};
+    sort_mode m_midi_sort_mode {sort_mode::ascending};
+
+    ImGuiTableColumnFlags m_text_msg_flags;
+    ImGuiTableColumnFlags m_midi_msg_flags;
+
+    settings &m_settings;
     midi_logger &m_midi_log;
 };
 

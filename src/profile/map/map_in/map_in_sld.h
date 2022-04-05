@@ -39,30 +39,13 @@ public:
 
     map_type type() override;
 
-    std::string as_string() override;
-
-    void set_dataref(std::string_view in_dataref);
-    [[nodiscard]] std::string_view dataref() const;
-
-    void set_value_min(float in_value);
-    float value_min() const;
-
-    void set_value_max(float in_value);
-    float value_max() const;
-
-    void set_command_up(std::string_view in_command);
-    [[nodiscard]] std::string_view command_up() const;
-
-    void set_command_middle(std::string_view in_command);
-    [[nodiscard]] std::string_view command_middle() const;
-
-    void set_command_down(std::string_view in_command);
-    [[nodiscard]] std::string_view command_down() const;
-
     void read_config(text_logger &in_log, toml::value &in_data) override;
     bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+
+protected:
+    std::string build_mapping_text() override;
 
 private:
     std::string m_dataref {};

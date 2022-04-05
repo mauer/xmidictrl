@@ -41,7 +41,7 @@ public:
     std::string_view preferences_path();
     std::string_view profiles_path();
 
-    std::string current_aircraft_path();
+    static std::string current_aircraft_path();
     std::string current_aircraft_author();
     std::string current_aircraft_icao();
     std::string current_aircraft_descr();

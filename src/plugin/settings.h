@@ -53,6 +53,12 @@ public:
     void set_max_midi_messages(int in_number);
     [[nodiscard]] int max_midi_messages() const;
 
+    void set_default_text_sort(sort_mode in_mode);
+    [[nodiscard]] sort_mode default_text_sort() const;
+
+    void set_default_midi_sort(sort_mode in_mode);
+    [[nodiscard]] sort_mode default_midi_sort() const;
+
     void set_common_profile(bool in_enabled);
     [[nodiscard]] bool common_profile() const;
 

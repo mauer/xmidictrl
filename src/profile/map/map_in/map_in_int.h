@@ -39,10 +39,11 @@ public:
 
     map_type type() override;
 
-    std::string as_string() override;
-
     bool check(text_logger &in_log) override;
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+
+protected:
+    std::string build_mapping_text() override;
 
 private:
     std::string m_command {};

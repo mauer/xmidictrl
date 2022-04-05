@@ -17,13 +17,10 @@
 
 #include "messages_window.h"
 
-#include <utility>
-
 // Font Awesome
 #include <IconsFontAwesome6.h>
 
 // XMidiCtrl
-#include "conversions.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
@@ -35,11 +32,27 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-messages_window::messages_window(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp)
+messages_window::messages_window(text_logger &in_text_log,
+                                 midi_logger &in_midi_log,
+                                 xplane &in_xp,
+                                 settings &in_settings)
     : ImGuiWindow(in_text_log, in_xp, 1400, 700),
+      m_settings(in_settings),
       m_midi_log(in_midi_log)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Messages");
+
+    m_text_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
+    if (m_settings.default_text_sort() == sort_mode::ascending)
+        m_text_msg_flags = m_text_msg_flags | ImGuiTableColumnFlags_PreferSortAscending;
+    else
+        m_text_msg_flags = m_text_msg_flags | ImGuiTableColumnFlags_PreferSortDescending;
+
+    m_midi_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
+    if (m_settings.default_midi_sort() == sort_mode::ascending)
+        m_midi_msg_flags = m_midi_msg_flags | ImGuiTableColumnFlags_PreferSortAscending;
+    else
+        m_midi_msg_flags = m_midi_msg_flags | ImGuiTableColumnFlags_PreferSortDescending;
 }
 
 
@@ -100,30 +113,30 @@ void messages_window::create_tab_text_msg()
 
         ImGui::BeginTable("tableTextMessages", 3,
                           ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
-        ImGui::TableSetupColumn("Message Date/Time",
-                                ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort,
-                                200);
+
+        ImGui::TableSetupColumn("Message Date/Time", m_text_msg_flags,200);
         ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
         ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        sort_mode mode = sort_mode::descending;
         if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
-            if (sort_specs->SpecsCount > 0) {
+            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
                 auto spec = sort_specs->Specs[0];
                 if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                    mode = sort_mode::ascending;
+                    m_text_sort_mode = sort_mode::ascending;
+                else
+                    m_text_sort_mode = sort_mode::descending;
             }
         }
 
-        if (mode == sort_mode::ascending) {
-            for (unsigned int i = 0; i < m_log.count(); i++) {
-                auto msg = m_log.message(i);
+        if (m_text_sort_mode == sort_mode::ascending) {
+            for (size_t i = 0; i < m_log.count(); i++) {
+                auto msg = m_log.message(static_cast<int>(i));
                 add_text_row(msg);
             }
-        } else {
-            for (unsigned int i = m_log.count() - 1; i > 0; i--) {
-                auto msg = m_log.message(i);
+        } else if (m_log.count() > 0) {
+            for (size_t i = m_log.count() - 1; i > 0; i--) {
+                auto msg = m_log.message(static_cast<int>(i));
                 add_text_row(msg);
             }
         }
@@ -162,9 +175,7 @@ void messages_window::create_tab_midi_msg()
 
         ImGui::BeginTable("tableMidiMessages", 10,
                           ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
-        ImGui::TableSetupColumn("Date/Time",
-                                ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort,
-                                200);
+        ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
         ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 100);
         ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
         ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 150);
@@ -176,23 +187,24 @@ void messages_window::create_tab_midi_msg()
         ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        sort_mode mode = sort_mode::descending;
         if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
-            if (sort_specs->SpecsCount > 0) {
+            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
                 auto spec = sort_specs->Specs[0];
                 if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                    mode = sort_mode::ascending;
+                    m_midi_sort_mode = sort_mode::ascending;
+                else
+                    m_midi_sort_mode = sort_mode::descending;
             }
         }
 
-        if (mode == sort_mode::ascending) {
-            for (unsigned int i = 0; i < m_midi_log.count(); i++) {
-                auto msg = m_midi_log.message(i);
+        if (m_midi_sort_mode == sort_mode::ascending) {
+            for (size_t i = 0; i < m_midi_log.count(); i++) {
+                auto msg = m_midi_log.message(static_cast<int>(i));
                 add_midi_row(msg);
             }
-        } else {
-            for (unsigned int i = m_midi_log.count() - 1; i > 0; i--) {
-                auto msg = m_midi_log.message(i);
+        } else if (m_midi_log.count() > 0) {
+            for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
+                auto msg = m_midi_log.message(static_cast<int>(i));
                 add_midi_row(msg);
             }
         }

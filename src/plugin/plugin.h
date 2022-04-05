@@ -66,7 +66,7 @@ public:
     void toggle_sublayer();
 
 private:
-    void process_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter);
+    void process_flight_loop([[maybe_unused]] float in_elapsed_me, float in_elapsed_sim, int in_counter);
 
     void create_datarefs();
     void remove_datarefs();

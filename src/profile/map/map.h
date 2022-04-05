@@ -42,7 +42,9 @@ public:
     [[nodiscard]] map_data_type data_type() const;
     [[nodiscard]] unsigned char data() const;
 
-    virtual std::string as_string() = 0;
+    std::string_view source_line() const;
+
+    std::string_view as_text();
 
     std::string get_key();
 
@@ -55,7 +57,7 @@ protected:
     void read_channel(text_logger &in_log, toml::value &in_data);
     void read_data(text_logger &in_log, toml::value &in_data);
 
-    std::string channel_data_as_string();
+    virtual std::string build_mapping_text() = 0;
 
 private:
     xplane &m_xp;
@@ -64,6 +66,9 @@ private:
 
     map_data_type m_data_type {map_data_type::none};
     unsigned char m_data {MIDI_NONE};
+
+    std::string m_source_line {};
+    std::string m_mapping_text {};
 };
 
 } // Namespace xmidictrl

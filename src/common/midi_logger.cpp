@@ -55,6 +55,9 @@ void midi_logger::set_max_size(int in_size)
         m_max_size = in_size;
     else
         m_max_size = 1;
+
+    while (m_messages.size() > m_max_size)
+        m_messages.pop_front();
 }
 
 

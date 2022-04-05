@@ -19,7 +19,6 @@
 
 // Standard
 #include <filesystem>
-#include <utility>
 
 // XMidiCtrl
 #include "map_in_cmd.h"
@@ -53,7 +52,7 @@ profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_
     m_profile_log->set_log_info(false);
 
     m_device_list = std::make_unique<device_list>();
-};
+}
 
 
 /**

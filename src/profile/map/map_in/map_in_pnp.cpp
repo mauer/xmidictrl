@@ -46,55 +46,6 @@ map_in_pnp::map_in_pnp(xplane &in_xp)
 map_type map_in_pnp::type()
 {
     return map_type::push_pull;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_pnp::as_string()
-{
-    std::string map_str = " :: Push & Pull ::\n";
-    map_str.append("Command push = '" + m_command_push + "'\n");
-    map_str.append("Command pull = '" + m_command_pull + "'\n");
-
-    return map_str;
-}
-
-
-/**
- * Set the push command
- */
-void map_in_pnp::set_command_push(std::string_view in_command)
-{
-    m_command_push = in_command;
-}
-
-
-/**
- * Return the push command
- */
-std::string_view map_in_pnp::command_push() const
-{
-    return m_command_push;
-}
-
-
-/**
- * Set the pull command
- */
-void map_in_pnp::set_command_pull(std::string_view in_command)
-{
-    m_command_pull = in_command;
-}
-
-
-/**
- * Return the pull command
- */
-std::string_view map_in_pnp::command_pull() const
-{
-    return m_command_pull;
 }
 
 
@@ -129,10 +80,10 @@ void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data)
     map_in::read_config(in_log, in_data);
 
     // read command push
-    set_command_push(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH));
+    m_command_push = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH);
 
     // read command pull
-    set_command_pull(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL));
+    m_command_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL);
 }
 
 
@@ -144,10 +95,19 @@ bool map_in_pnp::check(text_logger &in_log)
     if (!map::check(in_log))
         return false;
 
-    if (m_command_push.empty() && m_command_pull.empty())
+    if (m_command_push.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PUSH);
         return false;
-    else
-        return true;
+    }
+
+    if (m_command_pull.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PULL);
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -232,6 +192,25 @@ void map_in_pnp::reset()
 
     m_time_received.store(time_point::min());
     m_time_released.store(time_point::min());
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_pnp::build_mapping_text()
+{
+    std::string map_str = " :: Push & Pull ::\n";
+    map_str.append("Command push = '" + m_command_push + "'\n");
+    map_str.append("Command pull = '" + m_command_pull + "'\n");
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

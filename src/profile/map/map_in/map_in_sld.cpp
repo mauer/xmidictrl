@@ -46,137 +46,6 @@ map_in_sld::map_in_sld(xplane &in_xp)
 map_type map_in_sld::type()
 {
     return map_type::slider;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_sld::as_string()
-{
-    std::string map_str = " :: Slider ::\n";
-
-    if (!m_dataref.empty()) {
-        map_str.append("Dataref = '" + m_dataref + "'\n");
-        map_str.append("Value min = '" + std::to_string(m_value_min) + "\n");
-        map_str.append("Value max = '" + std::to_string(m_value_max) + "'\n");
-    } else {
-        if (!m_command_middle.empty())
-            map_str.append("Command down = '" + m_command_down + "'\nCommand middle = '" + m_command_middle +
-                           "'\nCommand up = '" + m_command_up + "'\n");
-        else
-            map_str.append("Command down = '" + m_command_down + "'\nCommand up = '" + m_command_up + "'\n");
-    }
-
-    return map_str;
-}
-
-
-/**
- * Set the dataref
- */
-void map_in_sld::set_dataref(std::string_view in_dataref)
-{
-    m_dataref = in_dataref;
-}
-
-
-/**
- * Return the dataref
- */
-std::string_view map_in_sld::dataref() const
-{
-    return m_dataref;
-}
-
-
-/**
- * Set the min value
- */
-void map_in_sld::set_value_min(float in_value)
-{
-    m_value_min = in_value;
-}
-
-
-/**
- * Return the min value
- */
-float map_in_sld::value_min() const
-{
-    return m_value_min;
-}
-
-
-/**
- * Set the max value
- */
-void map_in_sld::set_value_max(float in_value)
-{
-    m_value_max = in_value;
-}
-
-
-/**
- * Return the max value
- */
-float map_in_sld::value_max() const
-{
-    return m_value_max;
-}
-
-
-/**
- * Set the up command
- */
-void map_in_sld::set_command_up(std::string_view in_command)
-{
-    m_command_up = in_command;
-}
-
-
-/**
- * Return the up command
- */
-std::string_view map_in_sld::command_up() const
-{
-    return m_command_up;
-}
-
-
-/**
- * Set the middle command
- */
-void map_in_sld::set_command_middle(std::string_view in_command)
-{
-    m_command_middle = in_command;
-}
-
-
-/**
- * Return the middle command
- */
-std::string_view map_in_sld::command_middle() const
-{
-    return m_command_middle;
-}
-
-
-/**
- * Set the down command
- */
-void map_in_sld::set_command_down(std::string_view in_command)
-{
-    m_command_down = in_command;
-}
-
-
-/**
- * Return the down command
- */
-std::string_view map_in_sld::command_down() const
-{
-    return m_command_down;
 }
 
 
@@ -193,24 +62,24 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data)
         in_log.debug(" --> Use 'dataref' mode for slider mapping");
 
         // read dataref
-        set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
+        m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
 
         // read value min
-        set_value_min(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false, 0.0f));
+        m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false, 0.0f);
 
         // read value max
-        set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f));
+        m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f);
     } else {
         in_log.debug(" --> Use 'command' mode for slider mapping");
 
         // read command up
-        set_command_up(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP));
+        m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
 
         // read command middle
-        set_command_middle(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_MIDDLE, false));
+        m_command_middle = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_MIDDLE, false);
 
         // read command down
-        set_command_down(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN));
+        m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);
     }
 }
 
@@ -223,12 +92,12 @@ bool map_in_sld::check(text_logger &in_log)
     if (!map::check(in_log))
         return false;
 
-    if (!dataref().empty()) {
+    if (!m_dataref.empty()) {
         // dataref mode
-        if (!xp().datarefs().check(in_log, dataref()))
+        if (!xp().datarefs().check(in_log, m_dataref))
             return false;
 
-        if (value_min() == value_max())
+        if (m_value_min == m_value_max)
             return false;
     } else {
         // command mode
@@ -248,9 +117,9 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (!check_sublayer(in_sl_value))
         return true;
 
-    if (!dataref().empty()) {
+    if (!m_dataref.empty()) {
         // dataref mode
-        float value = 0.0f;
+        float value;
         if (in_msg.data_2() == MIDI_VELOCITY_MIN)
             value = m_value_min;
         else if (in_msg.data_2() == MIDI_VELOCITY_MAX)
@@ -294,6 +163,35 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
     }
 
     return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_sld::build_mapping_text()
+{
+    std::string map_str = " :: Slider ::\n";
+
+    if (!m_dataref.empty()) {
+        map_str.append("Dataref = '" + m_dataref + "'\n");
+        map_str.append("Value min = '" + std::to_string(m_value_min) + "\n");
+        map_str.append("Value max = '" + std::to_string(m_value_max) + "'\n");
+    } else {
+        if (!m_command_middle.empty())
+            map_str.append("Command down = '" + m_command_down + "'\nCommand middle = '" + m_command_middle +
+                           "'\nCommand up = '" + m_command_up + "'\n");
+        else
+            map_str.append("Command down = '" + m_command_down + "'\nCommand up = '" + m_command_up + "'\n");
+    }
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

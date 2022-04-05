@@ -19,7 +19,6 @@
 
 // Standard
 #include <filesystem>
-#include <utility>
 
 // XMidiCtrl
 #include "conversions.h"
@@ -140,7 +139,7 @@ int settings::max_text_messages() const
 void settings::set_max_midi_messages(int in_number)
 {
     m_config[CFG_KEY_MAX_MIDI_MESSAGES] = in_number;
-    m_text_log.set_max_size(in_number);
+    m_midi_log.set_max_size(in_number);
 }
 
 
@@ -150,6 +149,42 @@ void settings::set_max_midi_messages(int in_number)
 int settings::max_midi_messages() const
 {
     return toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 500);
+}
+
+
+/**
+ * Set the default sort mode for text messages
+ */
+void settings::set_default_text_sort(sort_mode in_mode)
+{
+    m_config[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(in_mode);
+}
+
+
+/**
+ * Return the default sort mode for text messages
+ */
+sort_mode settings::default_text_sort() const
+{
+    return static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_TEXT_SORT, 0));
+}
+
+
+/**
+ * Set the default sort mode for MIDI messages
+ */
+void settings::set_default_midi_sort(sort_mode in_mode)
+{
+    m_config[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(in_mode);
+}
+
+
+/**
+ * Return the default sort mode for MIDI messages
+ */
+sort_mode settings::default_midi_sort() const
+{
+    return static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_MIDI_SORT, 0));
 }
 
 

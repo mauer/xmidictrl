@@ -44,17 +44,6 @@ map_in_int::map_in_int(xplane &in_xp, std::string_view in_command)
 map_type map_in_int::type()
 {
     return map_type::internal;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_int::as_string()
-{
-    std::string map_str = " :: Internal ::\n";
-
-    return map_str;
 }
 
 
@@ -82,6 +71,24 @@ bool map_in_int::execute(midi_message &in_msg, std::string_view in_sl_value)
         return true;
 
     return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_int::build_mapping_text()
+{
+    std::string map_str = " :: Internal ::\n";
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

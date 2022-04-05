@@ -47,30 +47,6 @@ map_in_drf::map_in_drf(xplane &in_xp)
 map_type map_in_drf::type()
 {
     return map_type::dataref;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_drf::as_string()
-{
-    std::string map_str = " :: Dataref ::\n";
-    map_str.append("Dataref = '" + m_dataref + "'\n");
-
-    if (m_mode == dataref_mode::toggle)
-        map_str.append("Mode = 'toggle'\n");
-    else
-        map_str.append("Mode = 'momentary'\n");
-
-    map_str.append("Values = [");
-
-    for (auto &value : m_values)
-        map_str.append(" '" + value + "'");
-
-    map_str.append("]\n");
-
-    return map_str;
 }
 
 
@@ -116,14 +92,20 @@ bool map_in_drf::check(text_logger &in_log)
     if (!map::check(in_log))
         return false;
 
-    if (m_dataref.empty())
+    if (m_dataref.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_DATAREF);
         return false;
+    }
 
     if (!xp().datarefs().check(in_log, m_dataref))
         return false;
 
-    if (m_values.empty())
+    if (m_values.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> No values defined", CFG_KEY_DATAREF);
         return false;
+    }
 
     if (m_mode == dataref_mode::momentary && m_values.size() != 2)
         return false;
@@ -181,6 +163,36 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
     }
 
     return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_drf::build_mapping_text()
+{
+    std::string map_str = " :: Dataref ::\n";
+    map_str.append("Dataref = '" + m_dataref + "'\n");
+
+    if (m_mode == dataref_mode::toggle)
+        map_str.append("Mode = 'toggle'\n");
+    else
+        map_str.append("Mode = 'momentary'\n");
+
+    map_str.append("Values = [");
+
+    for (auto &value : m_values)
+        map_str.append(" '" + value + "'");
+
+    map_str.append("]\n");
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

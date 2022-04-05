@@ -17,6 +17,7 @@
 
 #include "map_out_drf.h"
 
+// Standard
 #include <utility>
 
 // XMidiCtrl
@@ -62,76 +63,6 @@ map_out_drf::~map_out_drf()
 map_type map_out_drf::type()
 {
     return map_type::dataref;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_out_drf::as_string()
-{
-    std::string map_str = " :: Dataref ::\n";
-
-    // Dataref
-    if (m_datarefs.size() == 1) {
-        map_str.append("Dataref = '" + m_datarefs[0] + "'\n");
-    } else {
-        map_str.append("Datarefs = [");
-
-        std::string data_str;
-        for (auto &str: m_datarefs) {
-            if (!data_str.empty())
-                data_str.append(", ");
-
-            data_str.append("'" + str + "'");
-        }
-
-        map_str.append(data_str + "]\n");
-    }
-
-    // Values on
-    if (m_values_on.size() == 1) {
-        map_str.append("Value on = '" + *m_values_on.begin() + "'\n");
-    } else if (m_values_on.size() > 1) {
-        map_str.append("Values on = [");
-
-        std::string values_str;
-        for (auto &str: m_values_on) {
-            if (!values_str.empty())
-                values_str.append(", ");
-
-            values_str.append("'" + str + "'");
-        }
-
-        map_str.append(values_str + "]\n");
-    }
-
-    // Values off
-    if (m_values_off.size() == 1) {
-        map_str.append("Value off = '" + *m_values_off.begin() + "'\n");
-    } else if (m_values_off.size() > 1) {
-        map_str.append("Values off = [");
-
-        std::string values_str;
-        for (auto &str: m_values_off) {
-            if (!values_str.empty())
-                values_str.append(", ");
-
-            values_str.append("'" + str + "'");
-        }
-
-        map_str.append(values_str + "]\n");
-    }
-
-    // Velocity on
-    if (m_velocity_on != MIDI_VELOCITY_MAX)
-        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
-
-    // Velocity off
-    if (m_velocity_off != MIDI_VELOCITY_MIN)
-        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'");
-
-    return map_str;
 }
 
 
@@ -455,6 +386,82 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
     task->velocity = MIDI_VELOCITY_MIN;
 
     return task;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_out_drf::build_mapping_text()
+{
+    std::string map_str = " :: Dataref ::\n";
+
+    // Dataref
+    if (m_datarefs.size() == 1) {
+        map_str.append("Dataref = '" + m_datarefs[0] + "'\n");
+    } else {
+        map_str.append("Datarefs = [");
+
+        std::string data_str;
+        for (auto &str: m_datarefs) {
+            if (!data_str.empty())
+                data_str.append(", ");
+
+            data_str.append("'" + str + "'");
+        }
+
+        map_str.append(data_str + "]\n");
+    }
+
+    // Values on
+    if (m_values_on.size() == 1) {
+        map_str.append("Value on = '" + *m_values_on.begin() + "'\n");
+    } else if (m_values_on.size() > 1) {
+        map_str.append("Values on = [");
+
+        std::string values_str;
+        for (auto &str: m_values_on) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append("'" + str + "'");
+        }
+
+        map_str.append(values_str + "]\n");
+    }
+
+    // Values off
+    if (m_values_off.size() == 1) {
+        map_str.append("Value off = '" + *m_values_off.begin() + "'\n");
+    } else if (m_values_off.size() > 1) {
+        map_str.append("Values off = [");
+
+        std::string values_str;
+        for (auto &str: m_values_off) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append("'" + str + "'");
+        }
+
+        map_str.append(values_str + "]\n");
+    }
+
+    // Velocity on
+    if (m_velocity_on != MIDI_VELOCITY_MAX)
+        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
+
+    // Velocity off
+    if (m_velocity_off != MIDI_VELOCITY_MIN)
+        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'");
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

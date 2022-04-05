@@ -124,7 +124,9 @@ float plugin::callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, in
 /**
  * Process the flight loop
  */
-void plugin::process_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter)
+void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
+                                 [[maybe_unused]] float in_elapsed_sim,
+                                 [[maybe_unused]] int in_counter)
 {
     std::string sl_value {};
 
@@ -413,7 +415,7 @@ void plugin::write_drf_sublayer(void *in_refcon, int in_value)
 /**
  * Handler for custom commands
  */
-int plugin::command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon)
+int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon)
 {
     if (in_phase != xplm_CommandEnd)
         return 1;
@@ -455,7 +457,7 @@ void plugin::create_window(window_type in_type)
             break;
 
         case window_type::messages_window:
-            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_xp);
+            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
             break;
 
         case window_type::devices_window:

@@ -27,9 +27,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 // Standard
-#include <cstdint>
 #include <cctype>
-#include <utility>
 
 // Fonts
 #include "IconsFontAwesome6.h"
@@ -78,7 +76,8 @@ ImGuiWindow::ImGuiWindow(text_logger &in_log, xplane &in_xp, int in_width, int i
                         ICON_FA_CIRCLE_CHECK
                         ICON_FA_CHECK
                         ICON_FA_CHECK_DOUBLE
-                        ICON_FA_TRASH_CAN);
+                        ICON_FA_TRASH_CAN
+                        ICON_FA_FLOPPY_DISK);
         builder.BuildRanges(&icon_ranges);
 
         if (!m_imGuiFontAtlas->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data,

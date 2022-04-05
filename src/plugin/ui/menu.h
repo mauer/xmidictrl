@@ -38,7 +38,7 @@ public:
     void remove_menu();
 
 private:
-    static void event_handler(void *in_menu_ref, void *in_item_ref);
+    static void event_handler([[maybe_unused]] void *in_menu_ref, void *in_item_ref);
 
     static void show_documentation();
     static void show_support();

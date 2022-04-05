@@ -19,7 +19,6 @@
 
 // Standard
 #include <string>
-#include <utility>
 
 // XMidiCtrl
 #include "plugin.h"
@@ -185,8 +184,8 @@ void profile_window::create_tab_errors_warnings()
         ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
-        for (unsigned int i = 0; i < m_profile.log().count(); i++) {
-            auto msg = m_profile.log().message(i);
+        for (size_t i = 0; i < m_profile.log().count(); i++) {
+            auto msg = m_profile.log().message(static_cast<int>(i));
 
             if (msg == nullptr)
                 continue;

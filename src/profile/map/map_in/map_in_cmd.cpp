@@ -17,8 +17,6 @@
 
 #include "map_in_cmd.h"
 
-#include <utility>
-
 // XMidiCtrl
 #include "toml_utils.h"
 
@@ -52,71 +50,11 @@ map_type map_in_cmd::type()
 
 
 /**
- * Return the mapping as string
- */
-std::string map_in_cmd::as_string()
-{
-    std::string map_str = " :: Command ::\n";
-    map_str.append("Command = '" + m_command + "'\n");
-
-    if (m_velocity_on != MIDI_VELOCITY_MAX)
-        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
-
-    if (m_velocity_off != MIDI_VELOCITY_MIN)
-        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'\n");
-
-    return map_str;
-}
-
-
-/**
- * Set the command
- */
-void map_in_cmd::set_command(std::string_view in_command)
-{
-    m_command = in_command;
-}
-
-
-/**
- * Return the command
- */
-std::string_view map_in_cmd::command() const
-{
-    return m_command;
-}
-
-
-/**
- * Set velocity on
- */
-void map_in_cmd::set_velocity_on(int in_velocity_on)
-{
-    if (in_velocity_on >= MIDI_VELOCITY_MIN && in_velocity_on <= MIDI_VELOCITY_MAX)
-        m_velocity_on = in_velocity_on;
-    else
-        m_velocity_on = MIDI_VELOCITY_MAX;
-}
-
-
-/**
  * Return velocity on
  */
 unsigned int map_in_cmd::velocity_on() const
 {
     return m_velocity_on;
-}
-
-
-/**
- * Set velocity off
- */
-void map_in_cmd::set_velocity_off(int in_velocity_off)
-{
-    if (in_velocity_off >= MIDI_VELOCITY_MIN && in_velocity_off <= MIDI_VELOCITY_MAX)
-        m_velocity_off = in_velocity_off;
-    else
-        m_velocity_off = MIDI_VELOCITY_MIN;
 }
 
 
@@ -138,13 +76,15 @@ void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data)
     map_in::read_config(in_log, in_data);
 
     // read the command
-    set_command(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND));
+    m_command = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND);
 
     // read velocity on
-    set_velocity_on(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_ON, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VELOCITY_ON, false))
+        m_velocity_on = toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_ON);
 
     // read velocity off
-    set_velocity_off(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VELOCITY_OFF, false))
+        m_velocity_off = toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF);
 }
 
 
@@ -156,10 +96,27 @@ bool map_in_cmd::check(text_logger &in_log)
     if (!map::check(in_log))
         return false;
 
-    if (command().empty())
+    if (m_command.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND);
         return false;
-    else
-        return true;
+    }
+
+    if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
+        in_log.error(source_line());
+        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
+                     CFG_KEY_VELOCITY_ON);
+        return false;
+    }
+
+    if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
+        in_log.error(source_line());
+        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
+                     CFG_KEY_VELOCITY_OFF);
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -171,18 +128,44 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (!check_sublayer(in_sl_value))
         return true;
 
-    in_msg.log().debug(" --> Execute command '%s'", command().data());
+    in_msg.log().debug(" --> Execute command '%s'", m_command.data());
 
-    if (in_msg.data_2() == velocity_on()) {
-        xp().cmd().begin(in_msg.log(), command());
-    } else if (in_msg.data_2() == velocity_off()) {
-        xp().cmd().end(in_msg.log(), command());
+    if (in_msg.data_2() == m_velocity_on) {
+        xp().cmd().begin(in_msg.log(), m_command);
+    } else if (in_msg.data_2() == m_velocity_off) {
+        xp().cmd().end(in_msg.log(), m_command);
     } else {
         in_msg.log().error("Invalid MIDI velocity '%i'", in_msg.data_2());
-        in_msg.log().error(" --> Supported values for the current mapping are '%i' and '%io'", velocity_on(), velocity_off());
+        in_msg.log().error(" --> Supported values for the current mapping are '%i' and '%io'",
+                           m_velocity_on,
+                           m_velocity_off);
     }
 
     return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_cmd::build_mapping_text()
+{
+    std::string map_str = " :: Command ::\n";
+    map_str.append("Command = '" + m_command + "'\n");
+
+    if (m_velocity_on != MIDI_VELOCITY_MAX)
+        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
+
+    if (m_velocity_off != MIDI_VELOCITY_MIN)
+        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'\n");
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

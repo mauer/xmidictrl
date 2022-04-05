@@ -39,8 +39,6 @@ public:
 
     map_type type() override;
 
-    std::string as_string() override;
-
     void set_dataref(std::string_view dataref);
     void set_dataref(std::vector<std::string> dataref);
 
@@ -61,6 +59,9 @@ public:
 
     std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out mode) override;
     std::shared_ptr<outbound_task> reset() override;
+
+protected:
+    std::string build_mapping_text() override;
 
 private:
     std::vector<std::string> m_datarefs {};

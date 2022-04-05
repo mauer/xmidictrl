@@ -41,14 +41,6 @@ public:
 
     map_type type() override;
 
-    std::string as_string() override;
-
-    void set_command_push(std::string_view in_command);
-    [[nodiscard]] std::string_view command_push() const;
-
-    void set_command_pull(std::string_view in_command);
-    [[nodiscard]] std::string_view command_pull() const;
-
     void set_time_received();
     void set_time_released();
 
@@ -56,6 +48,9 @@ public:
     bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+
+protected:
+    std::string build_mapping_text() override;
 
 private:
     enum class command_type {

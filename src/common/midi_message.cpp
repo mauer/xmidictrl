@@ -141,15 +141,15 @@ size_t midi_message::mapping_count() const
 std::string midi_message::mappings_as_string()
 {
     if (m_mappings.size() == 1)
-        return m_mappings.at(0)->as_string();
+        return m_mappings.at(0)->as_text().data();
 
     std::string map_str;
     for (auto &mapping: m_mappings) {
         if (map_str.empty()) {
-            map_str = mapping->as_string();
+            map_str = mapping->as_text();
         } else {
             map_str.append("\n");
-            map_str.append(mapping->as_string());
+            map_str.append(mapping->as_text());
         }
     }
 

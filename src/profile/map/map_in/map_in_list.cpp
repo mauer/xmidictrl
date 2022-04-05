@@ -17,9 +17,6 @@
 
 #include "map_in_list.h"
 
-// XMidiCtrl
-#include "conversions.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -44,7 +41,7 @@ map_in_list::~map_in_list()
 /**
  * Add a new mapping
  */
-void map_in_list::add(std::shared_ptr<map_in> in_map)
+void map_in_list::add(const std::shared_ptr<map_in> &in_map)
 {
     m_list.insert({in_map->get_key(), in_map});
 }

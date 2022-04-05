@@ -101,7 +101,7 @@ void menu::remove_menu()
 /**
  * Event handler fpr the menu
  */
-void menu::event_handler(void *in_menu_ref, void *in_item_ref)
+void menu::event_handler([[maybe_unused]] void *in_menu_ref, void *in_item_ref)
 {
     if (!strcmp((const char *) in_item_ref, MENUITEM_DEVICES_WINDOW))
         plugin::instance().show_devices_window();

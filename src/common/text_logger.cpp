@@ -109,6 +109,9 @@ bool text_logger::log_info() const
 void text_logger::set_max_size(int in_size)
 {
     m_max_size = in_size;
+
+    while (m_messages.size() > m_max_size)
+        m_messages.pop_front();
 }
 
 

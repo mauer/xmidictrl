@@ -18,6 +18,9 @@
 // Standard
 #include <string>
 
+// Font Awesome
+#include <IconsFontAwesome6.h>
+
 // XMidiCtrl
 #include "settings_window.h"
 #include "conversions.h"
@@ -32,7 +35,7 @@ namespace xmidictrl {
  * Constructor
  */
 settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings)
-    : ImGuiWindow(in_log, in_xp, 1000, 550),
+    : ImGuiWindow(in_log, in_xp, 1000, 650),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
@@ -41,6 +44,9 @@ settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &i
 
     m_max_text_messages = m_settings.max_text_messages();
     m_max_midi_messages = m_settings.max_midi_messages();
+
+    m_default_text_sort = static_cast<int>(m_settings.default_text_sort());
+    m_default_midi_sort = static_cast<int>(m_settings.default_midi_sort());
 
     m_common_profile = m_settings.common_profile();
 
@@ -83,8 +89,16 @@ void settings_window::create_widgets()
                 m_max_text_messages = 5000;
         }
     }
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Default sort mode:");
+    ImGui::SameLine();
+    ImGui::RadioButton("Text Messages Ascending", &m_default_text_sort, 0);
+    ImGui::SameLine();
+    ImGui::RadioButton("Text Messages Descending", &m_default_text_sort, 1);
 
     ImGui::NewLine();
+    ImGui::NewLine();
+
     ImGui::Checkbox("Log inbound and outbound MIDI messages", &m_log_midi);
     if (m_log_midi) {
         ImGui::SameLine(500);
@@ -98,6 +112,12 @@ void settings_window::create_widgets()
                 m_max_midi_messages = 5000;
         }
     }
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Default sort mode:");
+    ImGui::SameLine();
+    ImGui::RadioButton("MIDI Messages Ascending", &m_default_midi_sort, 0);
+    ImGui::SameLine();
+    ImGui::RadioButton("MIDI Messages Descending", &m_default_midi_sort, 1);
 
     ImGui::NewLine();
     ImGui::Checkbox("Show message dialog in case of errors and warnings", &m_show_messages);
@@ -135,12 +155,15 @@ void settings_window::create_widgets()
     ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_profiles.c_str());
 
     ImGui::NewLine();
-    if (ImGui::Button("Save Settings")) {
+    if (ImGui::Button("  " ICON_FA_FLOPPY_DISK " Save Settings  ")) {
         m_settings.set_debug_mode(m_debug_mode);
         m_settings.set_log_midi(m_log_midi);
 
         m_settings.set_max_text_messages(m_max_text_messages);
         m_settings.set_max_midi_messages(m_max_midi_messages);
+
+        m_settings.set_default_text_sort(static_cast<sort_mode>(m_default_text_sort));
+        m_settings.set_default_midi_sort(static_cast<sort_mode>(m_default_midi_sort));
 
         m_settings.set_show_messages(m_show_messages);
 

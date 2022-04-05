@@ -47,45 +47,6 @@ map_in_enc::map_in_enc(xplane &in_xp)
 map_type map_in_enc::type()
 {
     return map_type::encoder;
-};
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_enc::as_string()
-{
-    std::string map_str = " :: Encoder ::\n";
-
-    if (m_mode == encoder_mode::relative)
-        map_str.append("Mode = 'relative'\n");
-    else
-        map_str.append("Mode = 'range'\n");
-
-    if (!m_dataref.empty()) {
-        map_str.append("Dataref = '" + m_dataref + "'\n");
-        map_str.append("Modifier up = '" + std::to_string(m_modifier_up) + "'\n");
-
-        if (m_modifier_fast_up != 0)
-            map_str.append("Modifier up (fast) = '" + std::to_string(m_modifier_fast_up) + "'\n");
-
-        map_str.append("Modifier down = '" + std::to_string(m_modifier_down) + "'\n");
-
-        if (m_modifier_fast_down != 0)
-            map_str.append("Modifier down (fast) = '" + std::to_string(m_modifier_fast_down) + "'\n");
-    } else {
-        map_str.append("Command up = '" + m_command_up + "'\n");
-
-        if (!m_command_fast_up.empty())
-            map_str.append("Command up (fast) = '" + m_command_fast_up + "'\n");
-
-        map_str.append("Command down = '" + m_command_down + "'\n");
-
-        if (!m_command_fast_down.empty())
-            map_str.append("Command down (fast) = '" + m_command_fast_down + "'\n");
-    }
-
-    return map_str;
 }
 
 
@@ -312,13 +273,13 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data)
         set_modifier_fast_down(toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN, false));
 
         // read value min
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN)) {
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN, false)) {
             m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false);
             m_value_min_defined = true;
         }
 
         // read value max
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX)) {
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX, false)) {
             m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false);
             m_value_max_defined = true;
         }
@@ -540,6 +501,51 @@ bool map_in_enc::execute_command(midi_message &in_msg)
     }
 
     return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_enc::build_mapping_text()
+{
+    std::string map_str = " :: Encoder ::\n";
+
+    if (m_mode == encoder_mode::relative)
+        map_str.append("Mode = 'relative'\n");
+    else
+        map_str.append("Mode = 'range'\n");
+
+    if (!m_dataref.empty()) {
+        map_str.append("Dataref = '" + m_dataref + "'\n");
+        map_str.append("Modifier up = '" + std::to_string(m_modifier_up) + "'\n");
+
+        if (m_modifier_fast_up != 0)
+            map_str.append("Modifier up (fast) = '" + std::to_string(m_modifier_fast_up) + "'\n");
+
+        map_str.append("Modifier down = '" + std::to_string(m_modifier_down) + "'\n");
+
+        if (m_modifier_fast_down != 0)
+            map_str.append("Modifier down (fast) = '" + std::to_string(m_modifier_fast_down) + "'\n");
+    } else {
+        map_str.append("Command up = '" + m_command_up + "'\n");
+
+        if (!m_command_fast_up.empty())
+            map_str.append("Command up (fast) = '" + m_command_fast_up + "'\n");
+
+        map_str.append("Command down = '" + m_command_down + "'\n");
+
+        if (!m_command_fast_down.empty())
+            map_str.append("Command down (fast) = '" + m_command_fast_down + "'\n");
+    }
+
+    return map_str;
 }
 
 } // Namespace xmidictrl

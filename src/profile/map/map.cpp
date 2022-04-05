@@ -77,6 +77,26 @@ unsigned char map::data() const
 
 
 /**
+ * Return the source line
+ */
+std::string_view map::source_line() const
+{
+    return m_source_line;
+}
+
+/**
+ * Return the mapping as text
+ */
+std::string_view map::as_text()
+{
+    if (m_mapping_text.empty())
+        m_mapping_text = build_mapping_text();
+
+    return m_mapping_text;
+}
+
+
+/**
  * Return a string containing channel, type and data
  */
 std::string map::get_key()
@@ -114,6 +134,9 @@ std::string map::get_key()
  */
 void map::read_config(text_logger &in_log, toml::value &in_data)
 {
+    // set source line
+    m_source_line = std::to_string(in_data.location().line()) + " :: " + in_data.location().line_str();
+
     // required config
     read_channel(in_log, in_data);
     read_data(in_log, in_data);
@@ -233,39 +256,6 @@ void map::read_data(text_logger &in_log, toml::value &in_data)
         in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
         in_log.error(error.what());
     }
-}
-
-
-/**
- * Return the channel and data as string
- */
-std::string map::channel_data_as_string()
-{
-    std::stringstream ss;
-    ss << "Channel " << static_cast<int>(m_channel) << ", ";
-
-    switch (m_data_type) {
-        case map_data_type::control_change:
-            ss << "Control Change " << static_cast<int>(m_data);
-            break;
-
-        case map_data_type::note:
-            ss << "Note " << static_cast<int>(m_data);
-
-        case map_data_type::program_change:
-            ss << "Program Change "  << static_cast<int>(m_data);
-            break;
-
-        case map_data_type::pitch_bend:
-            ss << "Pitch Bend";
-            break;
-
-        case map_data_type::none:
-            ss << "<none>";
-            break;
-    }
-
-    return ss.str();
 }
 
 } // Namespace xmidictrl

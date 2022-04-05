@@ -36,7 +36,7 @@ public:
     virtual ~config() = default;
 
 protected:
-    xplane &xp() const;
+    [[nodiscard]] xplane &xp() const;
 
     bool load_file(text_logger &in_log, std::string_view in_filename);
     void close_file(text_logger &in_log);
