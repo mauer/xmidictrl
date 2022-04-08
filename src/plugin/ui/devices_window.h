@@ -22,12 +22,12 @@
 #include "RtMidi.h"
 
 // XMidiCtrl
-#include "ImGuiWindow.h"
+#include "imgui_window.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
-class devices_window : public ImGuiWindow {
+class devices_window : public imgui_window {
 public:
     devices_window(text_logger &in_log, xplane &in_xp);
     ~devices_window() override;

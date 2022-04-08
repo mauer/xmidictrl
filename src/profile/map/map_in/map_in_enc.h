@@ -39,36 +39,6 @@ public:
 
     map_type type() override;
 
-    void set_mode(encoder_mode in_mode);
-    [[nodiscard]] encoder_mode mode() const;
-
-    void set_dataref(std::string_view in_dataref);
-    [[nodiscard]] std::string_view dataref() const;
-
-    void set_modifier_up(float in_modifier);
-    [[nodiscard]] float modifier_up() const;
-
-    void set_modifier_down(float in_modifier);
-    [[nodiscard]] float modifier_down() const;
-
-    void set_modifier_fast_up(float in_modifier);
-    [[nodiscard]] float modifier_fast_up() const;
-
-    void set_modifier_fast_down(float in_modifier);
-    [[nodiscard]] float modifier_fast_down() const;
-
-    void set_command_up(std::string_view in_command_up);
-    [[nodiscard]] std::string_view command_up() const;
-
-    void set_command_fast_up(std::string_view in_command_fast_up);
-    [[nodiscard]] std::string_view command_fast_up() const;
-
-    void set_command_down(std::string_view in_command_down);
-    [[nodiscard]] std::string_view command_down() const;
-
-    void set_command_fast_down(std::string_view in_command_fast_down);
-    [[nodiscard]] std::string_view command_fast_down() const;
-
     void read_config(text_logger &in_log, toml::value &in_data) override;
     bool check(text_logger &in_log) override;
 

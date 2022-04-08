@@ -156,7 +156,7 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
  */
 std::string map_in_cmd::build_mapping_text()
 {
-    std::string map_str = " :: Command ::\n";
+    std::string map_str = " ====== Command ======\n";
     map_str.append("Command = '" + m_command + "'\n");
 
     if (m_velocity_on != MIDI_VELOCITY_MAX)

@@ -69,12 +69,12 @@ xplane_window::~xplane_window()
 /**
  * Return multi matrix
  */
-void xplane_window::multi_matrix_vec4f(GLfloat dst[4], const std::vector<float> &m, const GLfloat v[4])
+void xplane_window::multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float> &in_m, const GLfloat in_v[4])
 {
-    dst[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
-    dst[1] = v[0] * m[1] + v[1] * m[5] + v[2] * m[9] + v[3] * m[13];
-    dst[2] = v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + v[3] * m[14];
-    dst[3] = v[0] * m[3] + v[1] * m[7] + v[2] * m[11] + v[3] * m[15];
+    in_dst[0] = in_v[0] * in_m[0] + in_v[1] * in_m[4] + in_v[2] * in_m[8] + in_v[3] * in_m[12];
+    in_dst[1] = in_v[0] * in_m[1] + in_v[1] * in_m[5] + in_v[2] * in_m[9] + in_v[3] * in_m[13];
+    in_dst[2] = in_v[0] * in_m[2] + in_v[1] * in_m[6] + in_v[2] * in_m[10] + in_v[3] * in_m[14];
+    in_dst[3] = in_v[0] * in_m[3] + in_v[1] * in_m[7] + in_v[2] * in_m[11] + in_v[3] * in_m[15];
 }
 
 
@@ -110,10 +110,10 @@ void xplane_window::hide()
 /**
  * Set the title of the window
  */
-void xplane_window::set_title(std::string_view title)
+void xplane_window::set_title(std::string_view in_title)
 {
     if (m_window_id != nullptr)
-        XPLMSetWindowTitle(m_window_id, title.data());
+        XPLMSetWindowTitle(m_window_id, in_title.data());
 }
 
 
@@ -138,7 +138,7 @@ bool xplane_window::is_visible() const
 /**
  * On click event
  */
-bool xplane_window::on_click(int x, int y, XPLMMouseStatus status)
+bool xplane_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
 {
     return true;
 }
@@ -147,7 +147,7 @@ bool xplane_window::on_click(int x, int y, XPLMMouseStatus status)
 /**
  * On right click event
  */
-bool xplane_window::on_right_click(int x, int y, XPLMMouseStatus status)
+bool xplane_window::on_right_click(int in_x, int in_y, XPLMMouseStatus in_status)
 {
     return true;
 }
@@ -156,9 +156,9 @@ bool xplane_window::on_right_click(int x, int y, XPLMMouseStatus status)
 /**
  * On key pressed event
  */
-void xplane_window::on_key(char key, XPLMKeyFlags flags, char virtual_key, bool losing_focus)
+void xplane_window::on_key(char in_key, XPLMKeyFlags in_flags, char in_virtual_key, bool in_losing_focus)
 {
-    if (losing_focus) {
+    if (in_losing_focus) {
         return;
     }
 }
@@ -167,7 +167,7 @@ void xplane_window::on_key(char key, XPLMKeyFlags flags, char virtual_key, bool 
 /**
  * On cursor event
  */
-XPLMCursorStatus xplane_window::on_cursor(int x, int y)
+XPLMCursorStatus xplane_window::on_cursor(int in_x, int in_y)
 {
     // always return the default cursor
     return xplm_CursorDefault;
@@ -177,7 +177,7 @@ XPLMCursorStatus xplane_window::on_cursor(int x, int y)
 /**
  * On mouse wheel event
  */
-bool xplane_window::on_mouse_wheel(int x, int y, int wheel, int clicks)
+bool xplane_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_clicks)
 {
     return true;
 }
@@ -192,7 +192,7 @@ bool xplane_window::on_mouse_wheel(int x, int y, int wheel, int clicks)
 /**
  * Create a new window in X-Plane
  */
-void xplane_window::create_window(bool translucent)
+void xplane_window::create_window(bool in_translucent)
 {
     // get the X-Plane screen boundaries in boxels
     int screen_left, screen_top, screen_right, screen_bottom;
@@ -210,7 +210,7 @@ void xplane_window::create_window(bool translucent)
     params.layer = xplm_WindowLayerFloatingWindows;
 
     // set window decoration
-    if (translucent)
+    if (in_translucent)
         params.decorateAsFloatingWindow = xplm_WindowDecorationNone;
     else
         params.decorateAsFloatingWindow = xplm_WindowDecorationRoundRectangle;
@@ -271,7 +271,7 @@ void XPlaneWindow::setWindowGeometry(int mleft, int mtop, int mright, int mbot) 
 }*/
 
 
-bool xplane_window::hasKeyboardFocus()
+bool xplane_window::has_keyboard_focus()
 {
     if (m_window_id != nullptr)
         return XPLMHasKeyboardFocus(m_window_id);
@@ -280,10 +280,10 @@ bool xplane_window::hasKeyboardFocus()
 }
 
 
-void xplane_window::requestKeyboardFocus(bool request)
+void xplane_window::request_keyboard_focus(bool in_request)
 {
     if (m_window_id != nullptr)
-        XPLMTakeKeyboardFocus(request ? m_window_id : nullptr);
+        XPLMTakeKeyboardFocus(in_request ? m_window_id : nullptr);
 }
 
 
@@ -296,12 +296,12 @@ void xplane_window::update_matrices()
 }
 
 
-void xplane_window::boxels_to_native(int x, int y, int &out_x, int &out_y)
+void xplane_window::boxels_to_native(int in_x, int in_y, int &out_x, int &out_y)
 {
-    GLfloat boxelPos[4] = {(GLfloat) x, (GLfloat) y, 0, 1};
+    GLfloat boxel_pos[4] = {(GLfloat) in_x, (GLfloat) in_y, 0, 1};
     GLfloat eye[4], ndc[4];
 
-    multi_matrix_vec4f(eye, m_modelview, boxelPos);
+    multi_matrix_vec4f(eye, m_modelview, boxel_pos);
     multi_matrix_vec4f(ndc, m_projection, eye);
     ndc[3] = 1.0f / ndc[3];
     ndc[0] *= ndc[3];

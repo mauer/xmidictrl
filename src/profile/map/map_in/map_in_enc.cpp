@@ -51,198 +51,6 @@ map_type map_in_enc::type()
 
 
 /**
- * Set the encoder mode
- */
-void map_in_enc::set_mode(encoder_mode in_mode)
-{
-    m_mode = in_mode;
-}
-
-
-/**
- * Return the encoder mode
- */
-encoder_mode map_in_enc::mode() const
-{
-    return m_mode;
-}
-
-
-/**
- * Set the dataref
- */
-void map_in_enc::set_dataref(std::string_view in_dataref)
-{
-    m_dataref = in_dataref;
-}
-
-
-/**
- * Return the dataref
- */
-std::string_view map_in_enc::dataref() const
-{
-    return m_dataref;
-}
-
-
-/**
- * Set the modifier for up
- */
-void map_in_enc::set_modifier_up(float in_modifier)
-{
-    m_modifier_up = in_modifier;
-}
-
-
-/**
- * Return modifier for up
- */
-float map_in_enc::modifier_up() const
-{
-    return m_modifier_up;
-}
-
-
-/**
- * Set the modifier for down
- */
-void map_in_enc::set_modifier_down(float in_modifier)
-{
-    m_modifier_down = in_modifier;
-}
-
-
-/**
- * Return modifier for down
- */
-float map_in_enc::modifier_down() const
-{
-    return m_modifier_down;
-}
-
-
-/**
- * Set the modifier for fast up
- */
-void map_in_enc::set_modifier_fast_up(float in_modifier)
-{
-    m_modifier_fast_up = in_modifier;
-}
-
-
-/**
- * Return modifier for fast up
- */
-float map_in_enc::modifier_fast_up() const
-{
-    if (m_modifier_fast_up == 0.0f)
-        return m_modifier_up;
-    else
-        return m_modifier_fast_up;
-}
-
-
-/**
- * Set the modifier for fast down
- */
-void map_in_enc::set_modifier_fast_down(float in_modifier)
-{
-    m_modifier_fast_down = in_modifier;
-}
-
-
-/**
- * Return modifier for fast down
- */
-float map_in_enc::modifier_fast_down() const
-{
-    if (m_modifier_fast_down == 0.0f)
-        return m_modifier_down;
-    else
-        return m_modifier_fast_down;
-}
-
-
-/**
- * Set the command for up
- */
-void map_in_enc::set_command_up(std::string_view in_command_up)
-{
-    m_command_up = in_command_up;
-}
-
-
-/**
- * Return command for up
- */
-std::string_view map_in_enc::command_up() const
-{
-    return m_command_up;
-}
-
-
-/**
- * Set the command for fast up
- */
-void map_in_enc::set_command_fast_up(std::string_view in_command_fast_up)
-{
-    m_command_fast_up = in_command_fast_up;
-}
-
-
-/**
- * Return command for fast up
- */
-std::string_view map_in_enc::command_fast_up() const
-{
-    if (m_command_fast_up.empty())
-        return m_command_up;
-    else
-        return m_command_fast_up;
-}
-
-
-/**
- * Set the command for down
- */
-void map_in_enc::set_command_down(std::string_view in_command_down)
-{
-    m_command_down = in_command_down;
-}
-
-
-/**
- * Return command for down
- */
-std::string_view map_in_enc::command_down() const
-{
-    return m_command_down;
-}
-
-
-/**
- * Set the command for fast down
- */
-void map_in_enc::set_command_fast_down(std::string_view in_command_fast_down)
-{
-    m_command_fast_down = in_command_fast_down;
-}
-
-
-/**
- * Return command for fast down
- */
-std::string_view map_in_enc::command_fast_down() const
-{
-    if (m_command_fast_down.empty())
-        return m_command_down;
-    else
-        return m_command_fast_down;
-}
-
-
-/**
  * Read settings from config
  */
 void map_in_enc::read_config(text_logger &in_log, toml::value &in_data)
@@ -251,26 +59,32 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data)
     map_in::read_config(in_log, in_data);
 
     // read the mode
-    set_mode(conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false)));
+    m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
         in_log.debug(" --> Use 'dataref' mode for encoder mapping");
 
         // read dataref
-        set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
+        m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
 
         // read modifier up
-        set_modifier_up(toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_UP));
+        m_modifier_up = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_UP);
 
         // read modifier down
-        set_modifier_down(toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_DOWN));
+        m_modifier_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_DOWN);
 
         // read modifier fast up
-        set_modifier_fast_up(toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP, false));
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP, false))
+            m_modifier_fast_up = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP);
+        else
+            m_modifier_fast_up = m_modifier_up;
 
         // read modifier fast down
-        set_modifier_fast_down(toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN, false));
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN, false))
+            m_modifier_fast_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN);
+        else
+            m_modifier_fast_down = m_modifier_down;
 
         // read value min
         if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN, false)) {
@@ -287,16 +101,22 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data)
         in_log.debug(" --> Use 'command' mode for encoder mapping");
 
         // read command up
-        set_command_up(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP));
+        m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
 
         // read command down
-        set_command_down(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN));
+        m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);
 
         // read fast command up
-        set_command_fast_up(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_UP, false));
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_UP,false))
+            m_command_fast_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_UP);
+        else
+            m_command_fast_up = m_command_up;
 
         // read fast command down
-        set_command_fast_down(toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN, false));
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN, false))
+            m_command_fast_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN);
+        else
+            m_command_fast_down = m_command_down;
     }
 }
 
@@ -309,13 +129,13 @@ bool map_in_enc::check(text_logger &in_log)
     if (!map::check(in_log))
         return false;
 
-    if (!dataref().empty()) {
+    if (!m_dataref.empty()) {
         // dataref mode
-        if (!xp().datarefs().check(in_log, dataref()))
+        if (!xp().datarefs().check(in_log, m_dataref))
             return false;
 
-        if (modifier_up() == 0.0f && modifier_down() == 0.0f && modifier_fast_up() == 0.0f
-            && modifier_fast_down() == 0.0f)
+        if (m_modifier_up == 0.0f && m_modifier_down == 0.0f && m_modifier_fast_up == 0.0f
+            && m_modifier_fast_down == 0.0f)
             return false;
 
         if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max)
@@ -324,7 +144,7 @@ bool map_in_enc::check(text_logger &in_log)
         return true;
     } else {
         // command mode
-        if (command_up().empty() && command_down().empty() && command_fast_up().empty() && command_fast_down().empty())
+        if (m_command_up.empty() && m_command_down.empty() && m_command_fast_up.empty() && m_command_fast_down.empty())
             return false;
         else
             return true;
@@ -340,7 +160,7 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (!check_sublayer(in_sl_value))
         return true;
 
-    if (!dataref().empty())
+    if (!m_dataref.empty())
         return execute_dataref(in_msg);
     else
         return execute_command(in_msg);
@@ -361,7 +181,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
     float value = 0.0f;
 
     // read current value
-    if (!xp().datarefs().read(in_msg.log(), dataref(), value)) {
+    if (!xp().datarefs().read(in_msg.log(), m_dataref, value)) {
         m_velocity_prev = in_msg.data_2();
         return false;
     }
@@ -371,11 +191,11 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         if (in_msg.data_2() < 64) {
             // Down
             if (in_msg.data_2() < 61) {
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_fast_down());
-                value = value + modifier_fast_down();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_fast_down);
+                value = value + m_modifier_fast_down;
             } else {
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_down());
-                value = value + modifier_down();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_down);
+                value = value + m_modifier_down;
             }
 
             if (m_value_min_defined && value < m_value_min)
@@ -383,11 +203,11 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         } else if (in_msg.data_2() > 64) {
             // Up
             if (in_msg.data_2() > 68) {
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_fast_up());
-                value = value + modifier_fast_up();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_fast_up);
+                value = value + m_modifier_fast_up;
             } else {
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_up());
-                value = value + modifier_up();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_up);
+                value = value + m_modifier_up;
             }
 
             if (m_value_max_defined && value > m_value_max)
@@ -403,8 +223,8 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
         switch (in_msg.data_2()) {
             case MIDI_VELOCITY_MIN:
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_up());
-                value = value + modifier_down();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_up);
+                value = value + m_modifier_down;
 
                 if (m_value_min_defined && value < m_value_min)
                     value = m_value_min;
@@ -412,8 +232,8 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
                 break;
 
             case MIDI_VELOCITY_MAX:
-                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_up());
-                value = value + modifier_up();
+                in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_up);
+                value = value + m_modifier_up;
 
                 if (m_value_max_defined && value > m_value_max)
                     value = m_value_max;
@@ -422,14 +242,14 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
             default:
                 if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
-                    in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_up());
-                    value = value + modifier_up();
+                    in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_up);
+                    value = value + m_modifier_up;
 
                     if (m_value_max_defined && value > m_value_max)
                         value = m_value_max;
                 } else {
-                    in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", dataref().data(), modifier_down());
-                    value = value + modifier_down();
+                    in_msg.log().debug(" --> Modify dataref '%s' by value '%f'", m_dataref.data(), m_modifier_down);
+                    value = value + m_modifier_down;
 
                     if (m_value_min_defined && value < m_value_min)
                         value = m_value_min;
@@ -440,7 +260,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
     m_velocity_prev = in_msg.data_2();
 
-    if (!xp().datarefs().write(in_msg.log(), dataref(), value))
+    if (!xp().datarefs().write(in_msg.log(), m_dataref, value))
         return false;
 
     return true;
@@ -457,42 +277,42 @@ bool map_in_enc::execute_command(midi_message &in_msg)
         if (in_msg.data_2() < 64) {
             // Down
             if (in_msg.data_2() < 61) {
-                in_msg.log().debug(" --> Execute command '%s'" , command_fast_down().data());
-                xp().cmd().execute(in_msg.log(), command_fast_down());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_fast_down.data());
+                xp().cmd().execute(in_msg.log(), m_command_fast_down);
             } else {
-                in_msg.log().debug(" --> Execute command '%s'", command_down().data());
-                xp().cmd().execute(in_msg.log(), command_down());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_down.data());
+                xp().cmd().execute(in_msg.log(), m_command_down);
             }
         } else if (in_msg.data_2() > 64) {
             // Up
             if (in_msg.data_2() > 68) {
-                in_msg.log().debug(" --> Execute command '%s'", command_fast_up().data());
-                xp().cmd().execute(in_msg.log(), command_fast_up());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_fast_up.data());
+                xp().cmd().execute(in_msg.log(), m_command_fast_up);
             } else {
-                in_msg.log().debug(" --> Execute command '%s'", command_up().data());
-                xp().cmd().execute(in_msg.log(), command_up());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_up.data());
+                xp().cmd().execute(in_msg.log(), m_command_up);
             }
         }
     } else {
         // range mode
         switch (in_msg.data_2()) {
             case MIDI_VELOCITY_MIN:
-                in_msg.log().debug(" --> Execute command '%s'", command_down().data());
-                xp().cmd().execute(in_msg.log(), command_down());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_down.data());
+                xp().cmd().execute(in_msg.log(), m_command_down);
                 break;
 
             case MIDI_VELOCITY_MAX:
-                in_msg.log().debug(" --> Execute command '%s'", command_up().data());
-                xp().cmd().execute(in_msg.log(), command_up());
+                in_msg.log().debug(" --> Execute command '%s'", m_command_up.data());
+                xp().cmd().execute(in_msg.log(), m_command_up);
                 break;
 
             default:
                 if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
-                    in_msg.log().debug(" --> Execute command '%s'", command_up().data());
-                    xp().cmd().execute(in_msg.log(), command_up());
+                    in_msg.log().debug(" --> Execute command '%s'", m_command_up.data());
+                    xp().cmd().execute(in_msg.log(), m_command_up);
                 } else {
-                    in_msg.log().debug(" --> Execute command '%s'", command_down().data());
-                    xp().cmd().execute(in_msg.log(), command_down());
+                    in_msg.log().debug(" --> Execute command '%s'", m_command_down.data());
+                    xp().cmd().execute(in_msg.log(), m_command_down);
                 }
                 break;
         }
@@ -515,7 +335,7 @@ bool map_in_enc::execute_command(midi_message &in_msg)
  */
 std::string map_in_enc::build_mapping_text()
 {
-    std::string map_str = " :: Encoder ::\n";
+    std::string map_str = " ====== Encoder ======\n";
 
     if (m_mode == encoder_mode::relative)
         map_str.append("Mode = 'relative'\n");

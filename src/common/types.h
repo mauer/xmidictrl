@@ -112,6 +112,8 @@ const char *const CFG_KEY_PITCH_BEND = "pitch";
 const char *const CFG_KEY_PROGRAM_CHANGE = "prg";
 const char *const CFG_KEY_PORT_IN = "port_in";
 const char *const CFG_KEY_PORT_OUT = "port_out";
+const char *const CFG_KEY_SEND_ON = "send_on";
+const char *const CFG_KEY_SEND_OFF = "send_off";
 const char *const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";
 const char *const CFG_KEY_SL = "sl";
 const char *const CFG_KEY_SL_DATAREF = "sl_dataref";
@@ -200,6 +202,12 @@ enum class dataref_mode {
 enum class encoder_mode {
     relative,
     range
+};
+
+// Send mode
+enum class send_mode {
+    all,
+    one
 };
 
 // Sorting mode

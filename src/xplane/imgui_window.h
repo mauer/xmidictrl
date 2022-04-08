@@ -26,8 +26,8 @@
 //   Copyright (C) 2018, Christopher Collins
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef IMGUIWINDOW_H
-#define IMGUIWINDOW_H
+#ifndef IMGUI_WINDOW_H
+#define IMGUI_WINDOW_H
 
 // Standord
 #include <memory>
@@ -39,7 +39,6 @@
 #else
     #include <GL/gl.h>
     #include <GL/glext.h>
-
 #endif
 
 // Dear ImGui
@@ -52,37 +51,43 @@
 
 namespace xmidictrl {
 
-class ImGuiWindow : public xplane_window {
+class imgui_window : public xplane_window {
 public:
-    ImGuiWindow(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
-    ~ImGuiWindow() override;
+    imgui_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
+    ~imgui_window() override;
 
 protected:
     void on_draw() override;
-    bool on_click(int x, int y, XPLMMouseStatus status) override;
-    bool on_mouse_wheel(int x, int y, int wheel, int clicks) override;
-    XPLMCursorStatus on_cursor(int x, int y) override;
-    void on_key(char key, XPLMKeyFlags flags, char virtualKey, bool losingFocus) override;
+    bool on_click(int in_x, int in_y, XPLMMouseStatus in_status) override;
+    bool on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_clicks) override;
+    XPLMCursorStatus on_cursor(int in_x, int in_y) override;
+    void on_key(char in_key, XPLMKeyFlags in_flags, char in_virtual_key, bool in_losing_focus) override;
 
     virtual void create_widgets() = 0;
 
 private:
+    void build_window();
+    void show_window();
+
+    void translate_imgui_to_boxel(float in_x, float in_y, int &out_x, int &out_y) const;
+    void translate_to_imgui_space(int in_x, int in_y, float &out_x, float &out_y) const;
+
     const float IMGUI_FONT_SIZE = 18.0f;
 
-    static std::shared_ptr<ImGuiFontAtlas> m_imGuiFontAtlas;
+    static std::shared_ptr<ImGuiFontAtlas> m_font;
 
-    GLuint m_fontTextureId {};
-    ImGuiContext *imGuiContext {};
-    int mLeft {}, mTop {}, mRight {}, mBottom {};
-    bool stopped = false;
+    //GLuint m_font_texture_id {};
+    int m_font_texture_id {};
+    ImGuiContext *m_context {nullptr};
 
-    void buildWindow();
-    void showWindow();
+    int m_left {0};
+    int m_top {0};
+    int m_right {0};
+    int m_bottom {0};
 
-    void translateImguiToBoxel(float inX, float inY, int &outX, int &outY);
-    void translateToImguiSpace(int inX, int inY, float &outX, float &outY);
+    bool m_active {true};
 };
 
-} // Namespace XMidiCtrl
+} // Namespace xmidictrl
 
-#endif // IMGUIWINDOW_H
+#endif // IMGUI_WINDOW_H

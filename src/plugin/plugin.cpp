@@ -54,7 +54,7 @@ plugin::plugin()
     m_plugin_log->info("Plugin %s loaded successfully", XMIDICTRL_FULL_NAME);
     XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " loaded successfully").data());
 
-    m_midi_log->set_max_size(m_settings->max_text_messages());
+    m_midi_log->set_max_size(m_settings->max_midi_messages());
 
     // create the menu
     m_menu = std::make_unique<menu>();
@@ -437,7 +437,7 @@ int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMComm
 /**
  * Create and returns windows
  */
-void plugin::create_window(window_type in_type)
+std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
 {
     std::shared_ptr<xplane_window> window;
 
@@ -445,7 +445,7 @@ void plugin::create_window(window_type in_type)
     try {
         window = m_windows.at(in_type);
         window->show();
-        return;
+        return window;
     } catch (std::out_of_range &) {
         window = nullptr;
     }
@@ -475,6 +475,8 @@ void plugin::create_window(window_type in_type)
 
     if (window)
         m_windows.emplace(in_type, window);
+
+    return window;
 }
 
 } // Mamespace xmidictrl

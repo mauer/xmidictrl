@@ -267,11 +267,11 @@ float toml_utils::read_float(text_logger &in_log,
             if (in_data[in_name.data()].is_floating()) {
                 value = static_cast<float>(in_data[in_name.data()].as_floating());
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%f'", in_data.location().line(), in_name, value);
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%f'", in_data.location().line(), in_name.data(), value);
             } else if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<float>(in_data[in_name.data()].as_integer());
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), in_name, value);
+                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), in_name.data(), value);
             } else {
                 in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
                 in_log.error(" --> Parameter '%s' is not numeric", in_name);

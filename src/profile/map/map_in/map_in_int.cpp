@@ -86,7 +86,7 @@ bool map_in_int::execute(midi_message &in_msg, std::string_view in_sl_value)
  */
 std::string map_in_int::build_mapping_text()
 {
-    std::string map_str = " :: Internal ::\n";
+    std::string map_str = " ====== Internal ======\n";
 
     return map_str;
 }

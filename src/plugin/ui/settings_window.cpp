@@ -35,7 +35,7 @@ namespace xmidictrl {
  * Constructor
  */
 settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings)
-    : ImGuiWindow(in_log, in_xp, 1000, 650),
+    : imgui_window(in_log, in_xp, 1000, 600),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
@@ -79,48 +79,43 @@ void settings_window::create_widgets()
     ImGui::Checkbox("Debug Mode", &m_debug_mode);
     if (m_debug_mode) {
         ImGui::SameLine(500);
-        ImGui::Text("Message Limit:");
+        ImGui::Text("Limit for message log:");
         ImGui::SameLine();
         ImGui::PushItemWidth(150);
-        if (ImGui::InputInt(" Text", &m_max_text_messages, 50, 100)) {
+        if (ImGui::InputInt(" Messages##text", &m_max_text_messages, 50, 100)) {
             if (m_max_text_messages < 1)
                 m_max_text_messages = 1;
             else if (m_max_text_messages > 5000)
                 m_max_text_messages = 5000;
         }
     }
-    ImGui::NewLine();
     ImGui::TextUnformatted("Default sort mode:");
     ImGui::SameLine();
-    ImGui::RadioButton("Text Messages Ascending", &m_default_text_sort, 0);
+    ImGui::RadioButton("Ascending##text", &m_default_text_sort, 0);
     ImGui::SameLine();
-    ImGui::RadioButton("Text Messages Descending", &m_default_text_sort, 1);
+    ImGui::RadioButton("Descending##text", &m_default_text_sort, 1);
 
     ImGui::NewLine();
     ImGui::NewLine();
 
-    ImGui::Checkbox("Log inbound and outbound MIDI messages", &m_log_midi);
+    ImGui::Checkbox("Log MIDI messages", &m_log_midi);
     if (m_log_midi) {
         ImGui::SameLine(500);
-        ImGui::Text("Message Limit:");
+        ImGui::Text("Limit for MIDI log:");
         ImGui::SameLine();
         ImGui::PushItemWidth(150);
-        if (ImGui::InputInt(" MIDI", &m_max_midi_messages, 50, 100)) {
+        if (ImGui::InputInt(" Messages##midi", &m_max_midi_messages, 50, 100)) {
             if (m_max_midi_messages < 1)
                 m_max_midi_messages = 1;
             else if (m_max_midi_messages > 5000)
                 m_max_midi_messages = 5000;
         }
     }
-    ImGui::NewLine();
     ImGui::TextUnformatted("Default sort mode:");
     ImGui::SameLine();
-    ImGui::RadioButton("MIDI Messages Ascending", &m_default_midi_sort, 0);
+    ImGui::RadioButton("Ascending##midi", &m_default_midi_sort, 0);
     ImGui::SameLine();
-    ImGui::RadioButton("MIDI Messages Descending", &m_default_midi_sort, 1);
-
-    ImGui::NewLine();
-    ImGui::Checkbox("Show message dialog in case of errors and warnings", &m_show_messages);
+    ImGui::RadioButton("Descending##midi", &m_default_midi_sort, 1);
 
     ImGui::NewLine();
     ImGui::NewLine();
@@ -130,6 +125,7 @@ void settings_window::create_widgets()
     ImGui::NewLine();
 
     ImGui::Checkbox("Use common aircraft profile", &m_common_profile);
+    ImGui::Checkbox("Show errors after loading an aircraft", &m_show_messages);
 
     ImGui::NewLine();
     ImGui::NewLine();

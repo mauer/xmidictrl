@@ -42,17 +42,8 @@ public:
     void set_dataref(std::string_view dataref);
     void set_dataref(std::vector<std::string> dataref);
 
-    void set_values_on(const std::set<std::string>& values);
-    [[nodiscard]] std::set<std::string> values_on() const;
-
-    void set_values_off(const std::set<std::string>& valuees);
-    [[nodiscard]] std::set<std::string> values_off() const;
-
     void set_velocity_on(int velocity_on);
-    [[nodiscard]] unsigned int velocity_on() const;
-
     void set_velocity_off(int value_off);
-    [[nodiscard]] unsigned int velocity_off() const;
 
     void read_config(text_logger &in_log, toml::value &in_data) override;
     bool check(text_logger &in_log) override;
@@ -69,6 +60,9 @@ private:
 
     std::set<std::string> m_values_on {};
     std::set<std::string> m_values_off {};
+
+    send_mode m_send_on {send_mode::one};
+    send_mode m_send_off {send_mode::all};
 
     unsigned int m_velocity_on {127};
     unsigned int m_velocity_off {0};

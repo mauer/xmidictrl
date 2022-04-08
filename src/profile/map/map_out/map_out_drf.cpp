@@ -86,42 +86,6 @@ void map_out_drf::set_dataref(std::vector<std::string> dataref)
 
 
 /**
- * Set values on
- */
-void map_out_drf::set_values_on(const std::set<std::string> &values)
-{
-    m_values_on = values;
-}
-
-
-/**
- * Return value on
- */
-std::set<std::string> map_out_drf::values_on() const
-{
-    return m_values_on;
-}
-
-
-/**
- * Set values off
- */
-void map_out_drf::set_values_off(const std::set<std::string> &values)
-{
-    m_values_off = values;
-}
-
-
-/**
- * Return value off
- */
-std::set<std::string> map_out_drf::values_off() const
-{
-    return m_values_off;
-}
-
-
-/**
  * Set velocity on
  */
 void map_out_drf::set_velocity_on(int velocity_on)
@@ -134,15 +98,6 @@ void map_out_drf::set_velocity_on(int velocity_on)
 
 
 /**
- * Return velocity on
- */
-unsigned int map_out_drf::velocity_on() const
-{
-    return m_velocity_on;
-}
-
-
-/**
  * Set velocity off
  */
 void map_out_drf::set_velocity_off(int velocity_off)
@@ -151,15 +106,6 @@ void map_out_drf::set_velocity_off(int velocity_off)
         m_velocity_off = velocity_off;
     else
         m_velocity_off = MIDI_VELOCITY_MIN;
-}
-
-
-/**
- * Return velocity off
- */
-unsigned int map_out_drf::velocity_off() const
-{
-    return m_velocity_off;
 }
 
 
@@ -182,28 +128,24 @@ void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
 
     // read values on
     if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
-        set_values_on(toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON, false));
+        m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON, false);
     } else {
-        std::set<std::string> list;
+        m_values_on.clear();
         std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON, false);
 
         if (!value.empty())
-            list.insert(value);
-
-        set_values_on(list);
+            m_values_on.insert(value);
     }
 
     // read values off
     if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
-        set_values_off(toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF, false));
+        m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF, false);
     } else {
-        std::set<std::string> list;
+        m_values_off.clear();
         std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF, false);
 
         if (!value.empty())
-            list.insert(value);
-
-        set_values_off(list);
+            m_values_off.insert(value);
     }
 
     // read velocity on
@@ -211,6 +153,18 @@ void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
 
     // read velocity off
     set_velocity_off(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF, false));
+
+    // read send on
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_ON, false)) {
+        if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_ON) == "all")
+            m_send_on = send_mode::all;
+    }
+
+    // read send off
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_OFF, false)) {
+        if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_OFF) == "one")
+            m_send_off = send_mode::one;
+    }
 }
 
 
@@ -233,6 +187,20 @@ bool map_out_drf::check(text_logger &in_log)
             return false;
     }
 
+    if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
+        in_log.error(source_line());
+        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
+                     CFG_KEY_VELOCITY_ON);
+        return false;
+    }
+
+    if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
+        in_log.error(source_line());
+        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
+                     CFG_KEY_VELOCITY_OFF);
+        return false;
+    }
+
     return true;
 }
 
@@ -245,8 +213,8 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
     bool changed = false;
 
     bool send_msg = false;
-    bool send_on = false;
-    char send_off = 0;
+    int send_on = 0;
+    int send_off = 0;
 
     // if one value has been changed, all other values have to be checked as well
     for (auto &dataref: m_datarefs) {
@@ -286,7 +254,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
         // value_on has been defined
         if (!m_values_on.empty()) {
             if (m_values_on.find(value_current) != m_values_on.end()) {
-                send_on = true;
+                send_on++;
                 break;
             } else if (m_values_off.find(value_current) != m_values_off.end() || m_values_off.empty()) {
                 send_off++;
@@ -295,13 +263,16 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
             if (m_values_off.find(value_current) != m_values_off.end()) {
                 send_off++;
             } else if (m_values_on.find(value_current) != m_values_on.end() || m_values_on.empty()) {
-                send_on = true;
+                send_on++;
                 break;
             }
         }
     }
 
-    if (send_on || send_off == m_datarefs.size()) {
+    if ((m_send_on == send_mode::all && send_on == m_datarefs.size())
+        || (m_send_on == send_mode::one && send_on > 0)
+        || (m_send_off == send_mode::all && send_off == m_datarefs.size())
+        || (m_send_off == send_mode::one && send_off > 0)) {
         std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 
         task->data_changed = changed;
@@ -334,7 +305,8 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
         task->ch = channel();
         task->data = data();
 
-        if (send_on)
+        if ((m_send_on == send_mode::all && send_on == m_datarefs.size())
+            || (m_send_on == send_mode::one && send_on > 0))
             task->velocity = m_velocity_on;
         else
             task->velocity = m_velocity_off;
@@ -400,7 +372,7 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
  */
 std::string map_out_drf::build_mapping_text()
 {
-    std::string map_str = " :: Dataref ::\n";
+    std::string map_str = " ====== Dataref ======\n";
 
     // Dataref
     if (m_datarefs.size() == 1) {
@@ -460,6 +432,18 @@ std::string map_out_drf::build_mapping_text()
     // Velocity off
     if (m_velocity_off != MIDI_VELOCITY_MIN)
         map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'");
+
+    // Send on
+    if (m_send_on == send_mode::all)
+        map_str.append("Send on = 'all'");
+    else
+        map_str.append("Send on = 'one'");
+
+    // Send off
+    if (m_send_off == send_mode::all)
+        map_str.append("Send off = 'all'");
+    else
+        map_str.append("Send off = 'one'");
 
     return map_str;
 }

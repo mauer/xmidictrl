@@ -177,7 +177,7 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
  */
 std::string map_in_drf::build_mapping_text()
 {
-    std::string map_str = " :: Dataref ::\n";
+    std::string map_str = " ====== Dataref ======\n";
     map_str.append("Dataref = '" + m_dataref + "'\n");
 
     if (m_mode == dataref_mode::toggle)

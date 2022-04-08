@@ -19,13 +19,13 @@
 #define ABOUT_WINDOW_H
 
 // XMidiCtrl
-#include "ImGuiWindow.h"
+#include "imgui_window.h"
 #include "text_logger.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
-class about_window : public ImGuiWindow {
+class about_window : public imgui_window {
 public:
     about_window(text_logger &in_log, xplane &in_xp);
     ~about_window() override = default;

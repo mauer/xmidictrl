@@ -22,7 +22,7 @@ set(XPLANE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/commands.cpp
         ${CMAKE_CURRENT_LIST_DIR}/data.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ImGuiWindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/xplane.cpp
         ${CMAKE_CURRENT_LIST_DIR}/xplane_window.cpp
         )

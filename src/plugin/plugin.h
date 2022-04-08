@@ -79,7 +79,7 @@ private:
 
     static int command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
 
-    void create_window(window_type in_type);
+    std::shared_ptr<xplane_window> create_window(window_type in_type);
 
     XPLMFlightLoopID m_flight_loop_id {nullptr};
 

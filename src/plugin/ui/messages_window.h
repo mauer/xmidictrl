@@ -22,7 +22,7 @@
 #include <memory>
 
 // XMidiCtrl
-#include "ImGuiWindow.h"
+#include "imgui_window.h"
 #include "midi_logger.h"
 #include "settings.h"
 #include "text_logger.h"
@@ -31,7 +31,7 @@
 
 namespace xmidictrl {
 
-class messages_window : public ImGuiWindow {
+class messages_window : public imgui_window {
 public:
     messages_window(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
     ~messages_window() override;

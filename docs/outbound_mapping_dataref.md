@@ -20,6 +20,14 @@ It's not required to define *value_on* and *value_off*. However, at least one of
 |--------------|-------------------------------------------------------------|
 | velocity_on  | Velocity which will be sent for an on message (Default 127) |
 | velocity_off | Velocity which will be sent for an off message (Default 0)  |
+| send_on      | Can be set to 'one' or 'all' (Default 'one')                |
+| send_off     | Can be set to 'one' or 'all' (Default 'all')                |
+
+### Parameters send_on / send_off
+
+Both parameters define at which stage an MIDI on/off message should be sent. When set to 'one' the message will be
+sent as soon as one of the defined datarefs is set to value_on/value_off. If the parameter is set to 'all', all datarefs
+have to be to the value_on/value_off before the message is being sent.
 
 ## Examples
 

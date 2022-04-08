@@ -20,6 +20,9 @@
 // Standard
 #include <string>
 
+// Font Awesome
+#include <IconsFontAwesome6.h>
+
 // XMidiCtrl
 #include "plugin.h"
 
@@ -33,7 +36,7 @@ namespace xmidictrl {
  * Constructor
  */
 profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile)
-    : ImGuiWindow(in_log, in_xp, 1200, 600),
+    : imgui_window(in_log, in_xp, 1200, 600),
       m_profile(in_profile)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");
@@ -159,9 +162,9 @@ void profile_window::create_tab_errors_warnings()
         else
             ImGui::TextColored(COL_TEXT_VALUE, "No");
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 200);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 100);
 
-        if (ImGui::Button("  Reload Aircraft Profile  "))
+        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT " Reload Aircraft Profile  "))
             plugin::instance().load_profile();
 
         ImGui::Text("Warnings found:");

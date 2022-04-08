@@ -177,7 +177,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
  */
 std::string map_in_sld::build_mapping_text()
 {
-    std::string map_str = " :: Slider ::\n";
+    std::string map_str = " ====== Slider ======\n";
 
     if (!m_dataref.empty()) {
         map_str.append("Dataref = '" + m_dataref + "'\n");
