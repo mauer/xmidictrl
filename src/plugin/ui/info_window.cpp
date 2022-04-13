@@ -48,8 +48,7 @@ info_window::info_window(text_logger &in_log, xplane &in_xp, std::map<std::strin
  */
 void info_window::show()
 {
-    //set_window_position(window_position::bottom_left, 850, (int)(m_messages.size() * ROW_HEIGHT) + 50);
-
+    set_window_position(window_position::bottom_left, 850, (int)(m_messages.size() * ROW_HEIGHT) + 55);
     imgui_window::show();
 }
 

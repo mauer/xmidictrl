@@ -276,7 +276,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
     if (!xp().datarefs().write(in_msg.log(), m_dataref, value)) {
         try {
-            display_label(std::to_string(value));
+            display_label(in_msg.log(), std::to_string(value));
         } catch (std::bad_alloc &ex) {
             in_msg.log().error("Error converting float '%f' value to string", value);
             in_msg.log().error(ex.what());

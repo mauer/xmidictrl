@@ -59,8 +59,8 @@ public:
                  int in_width,
                  int in_height,
                  window_position in_position = window_position::top_left,
-                 int in_offset_x = 50,
-                 int in_offset_y = 50,
+                 int in_offset_x = 100,
+                 int in_offset_y = 100,
                  bool in_translucent = false);
     ~imgui_window() override;
 

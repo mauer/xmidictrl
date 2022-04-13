@@ -145,7 +145,7 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
         in_msg.log().debug(" --> Change dataref '%s' to value '%s'", m_dataref.c_str(), value.c_str());
 
         xp().datarefs().write(in_msg.log(), m_dataref, value);
-        display_label(value);
+        display_label(in_msg.log(), value);
     } else {
         toggle_dataref(in_msg.log(), m_dataref, m_values);
     }

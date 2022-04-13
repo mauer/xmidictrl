@@ -220,7 +220,7 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
         return false;
     }
 
-    in_log.debug("Set dataref '%s' to value '%s'", in_name.data(), in_value.data());
+    in_log.debug(" --> Set dataref '%s' to value '%s'", in_name.data(), in_value.data());
 
     try {
         if (item->type & xplmType_Int) {
@@ -275,7 +275,7 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
         return false;
     }
 
-    in_log.debug("Set dataref '%s' to value '%f'", in_name.data(), in_value);
+    in_log.debug(" --> Set dataref '%s' to value '%f'", in_name.data(), in_value);
 
     if (item->type & xplmType_Int) {
         write_int(item, static_cast<int>(in_value));
@@ -593,15 +593,15 @@ std::string data::toggle_int(text_logger &in_log,
 
     try {
         if (value == std::stoi(in_value_on.data())) {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_int(in_item, std::stoi(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_int(in_item, std::stoi(in_value_on.data()));
 
-            return in_value_off.data();
+            return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -632,12 +632,12 @@ std::string data::toggle_int_array(text_logger &in_log,
 
     try {
         if (value == std::stoi(in_value_on.data())) {
-            in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
+            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
             write_int_array(in_item, in_index, std::stoi(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
+            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
             write_int_array(in_item, in_index, std::stoi(in_value_on.data()));
 
             return in_value_on.data();
@@ -667,12 +667,12 @@ std::string data::toggle_float(text_logger &in_log,
 
     try {
         if (value == std::stof(in_value_on.data())) {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_float(in_item, std::stof(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_float(in_item, std::stof(in_value_on.data()));
 
             return in_value_on.data();
@@ -706,12 +706,12 @@ std::string data::toggle_float_array(text_logger &in_log,
 
     try {
         if (value == std::stof(in_value_on.data())) {
-            in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
+            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
             write_float_array(in_item, in_index, std::stof(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
+            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
             write_float_array(in_item, in_index, std::stof(in_value_on.data()));
 
             return in_value_on.data();
@@ -741,12 +741,12 @@ std::string data::toggle_double(text_logger &in_log,
 
     try {
         if (value == std::stod(in_value_on.data())) {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_double(in_item, std::stod(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_double(in_item, std::stod(in_value_on.data()));
 
             return in_value_on.data();
@@ -774,12 +774,12 @@ std::string data::toggle_byte(text_logger &in_log,
     std::string value = read_byte(in_item);
 
     if (value == in_value_on.data()) {
-        in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+        in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
         write_byte(in_item, in_value_off);
 
         return in_value_off.data();
     } else {
-        in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+        in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
         write_byte(in_item, in_value_on);
 
         return in_value_on.data();

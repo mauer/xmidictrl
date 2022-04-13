@@ -64,7 +64,7 @@ plugin::plugin()
     m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
 
     // create the inbound worker
-    m_worker = std::make_unique<inbound_worker>(*m_plugin_log);
+    m_worker = std::make_unique<inbound_worker>();
 }
 
 
@@ -160,19 +160,10 @@ void plugin::process_info_messages()
 
         if (msg->exp_time < std::chrono::system_clock::now())
             m_info_msg.erase(msg->id);
-
-        /*std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - msg->time;
-
-        m_plugin_log->debug("Process info 2.2 %f", elapsed_seconds);
-
-        if (elapsed_seconds.count() > 3.0f)
-            m_info_msg.erase(msg->id);*/
     }
 
     // show or hide dialog
     auto xp_win = create_window(window_type::info_window);
-
-    m_plugin_log->debug("Plugin: Number of info messages: %i", m_info_msg.size());
 
     if (xp_win != nullptr) {
         auto win = std::static_pointer_cast<info_window>(xp_win);
@@ -181,7 +172,6 @@ void plugin::process_info_messages()
             win->hide();
         else
             win->show();
-
     }
 }
 
@@ -281,9 +271,7 @@ void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, 
     msg->id = in_id;
     msg->text = in_msg;
 
-    m_plugin_log->debug("Info message exp time: %s", conversions::time_to_string(msg->exp_time).c_str());
-
-    m_info_msg.emplace(msg->id, msg);
+    m_info_msg.insert_or_assign(msg->id, msg);
 }
 
 

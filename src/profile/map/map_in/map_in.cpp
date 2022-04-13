@@ -90,7 +90,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
 {
     if (in_values.size() == 2) {
         auto value = xp().datarefs().toggle(in_log, in_dataref, in_values[0], in_values[1]);
-        display_label(value);
+        display_label(in_log, value);
     } else {
         // get current value
         std::string value;
@@ -116,7 +116,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
         in_log.debug(" --> Change dataref '%s' to value '%s'", in_dataref.data(), value.c_str());
 
         xp().datarefs().write(in_log, in_dataref, value);
-        display_label(value);
+        display_label(in_log, value);
     }
 }
 
@@ -124,7 +124,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
 /**
  * Display the label on the screen
  */
-void map_in::display_label(std::string_view in_value)
+void map_in::display_label(text_logger &in_log, std::string_view in_value)
 {
     if (m_label == nullptr)
         return;
