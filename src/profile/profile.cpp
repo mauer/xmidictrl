@@ -75,8 +75,8 @@ profile::~profile()
  */
 bool profile::load()
 {
-    // reset all messages
-    m_profile_log->clear();
+    clear();
+
     m_profile_log->debug("Load aircraft profile");
 
     // get the filename of the aircraft profile
@@ -96,8 +96,14 @@ bool profile::load()
         // load general settings for the profile
         m_sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
 
-        if (!m_sl_dataref.empty())
+        if (!m_sl_dataref.empty()) {
             m_profile_log->info("Sublayer mode activated");
+
+            if (!xp().datarefs().check(m_sl_dataref)) {
+                m_profile_log->error("Dataref '%s' not found", m_sl_dataref.c_str());
+                return false;
+            }
+        }
 
         create_device_list();
     } else {
@@ -106,7 +112,12 @@ bool profile::load()
     }
 
     // open the midi connections
-    return m_device_list->open_connections();
+    if (m_device_list->open_connections()) {
+        m_loaded = true;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
@@ -119,6 +130,17 @@ void profile::close()
 
     clear();
     close_file(*m_profile_log);
+
+    m_loaded = false;
+}
+
+
+/**
+ * Return if a profile is loaded
+ */
+bool profile::loaded() const
+{
+    return m_loaded;
 }
 
 
@@ -222,6 +244,9 @@ void profile::process(text_logger &in_log)
  */
 void profile::clear()
 {
+    m_loaded = false;
+    m_config = toml::value();
+
     m_sl_dataref.clear();
     m_filename.clear();
 
@@ -291,7 +316,7 @@ void profile::create_device_list()
         m_profile_log->info("%i Device(s) found in aircraft profile", profile_dev.size());
 
         // parse every device
-        for (int dev_no = 0; dev_no < static_cast<int>(profile_dev.size()); dev_no++) {
+        for (size_t dev_no = 0; dev_no < profile_dev.size(); dev_no++) {
             std::string name;
             int port_in;
             int port_out;
@@ -315,8 +340,7 @@ void profile::create_device_list()
                 port_in = toml_utils::read_int(*m_profile_log, settings_dev, CFG_KEY_PORT_IN);
 
                 if (port_in < 0) {
-                    // TODO
-                    //m_errors_found = true;
+                    m_profile_log->error("Invalid inbound port '%i'", port_in);
                     continue;
                 }
 
@@ -324,8 +348,7 @@ void profile::create_device_list()
                 port_out = toml_utils::read_int(*m_profile_log, settings_dev, CFG_KEY_PORT_OUT);
 
                 if (port_out < 0) {
-                    // TODO
-                    //m_errors_found = true;
+                    m_profile_log->error("Invalid outbound port '%i'", port_in);
                     continue;
                 }
 
@@ -337,14 +360,13 @@ void profile::create_device_list()
 
                 // create device
                 std::shared_ptr<device>
-                    device = m_device_list->create_device(m_plugin_log, m_midi_log, name, static_cast<int>(port_in),
-                                                          static_cast<int>(port_out), mode_out);
+                    device = m_device_list->create_device(m_plugin_log, m_midi_log, name, port_in,
+                                                          port_out, mode_out);
 
                 if (device != nullptr) {
                     // create inbound mappings
                     if (settings_dev.contains(CFG_KEY_MAPPING_IN)) {
                         create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
-
                     } else if (settings_dev.contains(CFG_KEY_MAPPING)) {
                         m_profile_log->warn("Device %i :: Key '%s' is deprecated, please rename it to '%s'",
                                             dev_no,
@@ -433,7 +455,7 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(*m_profile_log, settings[map_no]);
+            mapping->read_config(*m_profile_log, settings[map_no], m_config);
 
             if (mapping->check(*m_profile_log)) {
                 device->add_inbound_map(mapping);
@@ -472,7 +494,6 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
-
                 case map_type::dataref:
                     mapping = std::make_shared<map_out_drf>(xp());
                     break;

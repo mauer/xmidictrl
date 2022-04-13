@@ -34,6 +34,8 @@ public:
     explicit map_out(xplane &in_xp);
     ~map_out() override = default;
 
+    virtual void read_config(text_logger &in_log, toml::value &in_data) = 0;
+
     virtual std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out mode) = 0;
     virtual std::shared_ptr<outbound_task> reset() = 0;
 };

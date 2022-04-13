@@ -21,6 +21,7 @@ message("---- Directory: src/ui")
 set(UI_SRC
         ${CMAKE_CURRENT_LIST_DIR}/about_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/devices_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/info_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/menu.cpp
         ${CMAKE_CURRENT_LIST_DIR}/messages_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/profile_window.cpp

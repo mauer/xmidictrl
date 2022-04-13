@@ -90,10 +90,13 @@ const char *const CFG_KEY_COMMAND_PUSH = "command_push";
 const char *const CFG_KEY_COMMAND_UP = "command_up";
 const char *const CFG_KEY_COMMON_PROFILE = "common_profile";
 const char *const CFG_KEY_DATAREF = "dataref";
+const char *const CFG_KEY_DATAREF_PUSH = "dataref_push";
+const char *const CFG_KEY_DATAREF_PULL = "dataref_pull";
 const char *const CFG_KEY_DEBUG_MODE = "debug_mode";
 const char *const CFG_KEY_DEFAULT_MIDI_SORT = "default_midi_sort";
 const char *const CFG_KEY_DEFAULT_TEXT_SORT = "default_text_sort";
 const char *const CFG_KEY_DEVICE = "device";
+const char *const CFG_KEY_LABEL = "label";
 const char *const CFG_KEY_LOG_MIDI = "log_midi";
 const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
@@ -117,9 +120,13 @@ const char *const CFG_KEY_SEND_OFF = "send_off";
 const char *const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";
 const char *const CFG_KEY_SL = "sl";
 const char *const CFG_KEY_SL_DATAREF = "sl_dataref";
+const char *const CFG_KEY_TEXT = "text";
 const char *const CFG_KEY_TITLE = "title";
 const char *const CFG_KEY_TYPE = "type";
+const char *const CFG_KEY_VALUE = "value";
 const char *const CFG_KEY_VALUES = "values";
+const char *const CFG_KEY_VALUES_PUSH = "values_push";
+const char *const CFG_KEY_VALUES_PULL = "values_pull";
 const char *const CFG_KEY_VALUE_MIN = "value_min";
 const char *const CFG_KEY_VALUE_MAX = "value_max";
 const char *const CFG_KEY_VALUE_ON = "value_on";
@@ -221,6 +228,7 @@ enum class window_type {
     about_window,
     messages_window,
     devices_window,
+    info_window,
     profile_window,
     settings_window,
 };

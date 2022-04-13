@@ -223,7 +223,6 @@ void device::process_inbound_message(std::vector<unsigned char> *in_message)
 
             // for push and pull we have to wait until the command has ended
             if (mapping->type() == map_type::push_pull) {
-                // TODO: Move into mapping object (e.g. set_times) - what outabout outbound look?
                 switch (midi_msg->data_2()) {
                     case MIDI_VELOCITY_MAX: {
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);

@@ -96,14 +96,14 @@ void messages_window::create_tab_text_msg()
     if (ImGui::BeginTabItem("General Log")) {
         ImGui::Text("Debug Mode:");
         ImGui::SameLine(150);
-        if (m_log.debug_mode())
+        if (log().debug_mode())
             ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
         ImGui::SameLine(ImGui::GetWindowWidth() - 200);
 
         if (ImGui::Button("  " ICON_FA_TRASH_CAN " Clear Messages  "))
-            m_log.clear();
+            log().clear();
 
         ImGui::NewLine();
         ImGui::Text("MESSAGES");
@@ -130,13 +130,13 @@ void messages_window::create_tab_text_msg()
         }
 
         if (m_text_sort_mode == sort_mode::ascending) {
-            for (size_t i = 0; i < m_log.count(); i++) {
-                auto msg = m_log.message(static_cast<int>(i));
+            for (size_t i = 0; i < log().count(); i++) {
+                auto msg = log().message(static_cast<int>(i));
                 add_text_row(msg);
             }
-        } else if (m_log.count() > 0) {
-            for (size_t i = m_log.count() - 1; i > 0; i--) {
-                auto msg = m_log.message(static_cast<int>(i));
+        } else if (log().count() > 0) {
+            for (size_t i = log().count() - 1; i > 0; i--) {
+                auto msg = log().message(static_cast<int>(i));
                 add_text_row(msg);
             }
         }

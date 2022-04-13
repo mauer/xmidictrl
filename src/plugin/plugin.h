@@ -26,6 +26,7 @@
 
 // XMidiCtrl
 #include "inbound_worker.h"
+#include "info_msg.h"
 #include "menu.h"
 #include "text_logger.h"
 #include "midi_logger.h"
@@ -52,6 +53,8 @@ public:
     void load_profile();
     void close_profile();
 
+    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = 3);
+
     void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
 
     void show_messages_window();
@@ -67,6 +70,7 @@ public:
 
 private:
     void process_flight_loop([[maybe_unused]] float in_elapsed_me, float in_elapsed_sim, int in_counter);
+    void process_info_messages();
 
     void create_datarefs();
     void remove_datarefs();
@@ -85,6 +89,8 @@ private:
 
     std::unique_ptr<text_logger> m_plugin_log;
     std::unique_ptr<midi_logger> m_midi_log;
+
+    std::map<std::string, std::shared_ptr<info_msg>> m_info_msg;
 
     std::unique_ptr<xplane> m_xp;
     std::unique_ptr<settings> m_settings;

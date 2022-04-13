@@ -18,6 +18,7 @@
 #include "map_in_cmd.h"
 
 // XMidiCtrl
+#include "plugin.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -70,10 +71,10 @@ unsigned int map_in_cmd::velocity_off() const
 /**
  * Read settings from config
  */
-void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data)
+void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug(" --> Line %i :: Read settings for type 'cmd'", in_data.location().line());
-    map_in::read_config(in_log, in_data);
+    map_in::read_config(in_log, in_data, in_config);
 
     // read the command
     m_command = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND);
@@ -140,6 +141,8 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
                            m_velocity_on,
                            m_velocity_off);
     }
+
+    plugin::instance().show_info_message("MAP_IN_CMD", "Command executed");
 
     return true;
 }

@@ -37,6 +37,7 @@
 #else
     #include <GL/gl.h>
     #include <GL/glext.h>
+
 #endif
 
 // X-Plane SDK
@@ -50,20 +51,43 @@
 
 namespace xmidictrl {
 
+enum class window_position {
+    top_left,
+    bottom_left,
+    top_right,
+    bottom_right,
+    center,
+    top_center,
+    bottom_center
+};
+
 class xplane_window {
 public:
-    xplane_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
+    xplane_window(text_logger &in_log,
+                  xplane &in_xp,
+                  int in_width,
+                  int in_height,
+                  window_position in_position = window_position::top_left,
+                  int in_offset_x = 100,
+                  int in_offset_y = 100,
+                  bool in_translucent = false);
     virtual ~xplane_window();
 
     static void multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float> &in_m, const GLfloat in_v[4]);
 
-    XPLMWindowID window_id();
+    text_logger &log();
 
-    void show();
+    xplane &xp();
+
+    XPLMWindowID window_id();
+    [[nodiscard]] bool translucent() const;
+
+    virtual void show();
     void hide();
 
-    void set_title(std::string_view in_title);
+    void set_window_position(window_position in_position, int in_width, int in_height);
 
+    void set_title(std::string_view in_title);
     [[nodiscard]] bool is_visible() const;
 
     bool has_keyboard_focus();
@@ -81,16 +105,25 @@ protected:
 
     void update_matrices();
 
-    text_logger &m_log;
-    xplane &m_xp;
-
 private:
-    void create_window(bool in_translucent);
+    void calc_window_position(window_position in_position, int in_width, int in_height,
+                              int &out_left, int &out_right, int &out_top, int &out_bottom);
 
+    void create_window();
+
+    text_logger &m_log;
+
+    xplane &m_xp;
     XPLMWindowID m_window_id {nullptr};
 
     int m_width {};
     int m_height {};
+
+    window_position m_position {window_position::top_left};
+    int m_offset_x {100};
+    int m_offset_y {100};
+
+    bool m_translucent {false};
 
     std::vector<float> m_modelview {};
     std::vector<float> m_projection {};

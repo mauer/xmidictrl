@@ -131,7 +131,7 @@ std::string map::get_key()
 
 /**
  * Read the config
- */
+
 void map::read_config(text_logger &in_log, toml::value &in_data)
 {
     // set source line
@@ -140,7 +140,7 @@ void map::read_config(text_logger &in_log, toml::value &in_data)
     // required config
     read_channel(in_log, in_data);
     read_data(in_log, in_data);
-}
+} */
 
 
 /**
@@ -167,6 +167,20 @@ bool map::check(text_logger &in_log)
 xplane &map::xp() const
 {
     return m_xp;
+}
+
+
+/**
+ * Read the common config
+ */
+void map::read_common_config(text_logger &in_log, toml::value &in_data)
+{
+    // set source line
+    m_source_line = std::to_string(in_data.location().line()) + " :: " + in_data.location().line_str();
+
+    // required config
+    read_channel(in_log, in_data);
+    read_data(in_log, in_data);
 }
 
 

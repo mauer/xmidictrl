@@ -52,8 +52,15 @@ std::shared_ptr<ImGuiFontAtlas> imgui_window::m_font = nullptr;
 /**
  * Constructor
  */
-imgui_window::imgui_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent)
-    : xplane_window(in_log, in_xp, in_width, in_height, in_translucent)
+imgui_window::imgui_window(text_logger &in_log,
+                           xplane &in_xp,
+                           int in_width,
+                           int in_height,
+                           window_position in_position,
+                           int in_offset_x,
+                           int in_offset_y,
+                           bool in_translucent)
+    : xplane_window(in_log, in_xp, in_width, in_height, in_position, in_offset_y, in_offset_y, in_translucent)
 {
     // font atlas for Dear ImGui
     if (!m_font) {
@@ -198,8 +205,8 @@ void imgui_window::on_draw()
         build_window();
         show_window();
     } catch (const std::exception &ex) {
-        m_log.error("Error drawing Dear ImGui window:");
-        m_log.error(ex.what());
+        log().error("Error drawing Dear ImGui window:");
+        log().error(ex.what());
 
         m_active = false;
     }
@@ -236,6 +243,20 @@ void imgui_window::build_window()
     // transfer the window geometry to ImGui
     XPLMGetWindowGeometry(window_id(), &m_left, &m_top, &m_right, &m_bottom);
 
+    if (translucent()) {
+        XPLMSetGraphicsState(
+            0 /* no fog */,
+            0 /* 0 texture units */,
+            0 /* no lighting */,
+            0 /* no alpha testing */,
+            1 /* do alpha blend */,
+            1 /* do depth testing */,
+            0 /* no depth writing */
+        );
+
+        XPLMDrawTranslucentDarkBox(m_left, m_top, m_right, m_bottom);
+    }
+
     auto win_width = static_cast<float>(m_right - m_left);
     auto win_height = static_cast<float>(m_top - m_bottom);
 
@@ -248,9 +269,11 @@ void imgui_window::build_window()
     ImGui::SetNextWindowSize(ImVec2(win_width, win_height), ImGuiCond_Always);
 
     // and construct the window
-    ImGui::Begin(XMIDICTRL_NAME,
-                 nullptr,
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+    if (translucent())
+        flags = flags | ImGuiWindowFlags_NoBackground;
+
+    ImGui::Begin(XMIDICTRL_NAME, nullptr, flags);
 
     // create custom widgets
     create_widgets();
@@ -276,7 +299,6 @@ void imgui_window::show_window()
     // We are using the OpenGL fixed pipeline because messing with the
     // shader-state in X-Plane is not very well documented, but using the fixed
     // function pipeline is.
-
     // 1TU + Alpha settings, no depth, no fog.
     XPLMSetGraphicsState(0, 1, 0, 1, 1, 0, 0);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);

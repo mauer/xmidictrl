@@ -39,14 +39,25 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-xplane_window::xplane_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent)
+xplane_window::xplane_window(text_logger &in_log,
+                             xplane &in_xp,
+                             int in_width,
+                             int in_height,
+                             window_position in_position,
+                             int in_offset_x,
+                             int in_offset_y,
+                             bool in_translucent)
     : m_log(in_log),
       m_xp(in_xp),
       m_width(in_width),
-      m_height(in_height)
+      m_height(in_height),
+      m_position(in_position),
+      m_offset_x(in_offset_x),
+      m_offset_y(in_offset_y),
+      m_translucent(in_translucent)
 {
     // create window in X-Plane, but don't show it yet
-    create_window(in_translucent);
+    create_window();
 }
 
 
@@ -79,11 +90,38 @@ void xplane_window::multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<floa
 
 
 /**
+ * Return the log
+ */
+text_logger &xplane_window::log()
+{
+    return m_log;
+}
+
+
+/**
+ * Return the X-Plane connection
+ */
+xplane &xplane_window::xp()
+{
+    return m_xp;
+}
+
+
+/**
  * Return the window ID
  */
 XPLMWindowID xplane_window::window_id()
 {
     return m_window_id;
+}
+
+
+/**
+ * Return if the window should be displayed translucent
+ */
+bool xplane_window::translucent() const
+{
+    return m_translucent;
 }
 
 
@@ -108,6 +146,22 @@ void xplane_window::hide()
 
 
 /**
+ * Set a new window position
+ */
+void xplane_window::set_window_position(window_position in_position, int in_width, int in_height)
+{
+    m_position = in_position;
+    m_width = in_width;
+    m_height = in_height;
+
+    int left, right, top, bottom;
+    calc_window_position(in_position, in_width, in_height, left, right, top, bottom);
+
+    XPLMSetWindowGeometry(window_id(), left, top, right, bottom);
+}
+
+
+/**
  * Set the title of the window
  */
 void xplane_window::set_title(std::string_view in_title)
@@ -115,6 +169,8 @@ void xplane_window::set_title(std::string_view in_title)
     if (m_window_id != nullptr)
         XPLMSetWindowTitle(m_window_id, in_title.data());
 }
+
+
 
 
 /**
@@ -190,27 +246,90 @@ bool xplane_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_clic
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Create a new window in X-Plane
+ * Calculate the a new window position
  */
-void xplane_window::create_window(bool in_translucent)
+void xplane_window::calc_window_position(window_position in_position, int in_width, int in_height,
+                                         int &out_left, int &out_right, int &out_top, int &out_bottom)
 {
     // get the X-Plane screen boundaries in boxels
     int screen_left, screen_top, screen_right, screen_bottom;
     XPLMGetScreenBoundsGlobal(&screen_left, &screen_top, &screen_right, &screen_bottom);
 
+    switch (m_position) {
+        case window_position::top_left:
+            out_left = screen_left + m_offset_x;
+            out_right = out_left + m_width;
+            out_top = screen_top - m_offset_y;
+            out_bottom = out_top - m_height;
+            break;
+
+        case window_position::bottom_left:
+            out_left = screen_left + m_offset_x;
+            out_right = screen_left + m_offset_x + m_width;
+            out_top = screen_bottom + m_offset_y + m_height;
+            out_bottom = screen_bottom + m_offset_y;
+            break;
+
+        case window_position::top_right:
+            out_left = screen_right - m_offset_x - m_width;
+            out_right = screen_right - m_offset_x;
+            out_top = screen_top - m_offset_y;
+            out_bottom = screen_top - m_offset_y - m_height;
+            break;
+
+        case window_position::bottom_right:
+            out_left = screen_right - m_offset_x - m_width;
+            out_right = screen_right - m_offset_x;
+            out_top = screen_bottom + m_offset_y + m_height;
+            out_bottom = screen_bottom + m_offset_y;
+            break;
+
+        case window_position::center:
+            out_left = (int) (screen_right - screen_left - m_width) / 2;
+            out_right = out_left + m_width;
+            out_top = (int) (screen_top - screen_bottom - m_height) / 2;
+            out_bottom = screen_top - m_height;
+            break;
+
+        case window_position::top_center:
+            out_left = (int) (screen_right - screen_left - m_width) / 2;
+            out_right = out_left + m_width;
+            out_top = screen_top - m_offset_y;
+            out_bottom = screen_top - m_offset_y - m_height;
+            break;
+
+        case window_position::bottom_center:
+            out_left = (int) (screen_right - screen_left - m_width) / 2;
+            out_right = out_left + m_width;
+            out_top = screen_bottom + m_offset_y + m_height;
+            out_bottom = screen_bottom + m_offset_y;
+            break;
+    }
+}
+
+
+/**
+ * Create a new window in X-Plane
+ */
+void xplane_window::create_window()
+{
+    // get the X-Plane screen boundaries in boxels
+    //int screen_left, screen_top, screen_right, screen_bottom;
+    //XPLMGetScreenBoundsGlobal(&screen_left, &screen_top, &screen_right, &screen_bottom);
+
     // construct creation parameters for window
     XPLMCreateWindow_t params;
     params.structSize = sizeof(params);
-    params.left = screen_left + 100;
-    params.right = screen_left + 100 + m_width;
-    params.top = screen_top - 100;
-    params.bottom = screen_top - 100 - m_height;
     params.visible = 1;
     params.refcon = this;
     params.layer = xplm_WindowLayerFloatingWindows;
 
+    calc_window_position(m_position, m_width, m_height, params.left, params.right, params.top, params.bottom);
+
+    log().debug("Left %i, Right %i, Top %i, Bottom %i", params.left, params.right, params.top, params.bottom);
+
     // set window decoration
-    if (in_translucent)
+    if (m_translucent)
         params.decorateAsFloatingWindow = xplm_WindowDecorationNone;
     else
         params.decorateAsFloatingWindow = xplm_WindowDecorationRoundRectangle;
@@ -247,30 +366,9 @@ void xplane_window::create_window(bool in_translucent)
 }
 
 
-/*
-void XPlaneWindow::setPosition(int posx, int posy) {
-
-    bool vrEnabled = XPLMGetDatai(vrEnabledRef);
-
-    if (!vrEnabled) {
-        int winLeft, winTop, winRight, winBot;
-        XPLMGetScreenBoundsGlobal(&winLeft, &winTop, &winRight, &winBot);
-
-        XPLMSetWindowGeometry(window, winLeft + posx, winTop - posy, winLeft + posx + width,
-                              winTop - posy - height);
-    }
-}
-
-void XPlaneWindow::setWindowGeometry(int mleft, int mtop, int mright, int mbot) {
-
-    bool vrEnabled = XPLMGetDatai(vrEnabledRef);
-
-    if (!vrEnabled) {
-        XPLMSetWindowGeometry(window, mleft, mtop, mright, mbot);
-    }
-}*/
-
-
+/**
+ * Return if keyboard has the focus
+ */
 bool xplane_window::has_keyboard_focus()
 {
     if (m_window_id != nullptr)
@@ -280,6 +378,9 @@ bool xplane_window::has_keyboard_focus()
 }
 
 
+/**
+ * Request keyboard focus
+ */
 void xplane_window::request_keyboard_focus(bool in_request)
 {
     if (m_window_id != nullptr)
@@ -287,6 +388,9 @@ void xplane_window::request_keyboard_focus(bool in_request)
 }
 
 
+/**
+ * Update matrices from X-Plane datarefs
+ */
 void xplane_window::update_matrices()
 {
     // Get the current modelview matrix, viewport, and projection matrix from X-Plane
@@ -296,6 +400,9 @@ void xplane_window::update_matrices()
 }
 
 
+/**
+ * Convert boxels to native resolution
+ */
 void xplane_window::boxels_to_native(int in_x, int in_y, int &out_x, int &out_y)
 {
     GLfloat boxel_pos[4] = {(GLfloat) in_x, (GLfloat) in_y, 0, 1};

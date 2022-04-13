@@ -15,63 +15,35 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef INFO_WINDOW_H
+#define INFO_WINDOW_H
 
 // Standard
-#include <memory>
-
-// toml11
-#include <toml.hpp>
+#include <map>
 
 // XMidiCtrl
 #include "text_logger.h"
-#include "types.h"
+#include "imgui_window.h"
+#include "info_msg.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
-class map : public std::enable_shared_from_this<map> {
+class info_window : public imgui_window {
 public:
-    explicit map(xplane &in_xp);
-    virtual ~map() = default;
+    info_window(text_logger &in_log, xplane &in_xp, std::map<std::string, std::shared_ptr<info_msg>> &in_msg);
+    ~info_window() override = default;
 
-    virtual map_type type();
-
-    [[nodiscard]] unsigned char channel() const;
-    [[nodiscard]] map_data_type data_type() const;
-    [[nodiscard]] unsigned char data() const;
-
-    std::string_view source_line() const;
-
-    std::string_view as_text();
-
-    std::string get_key();
-
-    virtual bool check(text_logger &in_log);
+    void show() override;
 
 protected:
-    xplane &xp() const;
+    void create_widgets() override;
 
-    void read_common_config(text_logger &in_log, toml::value &in_data);
+    const int ROW_HEIGHT = 25;
 
-    void read_channel(text_logger &in_log, toml::value &in_data);
-    void read_data(text_logger &in_log, toml::value &in_data);
-
-    virtual std::string build_mapping_text() = 0;
-
-private:
-    xplane &m_xp;
-
-    unsigned char m_channel {MIDI_NONE};
-
-    map_data_type m_data_type {map_data_type::none};
-    unsigned char m_data {MIDI_NONE};
-
-    std::string m_source_line {};
-    std::string m_mapping_text {};
+    std::map<std::string, std::shared_ptr<info_msg>> &m_messages;
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_H
+#endif // INFO_WINDOW_H

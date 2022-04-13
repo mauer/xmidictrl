@@ -39,6 +39,7 @@
 #else
     #include <GL/gl.h>
     #include <GL/glext.h>
+
 #endif
 
 // Dear ImGui
@@ -53,7 +54,14 @@ namespace xmidictrl {
 
 class imgui_window : public xplane_window {
 public:
-    imgui_window(text_logger &in_log, xplane &in_xp, int in_width, int in_height, bool in_translucent = false);
+    imgui_window(text_logger &in_log,
+                 xplane &in_xp,
+                 int in_width,
+                 int in_height,
+                 window_position in_position = window_position::top_left,
+                 int in_offset_x = 50,
+                 int in_offset_y = 50,
+                 bool in_translucent = false);
     ~imgui_window() override;
 
 protected:

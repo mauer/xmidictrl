@@ -45,6 +45,8 @@ public:
     bool load();
     void close();
 
+    [[nodiscard]] bool loaded() const;
+
     [[nodiscard]] std::string_view filename() const;
 
     text_logger &log();
@@ -74,6 +76,8 @@ private:
     map_type read_mapping_type(toml::value &in_settings);
 
     settings &m_settings;
+
+    bool m_loaded {false};
 
     text_logger &m_plugin_log;
     midi_logger &m_midi_log;

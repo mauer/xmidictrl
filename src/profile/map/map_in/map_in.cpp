@@ -17,6 +17,10 @@
 
 #include "map_in.h"
 
+// XMidiCtrl
+#include "plugin.h"
+#include "toml_utils.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -28,7 +32,8 @@ namespace xmidictrl {
  */
 map_in::map_in(xplane &in_xp)
     : map(in_xp)
-{}
+{
+}
 
 
 
@@ -49,12 +54,14 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(text_logger &in_log, toml::value &in_data)
+void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    map::read_config(in_log, in_data);
+    // read the common data
+    read_common_config(in_log, in_data);
 
     // additional config
     read_sublayer(in_log, in_data);
+    read_label(in_log, in_data, in_config);
 }
 
 
@@ -62,6 +69,80 @@ void map_in::read_config(text_logger &in_log, toml::value &in_data)
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Check if the command is defined for the current sublayer
+ */
+bool map_in::check_sublayer(std::string_view in_sl_value)
+{
+    if (in_sl_value != m_sl && !m_sl.empty())
+        return false;
+
+    return true;
+}
+
+
+/**
+ * Toggle dataref between values
+ */
+void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values)
+{
+    if (in_values.size() == 2) {
+        auto value = xp().datarefs().toggle(in_log, in_dataref, in_values[0], in_values[1]);
+        display_label(value);
+    } else {
+        // get current value
+        std::string value;
+        xp().datarefs().read(in_log, in_dataref, value);
+
+        // search for the value in the values list
+        auto it = std::find(in_values.begin(), in_values.end(), value);
+
+        if (it != in_values.end()) {
+            auto idx = std::distance(in_values.begin(), it);
+
+            if (idx < in_values.size() - 1)
+                idx++;
+            else
+                idx = 0;
+
+            value = in_values[idx];
+        } else {
+            // value not found, let's take the first one of the list
+            value = in_values[0];
+        }
+
+        in_log.debug(" --> Change dataref '%s' to value '%s'", in_dataref.data(), value.c_str());
+
+        xp().datarefs().write(in_log, in_dataref, value);
+        display_label(value);
+    }
+}
+
+
+/**
+ * Display the label on the screen
+ */
+void map_in::display_label(std::string_view in_value)
+{
+    if (m_label == nullptr)
+        return;
+
+    try {
+        std::string value_text = m_label->values.at(in_value.data());
+
+        plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
+    } catch (std::out_of_range &ex) {
+        return;
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -86,14 +167,62 @@ void map_in::read_sublayer(text_logger &in_log, toml::value &in_data)
 
 
 /**
- * Check if the command is defined for the current sublayer
+ * Read label definition
  */
-bool map_in::check_sublayer(std::string_view in_sl_value)
+void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    if (in_sl_value != m_sl && !m_sl.empty())
-        return false;
+    // is a label defined?
+    if (!in_data.contains(CFG_KEY_LABEL))
+        return;
 
-    return true;
+    try {
+        std::string label_id = in_data[CFG_KEY_LABEL].as_string();
+
+        if (label_id.empty()) {
+            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_LABEL, label_id.c_str());
+            return;
+        }
+
+        if (!in_config.contains(label_id)) {
+            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+            in_log.error(" --> Definition for label '%s' not found", label_id.c_str());
+            return;
+        }
+
+        toml::value label_section = toml::find(in_config, label_id);
+
+        // start created the label
+        m_label = std::make_unique<label>();
+
+        // read the label text
+        m_label->text = toml_utils::read_string(in_log, label_section, CFG_KEY_TEXT);
+
+        // add a space at the end, if required
+        if (m_label->text.back() != ' ')
+            m_label->text.append(" ");
+
+        // read all label values
+        if (toml_utils::contains(in_log, label_section, CFG_KEY_VALUES)) {
+            auto values = label_section[CFG_KEY_VALUES].as_array();
+
+            for (auto value : values) {
+                std::string value_id = toml_utils::read_string(in_log, value, CFG_KEY_VALUE);
+                std::string value_text = toml_utils::read_string(in_log, value, CFG_KEY_TEXT);
+                m_label->values.emplace(value_id, value_text);
+            }
+        } else {
+            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+            in_log.error(" --> Parameter '%s' not found", CFG_KEY_VALUES);
+
+            m_label.reset();
+        }
+    } catch (toml::type_error &error) {
+        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error(error.what());
+
+        m_label.reset();
+    }
 }
 
 } // Namespace xmidictrl

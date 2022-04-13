@@ -56,6 +56,7 @@ void map_in_pnp::set_time_received()
 {
     // reset all times first
     reset();
+
     m_time_received.store(std::chrono::system_clock::now());
 }
 
@@ -74,16 +75,28 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data)
+void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug(" --> Line %i :: Read settings for type 'pnp'", in_data.location().line());
-    map_in::read_config(in_log, in_data);
+    map_in::read_config(in_log, in_data, in_config);
 
-    // read command push
-    m_command_push = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH);
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH, false)) {
+        // read dataref push
+        m_dataref_push = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PUSH, false);
+        m_values_push = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PUSH, false);
+    } else {
+        // read command push
+        m_command_push = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH, false);
+    }
 
-    // read command pull
-    m_command_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL);
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PULL, false)) {
+        // read dataref pull
+        m_dataref_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PULL, false);
+        m_values_pull = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PULL, false);
+    } else {
+        // read command pull
+        m_command_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL, false);
+    }
 }
 
 
@@ -92,22 +105,54 @@ void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data)
  */
 bool map_in_pnp::check(text_logger &in_log)
 {
+    bool result = true;
+
     if (!map::check(in_log))
-        return false;
+        result = false;
 
-    if (m_command_push.empty()) {
-        in_log.error(source_line());
-        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PUSH);
-        return false;
+    // pull
+    if (!m_dataref_pull.empty()) {
+        if (!xp().datarefs().check(m_dataref_pull)) {
+            in_log.error(source_line());
+            in_log.error(" --> Dataref '%s' not found", m_dataref_pull.data());
+            result = false;
+        }
+
+        if (m_values_pull.empty()) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameter '%s' is not defined", CFG_KEY_VALUES_PULL);
+            result = false;
+        }
+    } else {
+        if (m_command_pull.empty()) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PULL);
+            result = false;
+        }
     }
 
-    if (m_command_pull.empty()) {
-        in_log.error(source_line());
-        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PULL);
-        return false;
+    // push
+    if (!m_dataref_push.empty()) {
+        if (!xp().datarefs().check(m_dataref_push)) {
+            in_log.error(source_line());
+            in_log.error(" --> Dataref '%s' not found", m_dataref_push.data());
+            result = false;
+        }
+
+        if (m_values_push.empty()) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameter '%s' is not defined", CFG_KEY_VALUES_PUSH);
+            result = false;
+        }
+    } else {
+        if (m_command_push.empty()) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PUSH);
+            result = false;
+        }
     }
 
-    return true;
+    return result;
 }
 
 
@@ -123,19 +168,23 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
     }
 
     // check if the command has been already executed
-    if (m_command_type != command_type::none && m_time_command > time_point::min()) {
+    if (m_time_command > time_point::min()) {
         std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - m_time_command;
 
         if (elapsed.count() > 0.3f) {
             switch (m_command_type) {
                 case command_type::push:
-                    in_msg.log().debug(" --> End push command '%s'", m_command_push.c_str());
-                    xp().cmd().end(in_msg.log(), m_command_push);
+                    if (!m_command_push.empty()) {
+                        in_msg.log().debug(" --> End push command '%s'", m_command_push.c_str());
+                        xp().cmd().end(in_msg.log(), m_command_push);
+                    }
                     break;
 
                 case command_type::pull:
-                    in_msg.log().debug(" --> End pull command '%s'", m_command_pull.c_str());
-                    xp().cmd().end(in_msg.log(), m_command_pull);
+                    if (!m_command_pull.empty()) {
+                        in_msg.log().debug(" --> End pull command '%s'", m_command_pull.c_str());
+                        xp().cmd().end(in_msg.log(), m_command_pull);
+                    }
                     break;
 
                 case command_type::none:
@@ -151,7 +200,7 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
     }
 
     if (m_time_released.load() == time_point::min()) {
-        // failsafe, don't want to keep this task in the lst forever
+        // failsafe, don't want to keep this task in the list forever
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_received.load();
 
         if (elapsed_seconds.count() < 0.5f)
@@ -162,17 +211,31 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
     m_time_command = std::chrono::system_clock::now();
 
     if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
-        in_msg.log().debug(" --> Begin pull command '%s'", m_command_pull.c_str());
-        m_command_type = command_type::pull;
-        xp().cmd().begin(in_msg.log(), m_command_pull);
+        if (!m_dataref_pull.empty()) {
+            toggle_dataref(in_msg.log(), m_dataref_pull, m_values_pull);
+        } else if (!m_command_pull.empty()) {
+            in_msg.log().debug(" --> Begin pull command '%s'", m_command_pull.c_str());
+            m_command_type = command_type::pull;
+            xp().cmd().begin(in_msg.log(), m_command_pull);
+
+            // keep the task in the queue to end the command
+            return false;
+        }
     } else {
-        in_msg.log().debug(" --> Begin push command '%s'", m_command_push.c_str());
-        m_command_type = command_type::push;
-        xp().cmd().begin(in_msg.log(), m_command_push);
+        if (!m_dataref_push.empty()) {
+            toggle_dataref(in_msg.log(), m_dataref_push, m_values_push);
+        } else if (!m_command_push.empty()) {
+            in_msg.log().debug(" --> Begin push command '%s'", m_command_push.c_str());
+            m_command_type = command_type::push;
+            xp().cmd().begin(in_msg.log(), m_command_push);
+
+            // keep the task in the queue to end the command
+            return false;
+        }
     }
 
-    // keep the task in the queue to end the command
-    return false;
+    // don't keep the task in the queue
+    return true;
 }
 
 

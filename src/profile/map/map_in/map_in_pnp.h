@@ -28,8 +28,8 @@
 
 // XMidiCtrl
 #include "map_in.h"
-#include "text_logger.h"
 #include "midi_message.h"
+#include "text_logger.h"
 #include "types.h"
 
 namespace xmidictrl {
@@ -44,7 +44,7 @@ public:
     void set_time_received();
     void set_time_released();
 
-    void read_config(text_logger &in_log, toml::value &in_data) override;
+    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
     bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
@@ -66,6 +66,12 @@ private:
 
     std::atomic<time_point> m_time_received {time_point::min()};
     std::atomic<time_point> m_time_released {time_point::min()};
+
+    std::string m_dataref_push {};
+    std::string m_dataref_pull {};
+
+    std::vector<std::string> m_values_push {};
+    std::vector<std::string> m_values_pull {};
 
     std::string m_command_push {};
     std::string m_command_pull {};

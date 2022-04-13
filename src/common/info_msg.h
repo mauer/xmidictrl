@@ -15,50 +15,29 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_SLD_H
-#define MAP_IN_SLD_H
+#ifndef INFO_MSG_H
+#define INFO_MSG_H
 
 // Standard
 #include <string>
-#include <string_view>
-
-// toml11
-#include <toml.hpp>
 
 // XMidiCtrl
-#include "map_in.h"
-#include "text_logger.h"
-#include "midi_message.h"
+#include "types.h"
 
 namespace xmidictrl {
 
-class map_in_sld : public map_in {
-public:
-    explicit map_in_sld(xplane &in_xp);
-    ~map_in_sld() override = default;
+struct info_msg {
+    time_point exp_time;
+    std::string id;
+    std::string text;
 
-    map_type type() override;
-
-    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
-    bool check(text_logger &in_log) override;
-
-    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
-
-protected:
-    std::string build_mapping_text() override;
-
-private:
-    std::string m_dataref {};
-    float m_value_min {0.0f};
-    float m_value_max {1.0f};
-
-    std::string m_command_prev {};
-
-    std::string m_command_up {};
-    std::string m_command_middle {};
-    std::string m_command_down {};
+    explicit info_msg(int in_seconds)
+    {
+        exp_time = std::chrono::system_clock::now();
+        exp_time += std::chrono::seconds(in_seconds);
+    };
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_IN_SLD_H
+#endif // INFO_MSG_H

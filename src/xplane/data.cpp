@@ -29,9 +29,9 @@ namespace xmidictrl {
 /**
  * Check if a dataref is valid
  */
-bool data::check(text_logger &in_log, std::string_view in_name)
+bool data::check(std::string_view in_name)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -47,7 +47,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::string &out_
 {
     out_value.assign(std::string());
 
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -112,7 +112,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
 {
     out_value = 0.0f;
 
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -166,7 +166,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
  */
 bool data::read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
     out_values = {};
 
     if (item == nullptr)
@@ -188,7 +188,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<float
  */
 bool data::read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
     out_values = {};
 
     if (item == nullptr)
@@ -210,7 +210,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<int> 
  */
 bool data::write(text_logger &in_log, std::string_view in_name, std::string_view in_value)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -219,6 +219,8 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
         in_log.error("Dataref '%s' is not writeable", in_name.data());
         return false;
     }
+
+    in_log.debug("Set dataref '%s' to value '%s'", in_name.data(), in_value.data());
 
     try {
         if (item->type & xplmType_Int) {
@@ -263,7 +265,7 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
  */
 bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -272,6 +274,8 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
         in_log.error("Dataref '%s' is not writeable", in_name.data());
         return false;
     }
+
+    in_log.debug("Set dataref '%s' to value '%f'", in_name.data(), in_value);
 
     if (item->type & xplmType_Int) {
         write_int(item, static_cast<int>(in_value));
@@ -304,45 +308,39 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
 /**
  * Toggle a dataref between on and off
  */
-bool data::toggle(text_logger &in_log,
-                  std::string_view in_name,
-                  std::string_view in_value_on,
-                  std::string_view in_value_off)
+std::string data::toggle(text_logger &in_log,
+                         std::string_view in_name,
+                         std::string_view in_value_on,
+                         std::string_view in_value_off)
 {
-    data_item *item = retrieve_data(in_log, in_name);
+    data_item *item = retrieve_data(in_name);
 
     if (item == nullptr)
-        return false;
+        return {};
 
     if (!item->writeable) {
         in_log.error("Dataref '%s' is not writeable", in_name.data());
-        return false;
+        return {};
     }
 
     if (item->type & xplmType_Int) {
-        toggle_int(in_log, item, in_value_on, in_value_off);
-        return true;
+        return toggle_int(in_log, item, in_value_on, in_value_off);
     } else if (item->type & xplmType_Float) {
-        toggle_float(in_log, item, in_value_on, in_value_off);
-        return true;
+        return toggle_float(in_log, item, in_value_on, in_value_off);
     } else if (item->type & xplmType_Double) {
-        toggle_double(in_log, item, in_value_on, in_value_off);
-        return true;
+        return toggle_double(in_log, item, in_value_on, in_value_off);
     } else if (item->type & xplmType_Data) {
-        toggle_byte(in_log, item, in_value_on, in_value_off);
-        return true;
+        return toggle_byte(in_log, item, in_value_on, in_value_off);
     } else if (item->type & xplmType_IntArray) {
-        toggle_int_array(in_log, item, get_index(in_log, in_name), in_value_on, in_value_off);
-        return true;
+        return toggle_int_array(in_log, item, get_index(in_log, in_name), in_value_on, in_value_off);
     } else if (item->type & xplmType_FloatArray) {
-        toggle_float_array(in_log, item, get_index(in_log, in_name), in_value_on, in_value_off);
-        return true;
+        return toggle_float_array(in_log, item, get_index(in_log, in_name), in_value_on, in_value_off);
     } else if (item->type & xplmType_Unknown) {
         in_log.error("Could not determine type for dataref '%s'", in_name.data());
-        return false;
+        return {};
     } else {
         in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
-        return false;
+        return {};
     }
 }
 
@@ -356,7 +354,7 @@ bool data::toggle(text_logger &in_log,
 /**
  * Get the data ref for a dataref string
  */
-data_item *data::retrieve_data(text_logger &in_log, std::string_view in_name)
+data_item *data::retrieve_data(std::string_view in_name)
 {
     std::string dataref_name = in_name.data();
 
@@ -373,10 +371,8 @@ data_item *data::retrieve_data(text_logger &in_log, std::string_view in_name)
         item->name = dataref_name;
         item->type = xplmType_Unknown;
 
-        if (item->dataref == nullptr) {
-            in_log.error("Dataref '%s' not found", dataref_name.c_str());
+        if (item->dataref == nullptr)
             return {};
-        }
 
         item->type = XPLMGetDataRefTypes(item->dataref);
         item->writeable = XPLMCanWriteDataRef(item->dataref);
@@ -386,7 +382,6 @@ data_item *data::retrieve_data(text_logger &in_log, std::string_view in_name)
             item->size = XPLMGetDatab(item->dataref, nullptr, 0, 0);
 
         // add new dataref to cache
-        in_log.debug("Dataref '%s' added to internal cache", dataref_name.c_str());
         m_data_cache.emplace(dataref_name, std::move(item));
     }
 
@@ -588,10 +583,10 @@ std::vector<int> data::read_int_array(const data_item *item)
 /**
  * Toggle an integer dataref between on and off
  */
-void data::toggle_int(text_logger &in_log,
-                      const data_item *in_item,
-                      std::string_view in_value_on,
-                      std::string_view in_value_off)
+std::string data::toggle_int(text_logger &in_log,
+                             const data_item *in_item,
+                             std::string_view in_value_on,
+                             std::string_view in_value_off)
 {
     // read current value
     int value = read_int(in_item);
@@ -600,9 +595,13 @@ void data::toggle_int(text_logger &in_log,
         if (value == std::stoi(in_value_on.data())) {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_int(in_item, std::stoi(in_value_off.data()));
+
+            return in_value_off.data();
         } else {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_int(in_item, std::stoi(in_value_on.data()));
+
+            return in_value_off.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -611,20 +610,22 @@ void data::toggle_int(text_logger &in_log,
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
         in_log.error(ex.what());
     }
+
+    return {};
 }
 
 
 /**
  * Toggle an integer array dataref between on and off
  */
-void data::toggle_int_array(text_logger &in_log,
-                            const data_item *in_item,
-                            int in_index,
-                            std::string_view in_value_on,
-                            std::string_view in_value_off)
+std::string data::toggle_int_array(text_logger &in_log,
+                                   const data_item *in_item,
+                                   int in_index,
+                                   std::string_view in_value_on,
+                                   std::string_view in_value_off)
 {
     if (in_index < 0)
-        return;
+        return {};
 
     // read current value
     int value = read_int_array(in_log, in_item, in_index);
@@ -633,9 +634,13 @@ void data::toggle_int_array(text_logger &in_log,
         if (value == std::stoi(in_value_on.data())) {
             in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
             write_int_array(in_item, in_index, std::stoi(in_value_off.data()));
+
+            return in_value_off.data();
         } else {
             in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
             write_int_array(in_item, in_index, std::stoi(in_value_on.data()));
+
+            return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -644,16 +649,18 @@ void data::toggle_int_array(text_logger &in_log,
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
         in_log.error(ex.what());
     }
+
+    return {};
 }
 
 
 /**
  * Toggle a float dataref between on and off
  */
-void data::toggle_float(text_logger &in_log,
-                        const data_item *in_item,
-                        std::string_view in_value_on,
-                        std::string_view in_value_off)
+std::string data::toggle_float(text_logger &in_log,
+                               const data_item *in_item,
+                               std::string_view in_value_on,
+                               std::string_view in_value_off)
 {
     // read current value
     float value = read_float(in_item);
@@ -662,9 +669,13 @@ void data::toggle_float(text_logger &in_log,
         if (value == std::stof(in_value_on.data())) {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_float(in_item, std::stof(in_value_off.data()));
+
+            return in_value_off.data();
         } else {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_float(in_item, std::stof(in_value_on.data()));
+
+            return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -673,20 +684,22 @@ void data::toggle_float(text_logger &in_log,
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
         in_log.error(ex.what());
     }
+
+    return {};
 }
 
 
 /**
  * Toggle a float array dataref between on and off
  */
-void data::toggle_float_array(text_logger &in_log,
-                              const data_item *in_item,
-                              int in_index,
-                              std::string_view in_value_on,
-                              std::string_view in_value_off)
+std::string data::toggle_float_array(text_logger &in_log,
+                                     const data_item *in_item,
+                                     int in_index,
+                                     std::string_view in_value_on,
+                                     std::string_view in_value_off)
 {
     if (in_index < 0)
-        return;
+        return {};
 
     // read current value
     float value = read_float_array(in_log, in_item, in_index);
@@ -695,9 +708,13 @@ void data::toggle_float_array(text_logger &in_log,
         if (value == std::stof(in_value_on.data())) {
             in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
             write_float_array(in_item, in_index, std::stof(in_value_off.data()));
+
+            return in_value_off.data();
         } else {
             in_log.debug("Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
             write_float_array(in_item, in_index, std::stof(in_value_on.data()));
+
+            return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -706,13 +723,18 @@ void data::toggle_float_array(text_logger &in_log,
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
         in_log.error(ex.what());
     }
+
+    return {};
 }
 
 
 /**
  * Toggle an double dataref between on and off
  */
-void data::toggle_double(text_logger &in_log, const data_item *in_item, std::string_view in_value_on, std::string_view in_value_off)
+std::string data::toggle_double(text_logger &in_log,
+                                const data_item *in_item,
+                                std::string_view in_value_on,
+                                std::string_view in_value_off)
 {
     // read current value
     double value = read_double(in_item);
@@ -721,9 +743,13 @@ void data::toggle_double(text_logger &in_log, const data_item *in_item, std::str
         if (value == std::stod(in_value_on.data())) {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
             write_double(in_item, std::stod(in_value_off.data()));
+
+            return in_value_off.data();
         } else {
             in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
             write_double(in_item, std::stod(in_value_on.data()));
+
+            return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
@@ -732,25 +758,31 @@ void data::toggle_double(text_logger &in_log, const data_item *in_item, std::str
         in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
         in_log.error(ex.what());
     }
+
+    return {};
 }
 
 
 /**
  * Toggle a nyte dataref between on and off
  */
-void data::toggle_byte(text_logger &in_log,
-                       const data_item *in_item,
-                       std::string_view in_value_on,
-                       std::string_view in_value_off)
+std::string data::toggle_byte(text_logger &in_log,
+                              const data_item *in_item,
+                              std::string_view in_value_on,
+                              std::string_view in_value_off)
 {
     std::string value = read_byte(in_item);
 
     if (value == in_value_on.data()) {
-        in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+        in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
         write_byte(in_item, in_value_off);
+
+        return in_value_off.data();
     } else {
         in_log.debug("Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
         write_byte(in_item, in_value_on);
+
+        return in_value_on.data();
     }
 }
 

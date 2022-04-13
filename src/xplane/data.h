@@ -38,7 +38,7 @@ public:
     data() = default;
     ~data() = default;
 
-    bool check(text_logger &in_log, std::string_view in_name);
+    bool check(std::string_view in_name);
 
     bool read(text_logger &in_log, std::string_view in_name, std::string &out_value);
     bool read(text_logger &in_log, std::string_view in_name, float &out_value);
@@ -48,13 +48,13 @@ public:
     bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value);
     bool write(text_logger &in_log, std::string_view in_name, float in_value);
 
-    bool toggle(text_logger &in_log,
-                std::string_view in_name,
-                std::string_view in_value_on,
-                std::string_view in_value_off);
+    std::string toggle(text_logger &in_log,
+                       std::string_view in_name,
+                       std::string_view in_value_on,
+                       std::string_view in_value_off);
 
 private:
-    data_item *retrieve_data(text_logger &in_log, std::string_view in_name);
+    data_item *retrieve_data(std::string_view in_name);
 
     static int get_index(text_logger &in_log, std::string_view in_name);
 
@@ -78,32 +78,32 @@ private:
     static void write_double(const data_item *item, double value);
     static void write_byte(const data_item *item, std::string_view value);
 
-    static void toggle_int(text_logger &in_log,
-                           const data_item *in_item,
-                           std::string_view in_value_on,
-                           std::string_view in_value_off);
-    static void toggle_int_array(text_logger &in_log,
-                                 const data_item *in_item,
-                                 int in_index,
-                                 std::string_view in_value_on,
-                                 std::string_view in_value_off);
-    static void toggle_float(text_logger &in_log,
-                             const data_item *in_item,
-                             std::string_view in_value_on,
-                             std::string_view in_value_off);
-    static void toggle_float_array(text_logger &in_log,
+    static std::string toggle_int(text_logger &in_log,
+                                  const data_item *in_item,
+                                  std::string_view in_value_on,
+                                  std::string_view in_value_off);
+    static std::string toggle_int_array(text_logger &in_log,
+                                        const data_item *in_item,
+                                        int in_index,
+                                        std::string_view in_value_on,
+                                        std::string_view in_value_off);
+    static std::string toggle_float(text_logger &in_log,
+                                    const data_item *in_item,
+                                    std::string_view in_value_on,
+                                    std::string_view in_value_off);
+    static std::string toggle_float_array(text_logger &in_log,
+                                          const data_item *in_item,
+                                          int in_index,
+                                          std::string_view in_value_on,
+                                          std::string_view in_value_off);
+    static std::string toggle_double(text_logger &in_log,
+                                     const data_item *in_item,
+                                     std::string_view in_value_on,
+                                     std::string_view in_value_off);
+    static std::string toggle_byte(text_logger &in_log,
                                    const data_item *in_item,
-                                   int in_index,
                                    std::string_view in_value_on,
                                    std::string_view in_value_off);
-    static void toggle_double(text_logger &in_log,
-                              const data_item *in_item,
-                              std::string_view in_value_on,
-                              std::string_view in_value_off);
-    static void toggle_byte(text_logger &in_log,
-                            const data_item *in_item,
-                            std::string_view in_value_on,
-                            std::string_view in_value_off);
 
     std::map<std::string, std::unique_ptr<data_item>> m_data_cache {};
 };

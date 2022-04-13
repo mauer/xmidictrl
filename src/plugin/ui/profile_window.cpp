@@ -83,15 +83,15 @@ void profile_window::create_tab_general()
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_icao().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_icao().c_str());
 
         ImGui::Text("Description:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_descr().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_descr().c_str());
 
         ImGui::Text("Author:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_xp.current_aircraft_author().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_author().c_str());
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -162,7 +162,7 @@ void profile_window::create_tab_errors_warnings()
         else
             ImGui::TextColored(COL_TEXT_VALUE, "No");
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 100);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 250);
 
         if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT " Reload Aircraft Profile  "))
             plugin::instance().load_profile();

@@ -37,7 +37,6 @@ bool toml_utils::contains(text_logger &in_log,
     }
 
     try {
-        // read dataref
         if (in_data.contains(in_name.data())) {
             return true;
         } else {
@@ -145,7 +144,7 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
 
                 in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
                               in_data.location().line(),
-                              in_name,
+                              in_name.data(),
                               value.c_str());
 
                 if (!value.empty())
@@ -185,7 +184,7 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
 
                 in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
                               in_data.location().line(),
-                              in_name,
+                              in_name.data(),
                               value.c_str());
 
                 if (!value.empty())
@@ -221,7 +220,7 @@ int toml_utils::read_int(text_logger &in_log,
         // read dataref
         if (contains(in_log, in_data, in_name, in_mandatory)) {
             if (in_data[in_name.data()].is_integer()) {
-                value = static_cast<float>(in_data[in_name.data()].as_integer());
+                value = static_cast<int>(in_data[in_name.data()].as_integer());
 
                 in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
                               in_data.location().line(),

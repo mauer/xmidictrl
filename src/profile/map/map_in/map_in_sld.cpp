@@ -52,10 +52,10 @@ map_type map_in_sld::type()
 /**
  * Read settings from config
  */
-void map_in_sld::read_config(text_logger &in_log, toml::value &in_data)
+void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug(" --> Line %i :: Read settings for type 'sld'", in_data.location().line());
-    map_in::read_config(in_log, in_data);
+    map_in::read_config(in_log, in_data, in_config);
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
@@ -89,23 +89,34 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data)
  */
 bool map_in_sld::check(text_logger &in_log)
 {
+    bool result = true;
+
     if (!map::check(in_log))
-        return false;
+        result = false;
 
     if (!m_dataref.empty()) {
         // dataref mode
-        if (!xp().datarefs().check(in_log, m_dataref))
-            return false;
+        if (!xp().datarefs().check(m_dataref)) {
+            in_log.error(source_line());
+            in_log.error(" --> Dataref '%s' not found", m_dataref.data());
+            result = false;
+        }
 
-        if (m_value_min == m_value_max)
-            return false;
+        if (m_value_min == m_value_max) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameter '%s' is equal to parameter '%s'", CFG_KEY_VALUE_MIN, CFG_KEY_VALUE_MAX);
+            result = false;
+        }
     } else {
         // command mode
-        if (m_command_up.empty() && m_command_down.empty())
-            return false;
+        if (m_command_up.empty() && m_command_down.empty()) {
+            in_log.error(source_line());
+            in_log.error(" --> Parameters '%s' and '%s' are not defined", CFG_KEY_COMMAND_UP, CFG_KEY_COMMAND_DOWN);
+            result = false;
+        }
     }
 
-    return true;
+    return result;
 }
 
 
@@ -119,7 +130,8 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
 
     if (!m_dataref.empty()) {
         // dataref mode
-        float value;
+        float value = 0.0f;
+
         if (in_msg.data_2() == MIDI_VELOCITY_MIN)
             value = m_value_min;
         else if (in_msg.data_2() == MIDI_VELOCITY_MAX)
@@ -128,7 +140,15 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
             value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
 
         in_msg.log().debug(" --> Set dataref '%s' to value '%f'", m_dataref.c_str(), value);
-        xp().datarefs().write(in_msg.log(), m_dataref, value);
+
+        if (xp().datarefs().write(in_msg.log(), m_dataref, value)) {
+            try {
+                display_label(std::to_string(value));
+            } catch (std::bad_alloc &ex) {
+                in_msg.log().error("Error converting float '%f' value to string", value);
+                in_msg.log().error(ex.what());
+            }
+        }
     } else {
         // command mode
         if (in_msg.data_2() <= 10) {

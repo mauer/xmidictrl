@@ -53,10 +53,10 @@ map_type map_in_drf::type()
 /**
  * Read settings from config
  */
-void map_in_drf::read_config(text_logger &in_log, toml::value &in_data)
+void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
-    map_in::read_config(in_log, in_data);
+    map_in::read_config(in_log, in_data, in_config);
 
     // read mode
     m_mode = conversions::dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
@@ -89,28 +89,36 @@ void map_in_drf::read_config(text_logger &in_log, toml::value &in_data)
  */
 bool map_in_drf::check(text_logger &in_log)
 {
+    bool result = true;
+
     if (!map::check(in_log))
-        return false;
+        result = false;
 
     if (m_dataref.empty()) {
         in_log.error(source_line());
         in_log.error(" --> Parameter '%s' is empty", CFG_KEY_DATAREF);
-        return false;
+        result = false;
     }
 
-    if (!xp().datarefs().check(in_log, m_dataref))
-        return false;
+    if (!xp().datarefs().check(m_dataref)) {
+        in_log.error(source_line());
+        in_log.error(" --> Dataref '%s' not found", m_dataref.data());
+        result = false;
+    }
 
     if (m_values.empty()) {
         in_log.error(source_line());
         in_log.error(" --> No values defined", CFG_KEY_DATAREF);
-        return false;
+        result = false;
     }
 
-    if (m_mode == dataref_mode::momentary && m_values.size() != 2)
-        return false;
+    if (m_mode == dataref_mode::momentary && m_values.size() != 2) {
+        in_log.error(source_line());
+        in_log.error(" --> When parameter '%s' is 'momentary', two values (on/off) are expected", CFG_KEY_MODE);
+        result = false;
+    }
 
-    return true;
+    return result;
 }
 
 
@@ -126,40 +134,20 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_VELOCITY_MAX)
         return true;
 
-    in_msg.log().debug(" --> Change dataref '%s'", m_dataref.c_str());
-
-    if (m_values.size() == 2) {
-        if (m_mode == dataref_mode::momentary) {
-            if (in_msg.data_2() == MIDI_VELOCITY_MAX)
-                xp().datarefs().write(in_msg.log(), m_dataref, m_values[0]);
-            else
-                xp().datarefs().write(in_msg.log(), m_dataref, m_values[1]);
-        } else {
-            xp().datarefs().toggle(in_msg.log(), m_dataref, m_values[0], m_values[1]);
-        }
-    } else {
-        // get current value
+    if (m_values.size() == 2 && m_mode == dataref_mode::momentary) {
         std::string value;
-        xp().datarefs().read(in_msg.log(), m_dataref, value);
-
-        // search for the value in the values list
-        auto it = std::find(m_values.begin(), m_values.end(), value);
-
-        if (it != m_values.end()) {
-            int idx = static_cast<int>(std::distance(m_values.begin(), it));
-
-            if (idx < m_values.size() - 1)
-                idx++;
-            else
-                idx = 0;
-
-            value = m_values[idx];
-        } else {
-            // values not found, let's take the first one of the list
+        if (in_msg.data_2() == MIDI_VELOCITY_MAX)
             value = m_values[0];
-        }
+        else
+            value = m_values[1];
+
+        // change dataref and display label
+        in_msg.log().debug(" --> Change dataref '%s' to value '%s'", m_dataref.c_str(), value.c_str());
 
         xp().datarefs().write(in_msg.log(), m_dataref, value);
+        display_label(value);
+    } else {
+        toggle_dataref(in_msg.log(), m_dataref, m_values);
     }
 
     return true;
@@ -187,7 +175,7 @@ std::string map_in_drf::build_mapping_text()
 
     map_str.append("Values = [");
 
-    for (auto &value : m_values)
+    for (auto &value: m_values)
         map_str.append(" '" + value + "'");
 
     map_str.append("]\n");

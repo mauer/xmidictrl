@@ -22,9 +22,10 @@
 #include <memory>
 
 // XMidiCtrl
+#include "label.h"
 #include "map.h"
-#include "text_logger.h"
 #include "midi_message.h"
+#include "text_logger.h"
 #include "types.h"
 #include "xplane.h"
 
@@ -37,17 +38,23 @@ public:
 
     [[nodiscard]] std::string_view sl() const;
 
-    void read_config(text_logger &in_log, toml::value &in_data) override;
+    virtual void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config);
 
     virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
 
 protected:
-    void read_sublayer(text_logger &in_log, toml::value &in_data);
-
     bool check_sublayer(std::string_view in_sl_value);
+    void toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values);
+
+    void display_label(std::string_view in_value);
 
 private:
+    void read_sublayer(text_logger &in_log, toml::value &in_data);
+    void read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config);
+
     std::string m_sl {};
+
+    std::unique_ptr<label> m_label {};
 };
 
 } // Namespace xmiditrl

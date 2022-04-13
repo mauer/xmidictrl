@@ -20,6 +20,7 @@
 // XMidiCtrl
 #include "about_window.h"
 #include "devices_window.h"
+#include "info_window.h"
 #include "messages_window.h"
 #include "profile_window.h"
 #include "settings_window.h"
@@ -139,6 +140,49 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
 
     // process outbound tasks
     m_profile->process(*m_plugin_log);
+
+    // process info messages
+    process_info_messages();
+}
+
+
+/**
+ * Process into messages
+ */
+void plugin::process_info_messages()
+{
+    if (m_info_msg.empty())
+        return;
+
+    // remove expired messages
+    for (std::pair<std::string, std::shared_ptr<info_msg>> msg_pair: m_info_msg) {
+        auto msg = msg_pair.second;
+
+        if (msg->exp_time < std::chrono::system_clock::now())
+            m_info_msg.erase(msg->id);
+
+        /*std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - msg->time;
+
+        m_plugin_log->debug("Process info 2.2 %f", elapsed_seconds);
+
+        if (elapsed_seconds.count() > 3.0f)
+            m_info_msg.erase(msg->id);*/
+    }
+
+    // show or hide dialog
+    auto xp_win = create_window(window_type::info_window);
+
+    m_plugin_log->debug("Plugin: Number of info messages: %i", m_info_msg.size());
+
+    if (xp_win != nullptr) {
+        auto win = std::static_pointer_cast<info_window>(xp_win);
+
+        if (m_info_msg.empty())
+            win->hide();
+        else
+            win->show();
+
+    }
 }
 
 
@@ -210,6 +254,12 @@ void plugin::load_profile()
         if (m_settings->show_messages())
             show_messages_window();
     }
+
+    if (m_profile->loaded())
+        show_info_message(XMIDICTRL_NAME, "Profile '" + m_profile->title() + "' loaded", 20);
+     else
+        show_info_message(XMIDICTRL_NAME, "Profile '" + m_profile->title() + "' not loaded", 20);
+
 }
 
 
@@ -219,6 +269,21 @@ void plugin::load_profile()
 void plugin::close_profile()
 {
     m_profile->close();
+}
+
+
+/**
+ * Display an info message on the screen
+ */
+void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
+{
+    auto msg = std::make_shared<info_msg>(in_seconds);
+    msg->id = in_id;
+    msg->text = in_msg;
+
+    m_plugin_log->debug("Info message exp time: %s", conversions::time_to_string(msg->exp_time).c_str());
+
+    m_info_msg.emplace(msg->id, msg);
 }
 
 
@@ -300,6 +365,8 @@ void plugin::set_sublayer(int in_value)
  */
 void plugin::toggle_sublayer()
 {
+    show_info_message(XMIDICTRL_NAME, "Toggle sublayer", 3);
+
     if (m_sublayer == 1)
         m_sublayer = 0;
     else
@@ -420,6 +487,8 @@ int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMComm
     if (in_phase != xplm_CommandEnd)
         return 1;
 
+    plugin::instance().show_info_message("CMD", "Command executed");
+
     if (!strcmp((const char *) in_refcon, COMMAND_MESSAGE_WINDOW))
         plugin::instance().show_messages_window();
     else if (!strcmp((const char *) in_refcon, COMMAND_PROFILE_WINDOW))
@@ -464,6 +533,10 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             window = std::make_shared<devices_window>(*m_plugin_log, *m_xp);
             break;
 
+        case window_type::info_window:
+            window = std::make_shared<info_window>(*m_plugin_log, *m_xp, m_info_msg);
+            break;
+
         case window_type::profile_window:
             window = std::make_shared<profile_window>(*m_plugin_log, *m_xp, *m_profile);
             break;
@@ -473,7 +546,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             break;
     }
 
-    if (window)
+    if (window != nullptr)
         m_windows.emplace(in_type, window);
 
     return window;
