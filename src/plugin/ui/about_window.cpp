@@ -19,7 +19,6 @@
 
 // Standard
 #include <string>
-#include <utility>
 
 namespace xmidictrl {
 
@@ -31,7 +30,7 @@ namespace xmidictrl {
  * Constructor
  */
 about_window::about_window(text_logger &in_log, xplane &in_xp)
-    : imgui_window(in_log, in_xp, 850, 450)
+    : imgui_window(in_log, in_xp, 850, 460)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - About");
 }
@@ -69,6 +68,8 @@ void about_window::create_widgets()
     ImGui::TextUnformatted("TOML for Modern C++ from Toru Niina (https:://github.com/ToruNiina/toml11)");
     ImGui::Bullet();
     ImGui::TextUnformatted("Dear ImGui from Omar Cornut (https:://github.com/ocornut/imgui)");
+    ImGui::Bullet();
+    ImGui::TextUnformatted("Font Awesome from Fonticons Inc. (https://fontawesome.com)");
     ImGui::Bullet();
     ImGui::TextUnformatted(
         "Dear ImGui X-Plane Integration from Christopher Collins (https://github.com/xsquawkbox/xsb_public)");

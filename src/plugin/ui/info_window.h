@@ -22,16 +22,20 @@
 #include <map>
 
 // XMidiCtrl
-#include "text_logger.h"
 #include "imgui_window.h"
 #include "info_msg.h"
+#include "settings.h"
+#include "text_logger.h"
 #include "xplane.h"
 
 namespace xmidictrl {
 
 class info_window : public imgui_window {
 public:
-    info_window(text_logger &in_log, xplane &in_xp, std::map<std::string, std::shared_ptr<info_msg>> &in_msg);
+    info_window(text_logger &in_log,
+                xplane &in_xp,
+                settings &in_settings,
+                std::map<std::string, std::shared_ptr<info_msg>> &in_msg);
     ~info_window() override = default;
 
     void show() override;
@@ -41,6 +45,7 @@ protected:
 
     const int ROW_HEIGHT = 25;
 
+    settings &m_settings;
     std::map<std::string, std::shared_ptr<info_msg>> &m_messages;
 };
 

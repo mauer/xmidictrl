@@ -38,27 +38,28 @@ namespace xmidictrl {
  */
 plugin::plugin()
 {
-    // create loggers
+    // create logger
     m_plugin_log = std::make_unique<text_logger>();
-    m_midi_log = std::make_unique<midi_logger>();
+
 
     // create the integration to X-Plane
     m_xp = std::make_unique<xplane>(*m_plugin_log);
 
     // load general settings
-    m_settings = std::make_unique<settings>(*m_plugin_log, *m_midi_log, *m_xp);
+    m_settings = std::make_unique<settings>(*m_plugin_log, *m_xp);
 
     // initialize our logging system
-    m_plugin_log->enabled_file_logging(m_xp->xplane_path());
+    m_plugin_log->enable_file_logging(m_xp->xplane_path());
     m_plugin_log->set_debug_mode(m_settings->debug_mode());
     m_plugin_log->set_max_size(m_settings->max_text_messages());
     m_plugin_log->info("Plugin %s loaded successfully", XMIDICTRL_FULL_NAME);
     XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " loaded successfully").data());
 
-    m_midi_log->set_max_size(m_settings->max_midi_messages());
-
     // create the menu
     m_menu = std::make_unique<menu>();
+
+    // create the midi log
+    m_midi_log = std::make_unique<midi_logger>(*m_settings);
 
     // create the aircraft profile
     m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
@@ -244,12 +245,6 @@ void plugin::load_profile()
         if (m_settings->show_messages())
             show_messages_window();
     }
-
-    if (m_profile->loaded())
-        show_info_message(XMIDICTRL_NAME, "Profile '" + m_profile->title() + "' loaded", 20);
-     else
-        show_info_message(XMIDICTRL_NAME, "Profile '" + m_profile->title() + "' not loaded", 20);
-
 }
 
 
@@ -263,11 +258,29 @@ void plugin::close_profile()
 
 
 /**
+ * Display short info about the loaded profile
+ */
+void plugin::show_profile_message()
+{
+    if (m_profile->loaded())
+        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> Profile '" + m_profile->title() + "' loaded", 10);
+    else
+        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);
+}
+
+
+/**
  * Display an info message on the screen
  */
 void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
 {
-    auto msg = std::make_shared<info_msg>(in_seconds);
+    std::shared_ptr<info_msg> msg;
+
+    if (in_seconds == -1)
+        msg = std::make_shared<info_msg>(m_settings->info_seconds());
+    else
+        msg = std::make_shared<info_msg>(in_seconds);
+
     msg->id = in_id;
     msg->text = in_msg;
 
@@ -290,7 +303,8 @@ void plugin::add_inbound_task(const std::shared_ptr<inbound_task> &in_task)
  */
 void plugin::show_messages_window()
 {
-    create_window(window_type::messages_window);
+    auto window = create_window(window_type::messages_window);
+    window->show();
 }
 
 
@@ -299,7 +313,8 @@ void plugin::show_messages_window()
  */
 void plugin::show_devices_window()
 {
-    create_window(window_type::devices_window);
+    auto window = create_window(window_type::devices_window);
+    window->show();
 }
 
 
@@ -308,7 +323,8 @@ void plugin::show_devices_window()
  */
 void plugin::show_profile_window()
 {
-    create_window(window_type::profile_window);
+    auto window = create_window(window_type::profile_window);
+    window->show();
 }
 
 
@@ -317,7 +333,8 @@ void plugin::show_profile_window()
  */
 void plugin::show_settings_window()
 {
-    create_window(window_type::settings_window);
+    auto window = create_window(window_type::settings_window);
+    window->show();
 }
 
 
@@ -326,7 +343,8 @@ void plugin::show_settings_window()
  */
 void plugin::show_about_window()
 {
-    create_window(window_type::about_window);
+    auto window = create_window(window_type::about_window);
+    window->show();
 }
 
 
@@ -353,8 +371,6 @@ void plugin::set_sublayer(int in_value)
  */
 void plugin::toggle_sublayer()
 {
-    show_info_message(XMIDICTRL_NAME, "Toggle sublayer", 3);
-
     if (m_sublayer == 1)
         m_sublayer = 0;
     else
@@ -522,7 +538,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             break;
 
         case window_type::info_window:
-            window = std::make_shared<info_window>(*m_plugin_log, *m_xp, m_info_msg);
+            window = std::make_shared<info_window>(*m_plugin_log, *m_xp, *m_settings, m_info_msg);
             break;
 
         case window_type::profile_window:

@@ -32,14 +32,31 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp)
+settings::settings(text_logger &in_text_log, xplane &in_xp)
     : config(in_xp),
-      m_text_log(in_text_log),
-      m_midi_log(in_midi_log)
+      m_text_log(in_text_log)
 {
     // build name for general settings file
-    if (!load_file(m_text_log, get_settings_filename()))
+    if (load_file(m_text_log, get_settings_filename())) {
+        m_debug_mode = toml::find_or<bool>(m_config, CFG_KEY_DEBUG_MODE, false);
+        m_log_midi = toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
+        m_show_messages = toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+
+        m_max_text_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
+        m_max_midi_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 150);
+
+        m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_TEXT_SORT, 0));
+        m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_MIDI_SORT, 0));
+
+        m_use_common_profile = toml::find_or<bool>(m_config, CFG_KEY_COMMON_PROFILE, true);
+
+        m_info_position = static_cast<window_position>(toml::find_or<int>(m_config, CFG_KEY_COMMON_PROFILE, 1));
+        m_info_offset_x = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_X, 50);
+        m_info_offset_y = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_Y, 50);
+        m_info_seconds = toml::find_or<int>(m_config, CFG_KEY_INFO_SECONDS, 3);
+    } else {
         m_text_log.warn(" --> Will use default settings");
+    }
 }
 
 
@@ -61,10 +78,10 @@ settings::~settings()
 /**
  * Set if debug mode is on
  */
-void settings::set_debug_mode(bool in_mode)
+void settings::set_debug_mode(bool in_enabled)
 {
-    m_config[CFG_KEY_DEBUG_MODE] = in_mode;
-    m_text_log.set_debug_mode(in_mode);
+    m_debug_mode = in_enabled;
+    m_text_log.set_debug_mode(in_enabled);
 }
 
 
@@ -73,7 +90,7 @@ void settings::set_debug_mode(bool in_mode)
  */
 bool settings::debug_mode() const
 {
-    return toml::find_or<bool>(m_config, CFG_KEY_DEBUG_MODE, false);
+    return m_debug_mode;
 }
 
 
@@ -82,8 +99,7 @@ bool settings::debug_mode() const
  */
 void settings::set_log_midi(bool in_enabled)
 {
-    m_config[CFG_KEY_LOG_MIDI] = in_enabled;
-    m_midi_log.set_state(in_enabled);
+    m_log_midi = in_enabled;
 }
 
 
@@ -92,7 +108,7 @@ void settings::set_log_midi(bool in_enabled)
  */
 bool settings::log_midi() const
 {
-    return toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
+    return m_log_midi;
 }
 
 
@@ -101,7 +117,7 @@ bool settings::log_midi() const
  */
 void settings::set_show_messages(const bool in_enabled)
 {
-    m_config[CFG_KEY_SHOW_MSG_DIALOG] = in_enabled;
+    m_show_messages = in_enabled;
 }
 
 
@@ -110,7 +126,7 @@ void settings::set_show_messages(const bool in_enabled)
  */
 bool settings::show_messages() const
 {
-    return toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+    return m_show_messages;
 }
 
 
@@ -119,7 +135,7 @@ bool settings::show_messages() const
  */
 void settings::set_max_text_messages(int in_number)
 {
-    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = in_number;
+    m_max_text_messages = in_number;
     m_text_log.set_max_size(in_number);
 }
 
@@ -129,7 +145,7 @@ void settings::set_max_text_messages(int in_number)
  */
 int settings::max_text_messages() const
 {
-    return toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 500);
+    return m_max_text_messages;
 }
 
 
@@ -138,8 +154,7 @@ int settings::max_text_messages() const
  */
 void settings::set_max_midi_messages(int in_number)
 {
-    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = in_number;
-    m_midi_log.set_max_size(in_number);
+    m_max_midi_messages = in_number;
 }
 
 
@@ -148,7 +163,7 @@ void settings::set_max_midi_messages(int in_number)
  */
 int settings::max_midi_messages() const
 {
-    return toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 500);
+    return m_max_midi_messages;
 }
 
 
@@ -157,7 +172,7 @@ int settings::max_midi_messages() const
  */
 void settings::set_default_text_sort(sort_mode in_mode)
 {
-    m_config[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(in_mode);
+    m_default_text_sort = in_mode;
 }
 
 
@@ -166,7 +181,7 @@ void settings::set_default_text_sort(sort_mode in_mode)
  */
 sort_mode settings::default_text_sort() const
 {
-    return static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_TEXT_SORT, 0));
+    return m_default_text_sort;
 }
 
 
@@ -175,7 +190,7 @@ sort_mode settings::default_text_sort() const
  */
 void settings::set_default_midi_sort(sort_mode in_mode)
 {
-    m_config[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(in_mode);
+    m_default_midi_sort = in_mode;
 }
 
 
@@ -184,25 +199,97 @@ void settings::set_default_midi_sort(sort_mode in_mode)
  */
 sort_mode settings::default_midi_sort() const
 {
-    return static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_MIDI_SORT, 0));
+    return m_default_midi_sort;
 }
 
 
 /**
  * Sets if the common profile is enabled
  */
-void settings::set_common_profile(bool in_enabled)
+void settings::set_use_common_profile(bool in_enabled)
 {
-    m_config[CFG_KEY_COMMON_PROFILE] = in_enabled;
+    m_use_common_profile = in_enabled;
 }
 
 
 /**
  * Return if the common profile is enabled
  */
-bool settings::common_profile() const
+bool settings::use_common_profile() const
 {
-    return toml::find_or<int>(m_config, CFG_KEY_COMMON_PROFILE, true);
+    return m_use_common_profile;
+}
+
+
+/**
+ * Set the position of the info window
+ */
+void settings::set_info_position(window_position in_position)
+{
+    m_info_position = in_position;
+}
+
+
+/**
+ * Return the position of the info window
+ */
+window_position settings::info_position() const
+{
+    return m_info_position;
+}
+
+
+/**
+ * Set the info window offset x
+ */
+void settings::set_info_offset_x(int in_offset)
+{
+    m_info_offset_x = in_offset;
+}
+
+
+/**
+ * Return the info window offset x
+ */
+int settings::info_offset_x() const
+{
+    return m_info_offset_x;
+}
+
+
+/**
+ * Set the info window offset y
+ */
+void settings::set_info_offset_y(int in_offset)
+{
+    m_info_offset_y = in_offset;
+}
+
+
+/**
+ * Return the info window offset y
+ */
+int settings::info_offset_y() const
+{
+    return m_info_offset_y;
+}
+
+
+/**
+ * Set the number of seconds an info message should be displayed
+ */
+void settings::set_info_seconds(int in_seconds)
+{
+    m_info_seconds = in_seconds;
+}
+
+
+/**
+ * Return the number of seconds an info message should be displayed
+ */
+int settings::info_seconds() const
+{
+    return m_info_seconds;
 }
 
 
@@ -211,6 +298,23 @@ bool settings::common_profile() const
  */
 void settings::save_settings()
 {
+    m_config[CFG_KEY_DEBUG_MODE] = m_debug_mode;
+    m_config[CFG_KEY_LOG_MIDI] = m_log_midi;
+    m_config[CFG_KEY_SHOW_MSG_DIALOG] = m_show_messages;
+
+    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
+    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
+
+    m_config[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
+    m_config[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);
+
+    m_config[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
+
+    m_config[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
+    m_config[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
+    m_config[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;
+    m_config[CFG_KEY_INFO_SECONDS] = m_info_seconds;
+
     std::ofstream stream;
     std::string filename = get_settings_filename();
 

@@ -53,7 +53,7 @@ devices_window::~devices_window() = default;
  */
 void devices_window::create_widgets()
 {
-    ImGui::Text(ICON_FA_ARROW_LEFT " INBOUND PORTS");
+    ImGui::Text("  " ICON_FA_ARROW_LEFT "   INBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 
@@ -88,7 +88,7 @@ void devices_window::create_widgets()
     ImGui::NewLine();
     ImGui::NewLine();
 
-    ImGui::Text(ICON_FA_ARROW_RIGHT " OUTBOUND PORTS");
+    ImGui::Text("  " ICON_FA_ARROW_RIGHT "   OUTBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 

@@ -30,8 +30,12 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-info_window::info_window(text_logger &in_log, xplane &in_xp, std::map<std::string, std::shared_ptr<info_msg>> &in_msg)
+info_window::info_window(text_logger &in_log,
+                         xplane &in_xp,
+                         settings &in_settings,
+                         std::map<std::string, std::shared_ptr<info_msg>> &in_msg)
     : imgui_window(in_log, in_xp, 850, 80, window_position::bottom_left, 50, 50, true),
+      m_settings(in_settings),
       m_messages(in_msg)
 {
 }
@@ -48,8 +52,13 @@ info_window::info_window(text_logger &in_log, xplane &in_xp, std::map<std::strin
  */
 void info_window::show()
 {
-    set_window_position(window_position::bottom_left, 850, (int)(m_messages.size() * ROW_HEIGHT) + 55);
     imgui_window::show();
+
+    set_window_position(m_settings.info_position(),
+                        850,
+                        (int) (m_messages.size() * ROW_HEIGHT) + 55,
+                        m_settings.info_offset_x(),
+                        m_settings.info_offset_y());
 }
 
 

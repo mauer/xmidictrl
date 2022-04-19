@@ -63,7 +63,7 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
-        in_log.debug(" --> Use 'dataref' mode for encoder mapping");
+        in_log.debug(" --> Line %i :: Use 'dataref' mode for encoder mapping", in_data.location().line());
 
         // read dataref
         m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
@@ -98,7 +98,7 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
             m_value_max_defined = true;
         }
     } else {
-        in_log.debug(" --> Use 'command' mode for encoder mapping");
+        in_log.debug(" --> Line %i :: Use 'command' mode for encoder mapping", in_data.location().line());
 
         // read command up
         m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
@@ -197,7 +197,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
     // read current value
     if (!xp().datarefs().read(in_msg.log(), m_dataref, value)) {
         m_velocity_prev = in_msg.data_2();
-        return false;
+        return true;
     }
 
     if (m_mode == encoder_mode::relative) {
@@ -274,15 +274,15 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
     m_velocity_prev = in_msg.data_2();
 
-    if (!xp().datarefs().write(in_msg.log(), m_dataref, value)) {
+    if (xp().datarefs().write(in_msg.log(), m_dataref, value)) {
         try {
-            display_label(in_msg.log(), std::to_string(value));
+            display_label(in_msg.log(), value);
         } catch (std::bad_alloc &ex) {
             in_msg.log().error("Error converting float '%f' value to string", value);
             in_msg.log().error(ex.what());
         }
-
-        return false;
+    } else {
+        in_msg.log().error("Error changing dataref '%s' to value '%f'", m_dataref.data(), value);
     }
 
     return true;

@@ -46,6 +46,7 @@ protected:
     bool check_sublayer(std::string_view in_sl_value);
     void toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values);
 
+    void display_label(text_logger &in_log, float in_value);
     void display_label(text_logger &in_log, std::string_view in_value);
 
 private:

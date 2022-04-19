@@ -31,7 +31,7 @@ namespace xmidictrl {
 
 class xplane {
 public:
-    xplane(text_logger &in_log);
+    explicit xplane(text_logger &in_log);
     ~xplane() = default;
 
     XPLMPluginID plugin_id();

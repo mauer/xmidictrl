@@ -24,19 +24,14 @@
 
 // XMidiCtrl
 #include "midi_message.h"
+#include "settings.h"
 
 namespace xmidictrl {
 
 class midi_logger {
 public:
-    explicit midi_logger() = default;
+    explicit midi_logger(settings &in_settings);
     ~midi_logger() = default;
-
-    void set_state(bool in_state);
-    [[nodiscard]] bool state() const;
-
-    void set_max_size(int in_size);
-    [[nodiscard]] int max_size() const;
 
     void clear();
     size_t count();
@@ -45,8 +40,7 @@ public:
     void add(const std::shared_ptr<midi_message> &in_msg);
 
 private:
-    bool m_state {true};
-    int m_max_size {100};
+    settings &m_settings;
 
     std::deque<std::shared_ptr<midi_message>> m_messages;
 };

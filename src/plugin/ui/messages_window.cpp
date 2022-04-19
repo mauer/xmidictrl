@@ -73,12 +73,12 @@ messages_window::~messages_window() = default;
  */
 void messages_window::create_widgets()
 {
-    ImGui::BeginTabBar("MESSAGES_TAB");
+    if (ImGui::BeginTabBar("MESSAGES_TAB")) {
+        create_tab_text_msg();
+        create_tab_midi_msg();
 
-    create_tab_text_msg();
-    create_tab_midi_msg();
-
-    ImGui::EndTabBar();
+        ImGui::EndTabBar();
+    }
 }
 
 
@@ -97,12 +97,12 @@ void messages_window::create_tab_text_msg()
         ImGui::Text("Debug Mode:");
         ImGui::SameLine(150);
         if (log().debug_mode())
-            ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
+            ImGui::TextColored(COL_TEXT_VALUE, "Enabled (%i)", static_cast<int>(log().count()));
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
-        ImGui::SameLine(ImGui::GetWindowWidth() - 200);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 190);
 
-        if (ImGui::Button("  " ICON_FA_TRASH_CAN " Clear Messages  "))
+        if (ImGui::Button("  " ICON_FA_TRASH_CAN "  Clear Messages  "))
             log().clear();
 
         ImGui::NewLine();
@@ -114,9 +114,9 @@ void messages_window::create_tab_text_msg()
         ImGui::BeginTable("tableTextMessages", 3,
                           ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
 
-        ImGui::TableSetupColumn("Message Date/Time", m_text_msg_flags,200);
-        ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
-        ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Date/Time", m_text_msg_flags,200);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 120);
+        ImGui::TableSetupColumn("Message", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
         if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
@@ -157,14 +157,14 @@ void messages_window::create_tab_midi_msg()
         ImGui::Text("MIDI Logging:");
         ImGui::SameLine(150);
 
-        if (m_midi_log.state())
-            ImGui::TextColored(COL_TEXT_VALUE, "Enabled");
+        if (m_settings.log_midi())
+            ImGui::TextColored(COL_TEXT_VALUE, "Enabled (%i)", static_cast<int>(m_midi_log.count()));
         else
             ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 200);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 190);
 
-        if (ImGui::Button("  " ICON_FA_TRASH_CAN " Clear Messages  "))
+        if (ImGui::Button("  " ICON_FA_TRASH_CAN "  Clear Messages  "))
             m_midi_log.clear();
 
         ImGui::NewLine();
@@ -176,9 +176,9 @@ void messages_window::create_tab_midi_msg()
         ImGui::BeginTable("tableMidiMessages", 10,
                           ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
         ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
-        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
         ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
-        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 150);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 160);
         ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
         ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 80);
         ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 80);

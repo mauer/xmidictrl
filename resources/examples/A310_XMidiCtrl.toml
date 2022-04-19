@@ -1,16 +1,30 @@
-title   = "Settings for the iniBuils A310"
-version = "1.00"
+#----------------------------------------------------------------------------------------------------------------------
+# XMidiCtrl
+#
+# Example configuration for the Behringer X-Touch Mini MIDI controller together with the iniBuilds Airbus A310
+#
+# How to use:
+#   1. Copy this file into your aircraft directory of the iniBuilds Airbus A310 and rename it to XMidiCtrl.toml
+#   2. Adjust the port_in and port_out variables
+#   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
+#----------------------------------------------------------------------------------------------------------------------
+title      = "Settings for the iniBuidls A310"
+version    = "0.90"
+sl_dataref = "xmidictrl/sublayer"
 
 # Behringer X-Touch Mini
 [[device]]
-name = "Behringer X-Touch Mini"
-port_in = 0
-port_out = 1
+name       = "Behringer X-Touch Mini"
+port_in    = 0
+port_out   = 1
 mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer A
   #--------------------------------------------------------------------------------------------------------------------
- 
+
+  # Slider
+  { ch = 11, cc = 0, type = "sld", command_up = "A300/brightness/dome_light_toggle", command_down = "A300/brightness/dome_light_toggle" },
+
   # Encoders
   { ch = 11, cc = 1, type = "enc", command_up = "A300/altimeter/baro_up", command_down = "A300/altimeter/baro_down" },
   { ch = 11, cc = 2, type = "enc", command_up = "A300/MCDU/dh_fpa_up", command_down = "A300/MCDU/dh_fpa_down" },
@@ -20,7 +34,7 @@ mapping_in = [
   { ch = 11, cc = 6, type = "enc", command_up = "A300/MCDU/vvi_up", command_down = "A300/MCDU/vvi_down" },
   { ch = 11, cc = 7, type = "enc", dataref = "A300/CABIN/landing_elevation", modifier_up = 50, modifier_down = -50 },
   { ch = 11, cc = 8, type = "enc", command_up = "A300/TRP/flex_temp_up", command_down = "A300/TRP/flex_temp_down" },
-  
+
   # Encorder Buttons
   { ch = 11, cc = 9,  type = "cmd", command = "A300/altimeter/std_toggle" },
   { ch = 11, cc = 10, type = "pnp", command_push = "A300/MCDU/dh_pilot", command_pull = "A300/MCDU/fpa_pilot" },
@@ -30,9 +44,9 @@ mapping_in = [
   { ch = 11, cc = 14, type = "cmd", command = "A300/MCDU/vvi_engage" },
   { ch = 11, cc = 15, type = "cmd", command = "A300/TERR/terr_captain_toggle" },
   { ch = 11, cc = 16, type = "pnp", command_push = "A300/TRP/auto_mode", command_pull = "A300/TRP/flex_mode" },
-  
+
   # Buttons Upper Row
-  { ch = 11, cc = 17, type = "pnp", command_push = "A300/ECAM/clear", command_pull = "A300/takeoff_test" },
+  { ch = 11, cc = 17, type = "cmd", command = "A300/ECAM/clear" },
   { ch = 11, cc = 18, type = "pnp", command_push = "A300/ECAM/sts_page", command_pull = "A300/ECAM/recall" },
   { ch = 11, cc = 19, type = "cmd", command = "A300/MCDU/autothrottle_toggle" },
   { ch = 11, cc = 20, type = "cmd", command = "A300/MCDU/altitude_hold_engage" },
@@ -50,40 +64,48 @@ mapping_in = [
   { ch = 11, cc = 30, type = "cmd", command = "A300/MCDU/approach_mode" },
   { ch = 11, cc = 31, type = "pnp", command_push = "A300/TRP/toga_mode", command_pull = "A300/TRP/mct_mode" },
   { ch = 11, cc = 32, type = "pnp", command_push = "A300/TRP/cl_mode", command_pull = "A300/TRP/cr_mode" },
- 
+
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
 
+  # Slider
+  { ch = 11, cc = 50, type = "sld", command_up = "A300/brightness/dome_light_toggle", command_down = "A300/brightness/dome_light_toggle" },
+
   # Encoders
-  { ch = 11, cc = 51, type = "enc", command_up = "A300/altimeter/baro_up", command_down = "A300/altimeter/baro_down" },
-  { ch = 11, cc = 52, type = "enc", command_up = "A300/MCDU/dh_fpa_up", command_down = "A300/MCDU/dh_fpa_down" },
-  { ch = 11, cc = 53, type = "enc", command_up = "A300/MCDU/airspeed_up", command_down = "A300/MCDU/airspeed_down" },
-  { ch = 11, cc = 54, type = "enc", command_up = "A300/MCDU/altitude_up", command_down = "A300/MCDU/altitude_down" },
-  { ch = 11, cc = 55, type = "enc", command_up = "A300/MCDU/heading_up", command_down = "A300/MCDU/heading_down" },
-  { ch = 11, cc = 56, type = "enc", command_up = "A300/MCDU/vvi_up", command_down = "A300/MCDU/vvi_down" },
-  { ch = 11, cc = 57, type = "enc", dataref = "A300/CABIN/landing_elevation", modifier_up = 50, modifier_down = -50 },
-  { ch = 11, cc = 58, type = "enc", command_up = "A300/TCAS/pedestal_mode_up", command_down = "A300/TCAS/pedestal_mode_down" },
+  { ch = 11, cc = 51, type = "enc", command_up = "A300/altimeter2/baro_up", command_down = "A300/altimeter2/baro_down" },
+  { ch = 11, cc = 52, type = "enc", command_up = "A300/MCDU/dh_copilot_fpa_up", command_down = "A300/MCDU/dh_copilot_fpa_down" },
+
+  { ch = 11, cc = 53, sl = "0", type = "enc", dataref = "A300/brightness/capt_ctr_instrument_light_knob", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 53, sl = "1", type = "enc", dataref = "A300/brightness/fo_instrument_light_knob", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+
+  { ch = 11, cc = 54, type = "enc", dataref = "A300/brightness/main_instrument_light_knob", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+
+  { ch = 11, cc = 55, type = "enc", dataref = "A300/brightness/pfd_brightness", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+
+  { ch = 11, cc = 56, sl = "0", type = "enc", dataref = "A300/brightness/nd_brightness", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 56, sl = "1", type = "enc", dataref = "A300/brightness/nd_wxr_brightness", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+
+  { ch = 11, cc = 57, sl = "0", type = "enc", dataref = "A300/brightness/pedestal_light_knob", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 57, sl = "1", type = "enc", dataref = "A300/brightness/overhead_int_light_switch", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
+
+  { ch = 11, cc = 58, type = "enc", dataref = "A300/brightness/mcu_brightness_knob", modifier_up = 0.1, modifier_down = -0.1, value_min = 0, value_max = 1 },
 
   # Encoder Buttons
-  { ch = 11, cc = 59, type = "cmd", command = "A300/altimeter/std_toggle" },
-  { ch = 11, cc = 60, type = "pnp", command_push = "A300/MCDU/dh_pilot", command_pull = "A300/MCDU/fpa_pilot" },
-  { ch = 11, cc = 61, type = "pnp", command_push = "A300/MCDU/speed_pull", command_pull = "A300/MCDU/speed_push" },
-  { ch = 11, cc = 62, type = "pnp", command_push = "A300/MCDU/altitude_pull", command_pull = "A300/MCDU/altitude_hold_engage" },
-  { ch = 11, cc = 63, type = "pnp", command_push = "A300/MCDU/heading_pull", command_pull = "A300/MCDU/heading_push" },
-  { ch = 11, cc = 64, type = "pnp", command_push = "A300/MCDU/vvi_engage", command_pull = "A300/MCDU/approach_mode" },
-  { ch = 11, cc = 65, type = "cmd", command = "A300/TERR/terr_captain_toggle" },
-  { ch = 11, cc = 66, type = "cmd", command = "A300/TCAS/ident" },
+  { ch = 11, cc = 60, type = "pnp", command_push = "A300/MCDU/dh_copilot", command_pull = "A300/MCDU/fpa_copilot" },
+  { ch = 11, cc = 61, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+  { ch = 11, cc = 64, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+  { ch = 11, cc = 65, type = "cmd", command = "xmidictrl/toggle_sublayer" },
 
   # Buttons Upper Row
-  { ch = 11, cc = 67, type = "cmd", command = "A300/clock/et_toggle" },  
+  { ch = 11, cc = 67, type = "cmd", command = "A300/clock/et_toggle" },
   { ch = 11, cc = 68, type = "cmd", command = "A300/ECAM/engine_page" },
   { ch = 11, cc = 69, type = "cmd", command = "A300/ECAM/hyd_page" },
   { ch = 11, cc = 70, type = "cmd", command = "A300/ECAM/elec_ac_page" },
   { ch = 11, cc = 71, type = "cmd", command = "A300/ECAM/elec_dc_page" },
   { ch = 11, cc = 72, type = "cmd", command = "A300/ECAM/bleed_page" },
-  { channel = 11, cc = 73, type = "cmd", command = "A300/ECAM/cond_page" },
-  { ch = 11, cc = 74, type = "drf", dataref = "A300/WXR/system", value_on = "0", value_off = "1" },
+  { ch = 11, cc = 73, type = "cmd", command = "A300/ECAM/cond_page" },
+  { ch = 11, cc = 74, type = "drf", label = "label_wx", dataref = "A300/WXR/system", value_on = "0", value_off = "1" },
 
   # Buttons Lower Row
   { ch = 11, cc = 75, type = "cmd", command = "A300/pack1_toggle" },
@@ -94,12 +116,11 @@ mapping_in = [
   { ch = 11, cc = 80, type = "cmd", command = "A300/ECAM/door_page" },
   { ch = 11, cc = 81, type = "cmd", command = "A300/ECAM/wheel_page" },
   { ch = 11, cc = 82, type = "cmd", command = "A300/pack2_toggle" }
-] 
-
+]
 mapping_out = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer A
-  #--------------------------------------------------------------------------------------------------------------------  
+  #--------------------------------------------------------------------------------------------------------------------
 
   # Buttons Upper Row
   { ch = 11, cc = 17, type = "drf", dataref = "A300/ECAM/ecam_light[14]", value_on = "1", value_off = "0" },
@@ -126,11 +147,11 @@ mapping_out = [
   # Buttons Upper Row
   { ch = 11, cc = 67, type = "drf", dataref = "A300/clock/et_status", value_on = "1", value_off = "2" },
   { ch = 11, cc = 68, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 69, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 70, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 71, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 72, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
-  { ch = 11, cc = 73, type = "drf", dataref = "A300/ECAM/ecam_light[12]", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 69, type = "drf", dataref = "A300/ECAM/ecam_light[5]", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 70, type = "drf", dataref = "A300/ECAM/ecam_light[1]", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 71, type = "drf", dataref = "A300/ECAM/ecam_light[6]", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 72, type = "drf", dataref = "A300/ECAM/ecam_light[10]", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 73, type = "drf", dataref = "A300/ECAM/ecam_light[9]", value_on = "1", value_off = "0" },
   { ch = 11, cc = 74, type = "drf", dataref = "A300/WXR/system", value_on = "0", value_off = "1" },
 
   # Buttons Lower Row
@@ -142,4 +163,11 @@ mapping_out = [
   { ch = 11, cc = 80, type = "drf", dataref = "A300/ECAM/ecam_light[3]", value_on = "1", value_off = "0" },
   { ch = 11, cc = 81, type = "drf", dataref = "A300/ECAM/ecam_light[8]", value_on = "1", value_off = "0" },
   { ch = 11, cc = 82, type = "drf", dataref = "A300/pack2_state", value_on = "1", value_off = "0" }
+]
+
+[label_wx]
+text = "WX Radar:"
+values = [
+  { value = "1", text = "Off" },
+  { value = "0", text = "On" }
 ]

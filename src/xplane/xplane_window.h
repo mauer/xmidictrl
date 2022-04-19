@@ -47,19 +47,10 @@
 
 // XMidiCtrl
 #include "text_logger.h"
+#include "types.h"
 #include "xplane.h"
 
 namespace xmidictrl {
-
-enum class window_position {
-    top_left,
-    bottom_left,
-    top_right,
-    bottom_right,
-    center,
-    top_center,
-    bottom_center
-};
 
 class xplane_window {
 public:
@@ -85,7 +76,7 @@ public:
     virtual void show();
     void hide();
 
-    void set_window_position(window_position in_position, int in_width, int in_height);
+    void set_window_position(window_position in_position, int in_width, int in_height, int in_offset_x, int in_offset_y);
 
     void set_title(std::string_view in_title);
     [[nodiscard]] bool is_visible() const;
@@ -106,8 +97,7 @@ protected:
     void update_matrices();
 
 private:
-    void calc_window_position(window_position in_position, int in_width, int in_height,
-                              int &out_left, int &out_right, int &out_top, int &out_bottom);
+    void calc_window_position(int &out_left, int &out_right, int &out_top, int &out_bottom);
 
     void create_window();
 

@@ -53,7 +53,8 @@ public:
     void load_profile();
     void close_profile();
 
-    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = 3);
+    void show_profile_message();
+    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
 
     void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
 

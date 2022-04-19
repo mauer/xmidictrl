@@ -28,30 +28,6 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the text of a log level
- */
-std::string conversions::log_level_as_text(log_level level)
-{
-    switch (level) {
-        case log_level::error:
-            return "Errors";
-
-        case log_level::warn:
-            return "Warnings";
-
-        case log_level::info:
-            return "Information";
-
-        case log_level::debug:
-            return "Debug";
-
-        default:
-            return {"Debug"};
-    }
-}
-
-
-/**
  * Return the outbound mode for a given integer
  */
 mode_out conversions::mode_out_from_int(int mode)

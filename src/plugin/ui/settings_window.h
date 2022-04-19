@@ -34,6 +34,13 @@ protected:
     void create_widgets() override;
 
 private:
+    void create_tab_general();
+    void create_tab_logging();
+    void create_tab_paths();
+
+    std::string info_position_as_text(window_position in_position);
+    void save_settings();
+
     settings &m_settings;
 
     bool m_debug_mode;
@@ -46,7 +53,12 @@ private:
     int m_default_text_sort;
     int m_default_midi_sort;
 
-    bool m_common_profile;
+    bool m_use_common_profile;
+
+    window_position m_info_position;
+    int m_info_offset_x;
+    int m_info_offset_y;
+    int m_info_seconds;
 
     std::string m_path_xplane;
     std::string m_path_plugin;

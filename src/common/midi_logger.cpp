@@ -25,50 +25,23 @@
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   PUBLIC
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Set the logging state
+ * Constructor
  */
-void midi_logger::set_state(bool in_state)
+midi_logger::midi_logger(settings &in_settings)
+    : m_settings(in_settings)
 {
-    m_state = in_state;
 }
 
 
-/**
- * Return the logging state
- */
-bool midi_logger::state() const
-{
-    return m_state;
-}
 
 
-/**
- * Set the max message size
- */
-void midi_logger::set_max_size(int in_size)
-{
-    if (in_size > 0)
-        m_max_size = in_size;
-    else
-        m_max_size = 1;
-
-    while (m_messages.size() > m_max_size)
-        m_messages.pop_front();
-}
-
-
-/**
- * Return the max message size
- */
-int midi_logger::max_size() const
-{
-    return m_max_size;
-}
-
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Clear all messages
@@ -102,13 +75,14 @@ midi_message *midi_logger::message(int in_index)
  */
 void midi_logger::add(const std::shared_ptr<midi_message> &in_msg)
 {
-    if (!m_state)
+    if (!m_settings.log_midi())
         return;
 
-    while (m_messages.size() >= m_max_size)
+    while (m_messages.size() >= m_settings.max_midi_messages())
         m_messages.pop_front();
 
     m_messages.push_back(in_msg);
 }
+
 
 } // Namespace xmidictrl

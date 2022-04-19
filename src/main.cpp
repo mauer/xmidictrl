@@ -82,6 +82,10 @@ PLUGIN_API void XPluginReceiveMessage(XPLMPluginID i_from, int in_msg, void *inP
             xmidictrl::plugin::instance().load_profile();
             break;
 
+        case XPLM_MSG_AIRPORT_LOADED:
+            xmidictrl::plugin::instance().show_profile_message();
+            break;
+
         case XPLM_MSG_PLANE_UNLOADED:
             xmidictrl::plugin::instance().close_profile();
             break;

@@ -34,8 +34,6 @@ namespace xmidictrl {
 
 class conversions {
 public:
-    static std::string log_level_as_text(log_level level);
-
     static mode_out mode_out_from_int(int mode);
 
     // move directly into mapping classes

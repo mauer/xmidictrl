@@ -60,7 +60,7 @@ imgui_window::imgui_window(text_logger &in_log,
                            int in_offset_x,
                            int in_offset_y,
                            bool in_translucent)
-    : xplane_window(in_log, in_xp, in_width, in_height, in_position, in_offset_y, in_offset_y, in_translucent)
+    : xplane_window(in_log, in_xp, in_width, in_height, in_position, in_offset_x, in_offset_y, in_translucent)
 {
     // font atlas for Dear ImGui
     if (!m_font) {
@@ -385,8 +385,12 @@ bool imgui_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
         case xplm_MouseDrag:
             io.MouseDown[0] = true;
             break;
+
         case xplm_MouseUp:
             io.MouseDown[0] = false;
+            break;
+
+        default:
             break;
     }
 
@@ -410,6 +414,9 @@ bool imgui_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_click
 
         case 1:
             io.MouseWheelH = static_cast<float>(in_clicks);
+            break;
+
+        default:
             break;
     }
 

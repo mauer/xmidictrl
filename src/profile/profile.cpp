@@ -195,7 +195,7 @@ std::string profile::version()
  */
 std::string profile::get_filename_aircraft_path()
 {
-    return xp().current_aircraft_path() + std::string(FILENAME_PROFILE);
+    return xplane::current_aircraft_path() + std::string(FILENAME_PROFILE);
 }
 
 
@@ -284,7 +284,7 @@ std::string profile::find_profile()
         return filename;
 
     // 4. check for the common profile (if activated)
-    if (m_settings.common_profile()) {
+    if (m_settings.use_common_profile()) {
         filename = get_filename_profiles_path(false, false);
 
         m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());

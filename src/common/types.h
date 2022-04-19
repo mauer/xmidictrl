@@ -134,6 +134,10 @@ const char *const CFG_KEY_VALUE_OFF = "value_off";
 const char *const CFG_KEY_VELOCITY_ON = "velocity_on";
 const char *const CFG_KEY_VELOCITY_OFF = "velocity_off";
 const char *const CFG_KEY_VERSION = "version";
+const char *const CFG_KEY_INFO_OFFSET_X = "info_offset_x";
+const char *const CFG_KEY_INFO_OFFSET_Y = "info_offset_y";
+const char *const CFG_KEY_INFO_POSITION = "info_position";
+const char *const CFG_KEY_INFO_SECONDS = "info_seconds";
 
 // Mapping Types as strings
 const char *const CFG_MAPTYPE_COMMAND = "cmd";
@@ -221,6 +225,17 @@ enum class send_mode {
 enum class sort_mode {
     ascending  = 0,
     descending = 1
+};
+
+// Window position
+enum class window_position {
+    top_left      = 0,
+    bottom_left   = 1,
+    top_right     = 2,
+    bottom_right  = 3,
+    center        = 4,
+    top_center    = 5,
+    bottom_center = 6
 };
 
 // Window types

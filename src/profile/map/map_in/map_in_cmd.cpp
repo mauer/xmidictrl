@@ -142,8 +142,6 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
                            m_velocity_off);
     }
 
-    plugin::instance().show_info_message("MAP_IN_CMD", "Command executed");
-
     return true;
 }
 

@@ -59,7 +59,7 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::va
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
-        in_log.debug(" --> Use 'dataref' mode for slider mapping");
+        in_log.debug(" --> Line %i :: Use 'dataref' mode for slider mapping", in_data.location().line());
 
         // read dataref
         m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
@@ -70,7 +70,7 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::va
         // read value max
         m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f);
     } else {
-        in_log.debug(" --> Use 'command' mode for slider mapping");
+        in_log.debug(" --> Line %i :: Use 'command' mode for slider mapping", in_data.location().line());
 
         // read command up
         m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
@@ -130,7 +130,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
 
     if (!m_dataref.empty()) {
         // dataref mode
-        float value = 0.0f;
+        float value;
 
         if (in_msg.data_2() == MIDI_VELOCITY_MIN)
             value = m_value_min;

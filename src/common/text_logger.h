@@ -37,7 +37,7 @@ public:
     explicit text_logger(text_logger *in_parent = nullptr);
     ~text_logger();
 
-    void enabled_file_logging(std::string_view in_path);
+    void enable_file_logging(std::string_view in_path);
 
     void set_debug_mode(bool in_mode);
     bool debug_mode() const;
@@ -76,7 +76,6 @@ private:
 
     bool m_debug_mode {false};
     bool m_log_info {true};
-
 
     std::ofstream m_file_stream;
 

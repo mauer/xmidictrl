@@ -124,16 +124,31 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
 /**
  * Display the label on the screen
  */
+void map_in::display_label(text_logger &in_log, float in_value)
+{
+    std::stringstream ss;
+    ss << in_value;
+
+    display_label(in_log, ss.str());
+}
+
+
+/**
+ * Display the label on the screen
+ */
 void map_in::display_label(text_logger &in_log, std::string_view in_value)
 {
-    if (m_label == nullptr)
+    if (m_label == nullptr) {
+        in_log.debug(" --> No label defined");
         return;
+    }
 
     try {
         std::string value_text = m_label->values.at(in_value.data());
-
+        in_log.debug(" --> Found text '%s' for value '%s'", value_text.c_str(), in_value.data());
         plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
     } catch (std::out_of_range &ex) {
+        in_log.warn(" --> Text for value '%s' not found", in_value.data());
         return;
     }
 }

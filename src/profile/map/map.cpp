@@ -46,7 +46,7 @@ map::map(xplane &in_xp)
 map_type map::type()
 {
     return map_type::none;
-};
+}
 
 
 /**

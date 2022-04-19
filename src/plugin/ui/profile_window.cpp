@@ -54,12 +54,12 @@ profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_p
  */
 void profile_window::create_widgets()
 {
-    ImGui::BeginTabBar("PROFILE_TAB");
+    if (ImGui::BeginTabBar("PROFILE_TAB")) {
+        create_tab_general();
+        create_tab_errors_warnings();
 
-    create_tab_general();
-    create_tab_errors_warnings();
-
-    ImGui::EndTabBar();
+        ImGui::EndTabBar();
+    }
 }
 
 
@@ -162,9 +162,9 @@ void profile_window::create_tab_errors_warnings()
         else
             ImGui::TextColored(COL_TEXT_VALUE, "No");
 
-        ImGui::SameLine(ImGui::GetWindowWidth() - 250);
+        ImGui::SameLine(ImGui::GetWindowWidth() - 240);
 
-        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT " Reload Aircraft Profile  "))
+        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reload Aircraft Profile  "))
             plugin::instance().load_profile();
 
         ImGui::Text("Warnings found:");

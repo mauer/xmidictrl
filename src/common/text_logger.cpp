@@ -54,7 +54,7 @@ text_logger::~text_logger()
 /**
  * Enable file logging
  */
-void text_logger::enabled_file_logging(std::string_view in_path)
+void text_logger::enable_file_logging(std::string_view in_path)
 {
     if (!in_path.empty()) {
         std::string filename = std::string(in_path) + XMIDICTRL_NAME + LOGFILE_SUFFIX;

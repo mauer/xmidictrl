@@ -8,8 +8,9 @@
 #   2. Adjust the port_in and port_out variables
 #   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
-title   = "Settings for the ToLiss Airbus A321"
-version = "0.60"
+title      = "Settings for the ToLiss Airbus A321"
+version    = "0.90"
+sl_dataref = "xmidictrl/sublayer"
 
 # Behringer X-Touch Mini
 [[device]]
@@ -26,13 +27,15 @@ mapping_in = [
   { ch = 11, cc = 2, type = "enc", command_up = "sim/instruments/EFIS_mode_up", command_down = "sim/instruments/EFIS_mode_dn" },
   { ch = 11, cc = 3, type = "enc", command_up = "sim/instruments/map_zoom_out", command_down = "sim/instruments/map_zoom_in" },
   { ch = 11, cc = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down" },
-  { ch = 11, cc = 5, type = "enc", command_up = "sim/autopilot/heading_up", command_down = "sim/autopilot/heading_down" },
+  { ch = 11, cc = 5, type = "enc", dataref = "sim/cockpit/autopilot/heading_mag", modifier_up = 1, modifier_down = -1, modifier_fast_up = 10, modifier_fast_down = -10 },
   { ch = 11, cc = 6, type = "enc", command_up = "sim/autopilot/altitude_up", command_down = "sim/autopilot/altitude_down" },
   { ch = 11, cc = 7, type = "enc", command_up = "sim/autopilot/vertical_speed_up", command_down = "sim/autopilot/vertical_speed_down" },
+  { ch = 11, cc = 8, type = "enc", label = "xpdr", dataref = "AirbusFBW/XPDRPower", modifier_up = 1, modifier_down = -1, value_min = 0, value_max = 4 },
 
-  # encoder_cmd Buttons
+  # Encoder Buttons
+  { ch = 11, cc = 9,  type = "pnp", dataref_push = "AirbusFBW/BaroStdCapt", values_push = ['0', '1'], dataref_pull = "AirbusFBW/BaroUnitCapt", values_pull = ['0', '1'] },
   { ch = 11, cc = 10, type = "cmd", command = "toliss_airbus/dispcommands/CaptCstrPushButton" },
-  { channel = 11, cc = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },
+  { ch = 11, cc = 11, type = "cmd", command = "toliss_airbus/dispcommands/TerrOnND1Toggle" },
   { ch = 11, cc = 12, type = "pnp", command_push = "toliss_airbus/spd_pull", command_pull = "toliss_airbus/spd_push" },
   { ch = 11, cc = 13, type = "pnp", command_push = "AirbusFBW/PushHDGSel", command_pull = "AirbusFBW/PullHDGSel" },
   { ch = 11, cc = 14, type = "pnp", command_push = "AirbusFBW/PushAltitude", command_pull = "AirbusFBW/PullAltitude" },
@@ -61,8 +64,28 @@ mapping_in = [
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
 
+  # Encoders
+  { ch = 11, cc = 51, type = "enc", dataref = "AirbusFBW/DUBrightness[0]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 52, sl = "0", type = "enc", dataref = "AirbusFBW/DUBrightness[1]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 52, sl = "1", type = "enc", dataref = "AirbusFBW/WXAlphaND1", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 53, type = "enc", dataref = "AirbusFBW/DUBrightness[4]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 54, type = "enc", dataref = "AirbusFBW/DUBrightness[5]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 55, sl = "0", type = "enc", dataref = "AirbusFBW/PanelBrightnessLevel", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 55, sl = "1", type = "enc", dataref = "AirbusFBW/OHPBrightnessLevel", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 56, sl = "0", type = "enc", dataref = "AirbusFBW/PanelFloodBrightnessLevel", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 56, sl = "1", type = "enc", dataref = "AirbusFBW/PedestalFloodBrightnessLevel", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0, value_max = 1 },
+  { ch = 11, cc = 57, sl = "0", type = "enc", dataref = "AirbusFBW/DUBrightness[3]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 57, sl = "1", type = "enc", dataref = "AirbusFBW/WXAlphaND2", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+  { ch = 11, cc = 58, type = "enc", dataref = "AirbusFBW/DUBrightness[2]", modifier_up = 0.018518, modifier_down = -0.018518, value_min = 0.003704, value_max = 1 },
+
+  # Encoder Buttons
+  { ch = 11, cc = 60, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+  { ch = 11, cc = 63, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+  { ch = 11, cc = 64, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+  { ch = 11, cc = 65, type = "cmd", command = "xmidictrl/toggle_sublayer" },
+
   # Buttons Upper Row
-  { ch = 11, cc = 67, type = "cmd", command = "sim/radios/com1_standy_flip" },
+  { ch = 11, cc = 67, type = "drf", dataref = "AirbusFBW/APUBleedSwitch", value_on = "1", value_off = "0" },
   { ch = 11, cc = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" },
   { ch = 11, cc = 69, type = "drf", dataref = "AirbusFBW/SDBLEED", value_on = "1", value_off = "0" },
   { ch = 11, cc = 70, type = "drf", dataref = "AirbusFBW/SDPRESS", value_on = "1", value_off = "0" },
@@ -80,4 +103,36 @@ mapping_in = [
   { ch = 11, cc = 80, type = "drf", dataref = "AirbusFBW/SDFCTL", value_on = "1", value_off = "0" },
   { ch = 11, cc = 81, type = "drf", dataref = "AirbusFBW/SDSTATUS", value_on = "1", value_off = "0" },
   { ch = 11, cc = 82, type = "cmd", command = "toliss_airbus/aircondcommands/Pack2Toggle" }
+]
+mapping_out = [
+  #--------------------------------------------------------------------------------------------------------------------
+  # Layer B
+  #--------------------------------------------------------------------------------------------------------------------
+
+  # Buttons Upper Row
+  { ch = 11, cc = 67, type = "drf", dataref = "AirbusFBW/APUBleedSwitch", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 68, type = "drf", dataref = "AirbusFBW/SDENG", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 69, type = "drf", dataref = "AirbusFBW/SDBLEED", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 70, type = "drf", dataref = "AirbusFBW/SDPRESS", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 71, type = "drf", dataref = "AirbusFBW/SDELEC", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 72, type = "drf", dataref = "AirbusFBW/SDHYD", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 73, type = "drf", dataref = "AirbusFBW/SDFUEL", value_on = "1", value_off = "0" },
+
+  # Buttons Lower Row
+  { ch = 11, cc = 76, type = "drf", dataref = "AirbusFBW/SDAPU", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 77, type = "drf", dataref = "AirbusFBW/SDCOND", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 78, type = "drf", dataref = "AirbusFBW/SDDOOR", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 79, type = "drf", dataref = "AirbusFBW/SDWHEEL", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 80, type = "drf", dataref = "AirbusFBW/SDFCTL", value_on = "1", value_off = "0" },
+  { ch = 11, cc = 81, type = "drf", dataref = "AirbusFBW/SDSTATUS", value_on = "1", value_off = "0" }
+]
+
+[xpdr]
+text = "Transponder Mode:"
+values = [
+  { value = "0", text = "STBY" },
+  { value = "1", text = "ALT RPTG OFF" },
+  { value = "2", text = "XPNDR" },
+  { value = "3", text = "TA ONLY" },
+  { value = "4", text = "TA/RA" }
 ]
