@@ -1,9 +1,9 @@
 # Aircraft Profiles
 
-All settings for an aircraft are stored in a profile file. This allows you to have several configuration for different
+All settings for an aircraft are stored in a profile. This allows you to have several configuration for different
 aircraft. It is also possible to use a common profile, which will be used if no aircraft profile has been found. The 
 aircraft profile uses the TOML language and holds information about all MIDI devices to be used and the mappings of the 
-encoders and buttons.
+encoders, buttons and sliders.
 
 Once the aircraft has been loaded in X-Plane, the plugin will search the following locations in this order:
 

@@ -83,6 +83,7 @@ imgui_window::imgui_window(text_logger &in_log,
                         ICON_FA_CIRCLE_CHECK
                         ICON_FA_CHECK
                         ICON_FA_CHECK_DOUBLE
+                        ICON_FA_INFO
                         ICON_FA_TRASH_CAN
                         ICON_FA_FLOPPY_DISK
                         ICON_FA_ROTATE_RIGHT);

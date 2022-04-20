@@ -1,8 +1,5 @@
- + Support for other MIDI types
- + Display errors and midi messages in different orders, default setting
  + Display mappings and devices in profile window
  + Allow selection of different ports when loading an aircraft
- + AND option for multiple datarefs in outbound messages
- + Show notes in MIDI log
  + Slow mode for encoders
- + Message on dataref change
+ + Outbound mapping for sliders
+ + Init messages

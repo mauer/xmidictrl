@@ -17,6 +17,9 @@
 
 #include "xplane.h"
 
+// Standard
+#include <filesystem>
+
 // X-Plane SDK
 #include "XPLMPlanes.h"
 #include "XPLMPlugin.h"
@@ -179,6 +182,22 @@ std::string xplane::current_aircraft_icao()
         value.clear();
         return value;
     }
+}
+
+
+/**
+ * Return the acf name of the current aircraft
+ */
+std::string xplane::current_aircraft_acf_name()
+{
+    char aircraft_filename[256];
+    char aircraft_path[512];
+
+    // aircraft with index 0 is the user aircraft
+    XPLMGetNthAircraftModel(0, aircraft_filename, aircraft_path);
+    std::filesystem::path file = aircraft_filename;
+
+    return file.replace_extension().string();
 }
 
 

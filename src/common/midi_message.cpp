@@ -248,6 +248,30 @@ unsigned char midi_message::data_1() const
 
 
 /**
+ * Return the message data 1 as text
+ */
+std::string midi_message::data_1_as_text(note_name_type in_type)
+{
+    std::string m_data_1_string = std::to_string(m_data_1);
+
+    switch (type()) {
+        case midi_msg_type::note_off:
+        case midi_msg_type::note_on:
+            if (in_type == note_name_type::sharp)
+                m_data_1_string.append(" (" + std::string(sharp_note_names[static_cast<int>(m_data_1) % 12]) + ")");
+            else
+                m_data_1_string.append(" (" + std::string(flat_note_names[static_cast<int>(m_data_1) % 12]) + ")");
+            break;
+
+        default:
+            break;
+    }
+
+    return m_data_1_string;
+}
+
+
+/**
  * Set the message data 1
  */
 void midi_message::set_data_2(unsigned char in_data_2)

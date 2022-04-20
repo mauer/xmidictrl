@@ -37,6 +37,12 @@
 
 namespace xmidictrl {
 
+enum class filename_prefix {
+    none,
+    icao,
+    acf_name
+};
+
 class profile : public config {
 public:
     explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
@@ -55,8 +61,8 @@ public:
     std::string title();
     std::string version();
 
-    std::string get_filename_aircraft_path();
-    std::string get_filename_profiles_path(bool in_icao, bool in_author);
+    std::string get_filename_aircraft_path(filename_prefix in_prefix);
+    std::string get_filename_profiles_path(filename_prefix in_prefix);
 
     [[nodiscard]] std::string_view sl_dataref() const;
 

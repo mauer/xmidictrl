@@ -34,6 +34,9 @@ enum class midi_direction {
     out
 };
 
+const char* const sharp_note_names[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+const char* const flat_note_names[]  = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+
 class midi_message {
 public:
     midi_message(text_logger &in_log, midi_direction in_direction);
@@ -50,7 +53,6 @@ public:
     void add_mapping(const std::shared_ptr<map> &in_map);
 
     void set_time(time_point in_time);
-    //[[nodiscard]] time_point time() const;
     [[nodiscard]] std::string time() const;
 
     void set_port(unsigned int in_port);
@@ -63,6 +65,7 @@ public:
 
     void set_data_1(unsigned char in_data_1);
     [[nodiscard]] unsigned char data_1() const;
+    [[nodiscard]] std::string data_1_as_text(note_name_type in_type);
 
     void set_data_2(unsigned char in_data_2);
     [[nodiscard]] unsigned char data_2() const;

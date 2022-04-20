@@ -193,24 +193,36 @@ std::string profile::version()
 /**
  * Return the filename for the aircraft path
  */
-std::string profile::get_filename_aircraft_path()
+std::string profile::get_filename_aircraft_path(filename_prefix in_prefix)
 {
-    return xplane::current_aircraft_path() + std::string(FILENAME_PROFILE);
+    switch (in_prefix) {
+        case filename_prefix::icao:
+            return xplane::current_aircraft_path() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+
+        case filename_prefix::acf_name:
+            return xplane::current_aircraft_path() + xp().current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
+
+        default:
+            return xplane::current_aircraft_path() + std::string(FILENAME_PROFILE);
+    }
 }
 
 
 /**
  * Return the filename for the profile path
  */
-std::string profile::get_filename_profiles_path(bool icao, bool author)
+std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 {
-    if (icao && author)
-        return xp().profiles_path().data() + xp().current_aircraft_author() + "_" +
-               xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
-    else if (icao)
-        return xp().profiles_path().data() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
-    else
-        return xp().profiles_path().data() + std::string(FILENAME_PROFILE);
+    switch (in_prefix) {
+        case filename_prefix::icao:
+            return xp().profiles_path().data() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+
+        case filename_prefix::acf_name:
+            return xp().profiles_path().data() + xp().current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
+
+        default:
+            return xp().profiles_path().data() + std::string(FILENAME_PROFILE);
+    }
 }
 
 
@@ -262,30 +274,44 @@ std::string profile::find_profile()
 {
     std::string filename;
 
-    // 1. check if there is a profile in the aircraft directory
-    filename = get_filename_aircraft_path();
+    // check if there is a profile in the aircraft directory
+    filename = get_filename_aircraft_path(filename_prefix::none);
 
     m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
-    // 2. check if there is a profile in the profile directory including the author and ICAO
-    filename = get_filename_profiles_path(true, true);
+    // check if there is a profile in the aircraft directory including the ICAO
+    filename = get_filename_aircraft_path(filename_prefix::icao);
 
     m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
-    // 3. check if there is a profile in the profile directory including the ICAO
-    filename = get_filename_profiles_path(true, false);
+    // check if there is a profile in the aircraft directory including the acf name
+    filename = get_filename_aircraft_path(filename_prefix::acf_name);
 
     m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
     if (std::filesystem::exists(filename))
         return filename;
 
-    // 4. check for the common profile (if activated)
+    // check if there is a profile in the profile directory including the ICAO
+    filename = get_filename_profiles_path(filename_prefix::icao);
+
+    m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check if there is a profile in the profile directory including the acf name
+    filename = get_filename_profiles_path(filename_prefix::acf_name);
+
+    m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check for the common profile (if activated)
     if (m_settings.use_common_profile()) {
-        filename = get_filename_profiles_path(false, false);
+        filename = get_filename_profiles_path(filename_prefix::none);
 
         m_profile_log->debug(" --> Search for aircraft profile '%s'", filename.c_str());
         if (std::filesystem::exists(filename))

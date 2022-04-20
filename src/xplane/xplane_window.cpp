@@ -130,8 +130,10 @@ bool xplane_window::translucent() const
  */
 void xplane_window::show()
 {
-    if (m_window_id != nullptr)
-        XPLMSetWindowIsVisible(m_window_id, true);
+    if (m_window_id != nullptr) {
+        if (!is_visible())
+            XPLMSetWindowIsVisible(m_window_id, true);
+    }
 }
 
 
@@ -140,8 +142,10 @@ void xplane_window::show()
  */
 void xplane_window::hide()
 {
-    if (m_window_id != nullptr)
-        XPLMSetWindowIsVisible(m_window_id, false);
+    if (m_window_id != nullptr) {
+        if (is_visible())
+            XPLMSetWindowIsVisible(m_window_id, false);
+    }
 }
 
 

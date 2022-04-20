@@ -36,7 +36,7 @@ namespace xmidictrl {
  * Constructor
  */
 profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile)
-    : imgui_window(in_log, in_xp, 1200, 600),
+    : imgui_window(in_log, in_xp, 1200, 800),
       m_profile(in_profile)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");
@@ -95,6 +95,7 @@ void profile_window::create_tab_general()
 
         ImGui::NewLine();
         ImGui::NewLine();
+        ImGui::NewLine();
 
         ImGui::Text("CURRENT PROFILE");
         ImGui::Separator();
@@ -118,30 +119,44 @@ void profile_window::create_tab_general()
 
         ImGui::NewLine();
         ImGui::NewLine();
+        ImGui::NewLine();
 
-        ImGui::Text("POSSIBLE PROFILE NAMES");
+        ImGui::Text("POSSIBLE PROFILE NAMES - AIRCRAFT FOLDER");
         ImGui::Separator();
         ImGui::NewLine();
 
-        ImGui::Text("Aircraft folder:");
+        ImGui::Text("Without prefix:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path().data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::none).data());
+
+        ImGui::Text("ICAO:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::icao).data());
+
+        ImGui::Text("ACF Name:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::acf_name).data());
+
+        ImGui::NewLine();
+        ImGui::NewLine();
+
+        ImGui::Text("POSSIBLE PROFILE NAMES - PROFILES FOLDER");
+        ImGui::Separator();
+        ImGui::NewLine();
+
+        ImGui::Text("ICAO:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::icao).data());
+
+        ImGui::Text("ACF Name:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
 
-        ImGui::Text("ICAO and Author:");
+        ImGui::Text("Common Profile:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(true, true).data());
-
-        ImGui::Text("ICAO only:");
-        ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(true, false).data());
-
-        ImGui::NewLine();
-
-        ImGui::Text("Generic Profile:");
-        ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(false, false).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::none).data());
 
         ImGui::EndTabItem();
     }

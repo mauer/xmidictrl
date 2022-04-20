@@ -148,8 +148,7 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
         in_log.debug(" --> Found text '%s' for value '%s'", value_text.c_str(), in_value.data());
         plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
     } catch (std::out_of_range &ex) {
-        in_log.warn(" --> Text for value '%s' not found", in_value.data());
-        return;
+        plugin::instance().show_info_message(m_label->id, m_label->text + in_value.data());
     }
 }
 

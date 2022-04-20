@@ -15,6 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
+#include "settings_window.h"
+
 // Standard
 #include <string>
 
@@ -22,8 +24,8 @@
 #include <IconsFontAwesome6.h>
 
 // XMidiCtrl
-#include "settings_window.h"
 #include "conversions.h"
+#include "plugin.h"
 
 namespace xmidictrl {
 
@@ -44,6 +46,8 @@ settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &i
 
     m_max_text_messages = m_settings.max_text_messages();
     m_max_midi_messages = m_settings.max_midi_messages();
+
+    m_note_name = static_cast<int>(m_settings.note_name());
 
     m_default_text_sort = static_cast<int>(m_settings.default_text_sort());
     m_default_midi_sort = static_cast<int>(m_settings.default_midi_sort());
@@ -163,6 +167,14 @@ void settings_window::create_tab_general()
             ImGui::EndCombo();
         }
 
+        ImGui::SameLine(600);
+        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reset to default  ")) {
+            m_info_position = window_position::bottom_left;
+            m_info_offset_x = 50;
+            m_info_offset_y = 50;
+            m_info_seconds  = 3;
+        }
+
         ImGui::NewLine();
 
         ImGui::TextUnformatted("Offset X:");
@@ -183,6 +195,12 @@ void settings_window::create_tab_general()
         if (ImGui::InputInt("Seconds##time", &m_info_seconds, 1, 1)) {
             if (m_info_seconds < 1)
                 m_info_seconds = 1;
+        }
+
+        ImGui::SameLine(600);
+        if (ImGui::Button("  " ICON_FA_INFO "  Test info window  ")) {
+            save_settings();
+            plugin::instance().show_info_message("TEST_MESSAGE", "This is a test message");
         }
 
         ImGui::NewLine();
@@ -233,7 +251,6 @@ void settings_window::create_tab_logging()
 
         ImGui::NewLine();
         ImGui::NewLine();
-        ImGui::NewLine();
 
         ImGui::TextUnformatted("MIDI LOGGING");
         ImGui::Separator();
@@ -263,6 +280,12 @@ void settings_window::create_tab_logging()
         ImGui::RadioButton("Ascending##midi", &m_default_midi_sort, 0);
         ImGui::SameLine();
         ImGui::RadioButton("Descending##midi", &m_default_midi_sort, 1);
+
+        ImGui::TextUnformatted("Note names:");
+        ImGui::SameLine(250);
+        ImGui::RadioButton("Sharp names (e.g. C#)", &m_note_name, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("Flat names (e.g. Eb)", &m_note_name, 1);
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -350,6 +373,8 @@ void settings_window::save_settings()
     m_settings.set_max_text_messages(m_max_text_messages);
     m_settings.set_max_midi_messages(m_max_midi_messages);
 
+    m_settings.set_note_name(static_cast<note_name_type>(m_note_name));
+
     m_settings.set_default_text_sort(static_cast<sort_mode>(m_default_text_sort));
     m_settings.set_default_midi_sort(static_cast<sort_mode>(m_default_midi_sort));
 
@@ -364,6 +389,5 @@ void settings_window::save_settings()
 
     m_settings.save_settings();
 }
-
 
 } // Namespace xmidictrl

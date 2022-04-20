@@ -50,6 +50,8 @@ private:
     int m_max_text_messages;
     int m_max_midi_messages;
 
+    int m_note_name;
+
     int m_default_text_sort;
     int m_default_midi_sort;
 

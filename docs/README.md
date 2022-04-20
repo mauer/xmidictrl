@@ -10,6 +10,7 @@ The following devices are officially supported:
 The following devices are known to work:
 
 * Behringer BCR2000
+* Behringer X-Touch Compact
 * Loupedeck Live
 
 Most MIDI controllers should work, as long as they can send and receive standard MIDI messages.

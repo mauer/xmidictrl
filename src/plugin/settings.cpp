@@ -45,12 +45,14 @@ settings::settings(text_logger &in_text_log, xplane &in_xp)
         m_max_text_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
         m_max_midi_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 150);
 
+        m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_config, CFG_KEY_NOTE_NAME, 0));
+
         m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_TEXT_SORT, 0));
         m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_MIDI_SORT, 0));
 
         m_use_common_profile = toml::find_or<bool>(m_config, CFG_KEY_COMMON_PROFILE, true);
 
-        m_info_position = static_cast<window_position>(toml::find_or<int>(m_config, CFG_KEY_COMMON_PROFILE, 1));
+        m_info_position = static_cast<window_position>(toml::find_or<int>(m_config, CFG_KEY_INFO_POSITION, 1));
         m_info_offset_x = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_X, 50);
         m_info_offset_y = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_Y, 50);
         m_info_seconds = toml::find_or<int>(m_config, CFG_KEY_INFO_SECONDS, 3);
@@ -204,6 +206,24 @@ sort_mode settings::default_midi_sort() const
 
 
 /**
+ * Set the note name type
+ */
+void settings::set_note_name(note_name_type in_type)
+{
+    m_note_name = in_type;
+}
+
+
+/**
+ * Return the note name type
+ */
+note_name_type settings::note_name() const
+{
+    return m_note_name;
+}
+
+
+/**
  * Sets if the common profile is enabled
  */
 void settings::set_use_common_profile(bool in_enabled)
@@ -304,6 +324,8 @@ void settings::save_settings()
 
     m_config[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
     m_config[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
+
+    m_config[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
 
     m_config[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
     m_config[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);

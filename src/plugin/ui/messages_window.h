@@ -43,8 +43,8 @@ private:
     void create_tab_text_msg();
     void create_tab_midi_msg();
 
-    static void add_text_row(text_log_msg *in_msg);
-    static void add_midi_row(midi_message *in_msg);
+    void add_text_row(text_log_msg *in_msg);
+    void add_midi_row(midi_message *in_msg);
 
     static void draw_icon(const char *in_icon, std::string_view in_text);
 

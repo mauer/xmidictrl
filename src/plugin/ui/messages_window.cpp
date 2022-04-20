@@ -262,7 +262,7 @@ void messages_window::add_midi_row(midi_message *in_msg)
 
     ImGui::TableNextColumn();
     if (in_msg->data_1() != MIDI_NONE)
-        ImGui::Text("%i", in_msg->data_1());
+        ImGui::Text("%s", in_msg->data_1_as_text(m_settings.note_name()).c_str());
 
     ImGui::TableNextColumn();
     if (in_msg->data_2() != MIDI_NONE)

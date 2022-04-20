@@ -111,6 +111,7 @@ const char *const CFG_KEY_MODIFIER_FAST_UP = "modifier_fast_up";
 const char *const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char *const CFG_KEY_NAME = "name";
 const char *const CFG_KEY_NOTE = "note";
+const char *const CFG_KEY_NOTE_NAME = "note";
 const char *const CFG_KEY_PITCH_BEND = "pitch";
 const char *const CFG_KEY_PROGRAM_CHANGE = "prg";
 const char *const CFG_KEY_PORT_IN = "port_in";
@@ -163,6 +164,12 @@ enum class log_level {
     warn,
     info,
     debug
+};
+
+// Note names
+enum class note_name_type {
+    sharp = 0,
+    flat  = 1
 };
 
 // MIDI message type

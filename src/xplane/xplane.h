@@ -44,6 +44,7 @@ public:
     static std::string current_aircraft_path();
     std::string current_aircraft_author();
     std::string current_aircraft_icao();
+    std::string current_aircraft_acf_name();
     std::string current_aircraft_descr();
 
     commands &cmd();

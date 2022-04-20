@@ -58,6 +58,9 @@ public:
     void set_default_midi_sort(sort_mode in_mode);
     [[nodiscard]] sort_mode default_midi_sort() const;
 
+    void set_note_name(note_name_type in_type);
+    [[nodiscard]] note_name_type note_name() const;
+
     void set_use_common_profile(bool in_enabled);
     [[nodiscard]] bool use_common_profile() const;
 
@@ -84,6 +87,8 @@ private:
 
     int m_max_text_messages {1500};
     int m_max_midi_messages {150};
+
+    note_name_type m_note_name {note_name_type::sharp};
 
     sort_mode m_default_text_sort {sort_mode::ascending};
     sort_mode m_default_midi_sort {sort_mode::ascending};

@@ -3,6 +3,27 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 0.91
+
++ Added test function when setting up the info window to check the window position immediately
++ Added reset button for info window settings
++ Info window position will be saved correctly now
++ Info window will not block input for other windows
+
+-----------------------------------------------------------------------------------------------------------------------
+
+##  VERSION 0.90
+
++ Added label to display messages on the screen
++ Added dataref support for Push&Pull mappings
++ Added new parameters send_on / send_off for outbound messages
++ Complete rewrite of the logging
++ Rewrite of settings, profile and messages windows
++ Added example for iniBuilds A310 and Felis B747-200
++ Updated example for ToLiss A321
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 0.70
 
 + Added support for note, pitch bend and program change midi messages
@@ -10,7 +31,7 @@
 + Added new mode (momentary) for inbound dataref mappings
 + Improved documentation
 + Fixed mapping problem in ZIBO Boeing 738 example
-+ Added new paramaters value_min and value_max for encoder dataref mappings
++ Added new parameters value_min and value_max for encoder dataref mappings
 + Added option to disable the common aircraft profile
 
 -----------------------------------------------------------------------------------------------------------------------
