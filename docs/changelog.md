@@ -3,6 +3,12 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 0.92
+
++ Added new mapping type to send init messages once after the aircraft profile has been loaded
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 0.91
 
 + Added test function when setting up the info window to check the window position immediately

@@ -78,6 +78,15 @@ device::~device()
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Add a new init mapping to the device
+ */
+void device::add_init_map(std::shared_ptr<map_init> &in_mapping)
+{
+    m_map_init.add(in_mapping);
+}
+
+
+/**
  * Add a new inbound mapping to the device
  */
 void device::add_inbound_map(std::shared_ptr<map_in> &in_mapping)
@@ -188,6 +197,23 @@ void device::midi_callback([[maybe_unused]] double in_deltatime,
     if (in_userdata != nullptr) {
         auto *dev = static_cast<device *>(in_userdata);
         dev->process_inbound_message(in_message);
+    }
+}
+
+
+/**
+ * Process all init midi mappings
+ */
+void device::process_init_mappings(text_logger &in_log)
+{
+    for (auto &mapping: m_map_init) {
+        std::shared_ptr<outbound_task> task = mapping->execute(in_log);
+
+        if (task == nullptr)
+            continue;
+
+        if (m_midi_out != nullptr && m_midi_out->isPortOpen())
+            add_outbound_task(task);
     }
 }
 

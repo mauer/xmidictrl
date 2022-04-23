@@ -15,20 +15,16 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/profile/map")
+message("---- Directory: src/profile/map/map_init")
 
 # Add sources
-set(MAP_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+set(MAP_INIT_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/map_init.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_init_list.cpp
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PUBLIC ${MAP_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${MAP_INIT_SRC})
 
 # Add directory to includes
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
-
-# Add sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/map_in/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/map_init/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/map_out/CMakeLists.txt)

@@ -75,6 +75,7 @@ private:
 
     void create_device_list();
 
+    void create_init_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
     void create_inbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
     void create_outbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
 
@@ -84,6 +85,7 @@ private:
     settings &m_settings;
 
     bool m_loaded {false};
+    bool m_init_send {false};
 
     text_logger &m_plugin_log;
     midi_logger &m_midi_log;

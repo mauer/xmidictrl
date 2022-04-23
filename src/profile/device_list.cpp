@@ -91,6 +91,18 @@ void device_list::close_connections()
 
 
 /**
+ * Process the midi init mappings
+ */
+void device_list::process_init_mappings(text_logger &in_log)
+{
+    for (auto const &device: m_device_list) {
+        if (device != nullptr)
+            device->process_init_mappings(in_log);
+    }
+}
+
+
+/**
  * Process the midi outbound mappings
  */
 void device_list::process_outbound_mappings(text_logger &in_log)

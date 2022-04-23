@@ -6,13 +6,16 @@
   * [Installation](installation.md)
   * [Configuration](configuration.md)
   * [Plugin Commands](plugin_commands.md)
+  * [Plugin Datarefs](plugin_datarefs.md) 
 
 * **Getting started**
   * [Create a profile](create_profile.md)
+  * [Use the included examples](use_examples.md)
   * [FAQ](faq.md)
 
 * **Mappings**
-  * [Devices](device.md) 
+  * [Devices](device.md)
+  * [Init Mappings](init_mapping.md)
   * [Inbound Mappings](inbound_mapping.md)
       * [Commands](inbound_mapping_command.md)
       * [Datarefs](inbound_mapping_dataref.md)

@@ -29,7 +29,7 @@
 
 namespace xmidictrl {
 
-class map_out : public map {
+class map_out: public map {
 public:
     explicit map_out(xplane &in_xp);
     ~map_out() override = default;

@@ -15,36 +15,41 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_LIST_H
-#define MAP_OUT_LIST_H
+#ifndef MAP_INIT_H
+#define MAP_INIT_H
 
 // Standard
 #include <memory>
-#include <map>
 
 // XMidiCtrl
-#include "map_out.h"
+#include "map.h"
+#include "outbound_task.h"
+#include "types.h"
+#include "xplane.h"
 
 namespace xmidictrl {
 
-typedef std::vector<std::shared_ptr<map_out>>::iterator map_out_itr;
-
-class map_out_list {
+class map_init : public map {
 public:
-    explicit map_out_list() = default;
-    ~map_out_list();
+    explicit map_init(xplane &in_xp);
+    ~map_init() override = default;
 
-    void add(const std::shared_ptr<map_out> &map);
+    map_type type() override;
 
-    map_out_itr begin();
-    map_out_itr end();
+    void set_velocity(int in_velocity);
 
-    unsigned int size();
+    void read_config(text_logger &in_log, toml::value &in_data);
+    bool check(text_logger &in_log) override;
+
+    std::shared_ptr<outbound_task> execute(text_logger &in_log);
 
 protected:
-    std::vector<std::shared_ptr<map_out>> m_list;
+    std::string build_mapping_text() override;
+
+private:
+    unsigned int m_velocity {127};
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_OUT_LIST_H
+#endif // MAP_INIT_H

@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "map_out_list.h"
+#include "map_init_list.h"
 
 // XMidiCtrl
 #include "conversions.h"
@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Destructor
  */
-map_out_list::~map_out_list()
+map_init_list::~map_init_list()
 {
     m_list.clear();
 }
@@ -44,7 +44,7 @@ map_out_list::~map_out_list()
 /**
  * Add a new mapping
  */
-void map_out_list::add(const std::shared_ptr<map_out> &map)
+void map_init_list::add(const std::shared_ptr<map_init> &map)
 {
     m_list.push_back(map);
 }
@@ -53,7 +53,7 @@ void map_out_list::add(const std::shared_ptr<map_out> &map)
 /**
  * Return the begin iterator
  */
-map_out_itr map_out_list::begin()
+map_init_itr map_init_list::begin()
 {
     return m_list.begin();
 }
@@ -62,7 +62,7 @@ map_out_itr map_out_list::begin()
 /**
  * Return the end iterator
  */
-map_out_itr map_out_list::end()
+map_init_itr map_init_list::end()
 {
     return m_list.end();
 }
@@ -71,7 +71,7 @@ map_out_itr map_out_list::end()
 /**
  * Return the number of mapping
  */
-unsigned int map_out_list::size()
+unsigned int map_init_list::size()
 {
     return m_list.size();
 }

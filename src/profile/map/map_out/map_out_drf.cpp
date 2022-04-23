@@ -69,29 +69,29 @@ map_type map_out_drf::type()
 /**
  * Set single value dataref
  */
-void map_out_drf::set_dataref(std::string_view dataref)
+void map_out_drf::set_dataref(std::string_view in_dataref)
 {
     m_datarefs.clear();
-    m_datarefs.emplace_back(dataref.data());
+    m_datarefs.emplace_back(in_dataref.data());
 }
 
 
 /**
  * Set multiple datarefs
  */
-void map_out_drf::set_dataref(std::vector<std::string> dataref)
+void map_out_drf::set_dataref(std::vector<std::string> in_dataref)
 {
-    m_datarefs = std::move(dataref);
+    m_datarefs = std::move(in_dataref);
 }
 
 
 /**
  * Set velocity on
  */
-void map_out_drf::set_velocity_on(int velocity_on)
+void map_out_drf::set_velocity_on(int in_velocity_on)
 {
-    if (velocity_on >= MIDI_VELOCITY_MIN && velocity_on <= MIDI_VELOCITY_MAX)
-        m_velocity_on = velocity_on;
+    if (in_velocity_on >= MIDI_VELOCITY_MIN && in_velocity_on <= MIDI_VELOCITY_MAX)
+        m_velocity_on = in_velocity_on;
     else
         m_velocity_on = MIDI_VELOCITY_MAX;
 }
@@ -100,10 +100,10 @@ void map_out_drf::set_velocity_on(int velocity_on)
 /**
  * Set velocity off
  */
-void map_out_drf::set_velocity_off(int velocity_off)
+void map_out_drf::set_velocity_off(int in_velocity_off)
 {
-    if (velocity_off >= MIDI_VELOCITY_MIN && velocity_off <= MIDI_VELOCITY_MAX)
-        m_velocity_off = velocity_off;
+    if (in_velocity_off >= MIDI_VELOCITY_MIN && in_velocity_off <= MIDI_VELOCITY_MAX)
+        m_velocity_off = in_velocity_off;
     else
         m_velocity_off = MIDI_VELOCITY_MIN;
 }
@@ -220,7 +220,7 @@ bool map_out_drf::check(text_logger &in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const mode_out mode)
+std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const mode_out in_mode)
 {
     bool changed = false;
 
@@ -248,10 +248,10 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
         if (value_current != value_previous)
             changed = true;
 
-        if (mode == mode_out::on_change) {
+        if (in_mode == mode_out::on_change) {
             if (changed)
                 send_msg = true;
-        } else if (mode == mode_out::permanent) {
+        } else if (in_mode == mode_out::permanent) {
             send_msg = true;
         }
     }

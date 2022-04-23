@@ -240,6 +240,12 @@ std::string_view profile::sl_dataref() const
  */
 void profile::process(text_logger &in_log)
 {
+    if (!m_init_send) {
+        // process init mappings
+        m_device_list->process_init_mappings(in_log);
+        m_init_send = true;
+    }
+
     // process midi outbound mappings
     m_device_list->process_outbound_mappings(in_log);
 }
@@ -257,6 +263,8 @@ void profile::process(text_logger &in_log)
 void profile::clear()
 {
     m_loaded = false;
+    m_init_send = false;
+
     m_config = toml::value();
 
     m_sl_dataref.clear();
@@ -385,11 +393,18 @@ void profile::create_device_list()
                                                                                false));
 
                 // create device
-                std::shared_ptr<device>
-                    device = m_device_list->create_device(m_plugin_log, m_midi_log, name, port_in,
-                                                          port_out, mode_out);
+                std::shared_ptr<device> device = m_device_list->create_device(m_plugin_log,
+                                                                              m_midi_log,
+                                                                              name,
+                                                                              port_in,
+                                                                              port_out,
+                                                                              mode_out);
 
                 if (device != nullptr) {
+                    // create init mappings
+                    if (settings_dev.contains(CFG_KEY_MAPPING_INIT))
+                        create_init_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_INIT].as_array(), device);
+
                     // create inbound mappings
                     if (settings_dev.contains(CFG_KEY_MAPPING_IN)) {
                         create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
@@ -419,6 +434,38 @@ void profile::create_device_list()
     } catch (std::out_of_range &error) {
         m_profile_log->warn("No MIDI devices found in aircraft profile");
         m_profile_log->warn(error.what());
+    }
+}
+
+
+/**
+ * Create the init mapping for a device and store it
+ */
+void profile::create_init_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
+{
+    m_profile_log->info("Device %i :: %i init mapping(s) found", dev_no, settings.size());
+
+    // parse each mapping entry
+    for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
+        std::shared_ptr<map_init> mapping;
+
+        m_profile_log->debug("Device %i :: Mapping %i :: Reading config", dev_no, map_no);
+
+        try {
+            mapping = std::make_shared<map_init>(xp());
+
+            // read the settings and check if everything we need was defined
+            mapping->read_config(*m_profile_log, settings[map_no]);
+
+            if (mapping->check(*m_profile_log))
+                device->add_init_map(mapping);
+            else
+                m_profile_log->error("Device %i :: Mapping %i :: Parameters incomplete or incorrect", dev_no, map_no);
+
+        } catch (toml::type_error &error) {
+            m_profile_log->error("Device %i :: Mapping %i :: Error reading mapping", dev_no, map_no);
+            m_profile_log->error(error.what());
+        }
     }
 }
 

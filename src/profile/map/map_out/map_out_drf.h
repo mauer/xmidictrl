@@ -39,16 +39,16 @@ public:
 
     map_type type() override;
 
-    void set_dataref(std::string_view dataref);
-    void set_dataref(std::vector<std::string> dataref);
+    void set_dataref(std::string_view in_dataref);
+    void set_dataref(std::vector<std::string> in_dataref);
 
-    void set_velocity_on(int velocity_on);
-    void set_velocity_off(int value_off);
+    void set_velocity_on(int in_velocity_on);
+    void set_velocity_off(int in_velocity_off);
 
     void read_config(text_logger &in_log, toml::value &in_data) override;
     bool check(text_logger &in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out in_mode) override;
     std::shared_ptr<outbound_task> reset() override;
 
 protected:

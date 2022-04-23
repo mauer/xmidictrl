@@ -1,7 +1,7 @@
 # Devices
 
-You can define several MIDI devices in your profile. Each device needs several parameters, such as ports and of course 
-some mappings.
+You can define multiple MIDI devices in your profile. Each device needs several parameters, such as inbound / outbound
+ports and some mappings.
 
 # Required Parameters
 
@@ -11,22 +11,22 @@ some mappings.
 | port_out  | Port for outbound MIDI messages (only required if outbound mappings have been defined) |
 
 > You have to define at least port_in or port_out. This depends on your MIDI device and mappings. If you don't plan to
-> send any MIDI messages to your device then there is no need to define an outbound port.
+> send any MIDI messages to your device then there is obviously no need to define an outbound port.
 
 # Optional Parameters
 
 | Parameter   | Description                                                               |
 |-------------|---------------------------------------------------------------------------|
-| name        | It's good practise to define a good name for your device                  |
+| name        | It's good practise to define a name for your device                       |
 | mode_out    | 0 = permanent mode (default) / 1 = on change mode (see description below) |
 | mapping_in  | Mappings for inbound messages                                             |
 | mapping_out | Mappings for outbound messages                                            |
 
 # Which ports should be used?
 
-In order to determine the ports for all your MIDI devices, you can use the function **Show MIDI Devices** of the plugin. 
-You can find it in the menu **Plugins -> XMidiCtrl -> Show MIDI Devices**. The dialog will show you with a list of all 
-connected MIDI devices and their ports.
+In order to determine the ports for all your MIDI devices, you can open the window **MIDI Devices**. You can find it in 
+the X-Plane menu `Plugins -> XMidiCtrl -> Show MIDI Devices`. The window will show you with a list of all connected 
+MIDI devices and their ports.
 
 # Parameter mode_out
 
@@ -36,8 +36,11 @@ it's enough to send one MIDI message when the dataref changes.
 
 If you are using the Behringer X-Touch Mini then I would recommend the permanent mode. The button states are only set
 if the layer (A or B) is currently active. So speaking, if you have a button of layer A mapped to the caution light and
- layer B active when the caution light goes on, the button will not be illuminated when you switch back to layer A. If 
-you are in the permanent mode, will be sent around every half second. 
+layer B is active when the caution light goes on, the button will not be illuminated when you switch back to layer A. 
+If you are in the permanent mode, messages will be sent around every half second. 
+
+> I recommend using the permanent mode. It does not have any impact on the X-Plane performance, as most operations are
+> done in a separate worker thread.
 
 # Example
 ```
@@ -53,4 +56,3 @@ name     = "Behringer X-Touch Mini 2"
 port_in  = 1
 port_out = 2
 ```
-

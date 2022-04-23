@@ -37,6 +37,8 @@
 // XMidiCtrl
 #include "map_in.h"
 #include "map_in_list.h"
+#include "map_init.h"
+#include "map_init_list.h"
 #include "map_out.h"
 #include "map_out_list.h"
 #include "midi_logger.h"
@@ -61,6 +63,7 @@ public:
     device(device const &) = delete;
     device &operator=(device const &) = delete;
 
+    void add_init_map(std::shared_ptr<map_init> &in_mapping);
     void add_inbound_map(std::shared_ptr<map_in> &in_mapping);
     void add_outbound_map(std::shared_ptr<map_out> &in_mapping);
 
@@ -68,6 +71,8 @@ public:
     void close_connections();
 
     static void midi_callback([[maybe_unused]] double in_deltatime, std::vector<unsigned char> *in_message, void *in_userdata);
+
+    void process_init_mappings(text_logger &in_log);
 
     void process_inbound_message(std::vector<unsigned char> *in_message);
 
@@ -91,6 +96,7 @@ private:
 
     time_point m_time_sent {time_point::min()};
 
+    map_init_list m_map_init;
     map_in_list m_map_in;
     map_out_list m_map_out;
 

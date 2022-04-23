@@ -46,6 +46,7 @@ public:
     bool open_connections();
     void close_connections();
 
+    void process_init_mappings(text_logger &in_log);
     void process_outbound_mappings(text_logger &in_log);
     void process_outbound_reset();
 

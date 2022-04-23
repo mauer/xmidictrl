@@ -15,36 +15,36 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_LIST_H
-#define MAP_OUT_LIST_H
+#ifndef MAP_INIT_LIST_H
+#define MAP_INIT_LIST_H
 
 // Standard
 #include <memory>
 #include <map>
 
 // XMidiCtrl
-#include "map_out.h"
+#include "map_init.h"
 
 namespace xmidictrl {
 
-typedef std::vector<std::shared_ptr<map_out>>::iterator map_out_itr;
+typedef std::vector<std::shared_ptr<map_init>>::iterator map_init_itr;
 
-class map_out_list {
+class map_init_list {
 public:
-    explicit map_out_list() = default;
-    ~map_out_list();
+    explicit map_init_list() = default;
+    ~map_init_list();
 
-    void add(const std::shared_ptr<map_out> &map);
+    void add(const std::shared_ptr<map_init> &map);
 
-    map_out_itr begin();
-    map_out_itr end();
+    map_init_itr begin();
+    map_init_itr end();
 
     unsigned int size();
 
 protected:
-    std::vector<std::shared_ptr<map_out>> m_list;
+    std::vector<std::shared_ptr<map_init>> m_list;
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_OUT_LIST_H
+#endif // MAP_INIT_LIST_H
