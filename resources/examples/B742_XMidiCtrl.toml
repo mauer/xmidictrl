@@ -10,7 +10,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 
 title      = "Settings for the Felis 742"
-version    = "0.90"
+version    = "1.00"
 sl_dataref = "xmidictrl/sublayer"
 
 # Behringer X-Touch Mini

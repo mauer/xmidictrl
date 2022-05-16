@@ -9,7 +9,7 @@
 #   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
 title   = "Settings for the Hot Start TBM 900"
-version = "0.60"
+version = "1.00"
 
 # Behringer X-Touch Mini
 [[device]]

@@ -14,7 +14,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 
 title   = "Settings for the Hot Start Challenger 650 by Reflected Reality Simulations"
-version = "0.61"
+version = "1.00"
 sl_dataref = "CL650/pilot_seat"
 
 # Behringer X-Touch Mini

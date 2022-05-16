@@ -9,7 +9,7 @@
 #   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
 title      = "Settings for the ToLiss Airbus A321"
-version    = "0.90"
+version    = "1.00"
 sl_dataref = "xmidictrl/sublayer"
 
 # Behringer X-Touch Mini
