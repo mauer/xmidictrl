@@ -18,7 +18,6 @@
 #include "map_in_cmd.h"
 
 // XMidiCtrl
-#include "plugin.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -137,7 +136,7 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
         xp().cmd().end(in_msg.log(), m_command);
     } else {
         in_msg.log().error("Invalid MIDI velocity '%i'", in_msg.data_2());
-        in_msg.log().error(" --> Supported values for the current mapping are '%i' and '%io'",
+        in_msg.log().error(" --> Supported values for the current mapping are '%i' and '%i'",
                            m_velocity_on,
                            m_velocity_off);
     }

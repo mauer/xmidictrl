@@ -3,7 +3,7 @@
 Init mappings are processed once the aircraft profile has been loaded. They are only sent once and used to initialise
 the MIDI device. A typical example would be configuring the encoder lights on the Behringer X-Touch Mini.
 
-All init mappings are defined for each MIDI device individually using the parameter `mapping_out`.
+All init mappings are defined for each MIDI device individually using the parameter `mapping_init`.
 
 ## Example
 
@@ -45,4 +45,4 @@ One of the following parameters is required, depending on the MIDI message type.
 | cc        | Control Change    | Control Change No Number |
 | note      | Note On / Off     | Note Number              |
 | pitch     | Pitch Bend        | Pitch Bend Number        |
-| prgchg    | Program Change    | Program Change Number    |
+| prg       | Program Change    | Program Change Number    |

@@ -8,7 +8,7 @@
 #   2. Adjust the port_in and port_out variables
 #   3. Start X-Plane or reload the profile from the plugin menu XMidiCtrl -> Reload Aircraft Profile
 #----------------------------------------------------------------------------------------------------------------------
-title      = "Settings for the iniBuidls A310"
+title      = "Settings for the iniBuilds A310"
 version    = "0.90"
 sl_dataref = "xmidictrl/sublayer"
 

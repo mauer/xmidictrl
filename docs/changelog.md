@@ -3,6 +3,12 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 1.00
+
++ Some minor logging improvements
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 0.92
 
 + Added new mapping type to send init messages once after the aircraft profile has been loaded

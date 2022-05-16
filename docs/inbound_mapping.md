@@ -21,7 +21,7 @@ One of the following parameters is required, depending on the MIDI message type.
 | cc        | Control Change    | Control Change No Number |
 | note      | Note On / Off     | Note Number              |
 | pitch     | Pitch Bend        | Pitch Bend Number        |
-| prgchg    | Program Change    | Program Change Number    |
+| prg       | Program Change    | Program Change Number    |
 
 ## Optional Parameters
 

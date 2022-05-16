@@ -45,7 +45,7 @@ A mapping must contains exactly one of the following variables.
 | cc       | Control Change No Number |
 | note     | Note On/Off Number       |
 | pitch    | Pitch Bend Number        |
-| prgchg   | Program Change Number    |
+| prg      | Program Change Number    |
 
 
 ## Mapping Types
