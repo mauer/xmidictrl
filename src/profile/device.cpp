@@ -435,23 +435,23 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &in_task)
 
     switch (in_task->type) {
         case midi_msg_type::control_change:
-            msg->set_status((int) (0xb0 | (in_task->ch - 1)));
+            msg->set_status((int) (0xb0 | (in_task->channel - 1)));
             break;
 
         case midi_msg_type::note_on:
-            msg->set_status((int) (0x90 | (in_task->ch - 1)));
+            msg->set_status((int) (0x90 | (in_task->channel - 1)));
             break;
 
         case midi_msg_type::note_off:
-            msg->set_status((int) (0x80 | (in_task->ch - 1)));
+            msg->set_status((int) (0x80 | (in_task->channel - 1)));
             break;
 
         case midi_msg_type::pitch_bend:
-            msg->set_status((int) (0xe0 | (in_task->ch - 1)));
+            msg->set_status((int) (0xe0 | (in_task->channel - 1)));
             break;
 
         case midi_msg_type::program_change:
-            msg->set_status((int) (0xc0 | (in_task->ch - 1)));
+            msg->set_status((int) (0xc0 | (in_task->channel - 1)));
             break;
 
         default:
@@ -462,7 +462,7 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &in_task)
     msg->set_data_1(in_task->data);
     msg->set_data_2(in_task->velocity);
 
-    msg->add_mapping(in_task->map);
+    msg->add_mapping(in_task->mapping);
 
     // add message for internal list, but only if the dataref value has been changed, otherwise the logging will
     // increase very quickly

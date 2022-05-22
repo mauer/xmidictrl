@@ -315,7 +315,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
                 break;
         }
 
-        task->ch = channel();
+        task->channel = channel();
         task->data = data();
 
         if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
@@ -326,7 +326,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
 
 
         // add mapping to task
-        task->map = shared_from_this();
+        task->mapping = shared_from_this();
 
         return task;
     }
@@ -366,7 +366,7 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
             break;
     }
 
-    task->ch = channel();
+    task->channel = channel();
     task->data = data();
 
     task->velocity = MIDI_VELOCITY_MIN;

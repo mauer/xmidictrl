@@ -22,7 +22,7 @@
 #include <memory>
 
 // XMidiCtrl
-#include "map_in.h"
+#include "map.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
@@ -32,12 +32,12 @@ struct outbound_task {
 
     midi_msg_type type {midi_msg_type::none};
 
-    unsigned char ch {MIDI_NONE};
+    unsigned char channel {MIDI_NONE};
     unsigned char data {MIDI_NONE};
 
     unsigned char velocity {MIDI_NONE};
 
-    std::shared_ptr<map> map;
+    std::shared_ptr<map> mapping;
 };
 
 } // Namespace xmidictrl

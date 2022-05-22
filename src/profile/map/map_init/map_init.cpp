@@ -131,13 +131,13 @@ std::shared_ptr<outbound_task> map_init::execute(text_logger &in_log)
             break;
     }
 
-    task->ch = channel();
+    task->channel = channel();
     task->data = data();
 
     task->velocity = m_velocity;
 
     // add mapping to task
-    task->map = shared_from_this();
+    task->mapping = shared_from_this();
 
     return task;
 }
