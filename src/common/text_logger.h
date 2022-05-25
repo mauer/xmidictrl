@@ -65,7 +65,7 @@ public:
 private:
     bool check_log_level(log_level in_level) const;
 
-    void create_message(log_level in_level, std::string_view in_text, va_list in_args);
+    void create_message(log_level in_level, std::string_view in_text, std::va_list in_args);
     void add_message(log_level in_level, std::string_view in_text);
 
     text_logger *m_parent;

@@ -103,6 +103,7 @@ bool text_logger::log_info() const
     return m_log_info;
 }
 
+
 /**
  * Set the max message size
  */
@@ -199,14 +200,16 @@ bool text_logger::has_warnings() const
  */
 void text_logger::debug(std::string_view in_text, ...)
 {
-    std::va_list args;
+    std::va_list args, args_copy;
     va_start(args, in_text);
+    va_copy(args_copy, args);
 
-    create_message(log_level::debug, in_text, args);
+    create_message(log_level::debug, in_text, args_copy);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::debug, in_text, args);
+        m_parent->create_message(log_level::debug, in_text, args_copy);
 
+    va_end(args_copy);
     va_end(args);
 }
 
@@ -216,14 +219,34 @@ void text_logger::debug(std::string_view in_text, ...)
  */
 void text_logger::info(std::string_view in_text, ...)
 {
-    std::va_list args;
+    std::va_list args, args_copy;
     va_start(args, in_text);
+    va_copy(args_copy, args);
 
-    create_message(log_level::info, in_text, args);
+    create_message(log_level::info, in_text, args_copy);
+
+/*    if (check_log_level(log_level::info)) {
+        std::string formatted_text;
+
+        int len = std::vsnprintf(nullptr, 0, in_text.data(), args);
+
+        if (len < 0) {
+            va_end(args_copy);
+            va_end(args);
+            return;
+        }
+        
+        formatted_text.resize(len);
+        std::vsnprintf(&formatted_text[0], len + 1, in_text.data(), args_copy);
+
+        // add message to internal list and write to file stream
+        add_message(log_level::info, formatted_text);
+    } */
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::info, in_text, args);
+        m_parent->create_message(log_level::info, in_text, args_copy); 
 
+    va_end(args_copy);
     va_end(args);
 }
 
@@ -233,15 +256,17 @@ void text_logger::info(std::string_view in_text, ...)
  */
 void text_logger::warn(std::string_view in_text, ...)
 {
-    std::va_list args;
+    std::va_list args, args_copy;
     va_start(args, in_text);
+    va_copy(args_copy, args);
 
-    m_warn_count++;
-    create_message(log_level::warn, in_text, args);
+    //m_warn_count++;
+    create_message(log_level::warn, in_text, args_copy);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::warn, in_text, args);
+        m_parent->create_message(log_level::warn, in_text, args_copy);
 
+    va_end(args_copy);
     va_end(args);
 }
 
@@ -251,15 +276,17 @@ void text_logger::warn(std::string_view in_text, ...)
  */
 void text_logger::error(std::string_view in_text, ...)
 {
-    std::va_list args;
+    std::va_list args, args_copy;
     va_start(args, in_text);
+    va_copy(args_copy, args);
 
-    m_error_count++;
-    create_message(log_level::error, in_text, args);
+    //m_error_count++;
+    create_message(log_level::error, in_text, args_copy);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::error, in_text, args);
+        m_parent->create_message(log_level::error, in_text, args_copy);
 
+    va_end(args_copy);
     va_end(args);
 }
 
@@ -298,15 +325,29 @@ bool text_logger::check_log_level(const log_level in_level) const
 /**
  * Post a message
  */
-void text_logger::create_message(log_level in_level, std::string_view in_text, va_list in_args)
+void text_logger::create_message(log_level in_level, std::string_view in_text, std::va_list in_args)
 {
+    std::va_list args_copy;
+    va_copy(args_copy, in_args);
+    
     if (check_log_level(in_level)) {
-        std::vector<char> formatted_text(std::vsnprintf(nullptr, 0, in_text.data(), in_args) + 1);
-        std::vsnprintf(formatted_text.data(), formatted_text.size(), in_text.data(), in_args);
+        std::string formatted_text;
+
+        int len = std::vsnprintf(nullptr, 0, in_text.data(), in_args);
+
+        if (len < 0) {
+            va_end(args_copy);
+            return;
+        }
+        
+        formatted_text.resize(len);
+        std::vsnprintf(&formatted_text[0], len + 1, in_text.data(), args_copy);
 
         // add message to internal list and write to file stream
-        add_message(in_level, formatted_text.data());
+        add_message(in_level, formatted_text);
     }
+    
+    va_end(args_copy);
 }
 
 
@@ -315,6 +356,12 @@ void text_logger::create_message(log_level in_level, std::string_view in_text, v
  */
 void text_logger::add_message(log_level in_level, std::string_view in_text)
 {
+    if (in_level == log_level::warn)
+    	m_warn_count++;
+    	
+    if (in_level == log_level::error)
+    	m_error_count++;		
+
     // get current date time stamp
     time_t t = std::time(nullptr);
     struct tm *ltime = localtime(&t);

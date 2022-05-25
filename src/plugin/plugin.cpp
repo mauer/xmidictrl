@@ -262,10 +262,10 @@ void plugin::close_profile()
  */
 void plugin::show_profile_message()
 {
-    if (m_profile->loaded())
+    /*if (m_profile->loaded())
         show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> Profile '" + m_profile->title() + "' loaded", 10);
     else
-        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);
+        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);*/
 }
 
 
