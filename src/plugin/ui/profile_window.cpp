@@ -36,7 +36,7 @@ namespace xmidictrl {
  * Constructor
  */
 profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile)
-    : imgui_window(in_log, in_xp, 1200, 800),
+    : imgui_window(in_log, in_xp, 1200, 750),
       m_profile(in_profile)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");

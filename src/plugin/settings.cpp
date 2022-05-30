@@ -52,6 +52,7 @@ settings::settings(text_logger &in_text_log, xplane &in_xp)
 
         m_use_common_profile = toml::find_or<bool>(m_config, CFG_KEY_COMMON_PROFILE, true);
 
+        m_info_disabled = toml::find_or<bool>(m_config, CFG_KEY_INFO_DISABLED, false);
         m_info_position = static_cast<window_position>(toml::find_or<int>(m_config, CFG_KEY_INFO_POSITION, 1));
         m_info_offset_x = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_X, 50);
         m_info_offset_y = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_Y, 50);
@@ -242,6 +243,24 @@ bool settings::use_common_profile() const
 
 
 /**
+ * Set if the info window is disabled
+ */
+void settings::set_info_disabled(bool in_disabled)
+{
+    m_info_disabled = in_disabled;
+}
+
+
+/**
+ * Return if the info window is disabled
+ */
+bool settings::info_disabled() const
+{
+    return m_info_disabled;
+}
+
+
+/**
  * Set the position of the info window
  */
 void settings::set_info_position(window_position in_position)
@@ -332,6 +351,7 @@ void settings::save_settings()
 
     m_config[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
 
+    m_config[CFG_KEY_INFO_DISABLED] = m_info_disabled;
     m_config[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
     m_config[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
     m_config[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;

@@ -64,6 +64,9 @@ public:
     void set_use_common_profile(bool in_enabled);
     [[nodiscard]] bool use_common_profile() const;
 
+    void set_info_disabled(bool in_disabled);
+    [[nodiscard]] bool info_disabled() const;
+
     void set_info_position(window_position in_position);
     [[nodiscard]] window_position info_position() const;
 
@@ -94,6 +97,8 @@ private:
     sort_mode m_default_midi_sort {sort_mode::ascending};
 
     bool m_use_common_profile {true};
+
+    bool m_info_disabled {false};
 
     window_position m_info_position {window_position::bottom_left};
     int m_info_offset_x {50};

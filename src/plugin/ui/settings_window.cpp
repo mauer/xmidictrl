@@ -37,7 +37,7 @@ namespace xmidictrl {
  * Constructor
  */
 settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings)
-    : imgui_window(in_log, in_xp, 1000, 500),
+    : imgui_window(in_log, in_xp, 1000, 550),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
@@ -54,6 +54,7 @@ settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &i
 
     m_use_common_profile = m_settings.use_common_profile();
 
+    m_info_disabled = m_settings.info_disabled();
     m_info_position = m_settings.info_position();
     m_info_offset_x = m_settings.info_offset_x();
     m_info_offset_y = m_settings.info_offset_y();
@@ -116,6 +117,9 @@ void settings_window::create_tab_general()
 
         ImGui::TextUnformatted("INFO WINDOW");
         ImGui::Separator();
+        ImGui::NewLine();
+
+        ImGui::Checkbox("Disable info window", &m_info_disabled);
         ImGui::NewLine();
 
         ImGui::TextUnformatted("Window Position:");
@@ -215,7 +219,7 @@ void settings_window::create_tab_general()
 
 
 /**
- * Create tab for loggings settings
+ * Create tab for logging settings
  */
 void settings_window::create_tab_logging()
 {
@@ -287,6 +291,8 @@ void settings_window::create_tab_logging()
         ImGui::SameLine();
         ImGui::RadioButton("Flat names (e.g. Eb)", &m_note_name, 1);
 
+        ImGui::NewLine();
+        ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
 
@@ -382,6 +388,7 @@ void settings_window::save_settings()
 
     m_settings.set_use_common_profile(m_use_common_profile);
 
+    m_settings.set_info_disabled(m_info_disabled);
     m_settings.set_info_position(m_info_position);
     m_settings.set_info_offset_x(m_info_offset_x);
     m_settings.set_info_offset_y(m_info_offset_y);

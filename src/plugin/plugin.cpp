@@ -262,10 +262,13 @@ void plugin::close_profile()
  */
 void plugin::show_profile_message()
 {
-    /*if (m_profile->loaded())
+    if (m_settings->info_disabled())
+        return;
+
+    if (m_profile->loaded())
         show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> Profile '" + m_profile->title() + "' loaded", 10);
     else
-        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);*/
+        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);
 }
 
 
@@ -274,6 +277,9 @@ void plugin::show_profile_message()
  */
 void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
 {
+    if (m_settings->info_disabled())
+        return;
+
     std::shared_ptr<info_msg> msg;
 
     if (in_seconds == -1)

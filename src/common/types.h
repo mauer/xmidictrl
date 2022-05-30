@@ -137,6 +137,7 @@ const char *const CFG_KEY_VELOCITY = "velocity";
 const char *const CFG_KEY_VELOCITY_ON = "velocity_on";
 const char *const CFG_KEY_VELOCITY_OFF = "velocity_off";
 const char *const CFG_KEY_VERSION = "version";
+const char *const CFG_KEY_INFO_DISABLED = "info_disabled";
 const char *const CFG_KEY_INFO_OFFSET_X = "info_offset_x";
 const char *const CFG_KEY_INFO_OFFSET_Y = "info_offset_y";
 const char *const CFG_KEY_INFO_POSITION = "info_position";

@@ -3,6 +3,14 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 1.01
+
++ Fixed segmentation fault in Linux systems
++ Added option to disable the info window globally
++ Adjusted size of profile window
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 1.00
 
 + Some minor logging improvements

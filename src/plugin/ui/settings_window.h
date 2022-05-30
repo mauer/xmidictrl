@@ -57,6 +57,7 @@ private:
 
     bool m_use_common_profile;
 
+    bool m_info_disabled;
     window_position m_info_position;
     int m_info_offset_x;
     int m_info_offset_y;
