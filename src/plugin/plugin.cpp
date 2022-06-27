@@ -41,7 +41,6 @@ plugin::plugin()
     // create logger
     m_plugin_log = std::make_unique<text_logger>();
 
-
     // create the integration to X-Plane
     m_xp = std::make_unique<xplane>(*m_plugin_log);
 
@@ -52,7 +51,7 @@ plugin::plugin()
     m_plugin_log->enable_file_logging(m_xp->xplane_path());
     m_plugin_log->set_debug_mode(m_settings->debug_mode());
     m_plugin_log->set_max_size(m_settings->max_text_messages());
-    m_plugin_log->info("Plugin %s loaded successfully", XMIDICTRL_FULL_NAME);
+    m_plugin_log->info("Plugin " XMIDICTRL_FULL_NAME " loaded successfully");
     XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " loaded successfully").data());
 
     // create the menu
@@ -83,7 +82,7 @@ plugin::~plugin()
 
     m_midi_log.reset();
 
-    m_plugin_log->info("Plugin %s unloaded successfully", XMIDICTRL_FULL_NAME);
+    m_plugin_log->info("Plugin " XMIDICTRL_FULL_NAME " unloaded successfully");
     m_plugin_log.reset();
 
     m_xp.reset();
@@ -152,6 +151,9 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
  */
 void plugin::process_info_messages()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     if (m_info_msg.empty())
         return;
 
@@ -258,21 +260,6 @@ void plugin::close_profile()
 
 
 /**
- * Display short info about the loaded profile
- */
-void plugin::show_profile_message()
-{
-    if (m_settings->info_disabled())
-        return;
-
-    if (m_profile->loaded())
-        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> Profile '" + m_profile->title() + "' loaded", 10);
-    else
-        show_info_message(XMIDICTRL_NAME, XMIDICTRL_FULL_NAME " --> No profile loaded", 10);
-}
-
-
-/**
  * Display an info message on the screen
  */
 void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
@@ -289,6 +276,9 @@ void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, 
 
     msg->id = in_id;
     msg->text = in_msg;
+
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
 
     m_info_msg.insert_or_assign(msg->id, msg);
 }
@@ -562,4 +552,4 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
     return window;
 }
 
-} // Mamespace xmidictrl
+} // Namespace xmidictrl

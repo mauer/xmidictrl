@@ -98,24 +98,24 @@ bool conversions::create_preference_folders(text_logger &in_log, xplane &in_xp)
 {
     // check preference folder
     if (!std::filesystem::exists(in_xp.preferences_path())) {
-        in_log.info("Directory '%s' not found", in_xp.preferences_path().data());
+        in_log.info("Directory '" + in_xp.preferences_path() + "' not found");
 
         if (std::filesystem::create_directory(in_xp.preferences_path())) {
-            in_log.info("Directory '%s' created", in_xp.preferences_path().data());
+            in_log.info("Directory '" + in_xp.preferences_path() + "' created");
         } else {
-            in_log.error("Could not create directory '%s'", in_xp.preferences_path().data());
+            in_log.error("Could not create directory '" + in_xp.preferences_path() + "'");
             return false;
         }
     }
 
     // check profiles folder
     if (!std::filesystem::exists(in_xp.profiles_path())) {
-        in_log.info("Directory '%s' not found", in_xp.profiles_path().data());
+        in_log.info("Directory '" + in_xp.profiles_path() + "' not found");
 
         if (std::filesystem::create_directory(in_xp.profiles_path())) {
-            in_log.info("Directory '%s' created", in_xp.profiles_path().data());
+            in_log.info("Directory '" + in_xp.profiles_path() + "' created");
         } else {
-            in_log.error("Could not create directory '%s'", in_xp.profiles_path().data());
+            in_log.error("Could not create directory '" + in_xp.profiles_path() + "'");
             return false;
         }
     }

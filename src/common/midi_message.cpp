@@ -115,7 +115,7 @@ bool midi_message::check()
             return false;
 
         case midi_msg_type::none:
-            m_log->error("Could not determine MIDI type from Status '%i'", m_status);
+            m_log->error("Could not determine MIDI type from Status '" + std::to_string(m_status) + "'");
             return false;
 
         default:
@@ -250,7 +250,7 @@ unsigned char midi_message::data_1() const
 /**
  * Return the message data 1 as text
  */
-std::string midi_message::data_1_as_text(note_name_type in_type)
+std::string midi_message::data_1_as_text(note_name_type in_type) const
 {
     std::string m_data_1_string = std::to_string(m_data_1);
 

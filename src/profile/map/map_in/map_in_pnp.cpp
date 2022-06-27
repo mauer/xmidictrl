@@ -77,7 +77,7 @@ void map_in_pnp::set_time_released()
  */
 void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    in_log.debug(" --> Line %i :: Read settings for type 'pnp'", in_data.location().line());
+    in_log.debug_line(in_data.location().line(), "Read settings for type 'pnp'");
     map_in::read_config(in_log, in_data, in_config);
 
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH, false)) {
@@ -114,19 +114,19 @@ bool map_in_pnp::check(text_logger &in_log)
     if (!m_dataref_pull.empty()) {
         if (!xp().datarefs().check(m_dataref_pull)) {
             in_log.error(source_line());
-            in_log.error(" --> Dataref '%s' not found", m_dataref_pull.data());
+            in_log.error(" --> Dataref '" + std::string(m_dataref_pull) + "' not found");
             result = false;
         }
 
         if (m_values_pull.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '%s' is not defined", CFG_KEY_VALUES_PULL);
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUES_PULL) + "' is not defined");
             result = false;
         }
     } else {
         if (m_command_pull.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PULL);
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_COMMAND_PULL) + "' is empty");
             result = false;
         }
     }
@@ -135,19 +135,19 @@ bool map_in_pnp::check(text_logger &in_log)
     if (!m_dataref_push.empty()) {
         if (!xp().datarefs().check(m_dataref_push)) {
             in_log.error(source_line());
-            in_log.error(" --> Dataref '%s' not found", m_dataref_push.data());
+            in_log.error(" --> Dataref '" + std::string(m_dataref_push) + "' not found");
             result = false;
         }
 
         if (m_values_push.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '%s' is not defined", CFG_KEY_VALUES_PUSH);
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUES_PUSH) + "' is not defined");
             result = false;
         }
     } else {
         if (m_command_push.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND_PUSH);
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_COMMAND_PUSH) + "' is empty");
             result = false;
         }
     }
@@ -175,14 +175,14 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
             switch (m_command_type) {
                 case command_type::push:
                     if (!m_command_push.empty()) {
-                        in_msg.log().debug(" --> End push command '%s'", m_command_push.c_str());
+                        in_msg.log().debug(" --> End push command '" + m_command_push + "'");
                         xp().cmd().end(in_msg.log(), m_command_push);
                     }
                     break;
 
                 case command_type::pull:
                     if (!m_command_pull.empty()) {
-                        in_msg.log().debug(" --> End pull command '%s'", m_command_pull.c_str());
+                        in_msg.log().debug(" --> End pull command '" + m_command_pull + "'");
                         xp().cmd().end(in_msg.log(), m_command_pull);
                     }
                     break;
@@ -214,7 +214,7 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
         if (!m_dataref_pull.empty()) {
             toggle_dataref(in_msg.log(), m_dataref_pull, m_values_pull);
         } else if (!m_command_pull.empty()) {
-            in_msg.log().debug(" --> Begin pull command '%s'", m_command_pull.c_str());
+            in_msg.log().debug(" --> Begin pull command '" + m_command_pull + "'");
             m_command_type = command_type::pull;
             xp().cmd().begin(in_msg.log(), m_command_pull);
 
@@ -225,7 +225,7 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
         if (!m_dataref_push.empty()) {
             toggle_dataref(in_msg.log(), m_dataref_push, m_values_push);
         } else if (!m_command_push.empty()) {
-            in_msg.log().debug(" --> Begin push command '%s'", m_command_push.c_str());
+            in_msg.log().debug(" --> Begin push command '" + m_command_push + "'");
             m_command_type = command_type::push;
             xp().cmd().begin(in_msg.log(), m_command_push);
 

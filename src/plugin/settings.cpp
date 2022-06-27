@@ -372,7 +372,7 @@ void settings::save_settings()
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
     if (!stream.is_open()) {
-        m_text_log.error("Could not save general settings file '%s'", filename.c_str());
+        m_text_log.error("Could not save general settings file '" + filename + "'");
         return;
     }
 
@@ -386,7 +386,7 @@ void settings::save_settings()
  */
 std::string settings::get_settings_filename()
 {
-    std::string filename = xp().preferences_path().data() + std::string(XMIDICTRL_NAME) +
+    std::string filename = xp().preferences_path() + std::string(XMIDICTRL_NAME) +
                            std::string(SETTINGS_FILE_SUFFIX);
 
     return filename;

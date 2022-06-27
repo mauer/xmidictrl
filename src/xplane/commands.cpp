@@ -81,7 +81,7 @@ XPLMCommandRef commands::find_command_ref(text_logger &in_log, std::string_view 
     }
 
     if (cmd_ref == nullptr)
-        in_log.error("Command '%s' not found", in_cmd.data());
+        in_log.error("Command '" + std::string(in_cmd) + "' not found");
 
     return cmd_ref;
 }

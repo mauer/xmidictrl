@@ -18,6 +18,7 @@
 #include "midi_logger.h"
 
 // Standard
+#include <mutex>
 #include <vector>
 
 // XMidiCtrl
@@ -48,6 +49,9 @@ midi_logger::midi_logger(settings &in_settings)
  */
 void midi_logger::clear()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     m_messages.clear();
 }
 
@@ -57,6 +61,9 @@ void midi_logger::clear()
  */
 size_t midi_logger::count()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return m_messages.size();
 }
 
@@ -66,6 +73,9 @@ size_t midi_logger::count()
  */
 midi_message *midi_logger::message(int in_index)
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return m_messages.at(in_index).get();
 }
 
@@ -77,6 +87,9 @@ void midi_logger::add(const std::shared_ptr<midi_message> &in_msg)
 {
     if (!m_settings.log_midi())
         return;
+
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
 
     while (m_messages.size() >= m_settings.max_midi_messages())
         m_messages.pop_front();

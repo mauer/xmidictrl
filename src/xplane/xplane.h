@@ -36,10 +36,10 @@ public:
 
     XPLMPluginID plugin_id();
 
-    std::string_view plugin_path();
-    std::string_view xplane_path();
-    std::string_view preferences_path();
-    std::string_view profiles_path();
+    std::string plugin_path();
+    std::string xplane_path();
+    std::string preferences_path();
+    std::string profiles_path();
 
     static std::string current_aircraft_path();
     std::string current_aircraft_author();

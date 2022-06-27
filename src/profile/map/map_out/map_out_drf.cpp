@@ -114,7 +114,7 @@ void map_out_drf::set_velocity_off(int in_velocity_off)
  */
 void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log.debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
+    in_log.debug_line(in_data.location().line(), "Read settings for type 'drf'");
 
     read_common_config(in_log, in_data);
 
@@ -181,35 +181,35 @@ bool map_out_drf::check(text_logger &in_log)
 
     if (m_datarefs.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> Parameter '%s' is not defined", CFG_KEY_DATAREF);
+        in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is not defined");
         result = false;
     }
 
     if (m_values_on.empty() && m_values_off.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> Parameters '%s' and '%s' are not defined", CFG_KEY_VALUE_ON, CFG_KEY_VALUE_OFF);
+        in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF) + "' are not defined");
         result = false;
     }
 
     for (const auto &dataref: m_datarefs) {
         if (!xp().datarefs().check(dataref)) {
             in_log.error(source_line());
-            in_log.error(" --> Dataref '%s' not found", dataref.data());
+            in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
             result = false;
         }
     }
 
     if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
-                     CFG_KEY_VELOCITY_ON);
+        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_ON) + "', "
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
         result = false;
     }
 
     if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
-                     CFG_KEY_VELOCITY_OFF);
+        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_OFF) + "', "
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
         result = false;
     }
 

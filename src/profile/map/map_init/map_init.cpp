@@ -67,7 +67,7 @@ void map_init::set_velocity(int in_velocity)
  */
 void map_init::read_config(text_logger &in_log, toml::value &in_data)
 {
-    in_log.debug(" --> Line %i :: Read settings for init message", in_data.location().line());
+    in_log.debug_line(in_data.location().line(), "Read settings for init message");
 
     read_common_config(in_log, in_data);
 
@@ -88,8 +88,8 @@ bool map_init::check(text_logger &in_log)
 
     if (m_velocity < MIDI_VELOCITY_MIN || m_velocity > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
-                     CFG_KEY_VELOCITY);
+        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY) + "', "
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
         result = false;
     }
 

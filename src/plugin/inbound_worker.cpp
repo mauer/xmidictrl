@@ -74,4 +74,4 @@ void inbound_worker::process(std::string_view sl_value)
     }
 }
 
-} // Mamespace xmidictrl
+} // Namespace xmidictrl

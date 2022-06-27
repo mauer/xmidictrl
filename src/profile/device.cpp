@@ -51,12 +51,12 @@ device::device(text_logger &in_text_log,
         m_midi_in = std::make_unique<RtMidiIn>();
         m_midi_out = std::make_unique<RtMidiOut>();
 
-        m_text_log.info("Created new MIDI device :: Name = '%s', Port In = '%i', Port Out = '%i'",
-                        m_name.data(), in_port_in, in_port_out);
-
+        m_text_log.info("Created new MIDI device :: Name = '" + m_name + "', "
+                        + "Port In = '" + std::to_string(in_port_in) + "', "
+                        + "Port Out = '" + std::to_string(in_port_out) + "'");
     } catch (RtMidiError &error) {
         // we should never reach this, but let's be on the safe side
-        m_text_log.error("Error creating MIDI connections for device '%s'", m_name.c_str());
+        m_text_log.error("Error creating MIDI connections for device '" + m_name + "'");
         m_text_log.error(error.what());
     }
 }
@@ -116,10 +116,10 @@ bool device::open_connections()
             m_midi_in->ignoreTypes(false, false, false);
             m_midi_in->setCallback(&device::midi_callback, this);
 
-            m_text_log.info("Inbound port '%i' opened for device '%s'", m_port_in, m_name.c_str());
+            m_text_log.info("Inbound port '" + std::to_string(m_port_in) + "' opened for device '" + m_name + "'");
 
         } catch (const RtMidiError &error) {
-            m_text_log.error("Could not open inbound port '%i' for device '%s'", m_port_in, m_name.c_str());
+            m_text_log.error("Could not open inbound port '" + std::to_string(m_port_in) + "' for device '" + m_name + "'");
             m_text_log.error(error.what());
 
             return false;
@@ -131,10 +131,10 @@ bool device::open_connections()
         try {
             m_midi_out->openPort(m_port_out);
 
-            m_text_log.info("Outbound port '%i' opened for device '%s'", m_port_out, m_name.c_str());
+            m_text_log.info("Outbound port '" + std::to_string(m_port_out) + "' opened for device '" + m_name + "'");
 
         } catch (const RtMidiError &error) {
-            m_text_log.error("Could not open outbound port '%i' for device '%s'", m_port_in, m_name.c_str());
+            m_text_log.error("Could not open outbound port '" + std::to_string(m_port_out) + "' for device '" + m_name + "'");
             m_text_log.error(error.what());
 
             return false;
@@ -157,31 +157,23 @@ void device::close_connections()
         if (m_midi_in->isPortOpen()) {
             m_midi_in->closePort();
 
-            m_text_log.info("Closed inbound port '%i' for device '%s'", m_port_in, m_name.c_str());
+            m_text_log.info("Closed inbound port '" + std::to_string(m_port_in) + "' for device '" + m_name + "'");
         }
     }
 
     if (m_outbound_thread != nullptr) {
-        m_text_log.debug("Begin Terminate outbound thread '%i' for device '%s'",
-                         m_outbound_thread->get_id(),
-                         m_name.c_str());
-
         m_exit_outbound_thread.store(true);
         m_new_outbound_task.notify_one();
 
         if (m_outbound_thread->joinable())
             m_outbound_thread->join();
-
-        m_text_log.debug("End Terminate outbound thread '%i' for device '%s'",
-                         m_outbound_thread->get_id(),
-                         m_name.c_str());
     }
 
     if (m_midi_out != nullptr) {
         if (m_midi_out->isPortOpen()) {
             m_midi_out->closePort();
 
-            m_text_log.info("Closed outbound port '%i' for device '%s'", m_port_out, m_name.c_str());
+            m_text_log.info("Closed outbound port '" + std::to_string(m_port_out) + "' for device '" + m_name + "'");
         }
     }
 }
@@ -233,8 +225,10 @@ void device::process_inbound_message(std::vector<unsigned char> *in_message)
 
         // log MIDI in message
         m_midi_log.add(midi_msg);
-        m_text_log.debug("Inbound message from device '%s' on port '%i' :: Status = '%i', Data 1 = '%i', Data 2 = '%i'",
-                         m_name.c_str(), m_port_in, midi_msg->status(), midi_msg->data_1(), midi_msg->data_2());
+        m_text_log.debug("Inbound message from device '" + m_name + "' on port '" + std::to_string(m_port_in) + "' :: "
+                         + "Status = '" + std::to_string(midi_msg->status()) + "', "
+                         + "Data 1 = '" + std::to_string(midi_msg->data_1()) + "', "
+                         + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");
 
         if (!midi_msg->check())
             return;
@@ -266,7 +260,7 @@ void device::process_inbound_message(std::vector<unsigned char> *in_message)
                     }
 
                     default:
-                        m_text_log.warn("Invalid MIDI velocity '%i' for a Push&Pull mapping", midi_msg->data_2());
+                        m_text_log.warn("Invalid MIDI velocity '" + std::to_string(midi_msg->data_2()) + "' for a Push&Pull mapping");
                         break;
                 }
 
@@ -360,7 +354,7 @@ void device::create_outbound_thread()
     if (m_outbound_thread == nullptr)
         m_outbound_thread = std::make_unique<std::thread>(&device::process_outbound_tasks, this);
 
-    m_text_log.debug("Created outbound thread '%i' for device '%s'", m_outbound_thread->get_id(), m_name.c_str());
+    //m_text_log.debug("Created outbound thread '" +  + "' for device '%s'", m_outbound_thread->get_id(), m_name.c_str());
 }
 
 
@@ -405,7 +399,7 @@ void device::process_outbound_tasks()
             try {
                 m_midi_out->sendMessage(&midi_out);
             } catch (const RtMidiError &error) {
-                m_text_log.error("MIDI device '%s' :: %s", m_name.c_str(), error.what());
+                m_text_log.error("MIDI device '" + m_name + "' :: " + error.what());
                 m_text_log.error("Lost connection to MIDI device, stopped sending outbound messages");
 
                 m_midi_out->closePort();
@@ -468,12 +462,10 @@ void device::add_outbound_task(const std::shared_ptr<outbound_task> &in_task)
     // increase very quickly
     if (in_task->data_changed) {
         m_midi_log.add(msg);
-        m_text_log.debug("Outbound message for device '%s' on port '%i' :: Status = '%i', Data 1 = '%i', Data 2 = '%i'",
-                         m_name.c_str(),
-                         m_port_out,
-                         msg->status(),
-                         msg->data_1(),
-                         msg->data_2());
+        m_text_log.debug("Outbound message for device '" + m_name + "' on port '" + std::to_string(m_port_out) + "' :: "
+                         + "Status = '" + std::to_string(msg->status()) + "', "
+                         + "Data 1 = '" + std::to_string(msg->data_1()) + "', "
+                         + "Data 2 = '" + std::to_string(msg->data_2()) + "'");
     }
 
     std::lock_guard<std::mutex> lock(m_outbound_mutex);

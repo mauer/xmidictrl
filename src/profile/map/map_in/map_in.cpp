@@ -113,7 +113,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
             value = in_values[0];
         }
 
-        in_log.debug(" --> Change dataref '%s' to value '%s'", in_dataref.data(), value.c_str());
+        in_log.debug(" --> Change dataref '" + std::string(in_dataref) + "' to value '" + value + "'");
 
         xp().datarefs().write(in_log, in_dataref, value);
         display_label(in_log, value);
@@ -145,7 +145,7 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
 
     try {
         std::string value_text = m_label->values.at(in_value.data());
-        in_log.debug(" --> Found text '%s' for value '%s'", value_text.c_str(), in_value.data());
+        in_log.debug(" --> Found text '" + value_text + "' for value '" + std::string(in_value) + "'");
         plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
     } catch (std::out_of_range &ex) {
         plugin::instance().show_info_message(m_label->id, m_label->text + in_value.data());
@@ -171,10 +171,10 @@ void map_in::read_sublayer(text_logger &in_log, toml::value &in_data)
         if (in_data.contains(CFG_KEY_SL)) {
             m_sl = in_data[CFG_KEY_SL].as_string();
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%s'", in_data.location().line(), CFG_KEY_SL, m_sl.c_str());
+            in_log.debug_param(in_data.location().line(), CFG_KEY_SL, m_sl);
         }
     } catch (toml::type_error &error) {
-        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
     }
 }
@@ -193,14 +193,14 @@ void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &
         std::string label_id = in_data[CFG_KEY_LABEL].as_string();
 
         if (label_id.empty()) {
-            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
-            in_log.error(" --> Parameter '%s' is empty", CFG_KEY_LABEL, label_id.c_str());
+            in_log.error_line(in_data.location().line(), "Error reading mapping");
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_LABEL) + "' is empty");
             return;
         }
 
         if (!in_config.contains(label_id)) {
-            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
-            in_log.error(" --> Definition for label '%s' not found", label_id.c_str());
+            in_log.error_line(in_data.location().line(), "Error reading mapping");
+            in_log.error(" --> Definition for label '" + label_id + "' not found");
             return;
         }
 
@@ -226,13 +226,13 @@ void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &
                 m_label->values.emplace(value_id, value_text);
             }
         } else {
-            in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
-            in_log.error(" --> Parameter '%s' not found", CFG_KEY_VALUES);
+            in_log.error_line(in_data.location().line(), "Error reading mapping");
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUES) + "' not found");
 
             m_label.reset();
         }
     } catch (toml::type_error &error) {
-        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
 
         m_label.reset();

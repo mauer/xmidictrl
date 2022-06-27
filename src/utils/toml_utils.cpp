@@ -41,14 +41,14 @@ bool toml_utils::contains(text_logger &in_log,
             return true;
         } else {
             if (in_mandatory) {
-                in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-                in_log.error(" --> Parameter '%s' not found", in_name.data());
+                in_log.error_line(in_data.location().line(), in_data.location().line_str());
+                in_log.error(" --> Parameter '" + std::string(in_name) + "' not found");
             }
 
             return false;
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -78,7 +78,7 @@ bool toml_utils::is_array(text_logger &in_log, toml::value &in_data, std::string
             return false;
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -106,13 +106,10 @@ std::string toml_utils::read_string(text_logger &in_log,
         // read dataref
         if (contains(in_log, in_data, in_name, in_mandatory)) {
             value = in_data[in_name.data()].as_string();
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
-                          in_data.location().line(),
-                          in_name.data(),
-                          value.c_str());
+            in_log.debug_param(in_data.location().line(), std::string(in_name), value);
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -142,17 +139,14 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
-                              in_data.location().line(),
-                              in_name.data(),
-                              value.c_str());
+                in_log.debug_param(in_data.location().line(), std::string(in_name), value);
 
                 if (!value.empty())
                     list.insert(value.data());
             }
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -182,17 +176,14 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%s'",
-                              in_data.location().line(),
-                              in_name.data(),
-                              value.c_str());
+                in_log.debug_param(in_data.location().line(), std::string(in_name), value);
 
                 if (!value.empty())
                     list.push_back(value);
             }
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -222,20 +213,14 @@ int toml_utils::read_int(text_logger &in_log,
             if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<int>(in_data[in_name.data()].as_integer());
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
-                              in_data.location().line(),
-                              in_name.data(),
-                              value);
+                in_log.debug_param(in_data.location().line(), std::string(in_name), std::to_string(value));
             } else {
-                in_log.error("Line %i :: Parameter '%s' = '%s'",
-                              in_data.location().line(),
-                              in_name.data(),
-                              in_data.location().line_str().c_str());
-                in_log.error(" --> Parameter '%s' is not numeric", in_name);
+                in_log.error_line(in_data.location().line(), in_data.location().line_str());
+                in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
             }
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }
@@ -266,18 +251,18 @@ float toml_utils::read_float(text_logger &in_log,
             if (in_data[in_name.data()].is_floating()) {
                 value = static_cast<float>(in_data[in_name.data()].as_floating());
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%f'", in_data.location().line(), in_name.data(), value);
+                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
             } else if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<float>(in_data[in_name.data()].as_integer());
 
-                in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), in_name.data(), value);
+                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
             } else {
-                in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
-                in_log.error(" --> Parameter '%s' is not numeric", in_name);
+                in_log.error_line(in_data.location().line(), in_data.location().line_str());
+                in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
             }
         }
     } catch (toml::type_error &error) {
-        in_log.error("Line %i :: %s", in_data.location().line(), in_data.location().line_str().c_str());
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
     }

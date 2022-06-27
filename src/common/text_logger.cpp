@@ -18,6 +18,7 @@
 #include "text_logger.h"
 
 // Standard
+#include <mutex>
 #include <vector>
 
 namespace xmidictrl {
@@ -61,7 +62,7 @@ void text_logger::enable_file_logging(std::string_view in_path)
 
         m_file_stream.open(filename, std::ios_base::out | std::ios_base::trunc);
         if (!m_file_stream.is_open())
-            error("Failed to open log file '%s'", filename.c_str());
+            error("Failed to open log file '" + filename + "'");
     } else {
         error("Cannot open log file as the give file path is empty");
     }
@@ -109,6 +110,9 @@ bool text_logger::log_info() const
  */
 void text_logger::set_max_size(int in_size)
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     m_max_size = in_size;
 
     while (m_messages.size() > m_max_size)
@@ -121,6 +125,9 @@ void text_logger::set_max_size(int in_size)
  */
 int text_logger::max_size() const
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return m_max_size;
 }
 
@@ -130,6 +137,9 @@ int text_logger::max_size() const
  */
 void text_logger::clear()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     m_error_count = 0;
     m_warn_count = 0;
 
@@ -142,6 +152,9 @@ void text_logger::clear()
  */
 size_t text_logger::count()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return m_messages.size();
 }
 
@@ -151,6 +164,9 @@ size_t text_logger::count()
  */
 text_log_msg *text_logger::message(int in_index)
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return m_messages.at(in_index).get();
 }
 
@@ -160,6 +176,9 @@ text_log_msg *text_logger::message(int in_index)
  */
 std::string text_logger::messages_as_text()
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     if (m_messages.size() == 1)
         return {m_messages.at(0)->text};
 
@@ -182,6 +201,9 @@ std::string text_logger::messages_as_text()
  */
 bool text_logger::has_errors() const
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return (m_error_count > 0);
 }
 
@@ -191,6 +213,9 @@ bool text_logger::has_errors() const
  */
 bool text_logger::has_warnings() const
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     return (m_warn_count > 0);
 }
 
@@ -198,96 +223,85 @@ bool text_logger::has_warnings() const
 /**
  * Create a debug message
  */
-void text_logger::debug(std::string_view in_text, ...)
+void text_logger::debug(std::string_view in_text)
 {
-    std::va_list args, args_copy;
-    va_start(args, in_text);
-    va_copy(args_copy, args);
-
-    create_message(log_level::debug, in_text, args_copy);
+    create_message(log_level::debug, in_text);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::debug, in_text, args_copy);
+        m_parent->create_message(log_level::debug, in_text);
+}
 
-    va_end(args_copy);
-    va_end(args);
+
+/**
+ * Create a debug message with line number
+ */
+void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_text)
+{
+    std::string debug_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
+
+    create_message(log_level::debug, debug_text);
+
+    if (m_parent != nullptr)
+        m_parent->create_message(log_level::debug, debug_text);
+}
+
+
+/**
+ * Create a debug message with line number, parameter and value
+ */
+void text_logger::debug_param(std::uint_least32_t in_line, std::string_view in_param, std::string_view in_value)
+{
+    debug_line(in_line, "Parameter '" + std::string(in_param) + "' = '" + std::string(in_value) + "'");
 }
 
 
 /**
  * Create an info message
  */
-void text_logger::info(std::string_view in_text, ...)
+void text_logger::info(std::string_view in_text)
 {
-    std::va_list args, args_copy;
-    va_start(args, in_text);
-    va_copy(args_copy, args);
-
-    create_message(log_level::info, in_text, args_copy);
-
-/*    if (check_log_level(log_level::info)) {
-        std::string formatted_text;
-
-        int len = std::vsnprintf(nullptr, 0, in_text.data(), args);
-
-        if (len < 0) {
-            va_end(args_copy);
-            va_end(args);
-            return;
-        }
-        
-        formatted_text.resize(len);
-        std::vsnprintf(&formatted_text[0], len + 1, in_text.data(), args_copy);
-
-        // add message to internal list and write to file stream
-        add_message(log_level::info, formatted_text);
-    } */
+    create_message(log_level::info, in_text);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::info, in_text, args_copy); 
-
-    va_end(args_copy);
-    va_end(args);
+        m_parent->create_message(log_level::info, in_text);
 }
 
 
 /**
  * Create a warn message
  */
-void text_logger::warn(std::string_view in_text, ...)
+void text_logger::warn(std::string_view in_text)
 {
-    std::va_list args, args_copy;
-    va_start(args, in_text);
-    va_copy(args_copy, args);
-
-    //m_warn_count++;
-    create_message(log_level::warn, in_text, args_copy);
+    create_message(log_level::warn, in_text);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::warn, in_text, args_copy);
-
-    va_end(args_copy);
-    va_end(args);
+        m_parent->create_message(log_level::warn, in_text);
 }
 
 
 /**
  * Create an error message
  */
-void text_logger::error(std::string_view in_text, ...)
+void text_logger::error(std::string_view in_text)
 {
-    std::va_list args, args_copy;
-    va_start(args, in_text);
-    va_copy(args_copy, args);
-
-    //m_error_count++;
-    create_message(log_level::error, in_text, args_copy);
+    create_message(log_level::error, in_text);
 
     if (m_parent != nullptr)
-        m_parent->create_message(log_level::error, in_text, args_copy);
+        m_parent->create_message(log_level::error, in_text);
+}
 
-    va_end(args_copy);
-    va_end(args);
+
+/**
+ * Create an error message with line number
+ */
+void text_logger::error_line(std::uint_least32_t in_line, std::string_view in_text)
+{
+    std::string debug_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
+
+    create_message(log_level::error, debug_text);
+
+    if (m_parent != nullptr)
+        m_parent->create_message(log_level::error, debug_text);
 }
 
 
@@ -325,29 +339,11 @@ bool text_logger::check_log_level(const log_level in_level) const
 /**
  * Post a message
  */
-void text_logger::create_message(log_level in_level, std::string_view in_text, std::va_list in_args)
+void text_logger::create_message(log_level in_level, std::string_view in_text)
 {
-    std::va_list args_copy;
-    va_copy(args_copy, in_args);
-    
-    if (check_log_level(in_level)) {
-        std::string formatted_text;
-
-        int len = std::vsnprintf(nullptr, 0, in_text.data(), in_args);
-
-        if (len < 0) {
-            va_end(args_copy);
-            return;
-        }
-        
-        formatted_text.resize(len);
-        std::vsnprintf(&formatted_text[0], len + 1, in_text.data(), args_copy);
-
+    if (check_log_level(in_level))
         // add message to internal list and write to file stream
-        add_message(in_level, formatted_text);
-    }
-    
-    va_end(args_copy);
+        add_message(in_level, in_text);
 }
 
 
@@ -356,6 +352,9 @@ void text_logger::create_message(log_level in_level, std::string_view in_text, s
  */
 void text_logger::add_message(log_level in_level, std::string_view in_text)
 {
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
     if (in_level == log_level::warn)
     	m_warn_count++;
     	

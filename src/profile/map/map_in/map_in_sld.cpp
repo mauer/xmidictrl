@@ -54,12 +54,12 @@ map_type map_in_sld::type()
  */
 void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    in_log.debug(" --> Line %i :: Read settings for type 'sld'", in_data.location().line());
+    in_log.debug_line(in_data.location().line(), "Read settings for type 'sld'");
     map_in::read_config(in_log, in_data, in_config);
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
-        in_log.debug(" --> Line %i :: Use 'dataref' mode for slider mapping", in_data.location().line());
+        in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for slider mapping");
 
         // read dataref
         m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
@@ -70,7 +70,7 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::va
         // read value max
         m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f);
     } else {
-        in_log.debug(" --> Line %i :: Use 'command' mode for slider mapping", in_data.location().line());
+        in_log.debug_line(in_data.location().line(), "Use 'command' mode for slider mapping");
 
         // read command up
         m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
@@ -98,20 +98,20 @@ bool map_in_sld::check(text_logger &in_log)
         // dataref mode
         if (!xp().datarefs().check(m_dataref)) {
             in_log.error(source_line());
-            in_log.error(" --> Dataref '%s' not found", m_dataref.data());
+            in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
             result = false;
         }
 
         if (m_value_min == m_value_max) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '%s' is equal to parameter '%s'", CFG_KEY_VALUE_MIN, CFG_KEY_VALUE_MAX);
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '" + std::string(CFG_KEY_VALUE_MAX) + "'");
             result = false;
         }
     } else {
         // command mode
         if (m_command_up.empty() && m_command_down.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameters '%s' and '%s' are not defined", CFG_KEY_COMMAND_UP, CFG_KEY_COMMAND_DOWN);
+            in_log.error(" --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '" + std::string(CFG_KEY_COMMAND_DOWN) + "' are not defined");
             result = false;
         }
     }
@@ -139,20 +139,20 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
         else
             value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
 
-        in_msg.log().debug(" --> Set dataref '%s' to value '%f'", m_dataref.c_str(), value);
+        in_msg.log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
 
         if (xp().datarefs().write(in_msg.log(), m_dataref, value)) {
             try {
                 display_label(in_msg.log(), std::to_string(value));
             } catch (std::bad_alloc &ex) {
-                in_msg.log().error("Error converting float '%f' value to string", value);
+                in_msg.log().error("Error converting float '" + std::to_string(value) + "' value to string");
                 in_msg.log().error(ex.what());
             }
         }
     } else {
         // command mode
         if (in_msg.data_2() <= 10) {
-            in_msg.log().debug(" --> Execute command '%s'", m_command_down.c_str());
+            in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
 
             if (m_command_down != m_command_prev)
                 xp().cmd().execute(in_msg.log(), m_command_down);
@@ -160,7 +160,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
             m_command_prev = m_command_down;
 
         } else if (in_msg.data_2() >= 117) {
-            in_msg.log().debug(" --> Execute command '%s'", m_command_up.c_str());
+            in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
 
             if (m_command_up != m_command_prev)
                 xp().cmd().execute(in_msg.log(), m_command_up);
@@ -169,7 +169,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
 
         } else if (in_msg.data_2() >= 50 && in_msg.data_2() <= 70) {
             if (!m_command_middle.empty()) {
-                in_msg.log().debug(" --> Execute command '%s'", m_command_middle.c_str());
+                in_msg.log().debug(" --> Execute command '" + m_command_middle + "'");
 
                 if (m_command_middle != m_command_prev)
                     xp().cmd().execute(in_msg.log(), m_command_middle);

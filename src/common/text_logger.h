@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MESSAGE_HANDLER_H
-#define MESSAGE_HANDLER_H
+#ifndef TEXT_LOGGER_H
+#define TEXT_LOGGER_H
 
 // Standard
 #include <cstdarg>
@@ -57,15 +57,20 @@ public:
     bool has_errors() const;
     bool has_warnings() const;
 
-    void debug(std::string_view in_text, ...);
-    void info(std::string_view in_text, ...);
-    void warn(std::string_view in_text, ...);
-    void error(std::string_view in_text, ...);
+    void debug(std::string_view in_text);
+    void debug_line(std::uint_least32_t in_line, std::string_view in_text);
+    void debug_param(std::uint_least32_t in_line, std::string_view in_param, std::string_view in_value);
+
+    void info(std::string_view in_text);
+    void warn(std::string_view in_text);
+
+    void error(std::string_view in_text);
+    void error_line(std::uint_least32_t in_line, std::string_view in_text);
 
 private:
     bool check_log_level(log_level in_level) const;
 
-    void create_message(log_level in_level, std::string_view in_text, std::va_list in_args);
+    void create_message(log_level in_level, std::string_view in_text);
     void add_message(log_level in_level, std::string_view in_text);
 
     text_logger *m_parent;
@@ -84,4 +89,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // MESSAGE_HANDLER_H
+#endif // TEXT_LOGGER_H

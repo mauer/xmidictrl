@@ -95,11 +95,11 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::string &out_
         return true;
 
     } else if (item->type & xplmType_Unknown) {
-        in_log.error("Could not determine type for dataref '%s'", in_name.data());
+        in_log.error("Could not determine type for dataref '" + std::string(in_name) + "'");
         return false;
 
     } else {
-        in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
+        in_log.error("Unknown type '" + std::to_string(item->type) + "' for dataref '" + std::string(in_name) + "'");
         return false;
     }
 }
@@ -136,7 +136,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
         return true;
 
     } else if (item->type & xplmType_Data) {
-        in_log.error("Dataref '%s' is not numeric", in_name.data());
+        in_log.error("Dataref '" + std::string(in_name) + "' is not numeric");
         return false;
 
     } else if (item->type & xplmType_IntArray) {
@@ -151,11 +151,11 @@ bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
         return true;
 
     } else if (item->type & xplmType_Unknown) {
-        in_log.error("Could not determine type for dataref '%s'", in_name.data());
+        in_log.error("Could not determine type for dataref '" + std::string(in_name) + "'");
         return false;
 
     } else {
-        in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
+        in_log.error("Unknown type '" + std::to_string(item->type) + "' for dataref '" + std::string(in_name) + "'");
         return false;
     }
 }
@@ -177,7 +177,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<float
         return true;
 
     } else {
-        in_log.error("Could not read dataref '%s' as 'FloatArray'", in_name.data());
+        in_log.error("Could not read dataref '" + std::string(in_name) + "' as 'FloatArray'");
         return false;
     }
 }
@@ -199,7 +199,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<int> 
         return true;
 
     } else {
-        in_log.error("Could not read dataref '%s' as 'IntArray'", in_name.data());
+        in_log.error("Could not read dataref '" + std::string(in_name) + "' as 'IntArray'");
         return false;
     }
 }
@@ -216,11 +216,11 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
         return false;
 
     if (!item->writeable) {
-        in_log.error("Dataref '%s' is not writeable", in_name.data());
+        in_log.error("Dataref '" + std::string(in_name) + "' is not writeable");
         return false;
     }
 
-    in_log.debug(" --> Set dataref '%s' to value '%s'", in_name.data(), in_value.data());
+    in_log.debug(" --> Set dataref '" + std::string(in_name) + "' to value '" + std::string(in_value) + "'");
 
     try {
         if (item->type & xplmType_Int) {
@@ -242,17 +242,17 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
             write_float_array(item, get_index(in_log, in_name), std::stof(in_value.data()));
             return true;
         } else if (item->type & xplmType_Unknown) {
-            in_log.error("Could not determine type for dataref '%s'", in_name.data());
+            in_log.error("Could not determine type for dataref '" + std::string(in_name) + "'");
             return false;
         } else {
-            in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
+            in_log.error("Unknown type '" + std::to_string(item->type) + "' for dataref '" + std::string(in_name) + "'");
             return false;
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error writing dataref '%s'", in_name.data());
+        in_log.error("Error writing dataref '" + std::string(in_name) + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error writing dataref '%s'", in_name.data());
+        in_log.error("Error writing dataref '" + std::string(in_name) + "'");
         in_log.error(ex.what());
     }
 
@@ -271,11 +271,11 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
         return false;
 
     if (!item->writeable) {
-        in_log.error("Dataref '%s' is not writeable", in_name.data());
+        in_log.error("Dataref '" + std::string(in_name) + "' is not writeable");
         return false;
     }
 
-    in_log.debug(" --> Set dataref '%s' to value '%f'", in_name.data(), in_value);
+    in_log.debug(" --> Set dataref '" + std::string(in_name) + "' to value '" + std::to_string(in_value) + "'");
 
     if (item->type & xplmType_Int) {
         write_int(item, static_cast<int>(in_value));
@@ -287,7 +287,7 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
         write_double(item, static_cast<double>(in_value));
         return true;
     } else if (item->type & xplmType_Data) {
-        in_log.error("Dataref '%s' is not numeric", in_name.data());
+        in_log.error("Dataref '" + std::string(in_name) + "' is not numeric");
         return false;
     } else if (item->type & xplmType_IntArray) {
         write_int_array(item, get_index(in_log, in_name), static_cast<int>(in_value));
@@ -296,10 +296,10 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
         write_float_array(item, get_index(in_log, in_name), in_value);
         return true;
     } else if (item->type & xplmType_Unknown) {
-        in_log.error("Could not determine type for dataref '%s'", in_name.data());
+        in_log.error("Could not determine type for dataref '" + std::string(in_name) + "'");
         return false;
     } else {
-        in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
+        in_log.error("Unknown type '" + std::to_string(item->type) + "' for dataref '" + std::string(in_name) + "'");
         return false;
     }
 }
@@ -319,7 +319,7 @@ std::string data::toggle(text_logger &in_log,
         return {};
 
     if (!item->writeable) {
-        in_log.error("Dataref '%s' is not writeable", in_name.data());
+        in_log.error("Dataref '" + std::string(in_name) + "' is not writeable");
         return {};
     }
 
@@ -336,10 +336,10 @@ std::string data::toggle(text_logger &in_log,
     } else if (item->type & xplmType_FloatArray) {
         return toggle_float_array(in_log, item, get_index(in_log, in_name), in_value_on, in_value_off);
     } else if (item->type & xplmType_Unknown) {
-        in_log.error("Could not determine type for dataref '%s'", in_name.data());
+        in_log.error("Could not determine type for dataref '" + std::string(in_name) + "'");
         return {};
     } else {
-        in_log.error("Unknown type '%i' for dataref '%s'", item->type, in_name.data());
+        in_log.error("Unknown type '" + std::to_string(item->type) + "' for dataref '" + std::string(in_name) + "'");
         return {};
     }
 }
@@ -404,10 +404,10 @@ int data::get_index(text_logger &in_log, std::string_view in_name)
         try {
             index = std::stoi(in_name.substr(pos + 1, in_name.find(']') - pos - 1).data());
         } catch (std::invalid_argument &ex) {
-            in_log.error("Error reading index from dataref name '%s'", in_name.data());
+            in_log.error("Error reading index from dataref name '" + std::string(in_name) + "'");
             in_log.error(ex.what());
         } catch (std::out_of_range const &ex) {
-            in_log.error("Error reading index from dataref name '%s'", in_name.data());
+            in_log.error("Error reading index from dataref name '" + std::string(in_name) + "'");
             in_log.error(ex.what());
         }
     }
@@ -528,7 +528,7 @@ float data::read_float_array(text_logger &in_log, const data_item *in_item, int 
     if (in_index > -1)
         XPLMGetDatavf(in_item->dataref, &value, in_index, 1);
     else
-        in_log.error("Invalid index '%i' for dataref '%s'", in_index, in_item->name.c_str());
+        in_log.error("Invalid index '" + std::to_string(in_index) + "' for dataref '" + in_item->name + "'");
 
     return value;
 }
@@ -560,7 +560,7 @@ int data::read_int_array(text_logger &in_log, const data_item *in_item, int in_i
     if (in_index > -1)
         XPLMGetDatavi(in_item->dataref, &value, in_index, 1);
     else
-        in_log.error("Invalid index '%i' for dataref '%s'", in_index, in_item->name.c_str());
+        in_log.error("Invalid index '" + std::to_string(in_index) + "' for dataref '" + in_item->name + "'");
 
     return value;
 }
@@ -593,21 +593,21 @@ std::string data::toggle_int(text_logger &in_log,
 
     try {
         if (value == std::stoi(in_value_on.data())) {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_off) + "'");
             write_int(in_item, std::stoi(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_on) + "'");
             write_int(in_item, std::stoi(in_value_on.data()));
 
             return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     }
 
@@ -632,21 +632,21 @@ std::string data::toggle_int_array(text_logger &in_log,
 
     try {
         if (value == std::stoi(in_value_on.data())) {
-            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "[" + std::to_string(in_index) + "]' to value '" + std::string(in_value_off) + "'");
             write_int_array(in_item, in_index, std::stoi(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "[" + std::to_string(in_index) + "]' to value '" + std::string(in_value_on) + "'");
             write_int_array(in_item, in_index, std::stoi(in_value_on.data()));
 
             return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     }
 
@@ -667,21 +667,21 @@ std::string data::toggle_float(text_logger &in_log,
 
     try {
         if (value == std::stof(in_value_on.data())) {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_off) + "'");
             write_float(in_item, std::stof(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_on) + "'");
             write_float(in_item, std::stof(in_value_on.data()));
 
             return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     }
 
@@ -706,21 +706,21 @@ std::string data::toggle_float_array(text_logger &in_log,
 
     try {
         if (value == std::stof(in_value_on.data())) {
-            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_off.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "[" + std::to_string(in_index)+ "]' to value '" + std::string(in_value_off) + "'");
             write_float_array(in_item, in_index, std::stof(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug(" --> Set dataref '%s[%i]' to value '%s'", in_item->name.c_str(), in_index, in_value_on.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "[" + std::to_string(in_index)+ "]' to value '" + std::string(in_value_on) + "'");
             write_float_array(in_item, in_index, std::stof(in_value_on.data()));
 
             return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     }
 
@@ -741,21 +741,21 @@ std::string data::toggle_double(text_logger &in_log,
 
     try {
         if (value == std::stod(in_value_on.data())) {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_off) + "'");
             write_double(in_item, std::stod(in_value_off.data()));
 
             return in_value_off.data();
         } else {
-            in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+            in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_on) + "'");
             write_double(in_item, std::stod(in_value_on.data()));
 
             return in_value_on.data();
         }
     } catch (std::invalid_argument &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     } catch (std::out_of_range &ex) {
-        in_log.error("Error reading/writing dataref '%s'", in_item->name.c_str());
+        in_log.error("Error reading/writing dataref '" + in_item->name + "'");
         in_log.error(ex.what());
     }
 
@@ -774,12 +774,12 @@ std::string data::toggle_byte(text_logger &in_log,
     std::string value = read_byte(in_item);
 
     if (value == in_value_on.data()) {
-        in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_off.data());
+        in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_off) + "'");
         write_byte(in_item, in_value_off);
 
         return in_value_off.data();
     } else {
-        in_log.debug(" --> Set dataref '%s' to value '%s'", in_item->name.c_str(), in_value_on.data());
+        in_log.debug(" --> Set dataref '" + in_item->name + "' to value '" + std::string(in_value_on) + "'");
         write_byte(in_item, in_value_on);
 
         return in_value_on.data();

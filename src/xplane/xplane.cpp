@@ -66,7 +66,7 @@ XPLMPluginID xplane::plugin_id()
 /**
  * Return the path of the plugin installation
  */
-std::string_view xplane::plugin_path()
+std::string xplane::plugin_path()
 {
     if (m_plugin_path.empty()) {
         char path[512];
@@ -88,7 +88,7 @@ std::string_view xplane::plugin_path()
 /**
  * Return the path of the X-Plane installation
  */
-std::string_view xplane::xplane_path()
+std::string xplane::xplane_path()
 {
     if (m_xplane_path.empty()) {
         char path[512];
@@ -96,7 +96,7 @@ std::string_view xplane::xplane_path()
 
         m_xplane_path = std::string(path);
 
-        m_log.debug("X-Plane Path = '%s'", m_xplane_path.c_str());
+        m_log.debug("X-Plane Path = '" + m_xplane_path + "'");
     }
 
     return m_xplane_path;
@@ -106,7 +106,7 @@ std::string_view xplane::xplane_path()
 /**
  * Return the preferences path of the plugin
  */
-std::string_view xplane::preferences_path()
+std::string xplane::preferences_path()
 {
     if (m_preferences_path.empty()) {
         char path[512];
@@ -126,7 +126,7 @@ std::string_view xplane::preferences_path()
 /**
  * Return the profiles path within the preferences
  */
-std::string_view xplane::profiles_path()
+std::string xplane::profiles_path()
 {
     if (m_profiles_path.empty())
         m_profiles_path = std::string(preferences_path()) + PROFILES_DIRECTORY_NAME + "/";

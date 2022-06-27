@@ -65,7 +65,7 @@ public:
 
     void set_data_1(unsigned char in_data_1);
     [[nodiscard]] unsigned char data_1() const;
-    [[nodiscard]] std::string data_1_as_text(note_name_type in_type);
+    [[nodiscard]] std::string data_1_as_text(note_name_type in_type) const;
 
     void set_data_2(unsigned char in_data_2);
     [[nodiscard]] unsigned char data_2() const;

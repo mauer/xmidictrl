@@ -84,6 +84,7 @@ std::string_view map::source_line() const
     return m_source_line;
 }
 
+
 /**
  * Return the mapping as text
  */
@@ -182,18 +183,15 @@ void map::read_channel(text_logger &in_log, toml::value &in_data)
         if (in_data.contains(CFG_KEY_CH)) {
             m_channel = static_cast<unsigned char>( in_data[CFG_KEY_CH].as_integer());
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CH, m_channel);
+            in_log.debug_param(in_data.location().line(), std::string(CFG_KEY_CH), std::to_string(m_channel));
         } else {
-            in_log.info(" --> Line %i :: Parameter '%s' is missing, will use default channel '11'",
-                        in_data.location().line(),
-                        CFG_KEY_CH);
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i' (Default Value)",
-                         in_data.location().line(),
-                         CFG_KEY_CH,
-                         m_channel);
+            in_log.info(" --> Line " + std::to_string(in_data.location().line()) + " :: "
+                        + "Parameter '" + CFG_KEY_CH + "' is missing, will use default channel '11'");
+            in_log.debug_line(in_data.location().line(),
+                              "Parameter '" + std::string(CFG_KEY_CH) + "' = '" + std::to_string(m_channel) + "' (Default Value)");
         }
     } catch (toml::type_error &error) {
-        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
     }
 }
@@ -213,47 +211,41 @@ void map::read_data(text_logger &in_log, toml::value &in_data)
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC].as_integer());
             m_data_type = map_data_type::control_change;
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_CC, m_data);
+            in_log.debug_line(in_data.location().line(),
+                              "Parameter '" + std::string(CFG_KEY_CC) + "' = '" + std::to_string(m_data) + "'");
         } else if (in_data.contains(CFG_KEY_CC_DEPRECATED)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC_DEPRECATED].as_integer());
             m_data_type = map_data_type::control_change;
 
-            in_log.warn(" --> Line %i :: Parameter '%s' is deprecated, please rename it to '%s'",
-                        in_data.location().line(),
-                        CFG_KEY_CC_DEPRECATED,
-                        CFG_KEY_CC);
+            in_log.warn(" --> Line " + std::to_string(in_data.location().line()) + " :: "
+                        + "Parameter '" + CFG_KEY_CC_DEPRECATED + "' is deprecated, please rename it to '" + CFG_KEY_CC + "'");
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
-                         in_data.location().line(),
-                         CFG_KEY_CC_DEPRECATED,
-                         m_data);
+            in_log.debug_line(in_data.location().line(), "Parameter '" + std::string(CFG_KEY_CC_DEPRECATED) + "' = '" + std::to_string(m_data) + "'");
         } else if (in_data.contains(CFG_KEY_NOTE)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_NOTE].as_integer());
             m_data_type = map_data_type::note;
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'", in_data.location().line(), CFG_KEY_NOTE, m_data);
+            in_log.debug_line(in_data.location().line(),
+                              "Parameter '" + std::string(CFG_KEY_NOTE) + "' = '"+ std::to_string(m_data) + "'");
         } else if (in_data.contains(CFG_KEY_PITCH_BEND)) {
             m_data = 0;   // fixed value for pitch bend messages
             m_data_type = map_data_type::pitch_bend;
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i' (fixed value for pitch bend)",
-                         in_data.location().line(),
-                         CFG_KEY_PITCH_BEND,
-                         m_data);
+            in_log.debug_line(in_data.location().line(),
+                              "Parameter '" + std::string(CFG_KEY_PITCH_BEND) + "' = '"
+                              + std::to_string(m_data) + "' (fixed value for pitch bend)");
         } else if (in_data.contains(CFG_KEY_PROGRAM_CHANGE)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_PROGRAM_CHANGE].as_integer());
             m_data_type = map_data_type::program_change;
 
-            in_log.debug(" --> Line %i :: Parameter '%s' = '%i'",
-                         in_data.location().line(),
-                         CFG_KEY_PROGRAM_CHANGE,
-                         m_data);
+            in_log.debug_line(in_data.location().line(),
+                              "Parameter '" + std::string(CFG_KEY_PROGRAM_CHANGE) + "' = '" + std::to_string(m_data) + "'");
         } else {
-            in_log.error(" --> Line %i :: Parameter for MIDI type is missing", in_data.location().line());
+            in_log.error_line(in_data.location().line(), "Parameter for MIDI type is missing");
         }
 
     } catch (toml::type_error &error) {
-        in_log.error(" --> Line %i :: Error reading mapping", in_data.location().line());
+        in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
     }
 }

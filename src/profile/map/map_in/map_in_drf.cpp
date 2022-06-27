@@ -55,7 +55,7 @@ map_type map_in_drf::type()
  */
 void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    in_log.debug(" --> Line %i :: Read settings for type 'drf'", in_data.location().line());
+    in_log.debug(" --> Line " + std::to_string(in_data.location().line()) + " :: Read settings for type 'drf'");
     map_in::read_config(in_log, in_data, in_config);
 
     // read mode
@@ -96,25 +96,25 @@ bool map_in_drf::check(text_logger &in_log)
 
     if (m_dataref.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_DATAREF);
+        in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is empty");
         result = false;
     }
 
     if (!xp().datarefs().check(m_dataref)) {
         in_log.error(source_line());
-        in_log.error(" --> Dataref '%s' not found", m_dataref.data());
+        in_log.error(" --> Dataref '" + m_dataref + "' not found");
         result = false;
     }
 
     if (m_values.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> No values defined", CFG_KEY_DATAREF);
+        in_log.error(" --> No values defined");
         result = false;
     }
 
     if (m_mode == dataref_mode::momentary && m_values.size() != 2) {
         in_log.error(source_line());
-        in_log.error(" --> When parameter '%s' is 'momentary', two values (on/off) are expected", CFG_KEY_MODE);
+        in_log.error(" --> When parameter '" + std::string(CFG_KEY_MODE) + "' is 'momentary', two values (on/off) are expected");
         result = false;
     }
 
@@ -142,7 +142,7 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
             value = m_values[1];
 
         // change dataref and display label
-        in_msg.log().debug(" --> Change dataref '%s' to value '%s'", m_dataref.c_str(), value.c_str());
+        in_msg.log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
 
         xp().datarefs().write(in_msg.log(), m_dataref, value);
         display_label(in_msg.log(), value);

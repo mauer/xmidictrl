@@ -72,7 +72,7 @@ unsigned int map_in_cmd::velocity_off() const
  */
 void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
-    in_log.debug(" --> Line %i :: Read settings for type 'cmd'", in_data.location().line());
+    in_log.debug_line(in_data.location().line(), "Read settings for type 'cmd'");
     map_in::read_config(in_log, in_data, in_config);
 
     // read the command
@@ -98,21 +98,21 @@ bool map_in_cmd::check(text_logger &in_log)
 
     if (m_command.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> Parameter '%s' is empty", CFG_KEY_COMMAND);
+        in_log.error(" --> Parameter '" + std::string(CFG_KEY_COMMAND) + "' is empty");
         return false;
     }
 
     if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
-                     CFG_KEY_VELOCITY_ON);
+        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_ON) + "', "
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
         return false;
     }
 
     if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '%s', velocity has to be between 0 and 127",
-                     CFG_KEY_VELOCITY_OFF);
+        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_OFF) + "', "
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
         return false;
     }
 
@@ -128,17 +128,15 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
     if (!check_sublayer(in_sl_value))
         return true;
 
-    in_msg.log().debug(" --> Execute command '%s'", m_command.data());
+    in_msg.log().debug(" --> Execute command '" + m_command + "'");
 
     if (in_msg.data_2() == m_velocity_on) {
         xp().cmd().begin(in_msg.log(), m_command);
     } else if (in_msg.data_2() == m_velocity_off) {
         xp().cmd().end(in_msg.log(), m_command);
     } else {
-        in_msg.log().error("Invalid MIDI velocity '%i'", in_msg.data_2());
-        in_msg.log().error(" --> Supported values for the current mapping are '%i' and '%i'",
-                           m_velocity_on,
-                           m_velocity_off);
+        in_msg.log().error("Invalid MIDI velocity '" + std::to_string(in_msg.data_2()) + "'");
+        in_msg.log().error(" --> Supported values for the current mapping are '" + std::to_string(m_velocity_on) + "' and '" +  std::to_string(m_velocity_off) + "'");
     }
 
     return true;

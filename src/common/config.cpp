@@ -66,7 +66,7 @@ bool config::load_file(text_logger &in_log, std::string_view in_filename)
 
     // check if file exists
     if (!std::filesystem::exists(in_filename)) {
-        in_log.error("File '%s' not found", in_filename.data());
+        in_log.error("File '" + std::string(in_filename) + "' not found!");
         return false;
     }
 
@@ -75,14 +75,14 @@ bool config::load_file(text_logger &in_log, std::string_view in_filename)
         m_config = toml::parse(in_filename.data());
         m_filename = in_filename;
 
-        in_log.debug("File '%s' loaded successfully", m_filename.data());
+        in_log.debug("File '" + m_filename + "' loaded successfully");
     } catch (const toml::syntax_error &error) {
-        in_log.error("Error parsing file '%s'", in_filename.data());
+        in_log.error("Error parsing file '" + std::string(in_filename) + "'");
         in_log.error(error.what());
         return false;
 
     } catch (const std::runtime_error &error) {
-        in_log.error("Error opening file '%s'", in_filename.data());
+        in_log.error("Error opening file '" + std::string(in_filename) + "'");
         in_log.error(error.what());
         return false;
     }
@@ -97,7 +97,7 @@ bool config::load_file(text_logger &in_log, std::string_view in_filename)
 void config::close_file(text_logger &in_log)
 {
     if (!m_filename.empty())
-        in_log.debug("File '%s' closed", m_filename.data());
+        in_log.debug("File '" + m_filename + "' closed");
 
     m_config = toml::value();
     m_filename.clear();
