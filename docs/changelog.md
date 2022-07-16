@@ -6,6 +6,8 @@
 ##  VERSION 1.02
 
 + Improved logging system to fix crashes on Linux platform
++ Fixed mapping in CL650 example
++ Fixed crash on Mac OS when closing info window
 
 -----------------------------------------------------------------------------------------------------------------------
 
