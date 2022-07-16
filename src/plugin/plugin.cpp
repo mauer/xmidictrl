@@ -158,19 +158,19 @@ void plugin::process_info_messages()
         return;
 
     // remove expired messages
-    for (std::pair<std::string, std::shared_ptr<info_msg>> msg_pair: m_info_msg) {
-        auto msg = msg_pair.second;
+    for (auto it = m_info_msg.cbegin(); it != m_info_msg.cend();) {
+        auto msg = it->second;
 
         if (msg->exp_time < std::chrono::system_clock::now())
-            m_info_msg.erase(msg->id);
+            it = m_info_msg.erase(it);
+        else
+            ++it;
     }
 
     // show or hide dialog
-    auto xp_win = create_window(window_type::info_window);
+    auto win = create_window(window_type::info_window);
 
-    if (xp_win != nullptr) {
-        auto win = std::static_pointer_cast<info_window>(xp_win);
-
+    if (win != nullptr) {
         if (m_info_msg.empty())
             win->hide();
         else
