@@ -45,6 +45,10 @@
 #include "outbound_task.h"
 #include "types.h"
 
+#ifdef min
+#undef min // prevent clash with time_point::min() later
+#endif
+
 namespace xmidictrl {
 
 class device_list;
