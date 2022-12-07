@@ -40,7 +40,7 @@ const unsigned char MIDI_VELOCITY_MIN(0);
 const unsigned char MIDI_VELOCITY_MAX(127);
 
 // Interval of flight loop
-const int FLIGHTLOOP_INTERVAL(-1.0);
+const float FLIGHTLOOP_INTERVAL(-1.0f);
 
 // Name of the aircraft profile file
 const char *const FILENAME_PROFILE = "XMidiCtrl.toml";

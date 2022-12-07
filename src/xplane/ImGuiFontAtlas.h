@@ -36,8 +36,11 @@
 #define IMGUIFONTATLAS_H
 
 // OpenGL
-#ifdef __APPLE__
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
+#elif defined(_MSC_VER)
+#include <windows.h>
+#include <GL/gl.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>

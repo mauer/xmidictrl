@@ -32,6 +32,10 @@
 #include "text_logger.h"
 #include "types.h"
 
+#ifdef min
+#undef min // prevent clash with time_point::min() later
+#endif
+
 namespace xmidictrl {
 
 class map_in_pnp : public map_in {

@@ -35,24 +35,36 @@ configure_file(
 
 message("-- Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
-add_definitions("-include ${PROJECT_BINARY_DIR}/version.h")
+if (MSVC)
+    add_definitions("/FI${PROJECT_BINARY_DIR}/version.h")
+else()
+    add_definitions("-include ${PROJECT_BINARY_DIR}/version.h")
+endif()
 include_directories(${PROJECT_BINARY_DIR})
 
 # use highest optimization level and optimize for size
-if (NOT MSVC)
-    add_compile_options(-O3 -Os)
+if (MSVC)
+    add_compile_options("$<$<CONFIG:RELEASE>:/O2>")
+else()
+    add_compile_options("$<$<CONFIG:RELEASE>:-O3>" "$<$<CONFIG:RELEASE>:-Os>")
 endif()
 
 # set compiler options
 set(CMAKE_CXX_STANDARD 17)
-
-# disable warning no-free-nonheap-object because of toml11
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 10.0.0)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -fPIC")
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
+if (MSVC)
+    add_compile_options("/Zc:__cplusplus")
 endif()
 
+# disable warning no-free-nonheap-object because of toml11
+if (MSVC)
+    add_compile_options("/W4")
+else()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 10.0.0)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -fPIC")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
+    endif()
+endif()
 # Add subdirectories
 add_subdirectory(lib)
 add_subdirectory(src)

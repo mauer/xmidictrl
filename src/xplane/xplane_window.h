@@ -32,12 +32,14 @@
 #include <vector>
 
 // OpenGL
-#ifdef __APPLE__
-    #include <OpenGL/gl.h>
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#elif defined(_MSC_VER)
+#include <windows.h>
+#include <GL/gl.h>
 #else
-    #include <GL/gl.h>
-    #include <GL/glext.h>
-
+#include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 
 // X-Plane SDK
