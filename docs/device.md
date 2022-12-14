@@ -15,12 +15,13 @@ ports and some mappings.
 
 # Optional Parameters
 
-| Parameter   | Description                                                               |
-|-------------|---------------------------------------------------------------------------|
-| name        | It's good practise to define a name for your device                       |
-| mode_out    | 0 = permanent mode (default) / 1 = on change mode (see description below) |
-| mapping_in  | Mappings for inbound messages                                             |
-| mapping_out | Mappings for outbound messages                                            |
+| Parameter            | Description                                                               |
+|----------------------|---------------------------------------------------------------------------|
+| name                 | It's good practise to define a name for your device                       |
+| mode_out             | 0 = permanent mode (default) / 1 = on change mode (see description below) |
+| mapping_in           | Mappings for inbound messages                                             |
+| mapping_out          | Mappings for outbound messages                                            |
+| default_encoder_mode | Default encoder mode for the device (range/relative), default is relative |
 
 # Which ports should be used?
 

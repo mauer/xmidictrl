@@ -70,10 +70,10 @@ unsigned int map_in_cmd::velocity_off() const
 /**
  * Read settings from config
  */
-void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_cmd::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'cmd'");
-    map_in::read_config(in_log, in_data, in_config);
+    map_in::read_config(in_log, in_data, in_device, in_config);
 
     // read the command
     m_command = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND);

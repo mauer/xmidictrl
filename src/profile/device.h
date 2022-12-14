@@ -60,7 +60,8 @@ public:
            std::string_view in_name,
            unsigned int in_port_in,
            unsigned int in_port_out,
-           mode_out in_mode_out);
+           mode_out in_mode_out,
+           encoder_mode in_default_enc_mode);
     ~device();
 
     // no copying or copy assignments are allowed
@@ -83,6 +84,8 @@ public:
     void process_outbound_mappings(text_logger &in_log);
     void process_outbound_reset();
 
+    encoder_mode default_encoder_mode() const;
+
 private:
     void create_outbound_thread();
     void process_outbound_tasks();
@@ -97,6 +100,7 @@ private:
     unsigned int m_port_out;
 
     mode_out m_mode_out;
+    encoder_mode m_default_enc_mode {encoder_mode::relative};
 
     time_point m_time_sent {time_point::min()};
 

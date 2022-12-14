@@ -41,7 +41,8 @@ public:
                                           std::string_view in_name,
                                           unsigned int in_port_in,
                                           unsigned int in_port_out,
-                                          mode_out in_mode_out);
+                                          mode_out in_mode_out,
+                                          encoder_mode in_default_enc_mode);
 
     bool open_connections();
     void close_connections();

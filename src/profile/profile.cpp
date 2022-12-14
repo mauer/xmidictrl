@@ -356,6 +356,7 @@ void profile::create_device_list()
             int port_in;
             int port_out;
             mode_out mode_out;
+            encoder_mode default_enc_mode;
 
             // read all parameters for the current device
             toml::value settings_dev = profile_dev[dev_no];
@@ -394,13 +395,20 @@ void profile::create_device_list()
                                                                                CFG_KEY_MODE_OUT,
                                                                                false));
 
+                // default encoder mode
+                default_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(*m_profile_log,
+                                                                                               settings_dev,
+                                                                                               CFG_KEY_DEFAULT_ENCODER_MODE,
+                                                                                               false));
+
                 // create device
                 std::shared_ptr<device> device = m_device_list->create_device(m_plugin_log,
                                                                               m_midi_log,
                                                                               name,
                                                                               port_in,
                                                                               port_out,
-                                                                              mode_out);
+                                                                              mode_out,
+                                                                              default_enc_mode);
 
                 if (device != nullptr) {
                     // create init mappings
@@ -442,30 +450,30 @@ void profile::create_device_list()
 /**
  * Create the init mapping for a device and store it
  */
-void profile::create_init_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
+void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
 {
-    m_profile_log->info("Device " + std::to_string(dev_no) + " :: "
-                        + std::to_string(settings.size()) + " init mapping(s) found");
+    m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
+                        + std::to_string(in_settings.size()) + " init mapping(s) found");
 
     // parse each mapping entry
-    for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
+    for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_init> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
+        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
             mapping = std::make_shared<map_init>(xp());
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(*m_profile_log, settings[map_no]);
+            mapping->read_config(*m_profile_log, in_settings[map_no]);
 
             if (mapping->check(*m_profile_log))
-                device->add_init_map(mapping);
+                out_device->add_init_map(mapping);
             else
-                m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
+                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
 
         } catch (toml::type_error &error) {
-            m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
+            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
             m_profile_log->error(error.what());
         }
     }
@@ -475,19 +483,19 @@ void profile::create_init_mapping(int dev_no, toml::array settings, const std::s
 /**
  * Create the inbound mapping for a device and store it
  */
-void profile::create_inbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
+void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
 {
-    m_profile_log->info("Device " + std::to_string(dev_no) + " :: "
-                        + std::to_string(settings.size()) + " inbound mapping(s) found");
+    m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
+                        + std::to_string(in_settings.size()) + " inbound mapping(s) found");
 
     // parse each mapping entry
-    for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
+    for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_in> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(dev_no) + " :: Read settings for mapping " + std::to_string(map_no));
+        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Read settings for mapping " + std::to_string(map_no));
 
         try {
-            map_type type = read_mapping_type(settings[map_no]);
+            map_type type = read_mapping_type(in_settings[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
@@ -504,7 +512,7 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     break;
 
                 case map_type::internal:
-                    m_profile_log->warn("Device " + std::to_string(dev_no) + " :: "
+                    m_profile_log->warn("Device " + std::to_string(in_dev_no) + " :: "
                                         + "Mapping " + std::to_string(map_no) + " :: Mapping type 'int' is currently unsupported");
                     break;
 
@@ -517,30 +525,30 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
                     break;
 
                 case map_type::none:
-                    m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
+                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
                     break;
             }
 
             if (mapping == nullptr) {
-                m_profile_log->error("Line " + std::to_string(settings[map_no].location().line()) + " :: "
-                                     + settings[map_no].location().line_str());
+                m_profile_log->error("Line " + std::to_string(in_settings[map_no].location().line()) + " :: "
+                                     + in_settings[map_no].location().line_str());
                 m_profile_log->error(" --> Error reading mapping");
                 continue;
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(*m_profile_log, settings[map_no], m_config);
+            mapping->read_config(*m_profile_log, in_settings[map_no], *out_device, m_config);
 
             if (mapping->check(*m_profile_log)) {
-                device->add_inbound_map(mapping);
+                out_device->add_inbound_map(mapping);
             } else {
-                m_profile_log->error("Line " + std::to_string(settings[map_no].location().line()) + " :: "
-                                     + settings[map_no].location().line_str());
+                m_profile_log->error("Line " + std::to_string(in_settings[map_no].location().line()) + " :: "
+                                     + in_settings[map_no].location().line_str());
                 m_profile_log->error(" --> Parameters incomplete or incorrect");
             }
         } catch (toml::type_error &error) {
-            m_profile_log->error("Line " + std::to_string(settings[map_no].location().line()) + " :: "
-                                 + settings[map_no].location().line_str());
+            m_profile_log->error("Line " + std::to_string(in_settings[map_no].location().line()) + " :: "
+                                 + in_settings[map_no].location().line_str());
             m_profile_log->error(" --> Error reading config");
             m_profile_log->error(error.what());
         }
@@ -551,19 +559,19 @@ void profile::create_inbound_mapping(int dev_no, toml::array settings, const std
 /**
  * Create the outbound mapping for a device and store it
  */
-void profile::create_outbound_mapping(int dev_no, toml::array settings, const std::shared_ptr<device> &device)
+void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
 {
-    m_profile_log->info("Device " + std::to_string(dev_no) + " :: "
-                        + std::to_string(settings.size()) + " outbound mapping(s) found");
+    m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
+                        + std::to_string(in_settings.size()) + " outbound mapping(s) found");
 
     // parse each mapping entry
-    for (int map_no = 0; map_no < static_cast<int>(settings.size()); map_no++) {
+    for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_out> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
+        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
-            map_type type = read_mapping_type(settings[map_no]);
+            map_type type = read_mapping_type(in_settings[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
@@ -572,30 +580,30 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
                     break;
 
                 case map_type::internal:
-                    m_profile_log->warn("Device " + std::to_string(dev_no) + " :: "
+                    m_profile_log->warn("Device " + std::to_string(in_dev_no) + " :: "
                                         + "Mapping " + std::to_string(map_no) + " :: Mapping type 'int' is currently unsupported");
                     break;
 
                 default:
-                    m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
+                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
                     break;
             }
 
             if (mapping == nullptr) {
-                m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading config");
+                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading config");
                 continue;
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(*m_profile_log, settings[map_no]);
+            mapping->read_config(*m_profile_log, in_settings[map_no]);
 
             if (mapping->check(*m_profile_log))
-                device->add_outbound_map(mapping);
+                out_device->add_outbound_map(mapping);
             else
-                m_profile_log->error("Device " + std::to_string(dev_no)+ " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
+                m_profile_log->error("Device " + std::to_string(in_dev_no)+ " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
 
         } catch (toml::type_error &error) {
-            m_profile_log->error("Device " + std::to_string(dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
+            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
             m_profile_log->error(error.what());
         }
     }
@@ -605,21 +613,21 @@ void profile::create_outbound_mapping(int dev_no, toml::array settings, const st
 /**
  * Translate a type string to an enum value
  */
-map_type profile::translate_map_type(std::string_view type_str)
+map_type profile::translate_map_type(std::string_view in_type_str)
 {
     map_type type = map_type::none;
 
-    if (type_str == CFG_MAPTYPE_COMMAND)
+    if (in_type_str == CFG_MAPTYPE_COMMAND)
         type = map_type::command;
-    else if (type_str == CFG_MAPTYPE_SLIDER)
+    else if (in_type_str == CFG_MAPTYPE_SLIDER)
         type = map_type::slider;
-    else if (type_str == CFG_MAPTYPE_DATAREF)
+    else if (in_type_str == CFG_MAPTYPE_DATAREF)
         type = map_type::dataref;
-    else if (type_str == CFG_MAPTYPE_PUSH_PULL)
+    else if (in_type_str == CFG_MAPTYPE_PUSH_PULL)
         type = map_type::push_pull;
-    else if (type_str == CFG_MAPTYPE_ENCODER)
+    else if (in_type_str == CFG_MAPTYPE_ENCODER)
         type = map_type::encoder;
-    else if (type_str == CFG_MAPTYPE_INTERNAL)
+    else if (in_type_str == CFG_MAPTYPE_INTERNAL)
         type = map_type::internal;
 
     return type;
@@ -629,26 +637,26 @@ map_type profile::translate_map_type(std::string_view type_str)
 /**
  * Read the mapping type
  */
-map_type profile::read_mapping_type(toml::value &settings)
+map_type profile::read_mapping_type(toml::value &in_settings)
 {
     map_type type = map_type::none;
 
     try {
         // read type
-        if (settings.contains(CFG_KEY_TYPE)) {
-            std::string type_str {settings[CFG_KEY_TYPE].as_string()};
+        if (in_settings.contains(CFG_KEY_TYPE)) {
+            std::string type_str {in_settings[CFG_KEY_TYPE].as_string()};
 
-            m_profile_log->debug_line(settings.location().line(), "Parameter type = '" + type_str + "'");
+            m_profile_log->debug_line(in_settings.location().line(), "Parameter type = '" + type_str + "'");
 
             // get the mapping type
             type = translate_map_type(type_str);
         } else {
-            m_profile_log->error("Line " + std::to_string(settings.location().line()) + " :: " + settings.location().line_str());
+            m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
             m_profile_log->error(" --> Parameter '" + std::string(CFG_KEY_TYPE) + "' is missing");
         }
     } catch (toml::type_error &error) {
-        m_profile_log->error("Line " + std::to_string(settings.location().line()) + " :: " + settings.location().line_str());
-        m_profile_log->error("Line " + std::to_string(settings.location().line()) + " :: Error reading mapping");
+        m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
+        m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: Error reading mapping");
         m_profile_log->error(error.what());
     }
 

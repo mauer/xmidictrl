@@ -18,6 +18,7 @@
 #include "map_in.h"
 
 // XMidiCtrl
+#include "device.h"
 #include "plugin.h"
 #include "toml_utils.h"
 
@@ -54,7 +55,7 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
 {
     // read the common data
     read_common_config(in_log, in_data);

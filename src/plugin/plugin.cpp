@@ -19,13 +19,14 @@
 
 // XMidiCtrl
 #include "about_window.h"
+#include "conversions.h"
 #include "devices_window.h"
 #include "info_window.h"
 #include "messages_window.h"
 #include "profile_window.h"
 #include "settings_window.h"
 #include "version.h"
-#include "conversions.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -48,9 +49,15 @@ plugin::plugin()
     m_settings = std::make_unique<settings>(*m_plugin_log, *m_xp);
 
     // initialize our logging system
-    m_plugin_log->enable_file_logging(m_xp->xplane_path());
-    m_plugin_log->set_debug_mode(m_settings->debug_mode());
-    m_plugin_log->set_max_size(m_settings->max_text_messages());
+    if (utils::create_preference_folders(*m_plugin_log, *m_xp)) {
+        m_plugin_log->enable_file_logging(m_xp->preferences_path());
+        m_plugin_log->set_debug_mode(m_settings->debug_mode());
+        m_plugin_log->set_max_size(m_settings->max_text_messages());
+    } else {
+        m_plugin_log->info("Cannot create preference folder for " XMIDICTRL_FULL_NAME);
+        XPLMDebugString(std::string_view("Cannot create preference folder for " XMIDICTRL_FULL_NAME).data());
+    }
+
     m_plugin_log->info("Plugin " XMIDICTRL_FULL_NAME " loaded successfully");
     XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " loaded successfully").data());
 

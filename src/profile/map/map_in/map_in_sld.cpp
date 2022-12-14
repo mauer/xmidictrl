@@ -52,10 +52,10 @@ map_type map_in_sld::type()
 /**
  * Read settings from config
  */
-void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'sld'");
-    map_in::read_config(in_log, in_data, in_config);
+    map_in::read_config(in_log, in_data, in_device, in_config);
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {

@@ -22,6 +22,7 @@
 
 // XMidiCtrl
 #include "conversions.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -366,7 +367,7 @@ void settings::save_settings()
     }
 
     // check if our directory already exists in the preference folder
-    if (!conversions::create_preference_folders(m_text_log, xp()))
+    if (!utils::create_preference_folders(m_text_log, xp()))
         return;
 
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);

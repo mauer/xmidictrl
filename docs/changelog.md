@@ -4,6 +4,13 @@
 -----------------------------------------------------------------------------------------------------------------------
 
 ##  VERSION 1.02
++ Fixed small error in CL650 example mapping
++ Added default encoder mode in device settings
++ Moved logfile into preference folder where it should have been from the beginning on
+
+-----------------------------------------------------------------------------------------------------------------------
+
+##  VERSION 1.02
 
 + Improved logging system to fix crashes on Linux platform
 + Fixed mapping in CL650 example

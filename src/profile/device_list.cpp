@@ -49,14 +49,16 @@ std::shared_ptr<device> device_list::create_device(text_logger &in_text_log,
                                                    std::string_view in_name,
                                                    unsigned int in_port_in,
                                                    unsigned int in_port_out,
-                                                   mode_out in_mode_out)
+                                                   mode_out in_mode_out,
+                                                   encoder_mode in_default_enc_mode)
 {
     std::shared_ptr<device> dev = std::make_shared<device>(in_text_log,
                                                            in_midi_log,
                                                            in_name,
                                                            in_port_in,
                                                            in_port_out,
-                                                           in_mode_out);
+                                                           in_mode_out,
+                                                           in_default_enc_mode);
     m_device_list.push_back(dev);
 
     return dev;

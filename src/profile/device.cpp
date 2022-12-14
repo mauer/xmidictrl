@@ -38,13 +38,15 @@ device::device(text_logger &in_text_log,
                std::string_view in_name,
                unsigned int in_port_in,
                unsigned int in_port_out,
-               mode_out in_mode_out)
+               mode_out in_mode_out,
+               encoder_mode in_default_enc_mode)
     : m_text_log(in_text_log),
       m_midi_log(in_midi_log),
       m_name(in_name),
       m_port_in(in_port_in),
       m_port_out(in_port_out),
-      m_mode_out(in_mode_out)
+      m_mode_out(in_mode_out),
+      m_default_enc_mode(in_default_enc_mode)
 {
     try {
         // create midi classes
@@ -337,6 +339,15 @@ void device::process_outbound_reset()
         if (m_midi_out != nullptr && m_midi_out->isPortOpen())
             add_outbound_task(task);
     }
+}
+
+
+/**
+ * Return the default encoder mode
+ */
+encoder_mode device::default_encoder_mode() const
+{
+    return m_default_enc_mode;
 }
 
 

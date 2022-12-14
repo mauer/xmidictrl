@@ -18,6 +18,7 @@
 #include "map_in_enc.h"
 
 // XMidiCtrl
+#include "device.h"
 #include "toml_utils.h"
 #include "conversions.h"
 
@@ -53,13 +54,16 @@ map_type map_in_enc::type()
 /**
  * Read settings from config
  */
-void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'enc'");
-    map_in::read_config(in_log, in_data, in_config);
+    map_in::read_config(in_log, in_data, in_device, in_config);
 
     // read the mode
-    m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE, false))
+        m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
+    else
+        m_mode = in_device.default_encoder_mode();
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {

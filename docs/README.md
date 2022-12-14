@@ -1,6 +1,6 @@
-# MIDI Controller plugin for X-Plane 11.50+
+# MIDI Controller plugin for X-Plane 11.50+ / 12
 
-XMidiCtrl is a plugin for X-Plane 11 and allows the connection of MIDI devices to commands and datarefs without the
+XMidiCtrl is a plugin for X-Plane 11/12 and allows the connection of MIDI devices to commands and datarefs without the
 need of additional software.
 
 The following devices are officially supported:
