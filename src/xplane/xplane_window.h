@@ -21,8 +21,7 @@
 //   Released as public domain code.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XPLANE_WINDOW_H
-#define XPLANE_WINDOW_H
+#pragma once
 
 // Standard
 #include <cstdint>
@@ -49,7 +48,7 @@
 
 // XMidiCtrl
 #include "text_logger.h"
-#include "types.h"
+#include "xmc_types.h"
 #include "xplane.h"
 
 namespace xmidictrl {
@@ -124,5 +123,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // XPLANE_WINDOW_H

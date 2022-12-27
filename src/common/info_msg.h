@@ -15,14 +15,13 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INFO_MSG_H
-#define INFO_MSG_H
+#pragma once
 
 // Standard
 #include <string>
 
 // XMidiCtrl
-#include "types.h"
+#include "xmc_types.h"
 
 namespace xmidictrl {
 
@@ -39,5 +38,3 @@ struct info_msg {
 };
 
 } // Namespace xmidictrl
-
-#endif // INFO_MSG_H

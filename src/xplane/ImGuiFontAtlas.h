@@ -32,8 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef IMGUIFONTATLAS_H
-#define IMGUIFONTATLAS_H
+#pragma once
 
 // OpenGL
 #if defined(__APPLE__)
@@ -102,5 +101,3 @@ protected:
 };
 
 } // Namespace XMidiCtrl
-
-#endif // IMGUIFONTATLAS_H

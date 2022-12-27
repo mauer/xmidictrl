@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INBOUND_TASK_H
-#define INBOUND_TASK_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -33,5 +32,3 @@ struct inbound_task {
 };
 
 } // Namespace xmidictrl
-
-#endif // INBOUND_TASK_H

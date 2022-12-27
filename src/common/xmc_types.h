@@ -15,13 +15,10 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 // Standard
 #include <chrono>
-#include <map>
-#include <string>
 
 namespace xmidictrl {
 
@@ -260,5 +257,3 @@ enum class window_type {
 };
 
 } // Namespace xmidictrl
-
-#endif // TYPES_H

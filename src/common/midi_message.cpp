@@ -160,7 +160,7 @@ std::string midi_message::mappings_as_string()
 /**
  * Add mapping to MIDI message
  */
-void midi_message::add_mapping(const std::shared_ptr<map> &in_map)
+void midi_message::add_mapping(const std::shared_ptr<mapping> &in_map)
 {
     m_mappings.push_back(in_map);
 }

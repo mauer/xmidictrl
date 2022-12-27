@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_PNP_H
-#define MAP_IN_PNP_H
+#pragma once
 
 // Standard
 #include <atomic>
@@ -30,7 +29,7 @@
 #include "map_in.h"
 #include "midi_message.h"
 #include "text_logger.h"
-#include "types.h"
+#include "xmc_types.h"
 
 #ifdef min
 #undef min // prevent clash with time_point::min() later
@@ -40,7 +39,7 @@ namespace xmidictrl {
 
 class map_in_pnp : public map_in {
 public:
-    explicit map_in_pnp(xplane &in_xp);
+    explicit map_in_pnp(app_services& in_app);
     ~map_in_pnp() override = default;
 
     map_type type() override;
@@ -82,5 +81,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_IN_PNP_H

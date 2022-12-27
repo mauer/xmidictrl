@@ -15,11 +15,13 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TEXT_LOG_MSG_H
-#define TEXT_LOG_MSG_H
+#pragma once
+
+// Standard
+#include <string>
 
 // XMidiCtrl
-#include "types.h"
+#include "xmc_types.h"
 
 namespace xmidictrl {
 
@@ -51,5 +53,3 @@ struct text_log_msg {
 };
 
 } // Namespace xmidictrl
-
-#endif // TEXT_LOG_MSG_H

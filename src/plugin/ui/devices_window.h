@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DEVICES_WINDOW_H
-#define DEVICES_WINDOW_H
+#pragma once
 
 // RtMidi
 #include "RtMidi.h"
@@ -41,5 +40,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // DEVICES_WINDOW_H

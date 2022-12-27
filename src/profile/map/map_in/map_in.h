@@ -15,27 +15,26 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_H
-#define MAP_IN_H
+#pragma once
 
 // Standard
 #include <memory>
 
 // XMidiCtrl
 #include "label.h"
-#include "map.h"
+#include "mapping.h"
 #include "midi_message.h"
 #include "text_logger.h"
-#include "types.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
 class device;
 
-class map_in : public map {
+class map_in : public mapping {
 public:
-    explicit map_in(xplane &in_xp);
+    explicit map_in(app_services &in_app);
     ~map_in() override = default;
 
     [[nodiscard]] std::string_view sl() const;
@@ -61,5 +60,3 @@ private:
 };
 
 } // Namespace xmiditrl
-
-#endif // MAP_IN_H

@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef SETTINGS_WINDOW_H
-#define SETTINGS_WINDOW_H
+#pragma once
 
 // XMidiCtrl
 #include "imgui_window.h"
@@ -70,5 +69,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // SETTINGS_WINDOW_H

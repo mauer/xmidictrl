@@ -15,10 +15,10 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_DRF_H
-#define MAP_OUT_DRF_H
+#pragma once
 
 // Standard
+#include <map>
 #include <set>
 #include <string>
 #include <string_view>
@@ -34,7 +34,7 @@ namespace xmidictrl {
 
 class map_out_drf : public map_out {
 public:
-    explicit map_out_drf(xplane &in_xp);
+    explicit map_out_drf(app_services& in_app);
     ~map_out_drf() override;
 
     map_type type() override;
@@ -69,5 +69,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_OUT_DRF_H

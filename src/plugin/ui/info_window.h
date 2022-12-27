@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INFO_WINDOW_H
-#define INFO_WINDOW_H
+#pragma once
 
 // Standard
 #include <map>
@@ -50,5 +49,3 @@ protected:
 };
 
 } // Namespace xmidictrl
-
-#endif // INFO_WINDOW_H

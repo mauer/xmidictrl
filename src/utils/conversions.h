@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONVERSIONS_H
-#define CONVERSIONS_H
+#pragma once
 
 // Standard
 #include <set>
@@ -27,8 +26,8 @@
 
 // XMidiCtrl
 #include "text_logger.h"
-#include "types.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
@@ -44,9 +43,8 @@ public:
 
     static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
 
-    static bool create_preference_folders(text_logger &in_log, xplane &in_xp);
+    static bool create_preference_folders(text_logger &in_log, app_services &in_app);
 };
 
 } // Namespace xmidictrl
 
-#endif // CONVERSIONS_H

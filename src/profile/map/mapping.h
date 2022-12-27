@@ -15,23 +15,60 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 // Standard
-#include <string>
+#include <memory>
+
+// toml11
+#include <toml.hpp>
 
 // XMidiCtrl
 #include "text_logger.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
-class utils {
+class mapping : public std::enable_shared_from_this<mapping> {
 public:
-    static bool create_preference_folders(text_logger &in_log, xplane &in_xp);
+    explicit mapping(app_services &in_app);
+    virtual ~mapping() = default;
+
+    virtual map_type type();
+
+    [[nodiscard]] unsigned char channel() const;
+    [[nodiscard]] map_data_type data_type() const;
+    [[nodiscard]] unsigned char data() const;
+
+    std::string_view source_line() const;
+
+    std::string_view as_text();
+
+    std::string get_key();
+
+    virtual bool check(text_logger &in_log);
+
+protected:
+    app_services &app() const;
+
+    void read_common_config(text_logger &in_log, toml::value &in_data);
+
+    void read_channel(text_logger &in_log, toml::value &in_data);
+    void read_data(text_logger &in_log, toml::value &in_data);
+
+    virtual std::string build_mapping_text() = 0;
+
+private:
+    app_services &m_app;
+
+    unsigned char m_channel {MIDI_NONE};
+
+    map_data_type m_data_type {map_data_type::none};
+    unsigned char m_data {MIDI_NONE};
+
+    std::string m_source_line {};
+    std::string m_mapping_text {};
 };
 
 } // Namespace xmidictrl
-
-#endif // utils_H

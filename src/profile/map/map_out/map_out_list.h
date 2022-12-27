@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_LIST_H
-#define MAP_OUT_LIST_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -46,5 +45,3 @@ protected:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_OUT_LIST_H

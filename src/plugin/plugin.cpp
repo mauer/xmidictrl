@@ -26,7 +26,7 @@
 #include "profile_window.h"
 #include "settings_window.h"
 #include "version.h"
-#include "utils.h"
+#include "xmc_utils.h"
 
 namespace xmidictrl {
 

@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MIDI_LOGGER_H
-#define MIDI_LOGGER_H
+#pragma once
 
 // Standard
 #include <deque>
@@ -46,5 +45,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MIDI_LOGGER_H

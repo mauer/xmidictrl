@@ -19,14 +19,23 @@ message("---- Directory: src/profile/map/map_in")
 
 # Add sources
 set(MAP_IN_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/label.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_cmd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_cmd.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_drf.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_drf.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_enc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_enc.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_int.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_int.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_list.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_list.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_pnp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_pnp.h
         ${CMAKE_CURRENT_LIST_DIR}/map_in_sld.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in_sld.h
         )
 
 # Add sources to target

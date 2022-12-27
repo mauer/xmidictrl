@@ -20,8 +20,11 @@ message("---- Directory: src/plugin")
 # Add sources
 set(PLUGIN_SRC
         ${CMAKE_CURRENT_LIST_DIR}/plugin.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/plugin.h
         ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.h
         ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/settings.h
         )
 
 # Add sources to target

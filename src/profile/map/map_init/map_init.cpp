@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_init::map_init(xplane &in_xp)
-    : map(in_xp)
+map_init::map_init(app_services &in_app)
+    : mapping(in_app)
 {
 }
 
@@ -83,7 +83,7 @@ bool map_init::check(text_logger &in_log)
 {
     bool result = true;
 
-    if (!map::check(in_log))
+    if (!mapping::check(in_log))
         result = false;
 
     if (m_velocity < MIDI_VELOCITY_MIN || m_velocity > MIDI_VELOCITY_MAX) {

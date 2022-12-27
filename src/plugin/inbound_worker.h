@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INBOUND_WORKER_H
-#define INBOUND_WORKER_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -42,5 +41,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // INBOUND_WORKER_H

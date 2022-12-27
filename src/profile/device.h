@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#pragma once
 
 // Standard
 #include <atomic>
@@ -43,7 +42,7 @@
 #include "map_out_list.h"
 #include "midi_logger.h"
 #include "outbound_task.h"
-#include "types.h"
+#include "xmc_types.h"
 
 #ifdef min
 #undef min // prevent clash with time_point::min() later
@@ -121,5 +120,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // DEVICE_H

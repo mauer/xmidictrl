@@ -15,17 +15,16 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MIDI_MESSAGE_H
-#define MIDI_MESSAGE_H
+#pragma once
 
 // Standard
-#include <chrono>
+#include <memory>
+#include <string>
 #include <vector>
 
 // XMidiCtrl
-#include "map.h"
+#include "mapping.h"
 #include "text_logger.h"
-#include "types.h"
 
 namespace xmidictrl {
 
@@ -50,7 +49,7 @@ public:
 
     [[nodiscard]] size_t mapping_count() const;
     std::string mappings_as_string();
-    void add_mapping(const std::shared_ptr<map> &in_map);
+    void add_mapping(const std::shared_ptr<mapping> &in_map);
 
     void set_time(time_point in_time);
     [[nodiscard]] std::string time() const;
@@ -90,9 +89,7 @@ private:
     unsigned char m_data_1 {MIDI_NONE};
     unsigned char m_data_2 {MIDI_NONE};
 
-    std::vector<std::shared_ptr<map>> m_mappings;
+    std::vector<std::shared_ptr<mapping>> m_mappings;
 };
 
 } // Namespace xmidictrl
-
-#endif // MIDI_MESSAGE_H

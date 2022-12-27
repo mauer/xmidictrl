@@ -26,8 +26,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_int::map_in_int(xplane &in_xp, std::string_view in_command)
-    : map_in(in_xp),
+map_in_int::map_in_int(app_services &in_app, std::string_view in_command)
+    : map_in(in_app),
       m_command(in_command)
 {}
 
@@ -52,7 +52,7 @@ map_type map_in_int::type()
  */
 bool map_in_int::check(text_logger &in_log)
 {
-    if (!map::check(in_log))
+    if (!mapping::check(in_log))
         return false;
 
     if (m_command.empty())

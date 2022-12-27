@@ -20,8 +20,11 @@ message("---- Directory: src/profile/map/map_out")
 # Add sources
 set(MAP_OUT_SRC
         ${CMAKE_CURRENT_LIST_DIR}/map_out.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_out.h
         ${CMAKE_CURRENT_LIST_DIR}/map_out_drf.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_out_drf.h
         ${CMAKE_CURRENT_LIST_DIR}/map_out_list.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_out_list.h
         )
 
 # Add sources to target

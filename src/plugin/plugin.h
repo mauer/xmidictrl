@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#pragma once
 
 // Standard
 #include <map>
@@ -32,7 +31,7 @@
 #include "midi_logger.h"
 #include "profile.h"
 #include "settings.h"
-#include "types.h"
+#include "xmc_types.h"
 #include "xplane.h"
 #include "xplane_window.h"
 
@@ -116,5 +115,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // PLUGIN_H

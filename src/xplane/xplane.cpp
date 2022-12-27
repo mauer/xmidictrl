@@ -15,14 +15,14 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "xplane.h"
-
 // Standard
 #include <filesystem>
 
 // X-Plane SDK
 #include "XPLMPlanes.h"
 #include "XPLMPlugin.h"
+
+#include "xplane.h"
 
 namespace xmidictrl {
 
@@ -220,7 +220,7 @@ std::string xplane::current_aircraft_descr()
 /**
  * Return the cmd object
  */
-commands &xplane::cmd()
+simcmd_interface &xplane::cmd()
 {
     return *m_commands;
 }
@@ -229,7 +229,7 @@ commands &xplane::cmd()
 /**
  * Return the dataref object
  */
-data &xplane::datarefs()
+simvar_access &xplane::datarefs()
 {
     return *m_datarefs;
 }

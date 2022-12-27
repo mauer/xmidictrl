@@ -15,23 +15,22 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_INIT_H
-#define MAP_INIT_H
+#pragma once
 
 // Standard
 #include <memory>
 
 // XMidiCtrl
-#include "map.h"
+#include "mapping.h"
 #include "outbound_task.h"
-#include "types.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
-class map_init : public map {
+class map_init : public mapping {
 public:
-    explicit map_init(xplane &in_xp);
+    explicit map_init(app_services& in_app);
     ~map_init() override = default;
 
     map_type type() override;
@@ -51,5 +50,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_INIT_H

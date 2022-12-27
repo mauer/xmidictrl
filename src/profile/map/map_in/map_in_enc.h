@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_ENC_H
-#define MAP_IN_ENC_H
+#pragma once
 
 // Standard
 #include <string>
@@ -34,7 +33,7 @@ namespace xmidictrl {
 
 class map_in_enc : public map_in {
 public:
-    explicit map_in_enc(xplane &in_xp);
+    explicit map_in_enc(app_services& in_app);
     ~map_in_enc() override = default;
 
     map_type type() override;
@@ -77,5 +76,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_IN_ENC_H

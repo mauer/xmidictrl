@@ -19,10 +19,20 @@ message("---- Directory: src/common")
 
 # Add sources
 set(COMMON_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/app_services.h
         ${CMAKE_CURRENT_LIST_DIR}/config.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/config.h
+        ${CMAKE_CURRENT_LIST_DIR}/inbound_task.h
+        ${CMAKE_CURRENT_LIST_DIR}/info_msg.h
         ${CMAKE_CURRENT_LIST_DIR}/midi_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/midi_logger.h
         ${CMAKE_CURRENT_LIST_DIR}/midi_message.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/midi_message.h
+        ${CMAKE_CURRENT_LIST_DIR}/outbound_task.h
+        ${CMAKE_CURRENT_LIST_DIR}/text_log_msg.h
+        ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/text_logger.h
+        ${CMAKE_CURRENT_LIST_DIR}/xmc_types.h
         )
 
 # Add sources to target

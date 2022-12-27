@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#pragma once
 
 // Standard
 #include <map>
@@ -27,19 +26,20 @@
 #include "XPLMUtilities.h"
 
 // XMidiCtrl
+#include "app_services.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class commands {
+class commands : public simcmd_interface {
 public:
 	commands() = default;
     ~commands() = default;
 
-    void begin(text_logger &in_log, std::string_view in_cmd);
-    void end(text_logger &in_log, std::string_view in_cmd);
+    void begin(text_logger &in_log, std::string_view in_cmd) override;
+    void end(text_logger &in_log, std::string_view in_cmd) override;
     
-    void execute(text_logger &in_log, std::string_view in_cmd);
+    void execute(text_logger &in_log, std::string_view in_cmd) override;
 
 private:
     XPLMCommandRef find_command_ref(text_logger &in_log, std::string_view in_cmd);
@@ -48,5 +48,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // COMMANDS_H

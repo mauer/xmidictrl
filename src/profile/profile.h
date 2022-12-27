@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PROFILE_H
-#define PROFILE_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -29,11 +28,11 @@
 // XMidiCtrl
 #include "config.h"
 #include "device_list.h"
-#include "map.h"
+#include "mapping.h"
 #include "text_logger.h"
 #include "settings.h"
-#include "types.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
@@ -45,7 +44,7 @@ enum class filename_prefix {
 
 class profile : public config {
 public:
-    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
+    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services& in_app, settings &in_settings);
     ~profile() override;
 
     bool load();
@@ -98,5 +97,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // PROFILE_H

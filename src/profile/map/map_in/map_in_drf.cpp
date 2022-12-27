@@ -30,8 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(xplane &in_xp)
-    : map_in(in_xp)
+map_in_drf::map_in_drf(app_services &in_app)
+    : map_in(in_app)
 {}
 
 
@@ -91,7 +91,7 @@ bool map_in_drf::check(text_logger &in_log)
 {
     bool result = true;
 
-    if (!map::check(in_log))
+    if (!mapping::check(in_log))
         result = false;
 
     if (m_dataref.empty()) {
@@ -100,7 +100,7 @@ bool map_in_drf::check(text_logger &in_log)
         result = false;
     }
 
-    if (!xp().datarefs().check(m_dataref)) {
+    if (!app().datarefs().check(m_dataref)) {
         in_log.error(source_line());
         in_log.error(" --> Dataref '" + m_dataref + "' not found");
         result = false;
@@ -144,7 +144,7 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
         // change dataref and display label
         in_msg.log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
 
-        xp().datarefs().write(in_msg.log(), m_dataref, value);
+        app().datarefs().write(in_msg.log(), m_dataref, value);
         display_label(in_msg.log(), value);
     } else {
         toggle_dataref(in_msg.log(), m_dataref, m_values);

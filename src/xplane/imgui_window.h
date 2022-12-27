@@ -26,10 +26,9 @@
 //   Copyright (C) 2018, Christopher Collins
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef IMGUI_WINDOW_H
-#define IMGUI_WINDOW_H
+#pragma once
 
-// Standord
+// Standard
 #include <memory>
 #include <string>
 
@@ -99,5 +98,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // IMGUI_WINDOW_H

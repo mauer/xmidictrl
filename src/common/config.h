@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 // Standard
 #include <string_view>
@@ -26,17 +25,17 @@
 
 // XMidiCtrl
 #include "text_logger.h"
-#include "xplane.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
 class config {
 public:
-    explicit config(xplane &in_xp);
+    explicit config(app_services &in_app);
     virtual ~config() = default;
 
 protected:
-    [[nodiscard]] xplane &xp() const;
+    [[nodiscard]] app_services &app() const;
 
     bool load_file(text_logger &in_log, std::string_view in_filename);
     void close_file(text_logger &in_log);
@@ -44,11 +43,10 @@ protected:
     toml::value m_config {};
 
 private:
-    xplane &m_xp;
+    app_services &m_app;
 
     std::string m_filename {};
 };
 
 } // Namespace xmidictrl
 
-#endif // CONFIG_H

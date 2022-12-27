@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PROFILE_WINDOW_H
-#define PROFILE_WINDOW_H
+#pragma once
 
 // XMidiCtrl
 #include "imgui_window.h"
@@ -41,5 +40,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // profile_WINDOW_H

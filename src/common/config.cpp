@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(xplane &in_xp)
-    : m_xp(in_xp)
+config::config(app_services &in_app)
+    : m_app(in_app)
 {
 }
 
@@ -44,9 +44,9 @@ config::config(xplane &in_xp)
 /**
  * Return the xplane framework
  */
-xplane &config::xp() const
+app_services &config::app() const
 {
-    return m_xp;
+    return m_app;
 }
 
 

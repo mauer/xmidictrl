@@ -15,20 +15,16 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TEXT_LOGGER_H
-#define TEXT_LOGGER_H
+#pragma once
 
 // Standard
-#include <cstdarg>
 #include <deque>
 #include <fstream>
 #include <memory>
-#include <string>
 #include <string_view>
 
 // XMidiCtrl
 #include "text_log_msg.h"
-#include "types.h"
 
 namespace xmidictrl {
 
@@ -88,5 +84,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // TEXT_LOGGER_H

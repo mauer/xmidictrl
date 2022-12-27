@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MESSAGES_WINDOW_H
-#define MESSAGES_WINDOW_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -26,7 +25,7 @@
 #include "midi_logger.h"
 #include "settings.h"
 #include "text_logger.h"
-#include "types.h"
+#include "xmc_types.h"
 #include "xplane.h"
 
 namespace xmidictrl {
@@ -59,5 +58,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MESSAGES_WINDOW_H

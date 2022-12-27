@@ -15,14 +15,13 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef OUTBOUND_TASK_H
-#define OUTBOUND_TASK_H
+#pragma once
 
 // Standard
 #include <memory>
 
 // XMidiCtrl
-#include "map.h"
+#include "mapping.h"
 #include "midi_message.h"
 
 namespace xmidictrl {
@@ -37,9 +36,7 @@ struct outbound_task {
 
     unsigned char velocity {MIDI_NONE};
 
-    std::shared_ptr<map> mapping;
+    std::shared_ptr<mapping> mapping;
 };
 
 } // Namespace xmidictrl
-
-#endif // OUTBOUND_TASK_H

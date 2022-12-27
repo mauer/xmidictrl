@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TOML_UTILS_H
-#define TOML_UTILS_H
+#pragma once
 
 // Standard
 #include <set>
@@ -67,5 +66,3 @@ public:
 };
 
 } // Namespace xmidictrl
-
-#endif // TOML_UTILS_H

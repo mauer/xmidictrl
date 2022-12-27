@@ -15,40 +15,41 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XPLANE_H
-#define XPLANE_H
+#pragma once
 
 // Standard
 #include <memory>
 #include <string>
 
 // XMidiCtrl
+#include "app_services.h"
 #include "commands.h"
 #include "data.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class xplane {
+class xplane : public app_services {
 public:
     explicit xplane(text_logger &in_log);
     ~xplane() = default;
 
     XPLMPluginID plugin_id();
 
+    // app_services implementation
     std::string plugin_path();
     std::string xplane_path();
-    std::string preferences_path();
-    std::string profiles_path();
+    std::string preferences_path() override;
+    std::string profiles_path() override;
 
     static std::string current_aircraft_path();
     std::string current_aircraft_author();
-    std::string current_aircraft_icao();
-    std::string current_aircraft_acf_name();
+    std::string current_aircraft_icao() override;
+    std::string current_aircraft_acf_name() override;
     std::string current_aircraft_descr();
 
-    commands &cmd();
-    data &datarefs();
+    simcmd_interface &cmd() override;
+    simvar_access &datarefs() override;
 
 private:
     text_logger &m_log;
@@ -65,5 +66,3 @@ private:
 };
 
 } // namespace xmidictrl
-
-#endif // XPLANE_H

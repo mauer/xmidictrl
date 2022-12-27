@@ -30,7 +30,7 @@
 #include "midi_logger.h"
 #include "conversions.h"
 #include "toml_utils.h"
-#include "types.h"
+#include "xmc_types.h"
 
 namespace xmidictrl {
 
@@ -41,8 +41,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings)
-    : config(in_xp),
+profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services &in_app, settings &in_settings)
+    : config(in_app),
       m_settings(in_settings),
       m_plugin_log(in_text_log),
       m_midi_log(in_midi_log)
@@ -99,7 +99,7 @@ bool profile::load()
         if (!m_sl_dataref.empty()) {
             m_profile_log->info("Sublayer mode activated");
 
-            if (!xp().datarefs().check(m_sl_dataref)) {
+            if (!app().datarefs().check(m_sl_dataref)) {
                 m_profile_log->error("Dataref '" + std::string(m_sl_dataref) + "' not found");
                 return false;
             }
@@ -197,10 +197,10 @@ std::string profile::get_filename_aircraft_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return xplane::current_aircraft_path() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return xplane::current_aircraft_path() + app().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return xplane::current_aircraft_path() + xp().current_aircraft_acf_name() + "_"
+            return xplane::current_aircraft_path() + app().current_aircraft_acf_name() + "_"
                    + std::string(FILENAME_PROFILE);
 
         default:
@@ -216,13 +216,13 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return xp().profiles_path() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return app().profiles_path() + app().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return xp().profiles_path() + xp().current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
+            return app().profiles_path() + app().current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
 
         default:
-            return xp().profiles_path() + std::string(FILENAME_PROFILE);
+            return app().profiles_path() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -462,7 +462,7 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
         m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
-            mapping = std::make_shared<map_init>(xp());
+            mapping = std::make_shared<map_init>(app());
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
@@ -500,15 +500,15 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::command:
-                    mapping = std::make_shared<map_in_cmd>(xp());
+                    mapping = std::make_shared<map_in_cmd>(app());
                     break;
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_in_drf>(xp());
+                    mapping = std::make_shared<map_in_drf>(app());
                     break;
 
                 case map_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(xp());
+                    mapping = std::make_shared<map_in_enc>(app());
                     break;
 
                 case map_type::internal:
@@ -517,11 +517,11 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
                     break;
 
                 case map_type::push_pull:
-                    mapping = std::make_shared<map_in_pnp>(xp());
+                    mapping = std::make_shared<map_in_pnp>(app());
                     break;
 
                 case map_type::slider:
-                    mapping = std::make_shared<map_in_sld>(xp());
+                    mapping = std::make_shared<map_in_sld>(app());
                     break;
 
                 case map_type::none:
@@ -576,7 +576,7 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::dataref:
-                    mapping = std::make_shared<map_out_drf>(xp());
+                    mapping = std::make_shared<map_out_drf>(app());
                     break;
 
                 case map_type::internal:

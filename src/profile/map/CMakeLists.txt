@@ -19,7 +19,8 @@ message("---- Directory: src/profile/map")
 
 # Add sources
 set(MAP_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mapping.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/mapping.h
         )
 
 # Add sources to target

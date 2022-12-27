@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -27,7 +26,7 @@
 // XMidiCtrl
 #include "config.h"
 #include "text_logger.h"
-#include "types.h"
+#include "xmc_types.h"
 #include "xplane.h"
 
 namespace xmidictrl {
@@ -109,5 +108,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // SETTINGS_H

@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DATA_H
-#define DATA_H
+#pragma once
 
 // Standard
 #include <map>
@@ -28,30 +27,31 @@
 #include "XPLMDataAccess.h"
 
 // XMidiCtrl
+#include "app_services.h"
 #include "data_item.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class data {
+class data : public simvar_access {
 public:
     data() = default;
     ~data() = default;
 
-    bool check(std::string_view in_name);
+    bool check(std::string_view in_name) override;
 
-    bool read(text_logger &in_log, std::string_view in_name, std::string &out_value);
-    bool read(text_logger &in_log, std::string_view in_name, float &out_value);
-    bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values);
-    bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values);
+    bool read(text_logger &in_log, std::string_view in_name, std::string &out_value) override;
+    bool read(text_logger &in_log, std::string_view in_name, float &out_value) override;
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values) override;
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values) override;
 
-    bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value);
-    bool write(text_logger &in_log, std::string_view in_name, float in_value);
+    bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value) override;
+    bool write(text_logger &in_log, std::string_view in_name, float in_value) override;
 
     std::string toggle(text_logger &in_log,
                        std::string_view in_name,
                        std::string_view in_value_on,
-                       std::string_view in_value_off);
+                       std::string_view in_value_off) override;
 
 private:
     data_item *retrieve_data(std::string_view in_name);
@@ -109,5 +109,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // DATA_H

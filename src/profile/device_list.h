@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DEVICE_LIST_H
-#define DEVICE_LIST_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -59,5 +58,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // DEVICE_LIST_H

@@ -20,8 +20,11 @@ message("---- Directory: src/utils")
 # Set sources
 set(UTILS_SRC
         ${CMAKE_CURRENT_LIST_DIR}/conversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/conversions.h
         ${CMAKE_CURRENT_LIST_DIR}/toml_utils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/toml_utils.h
+        ${CMAKE_CURRENT_LIST_DIR}/xmc_utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xmc_utils.h
         )
 
 # Add sources to target

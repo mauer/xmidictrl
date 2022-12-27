@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_CMD_H
-#define MAP_IN_CMD_H
+#pragma once
 
 // Standard
 #include <string>
@@ -26,17 +25,17 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "map.h"
+#include "mapping.h"
 #include "map_in.h"
 #include "text_logger.h"
 #include "midi_message.h"
-#include "xplane.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(xplane &in_xp);
+    explicit map_in_cmd(app_services& in_app);
     ~map_in_cmd() override = default;
 
     map_type type() override;
@@ -60,5 +59,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_IN_CMD_H

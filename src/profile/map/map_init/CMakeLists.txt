@@ -20,7 +20,9 @@ message("---- Directory: src/profile/map/map_init")
 # Add sources
 set(MAP_INIT_SRC
         ${CMAKE_CURRENT_LIST_DIR}/map_init.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_init.h
         ${CMAKE_CURRENT_LIST_DIR}/map_init_list.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_init_list.h
         )
 
 # Add sources to target

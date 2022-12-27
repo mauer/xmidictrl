@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef LABEL_H
-#define LABEL_H
+#pragma once
 
 // Standard
 #include <map>
@@ -33,5 +32,3 @@ struct label {
 };
 
 } // Namespace xmiditrl
-
-#endif // LABEL_H

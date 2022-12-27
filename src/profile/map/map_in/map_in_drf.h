@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_DRF_H
-#define MAP_IN_DRF_H
+#pragma once
 
 // Standard
 #include <string>
@@ -35,7 +34,7 @@ namespace xmidictrl {
 
 class map_in_drf : public map_in {
 public:
-    explicit map_in_drf(xplane &in_xp);
+    explicit map_in_drf(app_services& in_app);
     ~map_in_drf() override = default;
 
     map_type type() override;
@@ -57,5 +56,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_IN_DRF_H

@@ -20,11 +20,18 @@ message("---- Directory: src/xplane")
 # Set sources
 set(XPLANE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/commands.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/commands.h
         ${CMAKE_CURRENT_LIST_DIR}/data.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/data.h
+        ${CMAKE_CURRENT_LIST_DIR}/data_item.h
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.h
         ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui_window.h
         ${CMAKE_CURRENT_LIST_DIR}/xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane.h
         ${CMAKE_CURRENT_LIST_DIR}/xplane_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane_window.h
         )
 
 # Add sources to target

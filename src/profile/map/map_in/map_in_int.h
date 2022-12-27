@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_INT_H
-#define MAP_IN_INT_H
+#pragma once
 
 // Standard
 #include <string>
@@ -28,13 +27,13 @@
 #include "map_in.h"
 #include "text_logger.h"
 #include "midi_message.h"
-#include "types.h"
+#include "xmc_types.h"
 
 namespace xmidictrl {
 
 class map_in_int : public map_in {
 public:
-    explicit map_in_int(xplane &in_xp, std::string_view in_command);
+    explicit map_in_int(app_services& in_app, std::string_view in_command);
     ~map_in_int() override = default;
 
     map_type type() override;
@@ -50,5 +49,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_IN_INT_H

@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DATA_ITEM_H
-#define DATA_ITEM_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -35,5 +34,3 @@ struct data_item {
 };
 
 } // Namespace xmidictrl
-
-#endif // DATA_ITEM_H

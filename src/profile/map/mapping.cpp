@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "map.h"
+#include "mapping.h"
 
 // XMidiCtrl
 #include "conversions.h"
@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(xplane &in_xp)
-    : m_xp(in_xp)
+mapping::mapping(app_services &in_app)
+    : m_app(in_app)
 {}
 
 
@@ -43,7 +43,7 @@ map::map(xplane &in_xp)
 /**
  * Return the mapping type
  */
-map_type map::type()
+map_type mapping::type()
 {
     return map_type::none;
 }
@@ -52,7 +52,7 @@ map_type map::type()
 /**
  * Return the chanel number
  */
-unsigned char map::channel() const
+unsigned char mapping::channel() const
 {
     return m_channel;
 }
@@ -61,7 +61,7 @@ unsigned char map::channel() const
 /**
  * Return the data type
  */
-map_data_type map::data_type() const
+map_data_type mapping::data_type() const
 {
     return m_data_type;
 }
@@ -70,7 +70,7 @@ map_data_type map::data_type() const
 /**
  * Return the data number
  */
-unsigned char map::data() const
+unsigned char mapping::data() const
 {
     return m_data;
 }
@@ -79,7 +79,7 @@ unsigned char map::data() const
 /**
  * Return the source line
  */
-std::string_view map::source_line() const
+std::string_view mapping::source_line() const
 {
     return m_source_line;
 }
@@ -88,7 +88,7 @@ std::string_view map::source_line() const
 /**
  * Return the mapping as text
  */
-std::string_view map::as_text()
+std::string_view mapping::as_text()
 {
     if (m_mapping_text.empty())
         m_mapping_text = build_mapping_text();
@@ -100,7 +100,7 @@ std::string_view map::as_text()
 /**
  * Return a string containing channel, type and data
  */
-std::string map::get_key()
+std::string mapping::get_key()
 {
     std::string type_code;
 
@@ -133,7 +133,7 @@ std::string map::get_key()
 /**
  * Check the mapping
  */
-bool map::check(text_logger &in_log)
+bool mapping::check(text_logger &in_log)
 {
     if (m_channel != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
         return true;
@@ -151,16 +151,16 @@ bool map::check(text_logger &in_log)
 /**
  * Return the xplane framework
  */
-xplane &map::xp() const
+app_services &mapping::app() const
 {
-    return m_xp;
+    return m_app;
 }
 
 
 /**
  * Read the common config
  */
-void map::read_common_config(text_logger &in_log, toml::value &in_data)
+void mapping::read_common_config(text_logger &in_log, toml::value &in_data)
 {
     // set source line
     m_source_line = std::to_string(in_data.location().line()) + " :: " + in_data.location().line_str();
@@ -174,7 +174,7 @@ void map::read_common_config(text_logger &in_log, toml::value &in_data)
 /**
  * Read parameter channel
  */
-void map::read_channel(text_logger &in_log, toml::value &in_data)
+void mapping::read_channel(text_logger &in_log, toml::value &in_data)
 {
     m_channel = 11; // default channel 11
 
@@ -200,7 +200,7 @@ void map::read_channel(text_logger &in_log, toml::value &in_data)
 /**
  * Read parameter data
  */
-void map::read_data(text_logger &in_log, toml::value &in_data)
+void mapping::read_data(text_logger &in_log, toml::value &in_data)
 {
     m_data = MIDI_NONE;
     m_data_type = map_data_type::none;

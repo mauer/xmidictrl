@@ -15,23 +15,22 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_H
-#define MAP_OUT_H
+#pragma once
 
 // Standard
 #include <memory>
 
 // XMidiCtrl
-#include "map.h"
+#include "mapping.h"
 #include "outbound_task.h"
-#include "types.h"
-#include "xplane.h"
+#include "xmc_types.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
-class map_out: public map {
+class map_out: public mapping {
 public:
-    explicit map_out(xplane &in_xp);
+    explicit map_out(app_services& in_app);
     ~map_out() override = default;
 
     virtual void read_config(text_logger &in_log, toml::value &in_data) = 0;
@@ -41,5 +40,3 @@ public:
 };
 
 } // Namespace xmidictrl
-
-#endif // MAP_OUT_H

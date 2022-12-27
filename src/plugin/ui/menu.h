@@ -15,8 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 
 // Standard
 #include <memory>
@@ -25,7 +24,7 @@
 #include "XPLMMenus.h"
 
 // XMidiCtrl
-#include "types.h"
+#include "xmc_types.h"
 
 namespace xmidictrl {
 
@@ -48,5 +47,3 @@ private:
 };
 
 } // Namespace xmidictrl
-
-#endif // MENU_H
