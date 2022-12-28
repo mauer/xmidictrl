@@ -19,7 +19,6 @@
 
 // XMidiCtrl
 #include "device.h"
-#include "plugin.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -147,9 +146,9 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
     try {
         std::string value_text = m_label->values.at(in_value.data());
         in_log.debug(" --> Found text '" + value_text + "' for value '" + std::string(in_value) + "'");
-        plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
+        app().show_info_message(m_label->id, m_label->text + value_text);
     } catch (std::out_of_range &ex) {
-        plugin::instance().show_info_message(m_label->id, m_label->text + in_value.data());
+        app().show_info_message(m_label->id, m_label->text + in_value.data());
     }
 }
 

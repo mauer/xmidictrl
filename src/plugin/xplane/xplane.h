@@ -22,34 +22,32 @@
 #include <string>
 
 // XMidiCtrl
-#include "app_services.h"
 #include "commands.h"
 #include "data.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class xplane : public app_services {
+class xplane {
 public:
     explicit xplane(text_logger &in_log);
     ~xplane() = default;
 
     XPLMPluginID plugin_id();
 
-    // app_services implementation
     std::string plugin_path();
     std::string xplane_path();
-    std::string preferences_path() override;
-    std::string profiles_path() override;
+    std::string preferences_path();
+    std::string profiles_path();
 
     static std::string current_aircraft_path();
     std::string current_aircraft_author();
-    std::string current_aircraft_icao() override;
-    std::string current_aircraft_acf_name() override;
+    std::string current_aircraft_icao();
+    std::string current_aircraft_acf_name();
     std::string current_aircraft_descr();
 
-    simcmd_interface &cmd() override;
-    simvar_access &datarefs() override;
+    simcmd_interface &cmd();
+    simvar_access &datarefs();
 
 private:
     text_logger &m_log;

@@ -30,6 +30,15 @@ namespace xmidictrl {
  * services provided by the hosting application (XPlane plugin or stdio tool).
  */
 
+struct inbound_task;
+
+class app_settings {
+public:
+    virtual bool log_midi() const = 0;
+    virtual int max_midi_messages() const = 0;
+    virtual bool use_common_profile() const = 0;
+};
+
 class simcmd_interface {
 public:
     virtual void begin(text_logger& in_log, std::string_view in_cmd) = 0;
@@ -60,11 +69,15 @@ public:
     virtual std::string preferences_path() = 0;
     virtual std::string profiles_path() = 0;
 
+    virtual std::string current_aircraft_path() = 0;
     virtual std::string current_aircraft_icao() = 0;
     virtual std::string current_aircraft_acf_name() = 0;
 
     virtual simcmd_interface& cmd() = 0;
     virtual simvar_access& datarefs() = 0;
+
+    virtual void add_inbound_task(const std::shared_ptr<inbound_task> &in_task) = 0;
+    virtual void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1) = 0;
 };
 
 } // Namespace xmidictrl

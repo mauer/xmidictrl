@@ -41,7 +41,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services &in_app, settings &in_settings)
+profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services &in_app, app_settings &in_settings)
     : config(in_app),
       m_settings(in_settings),
       m_plugin_log(in_text_log),
@@ -197,14 +197,14 @@ std::string profile::get_filename_aircraft_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return xplane::current_aircraft_path() + app().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return app().current_aircraft_path() + app().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return xplane::current_aircraft_path() + app().current_aircraft_acf_name() + "_"
+            return app().current_aircraft_path() + app().current_aircraft_acf_name() + "_"
                    + std::string(FILENAME_PROFILE);
 
         default:
-            return xplane::current_aircraft_path() + std::string(FILENAME_PROFILE);
+            return app().current_aircraft_path() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -402,7 +402,8 @@ void profile::create_device_list()
                                                                                                false));
 
                 // create device
-                std::shared_ptr<device> device = m_device_list->create_device(m_plugin_log,
+                std::shared_ptr<device> device = m_device_list->create_device(app(),
+                                                                              m_plugin_log,
                                                                               m_midi_log,
                                                                               name,
                                                                               port_in,

@@ -33,8 +33,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(text_logger &in_text_log, xplane &in_xp)
-    : config(in_xp),
+settings::settings(text_logger &in_text_log, app_services &in_app)
+    : config(in_app),
       m_text_log(in_text_log)
 {
     // build name for general settings file

@@ -23,6 +23,7 @@
 #include <queue>
 
 // XMidiCtrl
+#include "app_services.h"
 #include "device.h"
 #include "inbound_task.h"
 #include "text_logger.h"
@@ -35,7 +36,8 @@ public:
     explicit device_list() = default;
     ~device_list();
 
-    std::shared_ptr<device> create_device(text_logger &in_text_log,
+    std::shared_ptr<device> create_device(app_services &in_app,
+                                          text_logger &in_text_log,
                                           midi_logger &in_midi_log,
                                           std::string_view in_name,
                                           unsigned int in_port_in,

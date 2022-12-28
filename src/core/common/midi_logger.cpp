@@ -32,7 +32,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-midi_logger::midi_logger(settings &in_settings)
+midi_logger::midi_logger(app_settings &in_settings)
     : m_settings(in_settings)
 {
 }

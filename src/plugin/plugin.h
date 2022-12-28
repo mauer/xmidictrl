@@ -37,7 +37,7 @@
 
 namespace xmidictrl {
 
-class plugin {
+class plugin : public app_services {
 public:
     plugin();
     ~plugin();
@@ -52,9 +52,18 @@ public:
     void load_profile();
     void close_profile();
 
-    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
+    std::string preferences_path() override { return m_xp->preferences_path(); }
+    std::string profiles_path() override { return m_xp->profiles_path(); }
 
-    void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
+    std::string current_aircraft_path() override { return m_xp->current_aircraft_path(); }
+    std::string current_aircraft_icao() override { return m_xp->current_aircraft_icao(); }
+    std::string current_aircraft_acf_name() override { return m_xp->current_aircraft_acf_name(); }
+
+    simcmd_interface& cmd() override { return m_xp->cmd(); }
+    simvar_access& datarefs() override { return m_xp->datarefs(); }
+
+    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1) override;
+    void add_inbound_task(const std::shared_ptr<inbound_task> &in_task) override;
 
     void show_messages_window();
     void show_devices_window();

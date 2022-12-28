@@ -24,6 +24,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "app_services.h"
 #include "config.h"
 #include "text_logger.h"
 #include "xmc_types.h"
@@ -31,16 +32,16 @@
 
 namespace xmidictrl {
 
-class settings : public config {
+class settings : public config, public app_settings {
 public:
-    explicit settings(text_logger &in_text_log, xplane &in_xp);
+    explicit settings(text_logger &in_text_log, app_services &in_app);
     ~settings() override;
 
     void set_debug_mode(bool in_enabled);
     [[nodiscard]] bool debug_mode() const;
 
     void set_log_midi(bool in_enabled);
-    [[nodiscard]] bool log_midi() const;
+    [[nodiscard]] bool log_midi() const override;
 
     void set_show_messages(bool in_enabled);
     [[nodiscard]] bool show_messages() const;
@@ -49,7 +50,7 @@ public:
     [[nodiscard]] int max_text_messages() const;
 
     void set_max_midi_messages(int in_number);
-    [[nodiscard]] int max_midi_messages() const;
+    [[nodiscard]] int max_midi_messages() const override;
 
     void set_default_text_sort(sort_mode in_mode);
     [[nodiscard]] sort_mode default_text_sort() const;
@@ -61,7 +62,7 @@ public:
     [[nodiscard]] note_name_type note_name() const;
 
     void set_use_common_profile(bool in_enabled);
-    [[nodiscard]] bool use_common_profile() const;
+    [[nodiscard]] bool use_common_profile() const override;
 
     void set_info_disabled(bool in_disabled);
     [[nodiscard]] bool info_disabled() const;

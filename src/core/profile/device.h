@@ -34,6 +34,7 @@
 #include "RtMidi.h"
 
 // XMidiCtrl
+#include "app_services.h"
 #include "map_in.h"
 #include "map_in_list.h"
 #include "map_init.h"
@@ -54,7 +55,8 @@ class device_list;
 
 class device {
 public:
-    device(text_logger &in_text_log,
+    device(app_services &in_app,
+           text_logger &in_text_log,
            midi_logger &in_midi_log,
            std::string_view in_name,
            unsigned int in_port_in,
@@ -91,6 +93,7 @@ private:
 
     void add_outbound_task(const std::shared_ptr<outbound_task> &in_task);
 
+    app_services &m_app;
     text_logger &m_text_log;
     midi_logger &m_midi_log;
 

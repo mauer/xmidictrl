@@ -23,13 +23,13 @@
 
 // XMidiCtrl
 #include "midi_message.h"
-#include "settings.h"
+#include "app_services.h"
 
 namespace xmidictrl {
 
 class midi_logger {
 public:
-    explicit midi_logger(settings &in_settings);
+    explicit midi_logger(app_settings &in_settings);
     ~midi_logger() = default;
 
     void clear();
@@ -39,7 +39,7 @@ public:
     void add(const std::shared_ptr<midi_message> &in_msg);
 
 private:
-    settings &m_settings;
+    app_settings &m_settings;
 
     std::deque<std::shared_ptr<midi_message>> m_messages;
 };

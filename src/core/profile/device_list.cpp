@@ -44,7 +44,8 @@ device_list::~device_list()
 /**
  * Create a new midi device
  */
-std::shared_ptr<device> device_list::create_device(text_logger &in_text_log,
+std::shared_ptr<device> device_list::create_device(app_services &in_app,
+                                                   text_logger &in_text_log,
                                                    midi_logger &in_midi_log,
                                                    std::string_view in_name,
                                                    unsigned int in_port_in,
@@ -52,7 +53,8 @@ std::shared_ptr<device> device_list::create_device(text_logger &in_text_log,
                                                    mode_out in_mode_out,
                                                    encoder_mode in_default_enc_mode)
 {
-    std::shared_ptr<device> dev = std::make_shared<device>(in_text_log,
+    std::shared_ptr<device> dev = std::make_shared<device>(in_app,
+                                                           in_text_log,
                                                            in_midi_log,
                                                            in_name,
                                                            in_port_in,

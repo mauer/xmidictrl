@@ -30,7 +30,6 @@
 #include "device_list.h"
 #include "mapping.h"
 #include "text_logger.h"
-#include "settings.h"
 #include "xmc_types.h"
 #include "app_services.h"
 
@@ -44,7 +43,7 @@ enum class filename_prefix {
 
 class profile : public config {
 public:
-    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services& in_app, settings &in_settings);
+    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, app_services& in_app, app_settings &in_settings);
     ~profile() override;
 
     bool load();
@@ -81,7 +80,7 @@ private:
     static map_type translate_map_type(std::string_view in_type_str);
     map_type read_mapping_type(toml::value &in_settings);
 
-    settings &m_settings;
+    app_settings &m_settings;
 
     bool m_loaded {false};
     bool m_init_send {false};

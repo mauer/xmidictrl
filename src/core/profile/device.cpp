@@ -21,8 +21,8 @@
 #include "device_list.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
-#include "plugin.h"
 #include "conversions.h"
+
 
 namespace xmidictrl {
 
@@ -33,14 +33,16 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(text_logger &in_text_log,
+device::device(app_services &in_app,
+               text_logger &in_text_log,
                midi_logger &in_midi_log,
                std::string_view in_name,
                unsigned int in_port_in,
                unsigned int in_port_out,
                mode_out in_mode_out,
                encoder_mode in_default_enc_mode)
-    : m_text_log(in_text_log),
+    : m_app(in_app),
+      m_text_log(in_text_log),
       m_midi_log(in_midi_log),
       m_name(in_name),
       m_port_in(in_port_in),
@@ -286,7 +288,7 @@ void device::process_inbound_message(std::vector<unsigned char> *in_message)
                 task->msg = midi_msg;
                 task->map = mapping;
 
-                plugin::instance().add_inbound_task(task);
+                m_app.add_inbound_task(task); // was plugin::instance()
             }
         }
     }

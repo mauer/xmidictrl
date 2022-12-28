@@ -46,11 +46,11 @@ plugin::plugin()
     m_xp = std::make_unique<xplane>(*m_plugin_log);
 
     // load general settings
-    m_settings = std::make_unique<settings>(*m_plugin_log, *m_xp);
+    m_settings = std::make_unique<settings>(*m_plugin_log, *this);
 
     // initialize our logging system
-    if (utils::create_preference_folders(*m_plugin_log, *m_xp)) {
-        m_plugin_log->enable_file_logging(m_xp->preferences_path());
+    if (utils::create_preference_folders(*m_plugin_log, *this)) {
+        m_plugin_log->enable_file_logging(m_xp->preferences_path(), XMIDICTRL_NAME);
         m_plugin_log->set_debug_mode(m_settings->debug_mode());
         m_plugin_log->set_max_size(m_settings->max_text_messages());
     } else {
@@ -68,7 +68,7 @@ plugin::plugin()
     m_midi_log = std::make_unique<midi_logger>(*m_settings);
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
+    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *this, *m_settings);
 
     // create the inbound worker
     m_worker = std::make_unique<inbound_worker>();
@@ -214,7 +214,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    conversions::create_preference_folders(*m_plugin_log, *m_xp);
+    conversions::create_preference_folders(*m_plugin_log, *this);
 }
 
 
