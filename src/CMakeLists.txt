@@ -29,10 +29,9 @@ include_directories(${IMGUI_INCLUDEDIR})
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/core/common/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/core/utils/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/core/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 
 message("---- Directory: src")
