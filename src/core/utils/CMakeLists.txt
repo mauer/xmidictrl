@@ -31,4 +31,4 @@ set(UTILS_SRC
 target_sources(${PROJECT_NAME} PRIVATE ${UTILS_SRC})
 
 # Include current directory
-include_directories(${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

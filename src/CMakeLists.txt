@@ -19,19 +19,22 @@ message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Build XMidiCtrl core classes static library
+add_subdirectory(core)
+
+# ?? Below here is probably all plugin related and should be moved into the plugin subdirectory ??
+
+
 # Include fonts
 include_directories(${FONTS_INCLUDEDIR})
 
 # Include the ImGui files
 include_directories(${IMGUI_INCLUDEDIR})
 
-# Build shared library
+# Build X-Plane plugin shared library
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/core/common/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/core/utils/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/core/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 
 message("---- Directory: src")
@@ -45,6 +48,8 @@ target_sources(${PROJECT_NAME} PRIVATE ${XMIDICTRL_SRC})
 
 # include current directory
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+
+target_link_libraries(${PROJECT_NAME} xmidictrl_core)
 
 # link required dependencies
 if (WIN32)
