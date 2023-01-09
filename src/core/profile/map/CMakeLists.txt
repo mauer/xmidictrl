@@ -24,7 +24,7 @@ set(MAP_SRC
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PUBLIC ${MAP_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${MAP_SRC})
 
 # Add directory to includes
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
