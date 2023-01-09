@@ -16,41 +16,17 @@
 #----------------------------------------------------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.16)
-project(xmidictrl_core)
+project(xmidictrl_tool)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if (NOT TARGET toml11)
-    # Add toml11 for reading and writing the config files
-    message("-- Configuring build scripts for toml11")
-    add_subdirectory(../../lib/toml11 lib/toml11)
-endif()
+# Command-line / stdio tool
+add_executable(${PROJECT_NAME})
 
-if (NOT TARGET rtmidi)
-    # Add RtMidi for accessing MIDI devices
-    message("-- Configuring build scripts for RtMidi")
+target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+    )
 
-    # Configre RtMidi
-    set(RTMIDI_BUILD_STATIC_LIBS ON)
-    set(RTMIDI_BUILD_TESTING OFF)
-    set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+# This depends on the XMidiCtrl core library
+target_link_libraries(${PROJECT_NAME} xmidictrl_core)
 
-    # Disable build for iPhone
-    if (APPLE)
-        add_definitions(-DTARGET_OS_IPHONE=0)
-    endif()
-
-    if (WIN32)
-        set(RTMIDI_API_WINMM ON)
-        set(RTMIDI_API_JACK OFF)
-    endif()
-
-    add_subdirectory(../../lib/rtmidi lib/rtmidi)
-endif()
-
-# Build the xmidictrl_core static library
-add_library(${PROJECT_NAME} STATIC)
-include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
-target_link_libraries(${PROJECT_NAME} toml11 rtmidi)

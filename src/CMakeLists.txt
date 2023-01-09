@@ -17,81 +17,12 @@
 
 message("-- Configuring build scripts for ${PROJECT_NAME}")
 
-set(CMAKE_CXX_STANDARD 20)
-
 # Build XMidiCtrl core classes static library
 add_subdirectory(core)
 
-# ?? Below here is probably all plugin related and should be moved into the plugin subdirectory ??
+# Build XMidiCtrl plugin for X-Plane
+add_subdirectory(plugin)
 
+# Build XMidiCtrl stdio tool for test and debug
+add_subdirectory(tool)
 
-# Include fonts
-include_directories(${FONTS_INCLUDEDIR})
-
-# Include the ImGui files
-include_directories(${IMGUI_INCLUDEDIR})
-
-# Build X-Plane plugin shared library
-add_library(${PROJECT_NAME} SHARED)
-
-# Include sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
-
-message("---- Directory: src")
-
-# Source and header files
-set(XMIDICTRL_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/main_xp_plugin.cpp
-   )
-
-target_sources(${PROJECT_NAME} PRIVATE ${XMIDICTRL_SRC})
-
-# include current directory
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
-
-target_link_libraries(${PROJECT_NAME} xmidictrl_core)
-
-# link required dependencies
-if (WIN32)
-    message("Build for Windows Platform")
-    if (MINGW)
-        target_link_libraries(${PROJECT_NAME} mingw_stdthreads)
-    endif()
-    if (MSVC)
-        target_link_libraries(${PROJECT_NAME} toml11 rtmidi winmm xpsdk imgui)
-        include (GenerateExportHeader)
-        GENERATE_EXPORT_HEADER(${PROJECT_NAME})
-        add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:${PROJECT_NAME}> "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/win_x64/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-        )
-    else()
-        target_link_libraries(${PROJECT_NAME} -s -static -static-libgcc -static-libstdc++ toml11 rtmidi winmm xpsdk imgui)
-        set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/win_x64")
-    endif()
-elseif (APPLE)
-    message("Build for Apple Platform")
-    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation REQUIRED)
-    find_library(Cocoa_LIBRARY Cocoa REQUIRED)
-    find_library(Security_LIBRARY Security REQUIRED)
-    find_library(GSS_LIBRARY GSS REQUIRED)
-    find_library(OpenGL_LIBRARY OpenGL REQUIRED)
-    # Link OS X core system libraries.
-    target_link_libraries(${PROJECT_NAME} ${CORE_FOUNDATION_LIBRARY} ${Cocoa_LIBRARY} ${Security_LIBRARY} ${GSS_LIBRARY} ${OpenGL_LIBRARY})
-    target_link_libraries(${PROJECT_NAME} toml11 rtmidi xpsdk imgui)
-    target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-no_weak_imports")
-
-    # Restrict set of symbols exported from the plugin to the ones required by XPLM:
-    # target_link_options(${PROJECT_NAME} PRIVATE "-exported_symbols_list ${CMAKE_SOURCE_DIR}/src/xmidictrl.sym_mac")
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/mac_x64")
-elseif (UNIX)
-    message("Build for Linux Platform")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_64")
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 rtmidi xpsdk imgui)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_x64")
-endif ()
-
-# Set output properties for X-Plane standards
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
-set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".xpl")

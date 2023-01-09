@@ -22,25 +22,7 @@ cmake_minimum_required(VERSION 3.16)
 project(XMidiCtrl VERSION 1.03 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
-message("-----------------------------------------------")
-message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
-message("-----------------------------------------------")
-
-# Create version file with project name and version numbers
-message("-- Creating version file")
-configure_file(
-        "${PROJECT_SOURCE_DIR}/version.h.in"
-        "${PROJECT_BINARY_DIR}/version.h"
-)
-
 message("-- Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
-
-if (MSVC)
-    add_definitions("/FI${PROJECT_BINARY_DIR}/version.h")
-else()
-    add_definitions("-include ${PROJECT_BINARY_DIR}/version.h")
-endif()
-include_directories(${PROJECT_BINARY_DIR})
 
 # use highest optimization level and optimize for size
 if (MSVC)
@@ -50,7 +32,6 @@ else()
 endif()
 
 # set compiler options
-set(CMAKE_CXX_STANDARD 17)
 if (MSVC)
     add_compile_options("/Zc:__cplusplus")
 endif()
