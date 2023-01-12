@@ -127,15 +127,15 @@ void profile_window::create_tab_general()
 
         ImGui::Text("Without prefix:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::none).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_aircraft_path(filename_prefix::none).data());
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::icao).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_aircraft_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::acf_name).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_aircraft_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -146,17 +146,17 @@ void profile_window::create_tab_general()
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::icao).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_profiles_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::acf_name).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_profiles_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
 
         ImGui::Text("Common Profile:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::none).data());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().get_filename_profiles_path(filename_prefix::none).data());
 
         ImGui::EndTabItem();
     }

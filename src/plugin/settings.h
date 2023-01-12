@@ -32,9 +32,9 @@
 
 namespace xmidictrl {
 
-class settings : public config, public app_settings {
+class settings : public config , public app_settings {
 public:
-    explicit settings(text_logger &in_text_log, app_services &in_app);
+    explicit settings(text_logger &in_text_log, app_services &in_app, xplane &in_xp);
     ~settings() override;
 
     void set_debug_mode(bool in_enabled);
@@ -62,7 +62,7 @@ public:
     [[nodiscard]] note_name_type note_name() const;
 
     void set_use_common_profile(bool in_enabled);
-    [[nodiscard]] bool use_common_profile() const override;
+    [[nodiscard]] bool use_common_profile() const;
 
     void set_info_disabled(bool in_disabled);
     [[nodiscard]] bool info_disabled() const;
@@ -106,6 +106,7 @@ private:
     int m_info_seconds {3};
 
     text_logger &m_text_log;
+    xplane &m_xp;
 };
 
 } // Namespace xmidictrl

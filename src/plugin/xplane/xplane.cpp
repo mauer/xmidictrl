@@ -134,6 +134,37 @@ std::string xplane::profiles_path()
     return m_profiles_path;
 }
 
+bool xplane::create_preference_folders(text_logger& in_log)
+{
+    // check preference folder
+    if (!std::filesystem::exists(preferences_path())) {
+        in_log.info("Directory '" + preferences_path() + "' not found");
+
+        if (std::filesystem::create_directory(preferences_path())) {
+            in_log.info("Directory '" + preferences_path() + "' created");
+        }
+        else {
+            in_log.error("Could not create directory '" + preferences_path() + "'");
+            return false;
+        }
+    }
+
+    // check profiles folder
+    if (!std::filesystem::exists(profiles_path())) {
+        in_log.info("Directory '" + profiles_path() + "' not found");
+
+        if (std::filesystem::create_directory(profiles_path())) {
+            in_log.info("Directory '" + profiles_path() + "' created");
+        }
+        else {
+            in_log.error("Could not create directory '" + profiles_path() + "'");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 /**
  * Return the current aircraft path
@@ -215,6 +246,44 @@ std::string xplane::current_aircraft_descr()
         return value;
     }
 }
+
+/**
+ * Return the filename for the aircraft path
+ */
+std::string xplane::get_filename_aircraft_path(filename_prefix in_prefix)
+{
+    switch (in_prefix) {
+    case filename_prefix::icao:
+        return current_aircraft_path() + current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+
+    case filename_prefix::acf_name:
+        return current_aircraft_path() + current_aircraft_acf_name() + "_"
+            + std::string(FILENAME_PROFILE);
+
+    default:
+        return current_aircraft_path() + std::string(FILENAME_PROFILE);
+    }
+}
+
+
+/**
+ * Return the filename for the profile path
+ */
+std::string xplane::get_filename_profiles_path(filename_prefix in_prefix)
+{
+    switch (in_prefix) {
+    case filename_prefix::icao:
+        return profiles_path() + current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+
+    case filename_prefix::acf_name:
+        return profiles_path() + current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
+
+    default:
+        return profiles_path() + std::string(FILENAME_PROFILE);
+    }
+}
+
+
 
 
 /**

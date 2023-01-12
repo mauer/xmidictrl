@@ -42,8 +42,6 @@ public:
     static std::string time_to_string(time_point time);
 
     static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
-
-    static bool create_preference_folders(text_logger &in_log, app_services &in_app);
 };
 
 } // Namespace xmidictrl

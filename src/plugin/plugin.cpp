@@ -17,6 +17,9 @@
 
 #include "plugin.h"
 
+// Standard
+#include <filesystem>
+
 // XMidiCtrl
 #include "about_window.h"
 #include "conversions.h"
@@ -26,7 +29,6 @@
 #include "profile_window.h"
 #include "settings_window.h"
 #include "version.h"
-#include "xmc_utils.h"
 
 namespace xmidictrl {
 
@@ -46,10 +48,10 @@ plugin::plugin()
     m_xp = std::make_unique<xplane>(*m_plugin_log);
 
     // load general settings
-    m_settings = std::make_unique<settings>(*m_plugin_log, *this);
+    m_settings = std::make_unique<settings>(*m_plugin_log, *this, *m_xp);
 
     // initialize our logging system
-    if (utils::create_preference_folders(*m_plugin_log, *this)) {
+    if (m_xp->create_preference_folders(*m_plugin_log)) {
         m_plugin_log->enable_file_logging(m_xp->preferences_path(), XMIDICTRL_NAME);
         m_plugin_log->set_debug_mode(m_settings->debug_mode());
         m_plugin_log->set_max_size(m_settings->max_text_messages());
@@ -214,7 +216,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    conversions::create_preference_folders(*m_plugin_log, *this);
+    m_xp->create_preference_folders(*m_plugin_log);
 }
 
 
@@ -263,6 +265,61 @@ void plugin::load_profile()
 void plugin::close_profile()
 {
     m_profile->close();
+}
+
+/**
+ * Get the profile filename for the current aircraft
+ */
+std::string plugin::find_profile(text_logger& profile_log)
+{
+    std::string filename;
+
+    // check if there is a profile in the aircraft directory
+    filename = m_xp->get_filename_aircraft_path(filename_prefix::none);
+
+    profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check if there is a profile in the aircraft directory including the ICAO
+    filename = m_xp->get_filename_aircraft_path(filename_prefix::icao);
+
+    profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check if there is a profile in the aircraft directory including the acf name
+    filename = m_xp->get_filename_aircraft_path(filename_prefix::acf_name);
+
+    profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check if there is a profile in the profile directory including the ICAO
+    filename = m_xp->get_filename_profiles_path(filename_prefix::icao);
+
+    profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check if there is a profile in the profile directory including the acf name
+    filename = m_xp->get_filename_profiles_path(filename_prefix::acf_name);
+
+    profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+    if (std::filesystem::exists(filename))
+        return filename;
+
+    // check for the common profile (if activated)
+    if (m_settings->use_common_profile()) {
+        filename = m_xp->get_filename_profiles_path(filename_prefix::none);
+
+        profile_log.debug(" --> Search for aircraft profile '" + filename + "'");
+        if (std::filesystem::exists(filename))
+            return filename;
+    }
+
+    // nothing found, return an empty string
+    return {};
 }
 
 

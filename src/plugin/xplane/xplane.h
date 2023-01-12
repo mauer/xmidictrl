@@ -28,6 +28,12 @@
 
 namespace xmidictrl {
 
+enum class filename_prefix {
+    none,
+    icao,
+    acf_name
+};
+
 class xplane {
 public:
     explicit xplane(text_logger &in_log);
@@ -40,11 +46,16 @@ public:
     std::string preferences_path();
     std::string profiles_path();
 
+    bool create_preference_folders(text_logger& in_log);
+
     static std::string current_aircraft_path();
     std::string current_aircraft_author();
     std::string current_aircraft_icao();
     std::string current_aircraft_acf_name();
     std::string current_aircraft_descr();
+
+    std::string get_filename_aircraft_path(filename_prefix in_prefix);
+    std::string get_filename_profiles_path(filename_prefix in_prefix);
 
     simcmd_interface &cmd();
     simvar_access &datarefs();

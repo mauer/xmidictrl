@@ -36,7 +36,6 @@ class app_settings {
 public:
     virtual bool log_midi() const = 0;
     virtual int max_midi_messages() const = 0;
-    virtual bool use_common_profile() const = 0;
 };
 
 class simcmd_interface {
@@ -66,12 +65,7 @@ class app_services {
 public:
     virtual ~app_services() = default;
 
-    virtual std::string preferences_path() = 0;
-    virtual std::string profiles_path() = 0;
-
-    virtual std::string current_aircraft_path() = 0;
-    virtual std::string current_aircraft_icao() = 0;
-    virtual std::string current_aircraft_acf_name() = 0;
+    virtual std::string find_profile(text_logger& profile_log) = 0;
 
     virtual simcmd_interface& cmd() = 0;
     virtual simvar_access& datarefs() = 0;

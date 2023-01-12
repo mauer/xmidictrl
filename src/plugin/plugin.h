@@ -52,12 +52,7 @@ public:
     void load_profile();
     void close_profile();
 
-    std::string preferences_path() override { return m_xp->preferences_path(); }
-    std::string profiles_path() override { return m_xp->profiles_path(); }
-
-    std::string current_aircraft_path() override { return m_xp->current_aircraft_path(); }
-    std::string current_aircraft_icao() override { return m_xp->current_aircraft_icao(); }
-    std::string current_aircraft_acf_name() override { return m_xp->current_aircraft_acf_name(); }
+    std::string find_profile(text_logger& profile_log) override;
 
     simcmd_interface& cmd() override { return m_xp->cmd(); }
     simvar_access& datarefs() override { return m_xp->datarefs(); }
