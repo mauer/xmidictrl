@@ -15,40 +15,39 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_INT_H
-#define MAP_IN_INT_H
+#ifndef CMD_XPLANE_H
+#define CMD_XPLANE_H
 
 // Standard
-#include <string>
+#include <map>
+#include <memory>
+#include <string_view>
 
-// toml11
-#include <toml.hpp>
+// X-Plane SDK
+#include "XPLMUtilities.h"
 
 // XMidiCtrl
-#include "map_in.h"
+#include "commands.h"
 #include "text_logger.h"
-#include "midi_message.h"
-#include "types.h"
 
 namespace xmidictrl {
 
-class map_in_int : public map_in {
+class cmd_xplane : public commands {
 public:
-    explicit map_in_int(xplane &in_xp, std::string_view in_command);
-    ~map_in_int() override = default;
+    cmd_xplane() = default;
+    ~cmd_xplane() = default;
 
-    map_type type() override;
-
-    bool check(text_logger &in_log) override;
-    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
-
-protected:
-    std::string build_mapping_text() override;
+    void begin(text_logger &in_log, std::string_view in_cmd) override;
+    void end(text_logger &in_log, std::string_view in_cmd) override;
+    
+    void execute(text_logger &in_log, std::string_view in_cmd) override;
 
 private:
-    std::string m_command {};
+    XPLMCommandRef find_command_ref(text_logger &in_log, std::string_view in_cmd);
+
+    std::map<std::string, XPLMCommandRef> m_command_cache {};
 };
 
 } // Namespace xmidictrl
 
-#endif // MAP_IN_INT_H
+#endif // CMD_XPLANE_H

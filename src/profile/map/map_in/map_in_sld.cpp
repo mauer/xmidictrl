@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_sld::map_in_sld(xplane &in_xp)
-    : map_in(in_xp)
+map_in_sld::map_in_sld(environment &in_env)
+    : map_in(in_env)
 {}
 
 
@@ -96,7 +96,7 @@ bool map_in_sld::check(text_logger &in_log)
 
     if (!m_dataref.empty()) {
         // dataref mode
-        if (!xp().datarefs().check(m_dataref)) {
+        if (!env().drf().check(m_dataref)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
             result = false;
@@ -141,7 +141,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
 
         in_msg.log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
 
-        if (xp().datarefs().write(in_msg.log(), m_dataref, value)) {
+        if (env().drf().write(in_msg.log(), m_dataref, value)) {
             try {
                 display_label(in_msg.log(), std::to_string(value));
             } catch (std::bad_alloc &ex) {
@@ -155,7 +155,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
             in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
 
             if (m_command_down != m_command_prev)
-                xp().cmd().execute(in_msg.log(), m_command_down);
+                env().cmd().execute(in_msg.log(), m_command_down);
 
             m_command_prev = m_command_down;
 
@@ -163,7 +163,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
             in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
 
             if (m_command_up != m_command_prev)
-                xp().cmd().execute(in_msg.log(), m_command_up);
+                env().cmd().execute(in_msg.log(), m_command_up);
 
             m_command_prev = m_command_up;
 
@@ -172,7 +172,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
                 in_msg.log().debug(" --> Execute command '" + m_command_middle + "'");
 
                 if (m_command_middle != m_command_prev)
-                    xp().cmd().execute(in_msg.log(), m_command_middle);
+                    env().cmd().execute(in_msg.log(), m_command_middle);
 
                 m_command_prev = m_command_middle;
             }

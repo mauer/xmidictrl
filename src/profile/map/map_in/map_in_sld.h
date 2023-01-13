@@ -26,6 +26,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map_in.h"
 #include "text_logger.h"
 #include "midi_message.h"
@@ -34,7 +35,7 @@ namespace xmidictrl {
 
 class map_in_sld : public map_in {
 public:
-    explicit map_in_sld(xplane &in_xp);
+    explicit map_in_sld(environment &in_env);
     ~map_in_sld() override = default;
 
     map_type type() override;

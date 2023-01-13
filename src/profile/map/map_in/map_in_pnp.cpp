@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_pnp::map_in_pnp(xplane &in_xp)
-    : map_in(in_xp)
+map_in_pnp::map_in_pnp(environment &in_env)
+    : map_in(in_env)
 {}
 
 
@@ -112,7 +112,7 @@ bool map_in_pnp::check(text_logger &in_log)
 
     // pull
     if (!m_dataref_pull.empty()) {
-        if (!xp().datarefs().check(m_dataref_pull)) {
+        if (!env().drf().check(m_dataref_pull)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(m_dataref_pull) + "' not found");
             result = false;
@@ -133,7 +133,7 @@ bool map_in_pnp::check(text_logger &in_log)
 
     // push
     if (!m_dataref_push.empty()) {
-        if (!xp().datarefs().check(m_dataref_push)) {
+        if (!env().drf().check(m_dataref_push)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(m_dataref_push) + "' not found");
             result = false;
@@ -176,14 +176,14 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
                 case command_type::push:
                     if (!m_command_push.empty()) {
                         in_msg.log().debug(" --> End push command '" + m_command_push + "'");
-                        xp().cmd().end(in_msg.log(), m_command_push);
+                        env().cmd().end(in_msg.log(), m_command_push);
                     }
                     break;
 
                 case command_type::pull:
                     if (!m_command_pull.empty()) {
                         in_msg.log().debug(" --> End pull command '" + m_command_pull + "'");
-                        xp().cmd().end(in_msg.log(), m_command_pull);
+                        env().cmd().end(in_msg.log(), m_command_pull);
                     }
                     break;
 
@@ -216,7 +216,7 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
         } else if (!m_command_pull.empty()) {
             in_msg.log().debug(" --> Begin pull command '" + m_command_pull + "'");
             m_command_type = command_type::pull;
-            xp().cmd().begin(in_msg.log(), m_command_pull);
+            env().cmd().begin(in_msg.log(), m_command_pull);
 
             // keep the task in the queue to end the command
             return false;
@@ -227,7 +227,7 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
         } else if (!m_command_push.empty()) {
             in_msg.log().debug(" --> Begin push command '" + m_command_push + "'");
             m_command_type = command_type::push;
-            xp().cmd().begin(in_msg.log(), m_command_push);
+            env().cmd().begin(in_msg.log(), m_command_push);
 
             // keep the task in the queue to end the command
             return false;

@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "data.h"
+#include "data_xplane.h"
 
 #include <sstream>
 #include <cstring>
@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Check if a dataref is valid
  */
-bool data::check(std::string_view in_name)
+bool data_xplane::check(std::string_view in_name)
 {
     data_item *item = retrieve_data(in_name);
 
@@ -43,7 +43,7 @@ bool data::check(std::string_view in_name)
 /**
  * Read a dataref
  */
-bool data::read(text_logger &in_log, std::string_view in_name, std::string &out_value)
+bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::string &out_value)
 {
     out_value.assign(std::string());
 
@@ -108,7 +108,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::string &out_
 /**
  * Read a numeric dataref
  */
-bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
+bool data_xplane::read(text_logger &in_log, std::string_view in_name, float &out_value)
 {
     out_value = 0.0f;
 
@@ -164,7 +164,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, float &out_value)
 /**
  * Read a dataref as float array
  */
-bool data::read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values)
+bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values)
 {
     data_item *item = retrieve_data(in_name);
     out_values = {};
@@ -186,7 +186,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<float
 /**
  * Read a dataref as integer array
  */
-bool data::read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values)
+bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values)
 {
     data_item *item = retrieve_data(in_name);
     out_values = {};
@@ -208,7 +208,7 @@ bool data::read(text_logger &in_log, std::string_view in_name, std::vector<int> 
 /**
  * Write an value to a dataref
  */
-bool data::write(text_logger &in_log, std::string_view in_name, std::string_view in_value)
+bool data_xplane::write(text_logger &in_log, std::string_view in_name, std::string_view in_value)
 {
     data_item *item = retrieve_data(in_name);
 
@@ -263,7 +263,7 @@ bool data::write(text_logger &in_log, std::string_view in_name, std::string_view
 /**
  * Write an value to a numeric dataref
  */
-bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
+bool data_xplane::write(text_logger &in_log, std::string_view in_name, float in_value)
 {
     data_item *item = retrieve_data(in_name);
 
@@ -308,10 +308,10 @@ bool data::write(text_logger &in_log, std::string_view in_name, float in_value)
 /**
  * Toggle a dataref between on and off
  */
-std::string data::toggle(text_logger &in_log,
-                         std::string_view in_name,
-                         std::string_view in_value_on,
-                         std::string_view in_value_off)
+std::string data_xplane::toggle(text_logger &in_log,
+                                std::string_view in_name,
+                                std::string_view in_value_on,
+                                std::string_view in_value_off)
 {
     data_item *item = retrieve_data(in_name);
 
@@ -354,7 +354,7 @@ std::string data::toggle(text_logger &in_log,
 /**
  * Get the data ref for a dataref string
  */
-data_item *data::retrieve_data(std::string_view in_name)
+data_item *data_xplane::retrieve_data(std::string_view in_name)
 {
     std::string dataref_name = in_name.data();
 
@@ -392,7 +392,7 @@ data_item *data::retrieve_data(std::string_view in_name)
 /**
  * Extract the index from the name
  */
-int data::get_index(text_logger &in_log, std::string_view in_name)
+int data_xplane::get_index(text_logger &in_log, std::string_view in_name)
 {
     int index = -1;
 
@@ -419,7 +419,7 @@ int data::get_index(text_logger &in_log, std::string_view in_name)
 /**
  * Read a integer dataref
  */
-int data::read_int(const data_item *item)
+int data_xplane::read_int(const data_item *item)
 {
     // read current value
     return XPLMGetDatai(item->dataref);
@@ -429,7 +429,7 @@ int data::read_int(const data_item *item)
 /**
  * Read a float dataref
  */
-float data::read_float(const data_item *item)
+float data_xplane::read_float(const data_item *item)
 {
     // read current value
     return XPLMGetDataf(item->dataref);
@@ -439,7 +439,7 @@ float data::read_float(const data_item *item)
 /**
  * Read a double dataref
  */
-double data::read_double(const data_item *item)
+double data_xplane::read_double(const data_item *item)
 {
     // read current value
     return XPLMGetDatad(item->dataref);
@@ -449,7 +449,7 @@ double data::read_double(const data_item *item)
 /**
  * Read a byte dataref
  */
-std::string data::read_byte(const data_item *item)
+std::string data_xplane::read_byte(const data_item *item)
 {
     std::vector<char> tmpValue(item->size);
     XPLMGetDatab(item->dataref, &tmpValue[0], 0, static_cast<int>(tmpValue.size()));
@@ -461,7 +461,7 @@ std::string data::read_byte(const data_item *item)
 /**
  * Write an integer dataref
  */
-void data::write_int(const data_item *item, int value)
+void data_xplane::write_int(const data_item *item, int value)
 {
     XPLMSetDatai(item->dataref, value);
 }
@@ -470,7 +470,7 @@ void data::write_int(const data_item *item, int value)
 /**
  * Write an integer array dataref
  */
-void data::write_int_array(const data_item *item, int index, int value)
+void data_xplane::write_int_array(const data_item *item, int index, int value)
 {
     if (index < 0)
         return;
@@ -482,7 +482,7 @@ void data::write_int_array(const data_item *item, int index, int value)
 /**
  * Write a float dataref
  */
-void data::write_float(const data_item *item, float value)
+void data_xplane::write_float(const data_item *item, float value)
 {
     XPLMSetDataf(item->dataref, value);
 }
@@ -491,7 +491,7 @@ void data::write_float(const data_item *item, float value)
 /**
  * Write a float array dataref
  */
-void data::write_float_array(const data_item *item, int index, float value)
+void data_xplane::write_float_array(const data_item *item, int index, float value)
 {
     if (index < 0)
         return;
@@ -503,7 +503,7 @@ void data::write_float_array(const data_item *item, int index, float value)
 /**
  * Write a double dataref
  */
-void data::write_double(const data_item *item, double value)
+void data_xplane::write_double(const data_item *item, double value)
 {
     XPLMSetDatad(item->dataref, value);
 }
@@ -512,7 +512,7 @@ void data::write_double(const data_item *item, double value)
 /**
  * Write a byte dataref
  */
-void data::write_byte(const data_item *item, std::string_view value)
+void data_xplane::write_byte(const data_item *item, std::string_view value)
 {
     XPLMSetDatab(item->dataref, const_cast<char *>(value.data()), 0, static_cast<int>(value.size()) + 1);
 }
@@ -521,7 +521,7 @@ void data::write_byte(const data_item *item, std::string_view value)
 /**
  * Read a float array dataref by index
  */
-float data::read_float_array(text_logger &in_log, const data_item *in_item, int in_index)
+float data_xplane::read_float_array(text_logger &in_log, const data_item *in_item, int in_index)
 {
     float value = 0.0f;
 
@@ -537,7 +537,7 @@ float data::read_float_array(text_logger &in_log, const data_item *in_item, int 
 /**
  * Read a float array dataref
  */
-std::vector<float> data::read_float_array(const data_item *item)
+std::vector<float> data_xplane::read_float_array(const data_item *item)
 {
     std::vector<float> values {};
 
@@ -553,7 +553,7 @@ std::vector<float> data::read_float_array(const data_item *item)
 /**
  * Read an integer array dataref by index
  */
-int data::read_int_array(text_logger &in_log, const data_item *in_item, int in_index)
+int data_xplane::read_int_array(text_logger &in_log, const data_item *in_item, int in_index)
 {
     int value = 0;
 
@@ -569,7 +569,7 @@ int data::read_int_array(text_logger &in_log, const data_item *in_item, int in_i
 /**
  * Read an integer array dataref
  */
-std::vector<int> data::read_int_array(const data_item *item)
+std::vector<int> data_xplane::read_int_array(const data_item *item)
 {
     std::vector<int> values {};
 
@@ -583,10 +583,10 @@ std::vector<int> data::read_int_array(const data_item *item)
 /**
  * Toggle an integer dataref between on and off
  */
-std::string data::toggle_int(text_logger &in_log,
-                             const data_item *in_item,
-                             std::string_view in_value_on,
-                             std::string_view in_value_off)
+std::string data_xplane::toggle_int(text_logger &in_log,
+                                    const data_item *in_item,
+                                    std::string_view in_value_on,
+                                    std::string_view in_value_off)
 {
     // read current value
     int value = read_int(in_item);
@@ -618,11 +618,11 @@ std::string data::toggle_int(text_logger &in_log,
 /**
  * Toggle an integer array dataref between on and off
  */
-std::string data::toggle_int_array(text_logger &in_log,
-                                   const data_item *in_item,
-                                   int in_index,
-                                   std::string_view in_value_on,
-                                   std::string_view in_value_off)
+std::string data_xplane::toggle_int_array(text_logger &in_log,
+                                          const data_item *in_item,
+                                          int in_index,
+                                          std::string_view in_value_on,
+                                          std::string_view in_value_off)
 {
     if (in_index < 0)
         return {};
@@ -657,10 +657,10 @@ std::string data::toggle_int_array(text_logger &in_log,
 /**
  * Toggle a float dataref between on and off
  */
-std::string data::toggle_float(text_logger &in_log,
-                               const data_item *in_item,
-                               std::string_view in_value_on,
-                               std::string_view in_value_off)
+std::string data_xplane::toggle_float(text_logger &in_log,
+                                      const data_item *in_item,
+                                      std::string_view in_value_on,
+                                      std::string_view in_value_off)
 {
     // read current value
     float value = read_float(in_item);
@@ -692,11 +692,11 @@ std::string data::toggle_float(text_logger &in_log,
 /**
  * Toggle a float array dataref between on and off
  */
-std::string data::toggle_float_array(text_logger &in_log,
-                                     const data_item *in_item,
-                                     int in_index,
-                                     std::string_view in_value_on,
-                                     std::string_view in_value_off)
+std::string data_xplane::toggle_float_array(text_logger &in_log,
+                                            const data_item *in_item,
+                                            int in_index,
+                                            std::string_view in_value_on,
+                                            std::string_view in_value_off)
 {
     if (in_index < 0)
         return {};
@@ -731,10 +731,10 @@ std::string data::toggle_float_array(text_logger &in_log,
 /**
  * Toggle an double dataref between on and off
  */
-std::string data::toggle_double(text_logger &in_log,
-                                const data_item *in_item,
-                                std::string_view in_value_on,
-                                std::string_view in_value_off)
+std::string data_xplane::toggle_double(text_logger &in_log,
+                                       const data_item *in_item,
+                                       std::string_view in_value_on,
+                                       std::string_view in_value_off)
 {
     // read current value
     double value = read_double(in_item);
@@ -766,10 +766,10 @@ std::string data::toggle_double(text_logger &in_log,
 /**
  * Toggle a nyte dataref between on and off
  */
-std::string data::toggle_byte(text_logger &in_log,
-                              const data_item *in_item,
-                              std::string_view in_value_on,
-                              std::string_view in_value_off)
+std::string data_xplane::toggle_byte(text_logger &in_log,
+                                     const data_item *in_item,
+                                     std::string_view in_value_on,
+                                     std::string_view in_value_off)
 {
     std::string value = read_byte(in_item);
 

@@ -48,8 +48,8 @@
 #include "imgui.h"
 
 // XMidiCtrl
+#include "environment.h"
 #include "ImGuiFontAtlas.h"
-#include "xplane.h"
 #include "xplane_window.h"
 
 namespace xmidictrl {
@@ -57,7 +57,7 @@ namespace xmidictrl {
 class imgui_window : public xplane_window {
 public:
     imgui_window(text_logger &in_log,
-                 xplane &in_xp,
+                 environment &in_env,
                  int in_width,
                  int in_height,
                  window_position in_position = window_position::top_left,

@@ -21,6 +21,7 @@
 // Standard
 #include <cstdarg>
 #include <deque>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -37,7 +38,7 @@ public:
     explicit text_logger(text_logger *in_parent = nullptr);
     ~text_logger();
 
-    void enable_file_logging(std::string_view in_path);
+    void enable_file_logging(std::filesystem::path in_path);
 
     void set_debug_mode(bool in_mode);
     bool debug_mode() const;

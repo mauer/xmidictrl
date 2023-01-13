@@ -22,16 +22,16 @@
 #include <string>
 
 // XMidiCtrl
+#include "environment.h"
 #include "text_logger.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class utils {
 public:
-    static bool create_preference_folders(text_logger &in_log, xplane &in_xp);
+    static bool create_preference_folders(text_logger &in_log, environment &in_env);
 };
 
 } // Namespace xmidictrl
 
-#endif // utils_H
+#endif // UTILS_H

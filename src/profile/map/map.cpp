@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(xplane &in_xp)
-    : m_xp(in_xp)
+map::map(environment &in_env)
+    : m_env(in_env)
 {}
 
 
@@ -151,9 +151,9 @@ bool map::check(text_logger &in_log)
 /**
  * Return the xplane framework
  */
-xplane &map::xp() const
+environment &map::env() const
 {
-    return m_xp;
+    return m_env;
 }
 
 

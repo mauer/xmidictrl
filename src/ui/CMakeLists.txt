@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2022 Marco Auer
+#   Copyright (c) 2021-2023 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,20 +15,17 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/xplane")
+message("---- Directory: src/ui")
 
 # Set sources
-set(XPLANE_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/commands.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/data.cpp
+set(UI_SRC
         ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
         ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/xplane.cpp
         ${CMAKE_CURRENT_LIST_DIR}/xplane_window.cpp
         )
 
 # Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${XPLANE_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${UI_SRC})
 
 # Include current directory
 include_directories(${CMAKE_CURRENT_LIST_DIR})

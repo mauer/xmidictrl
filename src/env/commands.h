@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,55 +15,28 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XPLANE_H
-#define XPLANE_H
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
 // Standard
-#include <memory>
-#include <string>
+#include <string_view>
 
 // XMidiCtrl
-#include "commands.h"
-#include "data.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class xplane {
+class commands {
 public:
-    explicit xplane(text_logger &in_log);
-    ~xplane() = default;
+	commands() = default;
+    virtual ~commands() = default;
 
-    XPLMPluginID plugin_id();
-
-    std::string plugin_path();
-    std::string xplane_path();
-    std::string preferences_path();
-    std::string profiles_path();
-
-    static std::string current_aircraft_path();
-    std::string current_aircraft_author();
-    std::string current_aircraft_icao();
-    std::string current_aircraft_acf_name();
-    std::string current_aircraft_descr();
-
-    commands &cmd();
-    data &datarefs();
-
-private:
-    text_logger &m_log;
-
-    XPLMPluginID m_plugin_id {-1};
-
-    std::string m_xplane_path {};
-    std::string m_plugin_path {};
-    std::string m_preferences_path {};
-    std::string m_profiles_path {};
-
-    std::unique_ptr<commands> m_commands;
-    std::unique_ptr<data> m_datarefs;
+    virtual void begin(text_logger &in_log, std::string_view in_cmd) = 0;
+    virtual void end(text_logger &in_log, std::string_view in_cmd) = 0;
+    
+    virtual void execute(text_logger &in_log, std::string_view in_cmd) = 0;
 };
 
-} // namespace xmidictrl
+} // Namespace xmidictrl
 
-#endif // XPLANE_H
+#endif // COMMANDS_H

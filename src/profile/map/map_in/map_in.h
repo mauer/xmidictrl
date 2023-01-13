@@ -22,12 +22,12 @@
 #include <memory>
 
 // XMidiCtrl
+#include "environment.h"
 #include "label.h"
 #include "map.h"
 #include "midi_message.h"
 #include "text_logger.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
@@ -35,7 +35,7 @@ class device;
 
 class map_in : public map {
 public:
-    explicit map_in(xplane &in_xp);
+    explicit map_in(environment &in_env);
     ~map_in() override = default;
 
     [[nodiscard]] std::string_view sl() const;

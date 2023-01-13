@@ -26,17 +26,17 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map.h"
 #include "map_in.h"
 #include "text_logger.h"
 #include "midi_message.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(xplane &in_xp);
+    explicit map_in_cmd(environment &in_env);
     ~map_in_cmd() override = default;
 
     map_type type() override;

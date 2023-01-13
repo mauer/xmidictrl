@@ -22,16 +22,16 @@
 #include <memory>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map.h"
 #include "outbound_task.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class map_init : public map {
 public:
-    explicit map_init(xplane &in_xp);
+    explicit map_init(environment &in_env);
     ~map_init() override = default;
 
     map_type type() override;

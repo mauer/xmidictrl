@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(xplane &in_xp)
-    : m_xp(in_xp)
+config::config(environment &in_env)
+    : m_env(in_env)
 {
 }
 
@@ -42,11 +42,11 @@ config::config(xplane &in_xp)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the xplane framework
+ * Return the environment
  */
-xplane &config::xp() const
+environment &config::env() const
 {
-    return m_xp;
+    return m_env;
 }
 
 

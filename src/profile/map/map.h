@@ -25,15 +25,15 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "text_logger.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class map : public std::enable_shared_from_this<map> {
 public:
-    explicit map(xplane &in_xp);
+    explicit map(environment &in_env);
     virtual ~map() = default;
 
     virtual map_type type();
@@ -51,7 +51,7 @@ public:
     virtual bool check(text_logger &in_log);
 
 protected:
-    xplane &xp() const;
+    environment &env() const;
 
     void read_common_config(text_logger &in_log, toml::value &in_data);
 
@@ -61,7 +61,7 @@ protected:
     virtual std::string build_mapping_text() = 0;
 
 private:
-    xplane &m_xp;
+    environment &m_env;
 
     unsigned char m_channel {MIDI_NONE};
 

@@ -26,15 +26,15 @@
 
 // XMidiCtrl
 #include "config.h"
+#include "environment.h"
 #include "text_logger.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class settings : public config {
 public:
-    explicit settings(text_logger &in_text_log, xplane &in_xp);
+    explicit settings(text_logger &in_text_log, environment &in_env);
     ~settings() override;
 
     void set_debug_mode(bool in_enabled);

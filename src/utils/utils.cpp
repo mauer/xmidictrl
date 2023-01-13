@@ -29,28 +29,28 @@ namespace xmidictrl {
 /**
  * Create all required preference folders
  */
-bool utils::create_preference_folders(text_logger &in_log, xplane &in_xp)
+bool utils::create_preference_folders(text_logger &in_log, environment &in_env)
 {
     // check preference folder
-    if (!std::filesystem::exists(in_xp.preferences_path())) {
-        in_log.info("Directory '" + in_xp.preferences_path() + "' not found");
+    if (!std::filesystem::exists(in_env.preferences_path())) {
+        in_log.info("Directory '" + in_env.preferences_path().string() + "' not found");
 
-        if (std::filesystem::create_directory(in_xp.preferences_path())) {
-            in_log.info("Directory '" + in_xp.preferences_path() + "' created");
+        if (std::filesystem::create_directory(in_env.preferences_path())) {
+            in_log.info("Directory '" + in_env.preferences_path().string() + "' created");
         } else {
-            in_log.error("Could not create directory '" + in_xp.preferences_path() + "'");
+            in_log.error("Could not create directory '" + in_env.preferences_path().string() + "'");
             return false;
         }
     }
 
     // check profiles folder
-    if (!std::filesystem::exists(in_xp.profiles_path())) {
-        in_log.info("Directory '" + in_xp.profiles_path() + "' not found");
+    if (!std::filesystem::exists(in_env.profiles_path())) {
+        in_log.info("Directory '" + in_env.profiles_path().string() + "' not found");
 
-        if (std::filesystem::create_directory(in_xp.profiles_path())) {
-            in_log.info("Directory '" + in_xp.profiles_path() + "' created");
+        if (std::filesystem::create_directory(in_env.profiles_path())) {
+            in_log.info("Directory '" + in_env.profiles_path().string() + "' created");
         } else {
-            in_log.error("Could not create directory '" + in_xp.profiles_path() + "'");
+            in_log.error("Could not create directory '" + in_env.profiles_path().string() + "'");
             return false;
         }
     }

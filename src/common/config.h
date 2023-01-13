@@ -25,18 +25,18 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "text_logger.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class config {
 public:
-    explicit config(xplane &in_xp);
+    explicit config(environment &in_emv);
     virtual ~config() = default;
 
 protected:
-    [[nodiscard]] xplane &xp() const;
+    [[nodiscard]] environment &env() const;
 
     bool load_file(text_logger &in_log, std::string_view in_filename);
     void close_file(text_logger &in_log);
@@ -44,7 +44,7 @@ protected:
     toml::value m_config {};
 
 private:
-    xplane &m_xp;
+    environment &m_env;
 
     std::string m_filename {};
 };

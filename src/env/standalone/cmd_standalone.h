@@ -15,38 +15,31 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#ifndef CMD_STANDALONE_H
+#define CMD_STANDALONE_H
 
 // Standard
 #include <map>
 #include <memory>
 #include <string_view>
 
-// X-Plane SDK
-#include "XPLMUtilities.h"
-
 // XMidiCtrl
+#include "commands.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class commands {
+class cmd_standalone : public commands {
 public:
-	commands() = default;
-    ~commands() = default;
+    cmd_standalone() = default;
+    ~cmd_standalone() override = default;
 
-    void begin(text_logger &in_log, std::string_view in_cmd);
-    void end(text_logger &in_log, std::string_view in_cmd);
+    void begin(text_logger &in_log, std::string_view in_cmd) override;
+    void end(text_logger &in_log, std::string_view in_cmd) override;
     
-    void execute(text_logger &in_log, std::string_view in_cmd);
-
-private:
-    XPLMCommandRef find_command_ref(text_logger &in_log, std::string_view in_cmd);
-
-    std::map<std::string, XPLMCommandRef> m_command_cache {};
+    void execute(text_logger &in_log, std::string_view in_cmd) override;
 };
 
 } // Namespace xmidictrl
 
-#endif // COMMANDS_H
+#endif // CMD_STANDALONE_H

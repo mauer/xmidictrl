@@ -29,11 +29,11 @@
 // XMidiCtrl
 #include "config.h"
 #include "device_list.h"
+#include "environment.h"
 #include "map.h"
 #include "text_logger.h"
 #include "settings.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
@@ -45,7 +45,7 @@ enum class filename_prefix {
 
 class profile : public config {
 public:
-    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings);
+    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, environment &in_env, settings &in_settings);
     ~profile() override;
 
     bool load();

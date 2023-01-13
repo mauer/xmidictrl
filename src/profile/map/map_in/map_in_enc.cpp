@@ -31,8 +31,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_enc::map_in_enc(xplane &in_xp)
-    : map_in(in_xp)
+map_in_enc::map_in_enc(environment &in_env)
+    : map_in(in_env)
 {}
 
 
@@ -137,7 +137,7 @@ bool map_in_enc::check(text_logger &in_log)
 
     if (!m_dataref.empty()) {
         // dataref mode
-        if (!xp().datarefs().check(m_dataref)) {
+        if (!env().drf().check(m_dataref)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
             result = false;
@@ -197,7 +197,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
     float value = 0.0f;
 
     // read current value
-    if (!xp().datarefs().read(in_msg.log(), m_dataref, value)) {
+    if (!env().drf().read(in_msg.log(), m_dataref, value)) {
         m_velocity_prev = in_msg.data_2();
         return true;
     }
@@ -276,7 +276,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
     m_velocity_prev = in_msg.data_2();
 
-    if (xp().datarefs().write(in_msg.log(), m_dataref, value)) {
+    if (env().drf().write(in_msg.log(), m_dataref, value)) {
         try {
             display_label(in_msg.log(), value);
         } catch (std::bad_alloc &ex) {
@@ -302,19 +302,19 @@ bool map_in_enc::execute_command(midi_message &in_msg)
             // Down
             if (in_msg.data_2() < 61) {
                 in_msg.log().debug(" --> Execute command '" + m_command_fast_down + "'");
-                xp().cmd().execute(in_msg.log(), m_command_fast_down);
+                env().cmd().execute(in_msg.log(), m_command_fast_down);
             } else {
                 in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
-                xp().cmd().execute(in_msg.log(), m_command_down);
+                env().cmd().execute(in_msg.log(), m_command_down);
             }
         } else if (in_msg.data_2() > 64) {
             // Up
             if (in_msg.data_2() > 68) {
                 in_msg.log().debug(" --> Execute command '" + m_command_fast_up + "'");
-                xp().cmd().execute(in_msg.log(), m_command_fast_up);
+                env().cmd().execute(in_msg.log(), m_command_fast_up);
             } else {
                 in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
-                xp().cmd().execute(in_msg.log(), m_command_up);
+                env().cmd().execute(in_msg.log(), m_command_up);
             }
         }
     } else {
@@ -322,21 +322,21 @@ bool map_in_enc::execute_command(midi_message &in_msg)
         switch (in_msg.data_2()) {
             case MIDI_VELOCITY_MIN:
                 in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
-                xp().cmd().execute(in_msg.log(), m_command_down);
+                env().cmd().execute(in_msg.log(), m_command_down);
                 break;
 
             case MIDI_VELOCITY_MAX:
                 in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
-                xp().cmd().execute(in_msg.log(), m_command_up);
+                env().cmd().execute(in_msg.log(), m_command_up);
                 break;
 
             default:
                 if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
                     in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
-                    xp().cmd().execute(in_msg.log(), m_command_up);
+                    env().cmd().execute(in_msg.log(), m_command_up);
                 } else {
                     in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
-                    xp().cmd().execute(in_msg.log(), m_command_down);
+                    env().cmd().execute(in_msg.log(), m_command_down);
                 }
                 break;
         }

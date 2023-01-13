@@ -48,16 +48,16 @@
 #include <XPLMGraphics.h>
 
 // XMidiCtrl
+#include "environment.h"
 #include "text_logger.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class xplane_window {
 public:
     xplane_window(text_logger &in_log,
-                  xplane &in_xp,
+                  environment &in_env,
                   int in_width,
                   int in_height,
                   window_position in_position = window_position::top_left,
@@ -70,7 +70,7 @@ public:
 
     text_logger &log();
 
-    xplane &xp();
+    environment &env();
 
     XPLMWindowID window_id();
     [[nodiscard]] bool translucent() const;
@@ -105,7 +105,7 @@ private:
 
     text_logger &m_log;
 
-    xplane &m_xp;
+    environment &m_env;
     XPLMWindowID m_window_id {nullptr};
 
     int m_width {};

@@ -27,6 +27,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map_in.h"
 #include "midi_message.h"
 #include "text_logger.h"
@@ -40,7 +41,7 @@ namespace xmidictrl {
 
 class map_in_pnp : public map_in {
 public:
-    explicit map_in_pnp(xplane &in_xp);
+    explicit map_in_pnp(environment &in_env);
     ~map_in_pnp() override = default;
 
     map_type type() override;

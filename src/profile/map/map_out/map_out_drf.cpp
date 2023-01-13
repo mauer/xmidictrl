@@ -32,8 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out_drf::map_out_drf(xplane &in_xp)
-    : map_out(in_xp)
+map_out_drf::map_out_drf(environment &in_env)
+    : map_out(in_env)
 {}
 
 
@@ -192,7 +192,7 @@ bool map_out_drf::check(text_logger &in_log)
     }
 
     for (const auto &dataref: m_datarefs) {
-        if (!xp().datarefs().check(dataref)) {
+        if (!env().drf().check(dataref)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
             result = false;
@@ -233,7 +233,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
         // get the current value from X-Plane
         std::string value_current;
 
-        if (!xp().datarefs().read(in_log, dataref, value_current))
+        if (!env().drf().read(in_log, dataref, value_current))
             continue;
 
         // get current value

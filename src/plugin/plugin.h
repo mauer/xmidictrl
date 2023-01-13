@@ -25,6 +25,7 @@
 #include "XPLMProcessing.h"
 
 // XMidiCtrl
+#include "env_xplane.h"
 #include "inbound_worker.h"
 #include "info_msg.h"
 #include "menu.h"
@@ -33,7 +34,6 @@
 #include "profile.h"
 #include "settings.h"
 #include "types.h"
-#include "xplane.h"
 #include "xplane_window.h"
 
 namespace xmidictrl {
@@ -92,7 +92,7 @@ private:
 
     std::map<std::string, std::shared_ptr<info_msg>> m_info_msg;
 
-    std::unique_ptr<xplane> m_xp;
+    std::unique_ptr<env_xplane> m_env;
     std::unique_ptr<settings> m_settings;
     std::unique_ptr<profile> m_profile;
 

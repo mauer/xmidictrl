@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_cmd::map_in_cmd(xplane &in_xp)
-    : map_in(in_xp)
+map_in_cmd::map_in_cmd(environment &in_env)
+    : map_in(in_env)
 {}
 
 
@@ -131,9 +131,9 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
     in_msg.log().debug(" --> Execute command '" + m_command + "'");
 
     if (in_msg.data_2() == m_velocity_on) {
-        xp().cmd().begin(in_msg.log(), m_command);
+        env().cmd().begin(in_msg.log(), m_command);
     } else if (in_msg.data_2() == m_velocity_off) {
-        xp().cmd().end(in_msg.log(), m_command);
+        env().cmd().end(in_msg.log(), m_command);
     } else {
         in_msg.log().error("Invalid MIDI velocity '" + std::to_string(in_msg.data_2()) + "'");
         in_msg.log().error(" --> Supported values for the current mapping are '" + std::to_string(m_velocity_on) + "' and '" +  std::to_string(m_velocity_off) + "'");

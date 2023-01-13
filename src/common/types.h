@@ -148,7 +148,6 @@ const char *const CFG_KEY_INFO_SECONDS = "info_seconds";
 const char *const CFG_MAPTYPE_COMMAND = "cmd";
 const char *const CFG_MAPTYPE_DATAREF = "drf";
 const char *const CFG_MAPTYPE_ENCODER = "enc";
-const char *const CFG_MAPTYPE_INTERNAL = "int";
 const char *const CFG_MAPTYPE_PUSH_PULL = "pnp";
 const char *const CFG_MAPTYPE_SLIDER = "sld";
 
@@ -194,7 +193,6 @@ enum class map_type {
     command,
     dataref,
     encoder,
-    internal,
     push_pull,
     slider
 };

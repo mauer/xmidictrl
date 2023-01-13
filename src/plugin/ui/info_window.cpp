@@ -31,10 +31,10 @@ namespace xmidictrl {
  * Constructor
  */
 info_window::info_window(text_logger &in_log,
-                         xplane &in_xp,
+                         environment &in_env,
                          settings &in_settings,
                          std::map<std::string, std::shared_ptr<info_msg>> &in_msg)
-    : imgui_window(in_log, in_xp, 850, 80, window_position::bottom_left, 50, 50, true),
+    : imgui_window(in_log, in_env, 850, 80, window_position::bottom_left, 50, 50, true),
       m_settings(in_settings),
       m_messages(in_msg)
 {

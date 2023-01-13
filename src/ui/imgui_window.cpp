@@ -53,14 +53,14 @@ std::shared_ptr<ImGuiFontAtlas> imgui_window::m_font = nullptr;
  * Constructor
  */
 imgui_window::imgui_window(text_logger &in_log,
-                           xplane &in_xp,
+                           environment &in_env,
                            int in_width,
                            int in_height,
                            window_position in_position,
                            int in_offset_x,
                            int in_offset_y,
                            bool in_translucent)
-    : xplane_window(in_log, in_xp, in_width, in_height, in_position, in_offset_x, in_offset_y, in_translucent)
+    : xplane_window(in_log, in_env, in_width, in_height, in_position, in_offset_x, in_offset_y, in_translucent)
 {
     // font atlas for Dear ImGui
     if (!m_font) {

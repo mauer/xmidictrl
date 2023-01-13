@@ -40,7 +40,7 @@ namespace xmidictrl {
  * Constructor
  */
 xplane_window::xplane_window(text_logger &in_log,
-                             xplane &in_xp,
+                             environment &in_env,
                              int in_width,
                              int in_height,
                              window_position in_position,
@@ -48,7 +48,7 @@ xplane_window::xplane_window(text_logger &in_log,
                              int in_offset_y,
                              bool in_translucent)
     : m_log(in_log),
-      m_xp(in_xp),
+      m_env(in_env),
       m_width(in_width),
       m_height(in_height),
       m_position(in_position),
@@ -99,11 +99,11 @@ text_logger &xplane_window::log()
 
 
 /**
- * Return the X-Plane connection
+ * Return the environment
  */
-xplane &xplane_window::xp()
+environment &xplane_window::env()
 {
-    return m_xp;
+    return m_env;
 }
 
 
@@ -399,9 +399,9 @@ void xplane_window::request_keyboard_focus(bool in_request)
 void xplane_window::update_matrices()
 {
     // Get the current modelview matrix, viewport, and projection matrix from X-Plane
-    m_xp.datarefs().read(m_log, "sim/graphics/view/modelview_matrix", m_modelview);
-    m_xp.datarefs().read(m_log, "sim/graphics/view/projection_matrix", m_projection);
-    m_xp.datarefs().read(m_log, "sim/graphics/view/viewport", m_viewport);
+    m_env.drf().read(m_log, "sim/graphics/view/modelview_matrix", m_modelview);
+    m_env.drf().read(m_log, "sim/graphics/view/projection_matrix", m_projection);
+    m_env.drf().read(m_log, "sim/graphics/view/viewport", m_viewport);
 }
 
 

@@ -22,16 +22,16 @@
 #include <memory>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map.h"
 #include "outbound_task.h"
 #include "types.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class map_out: public map {
 public:
-    explicit map_out(xplane &in_xp);
+    explicit map_out(environment &in_env);
     ~map_out() override = default;
 
     virtual void read_config(text_logger &in_log, toml::value &in_data) = 0;

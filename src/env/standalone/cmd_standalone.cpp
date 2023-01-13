@@ -15,80 +15,35 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "map_in_int.h"
+#include "cmd_standalone.h"
 
 namespace xmidictrl {
-
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Constructor
- */
-map_in_int::map_in_int(xplane &in_xp, std::string_view in_command)
-    : map_in(in_xp),
-      m_command(in_command)
-{}
-
-
-
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the mapping type
+ * Begin a X-Plane command
  */
-map_type map_in_int::type()
+void cmd_standalone::begin(text_logger &in_log, std::string_view in_cmd)
 {
-    return map_type::internal;
 }
 
 
 /**
- * Check the mapping
+ * End a X-Plane command
  */
-bool map_in_int::check(text_logger &in_log)
+void cmd_standalone::end(text_logger &in_log, std::string_view in_cmd)
 {
-    if (!map::check(in_log))
-        return false;
-
-    if (m_command.empty())
-        return false;
-    else
-        return true;
 }
 
 
 /**
- * Execute the action in X-Plane
+ * Execute a X-Plane command
  */
-bool map_in_int::execute(midi_message &in_msg, std::string_view in_sl_value)
+void cmd_standalone::execute(text_logger &in_log, std::string_view in_cmd)
 {
-    if (!check_sublayer(in_sl_value))
-        return true;
-
-    return true;
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PROTECTED
-//---------------------------------------------------------------------------------------------------------------------
-
-
-/**
- * Return the mapping as string
- */
-std::string map_in_int::build_mapping_text()
-{
-    std::string map_str = " ====== Internal ======\n";
-
-    return map_str;
 }
 
 } // Namespace xmidictrl

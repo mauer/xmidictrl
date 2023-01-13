@@ -19,15 +19,15 @@
 #define PROFILE_WINDOW_H
 
 // XMidiCtrl
+#include "environment.h"
 #include "imgui_window.h"
 #include "profile.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class profile_window : public imgui_window {
 public:
-    profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile);
+    profile_window(text_logger &in_log, environment &in_env, profile &in_profile);
     ~profile_window() override = default;
 
 protected:

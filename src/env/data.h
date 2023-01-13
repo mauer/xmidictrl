@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,38 +15,39 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONVERSIONS_H
-#define CONVERSIONS_H
+#ifndef DATA_H
+#define DATA_H
 
 // Standard
-#include <set>
+#include <vector>
 #include <string>
 
-// toml11
-#include <toml.hpp>
-
 // XMidiCtrl
-#include "environment.h"
 #include "text_logger.h"
-#include "types.h"
 
 namespace xmidictrl {
 
-class conversions {
+class data {
 public:
-    static mode_out mode_out_from_int(int mode);
+    data() = default;
+    virtual ~data() = default;
 
-    // move directly into mapping classes
-    static dataref_mode dataref_mode_from_code(std::string_view mode);
-    static encoder_mode encoder_mode_from_code(std::string_view mode);
+    virtual bool check(std::string_view in_name) = 0;
 
-    static std::string time_to_string(time_point time);
+    virtual bool read(text_logger &in_log, std::string_view in_name, std::string &out_value) = 0;
+    virtual bool read(text_logger &in_log, std::string_view in_name, float &out_value) = 0;
+    virtual bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values) = 0;
+    virtual bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values) = 0;
 
-    static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
+    virtual bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value) = 0;
+    virtual bool write(text_logger &in_log, std::string_view in_name, float in_value) = 0;
 
-    static bool create_preference_folders(text_logger &in_log, environment &in_env);
+    virtual std::string toggle(text_logger &in_log,
+                               std::string_view in_name,
+                               std::string_view in_value_on,
+                               std::string_view in_value_off) = 0;
 };
 
 } // Namespace xmidictrl
 
-#endif // CONVERSIONS_H
+#endif // DATA_H

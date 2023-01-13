@@ -31,8 +31,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in::map_in(xplane &in_xp)
-    : map(in_xp)
+map_in::map_in(environment &in_env)
+    : map(in_env)
 {
 }
 
@@ -90,12 +90,12 @@ bool map_in::check_sublayer(std::string_view in_sl_value)
 void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values)
 {
     if (in_values.size() == 2) {
-        auto value = xp().datarefs().toggle(in_log, in_dataref, in_values[0], in_values[1]);
+        auto value = env().drf().toggle(in_log, in_dataref, in_values[0], in_values[1]);
         display_label(in_log, value);
     } else {
         // get current value
         std::string value;
-        xp().datarefs().read(in_log, in_dataref, value);
+        env().drf().read(in_log, in_dataref, value);
 
         // search for the value in the values list
         auto it = std::find(in_values.begin(), in_values.end(), value);
@@ -116,7 +116,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
 
         in_log.debug(" --> Change dataref '" + std::string(in_dataref) + "' to value '" + value + "'");
 
-        xp().datarefs().write(in_log, in_dataref, value);
+        env().drf().write(in_log, in_dataref, value);
         display_label(in_log, value);
     }
 }

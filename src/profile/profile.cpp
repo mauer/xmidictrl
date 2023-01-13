@@ -41,8 +41,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, xplane &in_xp, settings &in_settings)
-    : config(in_xp),
+profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, environment &in_env, settings &in_settings)
+    : config(in_env),
       m_settings(in_settings),
       m_plugin_log(in_text_log),
       m_midi_log(in_midi_log)
@@ -99,7 +99,7 @@ bool profile::load()
         if (!m_sl_dataref.empty()) {
             m_profile_log->info("Sublayer mode activated");
 
-            if (!xp().datarefs().check(m_sl_dataref)) {
+            if (!env().drf().check(m_sl_dataref)) {
                 m_profile_log->error("Dataref '" + std::string(m_sl_dataref) + "' not found");
                 return false;
             }
@@ -197,14 +197,15 @@ std::string profile::get_filename_aircraft_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return xplane::current_aircraft_path() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return env().current_aircraft_path().string() + env().current_aircraft_icao() + "_"
+                   + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return xplane::current_aircraft_path() + xp().current_aircraft_acf_name() + "_"
+            return env().current_aircraft_path().string() + env().current_aircraft_acf_name() + "_"
                    + std::string(FILENAME_PROFILE);
 
         default:
-            return xplane::current_aircraft_path() + std::string(FILENAME_PROFILE);
+            return env().current_aircraft_path().string() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -216,13 +217,14 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return xp().profiles_path() + xp().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return env().profiles_path().string() + env().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return xp().profiles_path() + xp().current_aircraft_acf_name() + "_" + std::string(FILENAME_PROFILE);
+            return env().profiles_path().string() + env().current_aircraft_acf_name() + "_"
+                   + std::string(FILENAME_PROFILE);
 
         default:
-            return xp().profiles_path() + std::string(FILENAME_PROFILE);
+            return env().profiles_path().string() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -433,7 +435,7 @@ void profile::create_device_list()
                         m_profile_log->info("Device " + std::to_string(dev_no) + " :: No outbound mappings found");
                 }
             } catch (const std::out_of_range &error) {
-                m_profile_log->error("Device " + std::to_string(dev_no)+ " :: Error reading profile");
+                m_profile_log->error("Device " + std::to_string(dev_no) + " :: Error reading profile");
                 m_profile_log->error(error.what());
             } catch (toml::type_error &error) {
                 m_profile_log->error("Device " + std::to_string(dev_no) + " :: Error reading profile");
@@ -459,10 +461,11 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
     for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_init> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
+        m_profile_log->debug(
+            "Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
-            mapping = std::make_shared<map_init>(xp());
+            mapping = std::make_shared<map_init>(env());
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
@@ -470,10 +473,12 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
             if (mapping->check(*m_profile_log))
                 out_device->add_init_map(mapping);
             else
-                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
+                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                     + " :: Parameters incomplete or incorrect");
 
         } catch (toml::type_error &error) {
-            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
+            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                 + " :: Error reading mapping");
             m_profile_log->error(error.what());
         }
     }
@@ -492,7 +497,8 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
     for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_in> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Read settings for mapping " + std::to_string(map_no));
+        m_profile_log->debug(
+            "Device " + std::to_string(in_dev_no) + " :: Read settings for mapping " + std::to_string(map_no));
 
         try {
             map_type type = read_mapping_type(in_settings[map_no]);
@@ -500,32 +506,28 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::command:
-                    mapping = std::make_shared<map_in_cmd>(xp());
+                    mapping = std::make_shared<map_in_cmd>(env());
                     break;
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_in_drf>(xp());
+                    mapping = std::make_shared<map_in_drf>(env());
                     break;
 
                 case map_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(xp());
-                    break;
-
-                case map_type::internal:
-                    m_profile_log->warn("Device " + std::to_string(in_dev_no) + " :: "
-                                        + "Mapping " + std::to_string(map_no) + " :: Mapping type 'int' is currently unsupported");
+                    mapping = std::make_shared<map_in_enc>(env());
                     break;
 
                 case map_type::push_pull:
-                    mapping = std::make_shared<map_in_pnp>(xp());
+                    mapping = std::make_shared<map_in_pnp>(env());
                     break;
 
                 case map_type::slider:
-                    mapping = std::make_shared<map_in_sld>(xp());
+                    mapping = std::make_shared<map_in_sld>(env());
                     break;
 
                 case map_type::none:
-                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
+                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                         + " :: Invalid mapping type");
                     break;
             }
 
@@ -568,7 +570,8 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
     for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_out> mapping;
 
-        m_profile_log->debug("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
+        m_profile_log->debug(
+            "Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
             map_type type = read_mapping_type(in_settings[map_no]);
@@ -576,21 +579,18 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::dataref:
-                    mapping = std::make_shared<map_out_drf>(xp());
-                    break;
-
-                case map_type::internal:
-                    m_profile_log->warn("Device " + std::to_string(in_dev_no) + " :: "
-                                        + "Mapping " + std::to_string(map_no) + " :: Mapping type 'int' is currently unsupported");
+                    mapping = std::make_shared<map_out_drf>(env());
                     break;
 
                 default:
-                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Invalid mapping type");
+                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                         + " :: Invalid mapping type");
                     break;
             }
 
             if (mapping == nullptr) {
-                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading config");
+                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                     + " :: Error reading config");
                 continue;
             }
 
@@ -600,10 +600,12 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
             if (mapping->check(*m_profile_log))
                 out_device->add_outbound_map(mapping);
             else
-                m_profile_log->error("Device " + std::to_string(in_dev_no)+ " :: Mapping " + std::to_string(map_no) + " :: Parameters incomplete or incorrect");
+                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                     + " :: Parameters incomplete or incorrect");
 
         } catch (toml::type_error &error) {
-            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Error reading mapping");
+            m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                                 + " :: Error reading mapping");
             m_profile_log->error(error.what());
         }
     }
@@ -627,8 +629,6 @@ map_type profile::translate_map_type(std::string_view in_type_str)
         type = map_type::push_pull;
     else if (in_type_str == CFG_MAPTYPE_ENCODER)
         type = map_type::encoder;
-    else if (in_type_str == CFG_MAPTYPE_INTERNAL)
-        type = map_type::internal;
 
     return type;
 }
@@ -651,11 +651,13 @@ map_type profile::read_mapping_type(toml::value &in_settings)
             // get the mapping type
             type = translate_map_type(type_str);
         } else {
-            m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
+            m_profile_log->error(
+                "Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
             m_profile_log->error(" --> Parameter '" + std::string(CFG_KEY_TYPE) + "' is missing");
         }
     } catch (toml::type_error &error) {
-        m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
+        m_profile_log->error(
+            "Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
         m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: Error reading mapping");
         m_profile_log->error(error.what());
     }

@@ -42,15 +42,15 @@ plugin::plugin()
     // create logger
     m_plugin_log = std::make_unique<text_logger>();
 
-    // create the integration to X-Plane
-    m_xp = std::make_unique<xplane>(*m_plugin_log);
+    // create the environment for X-Plane
+    m_env = std::make_unique<env_xplane>(*m_plugin_log);
 
     // load general settings
-    m_settings = std::make_unique<settings>(*m_plugin_log, *m_xp);
+    m_settings = std::make_unique<settings>(*m_plugin_log, *m_env);
 
     // initialize our logging system
-    if (utils::create_preference_folders(*m_plugin_log, *m_xp)) {
-        m_plugin_log->enable_file_logging(m_xp->preferences_path());
+    if (utils::create_preference_folders(*m_plugin_log, *m_env)) {
+        m_plugin_log->enable_file_logging(m_env->preferences_path());
         m_plugin_log->set_debug_mode(m_settings->debug_mode());
         m_plugin_log->set_max_size(m_settings->max_text_messages());
     } else {
@@ -68,7 +68,7 @@ plugin::plugin()
     m_midi_log = std::make_unique<midi_logger>(*m_settings);
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
+    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_env, *m_settings);
 
     // create the inbound worker
     m_worker = std::make_unique<inbound_worker>();
@@ -92,7 +92,7 @@ plugin::~plugin()
     m_plugin_log->info("Plugin " XMIDICTRL_FULL_NAME " unloaded successfully");
     m_plugin_log.reset();
 
-    m_xp.reset();
+    m_env.reset();
 
     XPLMDebugString(std::string_view("Plugin " XMIDICTRL_FULL_NAME " unloaded successfully").data());
 }
@@ -140,7 +140,7 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
 
     // are sublayers active?
     if (!m_profile->sl_dataref().empty())
-        m_xp->datarefs().read(*m_plugin_log, m_profile->sl_dataref(), sl_value);
+        m_env->drf().read(*m_plugin_log, m_profile->sl_dataref(), sl_value);
 
     // process inbound tasks
     m_worker->process(sl_value);
@@ -214,7 +214,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    conversions::create_preference_folders(*m_plugin_log, *m_xp);
+    conversions::create_preference_folders(*m_plugin_log, *m_env);
 }
 
 
@@ -403,7 +403,7 @@ void plugin::create_datarefs()
                                               nullptr, nullptr,
                                               this, this);
 
-    m_xp->datarefs().write(*m_plugin_log, "xmidictrl/sublayer", "0");
+    m_env->drf().write(*m_plugin_log, "xmidictrl/sublayer", "0");
 }
 
 
@@ -529,27 +529,27 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
     // looks like we have to create it
     switch (in_type) {
         case window_type::about_window:
-            window = std::make_shared<about_window>(*m_plugin_log, *m_xp);
+            window = std::make_shared<about_window>(*m_plugin_log, *m_env);
             break;
 
         case window_type::messages_window:
-            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_xp, *m_settings);
+            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_env, *m_settings);
             break;
 
         case window_type::devices_window:
-            window = std::make_shared<devices_window>(*m_plugin_log, *m_xp);
+            window = std::make_shared<devices_window>(*m_plugin_log, *m_env);
             break;
 
         case window_type::info_window:
-            window = std::make_shared<info_window>(*m_plugin_log, *m_xp, *m_settings, m_info_msg);
+            window = std::make_shared<info_window>(*m_plugin_log, *m_env, *m_settings, m_info_msg);
             break;
 
         case window_type::profile_window:
-            window = std::make_shared<profile_window>(*m_plugin_log, *m_xp, *m_profile);
+            window = std::make_shared<profile_window>(*m_plugin_log, *m_env, *m_profile);
             break;
 
         case window_type::settings_window:
-            window = std::make_shared<settings_window>(*m_plugin_log, *m_xp, *m_settings);
+            window = std::make_shared<settings_window>(*m_plugin_log, *m_env, *m_settings);
             break;
     }
 

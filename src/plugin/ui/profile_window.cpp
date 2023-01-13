@@ -35,8 +35,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile_window::profile_window(text_logger &in_log, xplane &in_xp, profile &in_profile)
-    : imgui_window(in_log, in_xp, 1200, 750),
+profile_window::profile_window(text_logger &in_log, environment &in_env, profile &in_profile)
+    : imgui_window(in_log, in_env, 1200, 750),
       m_profile(in_profile)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");
@@ -87,15 +87,15 @@ void profile_window::create_tab_general()
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_icao().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_icao().c_str());
 
         ImGui::Text("Description:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_descr().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_descr().c_str());
 
         ImGui::Text("Author:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", xp().current_aircraft_author().c_str());
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_author().c_str());
 
         ImGui::NewLine();
         ImGui::NewLine();

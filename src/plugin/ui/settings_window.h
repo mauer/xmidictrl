@@ -19,15 +19,15 @@
 #define SETTINGS_WINDOW_H
 
 // XMidiCtrl
+#include "environment.h"
 #include "imgui_window.h"
 #include "settings.h"
-#include "xplane.h"
 
 namespace xmidictrl {
 
 class settings_window : public imgui_window {
 public:
-    settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings);
+    settings_window(text_logger &in_log, environment &in_env, settings &in_settings);
     ~settings_window() override = default;
 
 protected:

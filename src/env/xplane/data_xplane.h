@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_XPLANE_H
+#define DATA_XPLANE_H
 
 // Standard
 #include <map>
@@ -28,15 +28,16 @@
 #include "XPLMDataAccess.h"
 
 // XMidiCtrl
+#include "data.h"
 #include "data_item.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
-class data {
+class data_xplane : public data {
 public:
-    data() = default;
-    ~data() = default;
+    data_xplane() = default;
+    ~data_xplane() = default;
 
     bool check(std::string_view in_name);
 
@@ -110,4 +111,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // DATA_H
+#endif // DATA_XPLANE_H

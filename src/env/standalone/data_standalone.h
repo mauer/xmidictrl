@@ -15,38 +15,42 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONVERSIONS_H
-#define CONVERSIONS_H
+#ifndef DATA_STANDALONE_H
+#define DATA_STANDALONE_H
 
 // Standard
-#include <set>
+#include <vector>
 #include <string>
 
-// toml11
-#include <toml.hpp>
-
 // XMidiCtrl
-#include "environment.h"
+#include "data.h"
+#include "data_item.h"
 #include "text_logger.h"
-#include "types.h"
 
 namespace xmidictrl {
 
-class conversions {
+class data_standalone : public data {
 public:
-    static mode_out mode_out_from_int(int mode);
+    data_standalone() = default;
+    ~data_standalone() override = default;
 
-    // move directly into mapping classes
-    static dataref_mode dataref_mode_from_code(std::string_view mode);
-    static encoder_mode encoder_mode_from_code(std::string_view mode);
+    bool check(std::string_view in_name) override;
 
-    static std::string time_to_string(time_point time);
+    bool read(text_logger &in_log, std::string_view in_name, std::string &out_value) override;
+    bool read(text_logger &in_log, std::string_view in_name, float &out_value) override;
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values) override;
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values) override;
 
-    static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
+    bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value) override;
+    bool write(text_logger &in_log, std::string_view in_name, float in_value) override;
 
-    static bool create_preference_folders(text_logger &in_log, environment &in_env);
+    std::string toggle(text_logger &in_log,
+                       std::string_view in_name,
+                       std::string_view in_value_on,
+                       std::string_view in_value_off) override;
+
 };
 
 } // Namespace xmidictrl
 
-#endif // CONVERSIONS_H
+#endif // DATA_STANDALONE_H

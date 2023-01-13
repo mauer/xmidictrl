@@ -34,9 +34,9 @@ namespace xmidictrl {
  */
 messages_window::messages_window(text_logger &in_text_log,
                                  midi_logger &in_midi_log,
-                                 xplane &in_xp,
+                                 environment &in_env,
                                  settings &in_settings)
-    : imgui_window(in_text_log, in_xp, 1400, 700),
+    : imgui_window(in_text_log, in_env, 1400, 700),
       m_settings(in_settings),
       m_midi_log(in_midi_log)
 {

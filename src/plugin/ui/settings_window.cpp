@@ -36,8 +36,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &in_settings)
-    : imgui_window(in_log, in_xp, 1000, 550),
+settings_window::settings_window(text_logger &in_log, environment &in_env, settings &in_settings)
+    : imgui_window(in_log, in_env, 1000, 550),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
@@ -60,10 +60,10 @@ settings_window::settings_window(text_logger &in_log, xplane &in_xp, settings &i
     m_info_offset_y = m_settings.info_offset_y();
     m_info_seconds = m_settings.info_seconds();
 
-    m_path_xplane = in_xp.xplane_path();
-    m_path_plugin = in_xp.plugin_path();
-    m_path_preferences = in_xp.preferences_path();
-    m_path_profiles = in_xp.profiles_path();
+    m_path_xplane = in_env.xplane_path().string();
+    m_path_plugin = in_env.plugin_path().string();
+    m_path_preferences = in_env.preferences_path().string();
+    m_path_profiles = in_env.profiles_path().string();
 
     set_title(std::string(XMIDICTRL_NAME) + " - Settings");
 }

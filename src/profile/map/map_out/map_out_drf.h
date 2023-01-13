@@ -27,6 +27,7 @@
 #include <toml.hpp>
 
 // XMidiCtrl
+#include "environment.h"
 #include "map_out.h"
 #include "outbound_task.h"
 
@@ -34,7 +35,7 @@ namespace xmidictrl {
 
 class map_out_drf : public map_out {
 public:
-    explicit map_out_drf(xplane &in_xp);
+    explicit map_out_drf(environment &in_env);
     ~map_out_drf() override;
 
     map_type type() override;

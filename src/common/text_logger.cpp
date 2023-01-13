@@ -55,10 +55,10 @@ text_logger::~text_logger()
 /**
  * Enable file logging
  */
-void text_logger::enable_file_logging(std::string_view in_path)
+void text_logger::enable_file_logging(std::filesystem::path in_path)
 {
     if (!in_path.empty()) {
-        std::string filename = std::string(in_path) + XMIDICTRL_NAME + LOGFILE_SUFFIX;
+        std::string filename = in_path.string() + XMIDICTRL_NAME + LOGFILE_SUFFIX;
 
         m_file_stream.open(filename, std::ios_base::out | std::ios_base::trunc);
         if (!m_file_stream.is_open())

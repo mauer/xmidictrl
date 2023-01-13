@@ -35,7 +35,7 @@ namespace xmidictrl {
 
 class map_in_drf : public map_in {
 public:
-    explicit map_in_drf(xplane &in_xp);
+    explicit map_in_drf(environment &in_env);
     ~map_in_drf() override = default;
 
     map_type type() override;

@@ -21,7 +21,6 @@
 #include <filesystem>
 
 // XMidiCtrl
-#include "conversions.h"
 #include "utils.h"
 
 namespace xmidictrl {
@@ -33,8 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(text_logger &in_text_log, xplane &in_xp)
-    : config(in_xp),
+settings::settings(text_logger &in_text_log, environment &in_env)
+    : config(in_env),
       m_text_log(in_text_log)
 {
     // build name for general settings file
@@ -367,7 +366,7 @@ void settings::save_settings()
     }
 
     // check if our directory already exists in the preference folder
-    if (!utils::create_preference_folders(m_text_log, xp()))
+    if (!utils::create_preference_folders(m_text_log, env()))
         return;
 
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
@@ -387,7 +386,7 @@ void settings::save_settings()
  */
 std::string settings::get_settings_filename()
 {
-    std::string filename = xp().preferences_path() + std::string(XMIDICTRL_NAME) +
+    std::string filename = env().preferences_path().string() + std::string(XMIDICTRL_NAME) +
                            std::string(SETTINGS_FILE_SUFFIX);
 
     return filename;
