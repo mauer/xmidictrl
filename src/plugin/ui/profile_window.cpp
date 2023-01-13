@@ -75,9 +75,13 @@ void profile_window::create_widgets()
 void profile_window::create_tab_general()
 {
     if (ImGui::BeginTabItem("General Information")) {
-        ImGui::NewLine();
-
         ImGui::Text("AIRCRAFT INFORMATION");
+
+        ImGui::SameLine(ImGui::GetWindowWidth() - 240);
+
+        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reload Aircraft Profile  "))
+            plugin::instance().load_profile();
+
         ImGui::Separator();
         ImGui::NewLine();
 

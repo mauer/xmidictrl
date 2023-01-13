@@ -65,6 +65,7 @@ else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
     endif()
 endif()
+
 # Add subdirectories
 add_subdirectory(lib)
 add_subdirectory(src)

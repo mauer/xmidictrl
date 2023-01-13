@@ -398,7 +398,7 @@ void profile::create_device_list()
                 // default encoder mode
                 default_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(*m_profile_log,
                                                                                                settings_dev,
-                                                                                               CFG_KEY_DEFAULT_ENCODER_MODE,
+                                                                                               CFG_KEY_ENCODER_MODE,
                                                                                                false));
 
                 // create device

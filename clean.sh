@@ -1,6 +1,9 @@
 #!/bin/bash
 echo "--------------------- Cleaning Project --------------------"
 
+echo "-- remove directory 'build'"
+rm -r build
+
 echo "-- remove directory 'build-win'"
 rm -r build-win
 
