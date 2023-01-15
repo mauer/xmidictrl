@@ -24,6 +24,11 @@
 #include "plugin.h"
 #include "conversions.h"
 
+// Make sure min is not defined as a macro otherwise time_point::min() will not compile
+#if defined(_MSC_VER) && defined(min)
+#undef min
+#endif
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
