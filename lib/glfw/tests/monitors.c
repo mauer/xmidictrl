@@ -28,7 +28,6 @@
 //
 //========================================================================
 
-#define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -241,8 +240,6 @@ int main(int argc, char** argv)
     }
 
     glfwSetErrorCallback(error_callback);
-
-    glfwInitHint(GLFW_COCOA_MENUBAR, GLFW_FALSE);
 
     if (!glfwInit())
         exit(EXIT_FAILURE);

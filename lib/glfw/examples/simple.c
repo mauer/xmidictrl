@@ -1,5 +1,5 @@
 //========================================================================
-// OpenGL ES 2.0 triangle example
+// Simple GLFW example
 // Copyright (c) Camilla Löwy <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
@@ -22,34 +22,30 @@
 //    distribution.
 //
 //========================================================================
+//! [code]
 
-#define GLAD_GLES2_IMPLEMENTATION
-#include <glad/gles2.h>
+#include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include "linmath.h"
 
 #include <stdlib.h>
-#include <stddef.h>
 #include <stdio.h>
 
-typedef struct Vertex
+static const struct
 {
-    vec2 pos;
-    vec3 col;
-} Vertex;
-
-static const Vertex vertices[3] =
+    float x, y;
+    float r, g, b;
+} vertices[3] =
 {
-    { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
-    { {  0.6f, -0.4f }, { 0.f, 1.f, 0.f } },
-    { {   0.f,  0.6f }, { 0.f, 0.f, 1.f } }
+    { -0.6f, -0.4f, 1.f, 0.f, 0.f },
+    {  0.6f, -0.4f, 0.f, 1.f, 0.f },
+    {   0.f,  0.6f, 0.f, 0.f, 1.f }
 };
 
 static const char* vertex_shader_text =
-"#version 100\n"
-"precision mediump float;\n"
+"#version 110\n"
 "uniform mat4 MVP;\n"
 "attribute vec3 vCol;\n"
 "attribute vec2 vPos;\n"
@@ -61,8 +57,7 @@ static const char* vertex_shader_text =
 "}\n";
 
 static const char* fragment_shader_text =
-"#version 100\n"
-"precision mediump float;\n"
+"#version 110\n"
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
@@ -71,7 +66,7 @@ static const char* fragment_shader_text =
 
 static void error_callback(int error, const char* description)
 {
-    fprintf(stderr, "GLFW Error: %s\n", description);
+    fprintf(stderr, "Error: %s\n", description);
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -82,80 +77,80 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main(void)
 {
+    GLFWwindow* window;
+    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+    GLint mvp_location, vpos_location, vcol_location;
+
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "OpenGL ES 2.0 Triangle (EGL)", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
     if (!window)
     {
-        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-        window = glfwCreateWindow(640, 480, "OpenGL ES 2.0 Triangle", NULL, NULL);
-        if (!window)
-        {
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
+        glfwTerminate();
+        exit(EXIT_FAILURE);
     }
 
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
-    gladLoadGLES2(glfwGetProcAddress);
+    gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
 
-    GLuint vertex_buffer;
+    // NOTE: OpenGL error checks have been omitted for brevity
+
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
     glCompileShader(vertex_shader);
 
-    const GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
     glCompileShader(fragment_shader);
 
-    const GLuint program = glCreateProgram();
+    program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-    const GLint mvp_location = glGetUniformLocation(program, "MVP");
-    const GLint vpos_location = glGetAttribLocation(program, "vPos");
-    const GLint vcol_location = glGetAttribLocation(program, "vCol");
+    mvp_location = glGetUniformLocation(program, "MVP");
+    vpos_location = glGetAttribLocation(program, "vPos");
+    vcol_location = glGetAttribLocation(program, "vCol");
 
     glEnableVertexAttribArray(vpos_location);
-    glEnableVertexAttribArray(vcol_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(Vertex), (void*) offsetof(Vertex, pos));
+                          sizeof(vertices[0]), (void*) 0);
+    glEnableVertexAttribArray(vcol_location);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(Vertex), (void*) offsetof(Vertex, col));
+                          sizeof(vertices[0]), (void*) (sizeof(float) * 2));
 
     while (!glfwWindowShouldClose(window))
     {
+        float ratio;
         int width, height;
+        mat4x4 m, p, mvp;
+
         glfwGetFramebufferSize(window, &width, &height);
-        const float ratio = width / (float) height;
+        ratio = width / (float) height;
 
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        mat4x4 m, p, mvp;
         mat4x4_identity(m);
         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         mat4x4_mul(mvp, p, m);
 
         glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) &mvp);
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
@@ -168,3 +163,4 @@ int main(void)
     exit(EXIT_SUCCESS);
 }
 
+//! [code]
