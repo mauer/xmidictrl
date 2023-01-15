@@ -8,10 +8,8 @@ video tutorials.
  - Bobyshev Alexander
  - Laurent Aphecetche
  - Matt Arsenault
- - Takuro Ashie
  - ashishgamedev
  - David Avedissian
- - Luca Bacci
  - Keith Bauer
  - John Bartholomew
  - Coşku Baş
@@ -34,7 +32,6 @@ video tutorials.
  - Arturo Castro
  - Chi-kwan Chan
  - TheChocolateOre
- - Ali Chraghi
  - Joseph Chua
  - Ian Clarkson
  - Michał Cichoń
@@ -62,7 +59,7 @@ video tutorials.
  - Robin Eklind
  - Jan Ekström
  - Siavash Eliasi
- - Ahmad Fatoum
+ - TheExileFox
  - Nikita Fediuchin
  - Felipe Ferreira
  - Michael Fogleman
@@ -84,7 +81,6 @@ video tutorials.
  - Jonathan Hale
  - hdf89shfdfs
  - Sylvain Hellegouarch
- - Björn Hempel
  - Matthew Henry
  - heromyth
  - Lucas Hinderberger
@@ -128,7 +124,6 @@ video tutorials.
  - lukect
  - Tristam MacDonald
  - Hans Mackowiak
- - Ramiro Magno
  - Дмитри Малышев
  - Zbigniew Mandziejewicz
  - Adam Marcus
@@ -152,12 +147,10 @@ video tutorials.
  - Jon Morton
  - Pierre Moulon
  - Martins Mozeiko
- - Pascal Muetschard
  - James Murphy
  - Julian Møller
  - ndogxj
  - F. Nedelec
- - n3rdopolis
  - Kristian Nielsen
  - Joel Niemelä
  - Kamil Nowakowski
@@ -165,11 +158,9 @@ video tutorials.
  - Denis Ovod
  - Ozzy
  - Andri Pálsson
- - luz paz
  - Peoro
  - Braden Pellett
  - Christopher Pelloux
- - Michael Pennington
  - Arturo J. Pérez
  - Vladimir Perminov
  - Olivier Perret
@@ -188,13 +179,10 @@ video tutorials.
  - pthom
  - Martin Pulec
  - Guillaume Racicot
- - Christian Rauch
  - Philip Rideout
  - Eddie Ringle
  - Max Risuhin
- - Joe Roback
  - Jorge Rodriguez
- - Jari Ronkainen
  - Luca Rood
  - Ed Ropple
  - Aleksey Rybalkin
@@ -213,7 +201,6 @@ video tutorials.
  - Daniel Sieger
  - Daniel Skorupski
  - Slemmie
- - Anthony Smith
  - Bradley Smith
  - Cliff Smolinsky
  - Patrick Snape
@@ -228,7 +215,6 @@ video tutorials.
  - Paul Sultana
  - Nathan Sweet
  - TTK-Bandit
- - Jared Tiala
  - Sergey Tikhomirov
  - Arthur Tombs
  - TronicLabs
@@ -246,14 +232,12 @@ video tutorials.
  - Torsten Walluhn
  - Patrick Walton
  - Xo Wang
- - Andre Weissflog
  - Jay Weisskopf
  - Frank Wille
- - Andy Williams
- - Joel Winarske
  - Richard A. Wilkes
  - Tatsuya Yatagawa
  - Ryogo Yoshimura
+ - Rácz Zalán
  - Lukas Zanner
  - Andrey Zholos
  - Aihui Zhu

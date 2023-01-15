@@ -249,21 +249,6 @@ This hint only has an effect on platforms where screen coordinates and pixels
 always map 1:1 such as Windows and X11.  On platforms like macOS the resolution
 of the framebuffer is changed independently of the window size.
 
-@anchor GLFW_MOUSE_PASSTHROUGH_hint
-__GLFW_MOUSE_PASSTHROUGH__ specifies whether the window is transparent to mouse
-input, letting any mouse events pass through to whatever window is behind it.
-This is only supported for undecorated windows.  Decorated windows with this
-enabled will behave differently between platforms.  Possible values are
-`GLFW_TRUE` and `GLFW_FALSE`.
-
-@anchor GLFW_POSITION_X
-@anchor GLFW_POSITION_Y
-__GLFW_POSITION_X__ and __GLFW_POSITION_Y__ specify the desired initial position
-of the window.  The window manager may modify or ignore these coordinates.  If
-either or both of these hints are set to `GLFW_ANY_POSITION` then the window
-manager will position the window where it thinks the user will prefer it.
-Possible values are any valid screen coordinates and `GLFW_ANY_POSITION`.
-
 
 @subsubsection window_hints_fb Framebuffer related hints
 
@@ -318,7 +303,6 @@ rendering will be disabled.
 always have sRGB rendering enabled.
 
 @anchor GLFW_DOUBLEBUFFER
-@anchor GLFW_DOUBLEBUFFER_hint
 __GLFW_DOUBLEBUFFER__ specifies whether the framebuffer should be double
 buffered.  You nearly always want to use double buffering.  This is a hard
 constraint.  Possible values are `GLFW_TRUE` and `GLFW_FALSE`.
@@ -387,10 +371,12 @@ requested.  Additionally, OpenGL ES 1.x cannot be returned if 2.0 or later was
 requested, and vice versa.  This is because OpenGL ES 3.x is backward compatible
 with 2.0, but OpenGL ES 2.0 is not backward compatible with 1.x.
 
-@note @macos The OS only supports core profile contexts for OpenGL versions 3.2
-and later.  Before creating an OpenGL context of version 3.2 or later you must
-set the [GLFW_OPENGL_PROFILE](@ref GLFW_OPENGL_PROFILE_hint) hint accordingly.
-OpenGL 3.0 and 3.1 contexts are not supported at all on macOS.
+@note @macos The OS only supports forward-compatible core profile contexts for
+OpenGL versions 3.2 and later.  Before creating an OpenGL context of version
+3.2 or later you must set the
+[GLFW_OPENGL_FORWARD_COMPAT](@ref GLFW_OPENGL_FORWARD_COMPAT_hint) and
+[GLFW_OPENGL_PROFILE](@ref GLFW_OPENGL_PROFILE_hint) hints accordingly.  OpenGL
+3.0 and 3.1 contexts are not supported at all on macOS.
 
 @anchor GLFW_OPENGL_FORWARD_COMPAT_hint
 __GLFW_OPENGL_FORWARD_COMPAT__ specifies whether the OpenGL context should be
@@ -401,18 +387,14 @@ version is 3.0 or above.  If OpenGL ES is requested, this hint is ignored.
 Forward-compatibility is described in detail in the
 [OpenGL Reference Manual](https://www.opengl.org/registry/).
 
-@anchor GLFW_CONTEXT_DEBUG_hint
 @anchor GLFW_OPENGL_DEBUG_CONTEXT_hint
-__GLFW_CONTEXT_DEBUG__ specifies whether the context should be created in debug
-mode, which may provide additional error and diagnostic reporting functionality.
-Possible values are `GLFW_TRUE` and `GLFW_FALSE`.
+__GLFW_OPENGL_DEBUG_CONTEXT__ specifies whether the context should be created
+in debug mode, which may provide additional error and diagnostic reporting
+functionality.  Possible values are `GLFW_TRUE` and `GLFW_FALSE`.
 
 Debug contexts for OpenGL and OpenGL ES are described in detail by the
 [GL_KHR_debug](https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_debug.txt)
 extension.
-
-@note `GLFW_CONTEXT_DEBUG` is the new name introduced in GLFW 3.4.  The older
-`GLFW_OPENGL_DEBUG_CONTEXT` name is also available for compatibility.
 
 @anchor GLFW_OPENGL_PROFILE_hint
 __GLFW_OPENGL_PROFILE__ specifies which OpenGL profile to create the context
@@ -455,15 +437,7 @@ The no error mode for OpenGL and OpenGL ES is described in detail by the
 extension.
 
 
-@subsubsection window_hints_win32 Win32 specific hints
-
-@anchor GLFW_WIN32_KEYBOARD_MENU_hint
-__GLFW_WIN32_KEYBOARD_MENU__ specifies whether to allow access to the window
-menu via the Alt+Space and Alt-and-then-Space keyboard shortcuts.  This is
-ignored on other platforms.
-
-
-@subsubsection window_hints_osx macOS specific hints
+@subsubsection window_hints_osx macOS specific window hints
 
 @anchor GLFW_COCOA_RETINA_FRAMEBUFFER_hint
 __GLFW_COCOA_RETINA_FRAMEBUFFER__ specifies whether to use full resolution
@@ -497,16 +471,8 @@ should also declare this in its `Info.plist` by setting the
 @anchor GLFW_X11_CLASS_NAME_hint
 @anchor GLFW_X11_INSTANCE_NAME_hint
 __GLFW_X11_CLASS_NAME__ and __GLFW_X11_INSTANCE_NAME__ specifies the desired
-ASCII encoded class and instance parts of the ICCCM `WM_CLASS` window property.  Both
-hints need to be set to something other than an empty string for them to take effect.
+ASCII encoded class and instance parts of the ICCCM `WM_CLASS` window property.
 These are set with @ref glfwWindowHintString.
-
-@subsubsection window_hints_wayland Wayland specific window hints
-
-@anchor GLFW_WAYLAND_APP_ID_hint
-__GLFW_WAYLAND_APP_ID__ specifies the Wayland app_id for a window, used
-by window managers to identify types of windows. This is set with
-@ref glfwWindowHintString.
 
 
 @subsubsection window_hints_values Supported and default values
@@ -524,9 +490,6 @@ GLFW_CENTER_CURSOR            | `GLFW_TRUE`                 | `GLFW_TRUE` or `GL
 GLFW_TRANSPARENT_FRAMEBUFFER  | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_FOCUS_ON_SHOW            | `GLFW_TRUE`                 | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_SCALE_TO_MONITOR         | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
-GLFW_MOUSE_PASSTHROUGH        | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
-GLFW_POSITION_X               | `GLFW_ANY_POSITION`         | Any valid screen x-coordinate or `GLFW_ANY_POSITION`
-GLFW_POSITION_Y               | `GLFW_ANY_POSITION`         | Any valid screen y-coordinate or `GLFW_ANY_POSITION`
 GLFW_RED_BITS                 | 8                           | 0 to `INT_MAX` or `GLFW_DONT_CARE`
 GLFW_GREEN_BITS               | 8                           | 0 to `INT_MAX` or `GLFW_DONT_CARE`
 GLFW_BLUE_BITS                | 8                           | 0 to `INT_MAX` or `GLFW_DONT_CARE`
@@ -550,15 +513,13 @@ GLFW_CONTEXT_VERSION_MINOR    | 0                           | Any valid minor ve
 GLFW_CONTEXT_ROBUSTNESS       | `GLFW_NO_ROBUSTNESS`        | `GLFW_NO_ROBUSTNESS`, `GLFW_NO_RESET_NOTIFICATION` or `GLFW_LOSE_CONTEXT_ON_RESET`
 GLFW_CONTEXT_RELEASE_BEHAVIOR | `GLFW_ANY_RELEASE_BEHAVIOR` | `GLFW_ANY_RELEASE_BEHAVIOR`, `GLFW_RELEASE_BEHAVIOR_FLUSH` or `GLFW_RELEASE_BEHAVIOR_NONE`
 GLFW_OPENGL_FORWARD_COMPAT    | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
-GLFW_CONTEXT_DEBUG            | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
+GLFW_OPENGL_DEBUG_CONTEXT     | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_OPENGL_PROFILE           | `GLFW_OPENGL_ANY_PROFILE`   | `GLFW_OPENGL_ANY_PROFILE`, `GLFW_OPENGL_COMPAT_PROFILE` or `GLFW_OPENGL_CORE_PROFILE`
-GLFW_WIN32_KEYBOARD_MENU      | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_COCOA_RETINA_FRAMEBUFFER | `GLFW_TRUE`                 | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_COCOA_FRAME_NAME         | `""`                        | A UTF-8 encoded frame autosave name
 GLFW_COCOA_GRAPHICS_SWITCHING | `GLFW_FALSE`                | `GLFW_TRUE` or `GLFW_FALSE`
 GLFW_X11_CLASS_NAME           | `""`                        | An ASCII encoded `WM_CLASS` class name
 GLFW_X11_INSTANCE_NAME        | `""`                        | An ASCII encoded `WM_CLASS` instance name
-GLFW_WAYLAND_APP_ID           | `""`                        | An ASCII encoded Wayland `app_id` name
 
 
 @section window_events Window event processing
@@ -809,20 +770,7 @@ are undefined if they conflict.
 
 @subsection window_pos Window position
 
-By default, the window manager chooses the position of new windowed mode
-windows, based on its size and which monitor the user appears to be working on.
-This is most often the right choice.  If you need to create a window at
-a specific position, you can set the desired position with the @ref
-GLFW_POSITION_X and @ref GLFW_POSITION_Y window hints.
-
-@code
-glfwWindowHint(GLFW_POSITION_X, 70);
-glfwWindowHint(GLFW_POSITION_Y, 83);
-@endcode
-
-To restore the previous behavior, set these hints to `GLFW_ANY_POSITION`.
-
-The position of a windowed mode window can be changed with @ref
+The position of a windowed-mode window can be changed with @ref
 glfwSetWindowPos.  This moves the window so that the upper-left corner of its
 content area has the specified [screen coordinates](@ref coordinate_systems).
 The window system may put limitations on window placement.
@@ -1241,11 +1189,7 @@ If the system does not support whole window transparency, this function always
 returns one.
 
 GLFW comes with a test program that lets you control whole window transparency
-at run-time called `window`.
-
-If you want to use either of these transparency methods to display a temporary
-overlay like for example a notification, the @ref GLFW_FLOATING and @ref
-GLFW_MOUSE_PASSTHROUGH window hints and attributes may be useful.
+at run-time called `opacity`.
 
 
 @subsection window_attribs Window attributes
@@ -1335,15 +1279,6 @@ focus when @ref glfwShowWindow is called. This can be set before creation
 with the [GLFW_FOCUS_ON_SHOW](@ref GLFW_FOCUS_ON_SHOW_hint) window hint or
 after with @ref glfwSetWindowAttrib.
 
-@anchor GLFW_MOUSE_PASSTHROUGH_attrib
-__GLFW_MOUSE_PASSTHROUGH__ specifies whether the window is transparent to mouse
-input, letting any mouse events pass through to whatever window is behind it.
-This can be set before creation with the
-[GLFW_MOUSE_PASSTHROUGH](@ref GLFW_MOUSE_PASSTHROUGH_hint) window hint or after
-with @ref glfwSetWindowAttrib.  This is only supported for undecorated windows.
-Decorated windows with this enabled will behave differently between platforms.
-
-
 @subsubsection window_attribs_ctx Context related attributes
 
 @anchor GLFW_CLIENT_API_attrib
@@ -1370,14 +1305,9 @@ of the GLFW header.
 __GLFW_OPENGL_FORWARD_COMPAT__ is `GLFW_TRUE` if the window's context is an
 OpenGL forward-compatible one, or `GLFW_FALSE` otherwise.
 
-@anchor GLFW_CONTEXT_DEBUG_attrib
 @anchor GLFW_OPENGL_DEBUG_CONTEXT_attrib
-__GLFW_CONTEXT_DEBUG__ is `GLFW_TRUE` if the window's context is in debug
+__GLFW_OPENGL_DEBUG_CONTEXT__ is `GLFW_TRUE` if the window's context is in debug
 mode, or `GLFW_FALSE` otherwise.
-
-@par
-This is the new name, introduced in GLFW 3.4.  The older
-`GLFW_OPENGL_DEBUG_CONTEXT` name is also available for compatibility.
 
 @anchor GLFW_OPENGL_PROFILE_attrib
 __GLFW_OPENGL_PROFILE__ indicates the OpenGL profile used by the context.  This
@@ -1410,11 +1340,9 @@ if the window's context supports robustness, or `GLFW_NO_ROBUSTNESS` otherwise.
 
 @subsubsection window_attribs_fb Framebuffer related attributes
 
-GLFW does not expose most attributes of the default framebuffer (i.e. the
-framebuffer attached to the window) as these can be queried directly with either
-OpenGL, OpenGL ES or Vulkan.  The one exception is
-[GLFW_DOUBLEBUFFER](@ref GLFW_DOUBLEBUFFER_attrib), as this is not provided by
-OpenGL ES.
+GLFW does not expose attributes of the default framebuffer (i.e. the framebuffer
+attached to the window) as these can be queried directly with either OpenGL,
+OpenGL ES or Vulkan.
 
 If you are using version 3.0 or later of OpenGL or OpenGL ES, the
 `glGetFramebufferAttachmentParameteriv` function can be used to retrieve the
@@ -1439,11 +1367,6 @@ When calling `glGetFramebufferAttachmentParameteriv`, the red, green, blue and
 alpha sizes are queried from the `GL_BACK_LEFT`, while the depth and stencil
 sizes are queried from the `GL_DEPTH` and `GL_STENCIL` attachments,
 respectively.
-
-@anchor GLFW_DOUBLEBUFFER_attrib
-__GLFW_DOUBLEBUFFER__ indicates whether the specified window is double-buffered
-when rendering with OpenGL or OpenGL ES.  This can be set before creation with
-the [GLFW_DOUBLEBUFFER](@ref GLFW_DOUBLEBUFFER_hint) window hint.
 
 
 @section buffer_swap Buffer swapping

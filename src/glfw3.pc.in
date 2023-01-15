@@ -7,7 +7,7 @@ Name: GLFW
 Description: A multi-platform library for OpenGL, window and input
 Version: @GLFW_VERSION@
 URL: https://www.glfw.org/
-Requires.private: @GLFW_PKG_CONFIG_REQUIRES_PRIVATE@
+Requires.private: @GLFW_PKG_DEPS@
 Libs: -L${libdir} -l@GLFW_LIB_NAME@
-Libs.private: @GLFW_PKG_CONFIG_LIBS_PRIVATE@
+Libs.private: @GLFW_PKG_LIBS@
 Cflags: -I${includedir}

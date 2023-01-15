@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.4 Win32 - www.glfw.org
+// GLFW 3.3 Win32 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2019 Camilla Löwy <elmindreda@glfw.org>
@@ -28,8 +28,6 @@
 //========================================================================
 
 #include "internal.h"
-
-#if defined(_GLFW_WIN32)
 
 #include <stdio.h>
 #include <math.h>
@@ -201,11 +199,11 @@ static GLFWbool supportsXInput(const GUID* guid)
     if (GetRawInputDeviceList(NULL, &count, sizeof(RAWINPUTDEVICELIST)) != 0)
         return GLFW_FALSE;
 
-    ridl = _glfw_calloc(count, sizeof(RAWINPUTDEVICELIST));
+    ridl = calloc(count, sizeof(RAWINPUTDEVICELIST));
 
     if (GetRawInputDeviceList(ridl, &count, sizeof(RAWINPUTDEVICELIST)) == (UINT) -1)
     {
-        _glfw_free(ridl);
+        free(ridl);
         return GLFW_FALSE;
     }
 
@@ -250,7 +248,7 @@ static GLFWbool supportsXInput(const GUID* guid)
         }
     }
 
-    _glfw_free(ridl);
+    free(ridl);
     return result;
 }
 
@@ -266,7 +264,7 @@ static void closeJoystick(_GLFWjoystick* js)
         IDirectInputDevice8_Release(js->win32.device);
     }
 
-    _glfw_free(js->win32.objects);
+    free(js->win32.objects);
     _glfwFreeJoystick(js);
 }
 
@@ -418,8 +416,8 @@ static BOOL CALLBACK deviceCallback(const DIDEVICEINSTANCE* di, void* user)
 
     memset(&data, 0, sizeof(data));
     data.device = device;
-    data.objects = _glfw_calloc(dc.dwAxes + (size_t) dc.dwButtons + dc.dwPOVs,
-                                sizeof(_GLFWjoyobjectWin32));
+    data.objects = calloc(dc.dwAxes + (size_t) dc.dwButtons + dc.dwPOVs,
+                          sizeof(_GLFWjoyobjectWin32));
 
     if (FAILED(IDirectInputDevice8_EnumObjects(device,
                                                deviceObjectCallback,
@@ -430,7 +428,7 @@ static BOOL CALLBACK deviceCallback(const DIDEVICEINSTANCE* di, void* user)
                         "Win32: Failed to enumerate device objects");
 
         IDirectInputDevice8_Release(device);
-        _glfw_free(data.objects);
+        free(data.objects);
         return DIENUM_CONTINUE;
     }
 
@@ -447,7 +445,7 @@ static BOOL CALLBACK deviceCallback(const DIDEVICEINSTANCE* di, void* user)
                         "Win32: Failed to convert joystick name to UTF-8");
 
         IDirectInputDevice8_Release(device);
-        _glfw_free(data.objects);
+        free(data.objects);
         return DIENUM_STOP;
     }
 
@@ -475,7 +473,7 @@ static BOOL CALLBACK deviceCallback(const DIDEVICEINSTANCE* di, void* user)
     if (!js)
     {
         IDirectInputDevice8_Release(device);
-        _glfw_free(data.objects);
+        free(data.objects);
         return DIENUM_STOP;
     }
 
@@ -492,6 +490,39 @@ static BOOL CALLBACK deviceCallback(const DIDEVICEINSTANCE* di, void* user)
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
+
+// Initialize joystick interface
+//
+void _glfwInitJoysticksWin32(void)
+{
+    if (_glfw.win32.dinput8.instance)
+    {
+        if (FAILED(DirectInput8Create(_glfw.win32.instance,
+                                      DIRECTINPUT_VERSION,
+                                      &IID_IDirectInput8W,
+                                      (void**) &_glfw.win32.dinput8.api,
+                                      NULL)))
+        {
+            _glfwInputError(GLFW_PLATFORM_ERROR,
+                            "Win32: Failed to create interface");
+        }
+    }
+
+    _glfwDetectJoystickConnectionWin32();
+}
+
+// Close all opened joystick handles
+//
+void _glfwTerminateJoysticksWin32(void)
+{
+    int jid;
+
+    for (jid = GLFW_JOYSTICK_1;  jid <= GLFW_JOYSTICK_LAST;  jid++)
+        closeJoystick(_glfw.joysticks + jid);
+
+    if (_glfw.win32.dinput8.api)
+        IDirectInput8_Release(_glfw.win32.dinput8.api);
+}
 
 // Checks for new joysticks after DBT_DEVICEARRIVAL
 //
@@ -563,7 +594,7 @@ void _glfwDetectJoystickDisconnectionWin32(void)
     {
         _GLFWjoystick* js = _glfw.joysticks + jid;
         if (js->connected)
-            _glfwPollJoystickWin32(js, _GLFW_POLL_PRESENCE);
+            _glfwPlatformPollJoystick(js, _GLFW_POLL_PRESENCE);
     }
 }
 
@@ -572,38 +603,7 @@ void _glfwDetectJoystickDisconnectionWin32(void)
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwInitJoysticksWin32(void)
-{
-    if (_glfw.win32.dinput8.instance)
-    {
-        if (FAILED(DirectInput8Create(_glfw.win32.instance,
-                                      DIRECTINPUT_VERSION,
-                                      &IID_IDirectInput8W,
-                                      (void**) &_glfw.win32.dinput8.api,
-                                      NULL)))
-        {
-            _glfwInputError(GLFW_PLATFORM_ERROR,
-                            "Win32: Failed to create interface");
-            return GLFW_FALSE;
-        }
-    }
-
-    _glfwDetectJoystickConnectionWin32();
-    return GLFW_TRUE;
-}
-
-void _glfwTerminateJoysticksWin32(void)
-{
-    int jid;
-
-    for (jid = GLFW_JOYSTICK_1;  jid <= GLFW_JOYSTICK_LAST;  jid++)
-        closeJoystick(_glfw.joysticks + jid);
-
-    if (_glfw.win32.dinput8.api)
-        IDirectInput8_Release(_glfw.win32.dinput8.api);
-}
-
-GLFWbool _glfwPollJoystickWin32(_GLFWjoystick* js, int mode)
+int _glfwPlatformPollJoystick(_GLFWjoystick* js, int mode)
 {
     if (js->win32.device)
     {
@@ -742,12 +742,7 @@ GLFWbool _glfwPollJoystickWin32(_GLFWjoystick* js, int mode)
     return GLFW_TRUE;
 }
 
-const char* _glfwGetMappingNameWin32(void)
-{
-    return "Windows";
-}
-
-void _glfwUpdateGamepadGUIDWin32(char* guid)
+void _glfwPlatformUpdateGamepadGUID(char* guid)
 {
     if (strcmp(guid + 20, "504944564944") == 0)
     {
@@ -757,6 +752,4 @@ void _glfwUpdateGamepadGUIDWin32(char* guid)
                 original, original + 4);
     }
 }
-
-#endif // _GLFW_WIN32
 
