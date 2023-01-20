@@ -12,7 +12,7 @@ RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
 RUN update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
 
 # Install required libraries under Linux.
-RUN apt-get install -y --no-install-recommends libasound2-dev && apt-get clean
+RUN apt-get install -y --no-install-recommends libasound2-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev && apt-get clean
 RUN sudo ldconfig /usr/osxcross/lib
 
 USER xpbuild

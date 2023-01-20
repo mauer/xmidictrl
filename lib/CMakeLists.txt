@@ -52,6 +52,15 @@ add_subdirectory(rtmidi)
 # Add the X-Plane SDK
 include(${CMAKE_CURRENT_LIST_DIR}/xpsdk.cmake)
 
+# Add GLFW
+message("-- Configuring build scripts for GLFW")
+
+set(GLFW_BUILD_EXAMPLES OFF)
+set(GLFW_BUILD_TESTS OFF)
+set(GLFW_BUILD_DOCS OFF)
+
+add_subdirectory(glfw)
+
 # Add ImGui for the User Interface
 include(${CMAKE_CURRENT_LIST_DIR}/imgui.cmake)
 
