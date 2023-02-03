@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 1.03 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
+project(XMidiCtrl VERSION 1.04 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
@@ -64,6 +64,17 @@ else()
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-sign-compare -Wno-free-nonheap-object -fPIC")
     endif()
+endif()
+
+# enable universal binary for macOS
+if (APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+
+##    set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+##    set(CMAKE_HAVE_THREADS_LIBRARY 1)
+##    set(CMMAKE_USE_PTHREADS_INIT 1)
+##    set(THREADS_PREFER_PTHREAD_FLAG ON)
 endif()
 
 # Add subdirectories

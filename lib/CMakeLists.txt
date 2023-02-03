@@ -53,13 +53,13 @@ add_subdirectory(rtmidi)
 include(${CMAKE_CURRENT_LIST_DIR}/xpsdk.cmake)
 
 # Add GLFW
-message("-- Configuring build scripts for GLFW")
+##message("-- Configuring build scripts for GLFW")
+##message("-- OSX SysRoot" ${CMAKE_OSX_SYSROOT})
+##set(GLFW_BUILD_EXAMPLES OFF)
+##set(GLFW_BUILD_TESTS OFF)
+##set(GLFW_BUILD_DOCS OFF)
 
-set(GLFW_BUILD_EXAMPLES OFF)
-set(GLFW_BUILD_TESTS OFF)
-set(GLFW_BUILD_DOCS OFF)
-
-add_subdirectory(glfw)
+#add_subdirectory(glfw)
 
 # Add ImGui for the User Interface
 include(${CMAKE_CURRENT_LIST_DIR}/imgui.cmake)

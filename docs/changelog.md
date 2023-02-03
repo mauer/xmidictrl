@@ -3,7 +3,13 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
-##  VERSION 1.02
+##  VERSION 1.04
++ Added universal binary for macOS
++ Updated X-Plane SDK to version 4.0.0, Beta 1
+
+-----------------------------------------------------------------------------------------------------------------------
+
+##  VERSION 1.03
 + Fixed small error in CL650 example mapping
 + Added default encoder mode in device settings
 + Moved logfile into preference folder where it should have been from the beginning on
