@@ -36,6 +36,15 @@ include(${CMAKE_CURRENT_LIST_DIR}/env/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 
+# Apple deprecated OpenGL...yea, we know, keep quiet
+if (APPLE)
+    set_source_files_properties(
+            ${CMAKE_CURRENT_LIST_DIR}/ui/ImgFontAtlas.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/ui/imgui_window.cpp
+        PROPERTIES
+            COMPILE_OPTIONS "-Wno-deprecated-declarations")
+endif()
+
 # link required dependencies
 if (WIN32)
     message("Build for Windows Platform")

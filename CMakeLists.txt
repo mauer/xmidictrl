@@ -71,6 +71,8 @@ if (APPLE)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 
+    # Apple deprecated OpenGL...yea, we know, keep quiet
+    set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations")
 ##    set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 ##    set(CMAKE_HAVE_THREADS_LIBRARY 1)
 ##    set(CMMAKE_USE_PTHREADS_INIT 1)
