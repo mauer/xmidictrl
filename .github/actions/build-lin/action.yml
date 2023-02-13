@@ -43,7 +43,7 @@ runs:
     - name: Test for Target
       shell: bash
       env:
-        TARGET_XPL: cmake-build-lin/${{ inputs.archFolder }}/${{ inputs.pluginName }}.xpl
+        TARGET_XPL: package/${{ inputs.pluginName }}/${{ inputs.archFolder }}/${{ inputs.pluginName }}.xpl
       run: |
         if [[ ! -f "$TARGET_XPL" ]]; then
           echo Expected target build not found: "$TARGET_XPL"
@@ -53,5 +53,5 @@ runs:
       id: return
       shell: bash
       env:
-        TARGET_XPL: cmake-build-lin/${{ inputs.archFolder }}/${{ inputs.pluginName }}.xpl
+        TARGET_XPL: package/${{ inputs.pluginName }}/${{ inputs.archFolder }}/${{ inputs.pluginName }}.xpl
       run: echo "xpl-file-name=$(echo $TARGET_XPL)" >> $GITHUB_OUTPUT
