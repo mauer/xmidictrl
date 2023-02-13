@@ -30,4 +30,4 @@ jobs:
         with:
           pluginName: ${{ env.PRJ_NAME }}
           archFolder: lin_x64
-          xplFileName: "${{ steps.build.outputs.xpl-file-nae }}"
+          xplFileName: "${{ steps.build.outputs.xpl-file-name }}"
