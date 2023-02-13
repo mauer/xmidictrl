@@ -1,0 +1,74 @@
+#!/bin/sh
+# Signs and notarizes a macOS build
+  #
+  # Parameters
+  # 1. Path to file to sign, then notarize
+  # 2. Signing ID file like 'certificate.p12'
+  # 3. Password for above p12 file
+  # 4. Apple ID for notarization (parameter --apple-id to notarytool)
+  # 5. Team ID for notarization (parmeter --team-id to notarytool)
+  # 6. App-specific password for notarization (parameter --password to notarytool)
+
+  set -eu
+  
+  # --- Cleanup in case of faulty exit
+  
+  function cleanup {
+  echo ">>> Cleanup <<<"
+  security delete-keychain build.keychain
+}
+
+  # ==================================================================
+  # Read parameters
+
+  if (( $# < 6 ))
+  then
+  echo "$0 requires 6 parameters, check script!"
+  exit 1
+  fi
+  
+  PATH_TO_FILE=$1
+  SIGN_ID_FILE=$2
+  SIGN_ID_PWD=$3
+  NOTAR_USER=$4
+  NOTAR_TEAM=$5
+  NOTAR_PWD=$6
+  
+  # --- Sign
+  
+  echo .
+  echo "--- Sign ---"
+  echo .
+  
+  # Taken from https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
+  # Create a temporary keychain and import the given certificate
+  security create-keychain -p NotSoSecretAPwd build.keychain
+  trap cleanup EXIT           # Make sure the keychain gets removed in case of failure exit
+  security default-keychain -s build.keychain
+  security unlock-keychain -p NotSoSecretAPwd build.keychain
+  security import "$SIGN_ID_FILE" -P "$SIGN_ID_PWD" -k build.keychain -T /usr/bin/codesign
+  # Allow some tools to use the keychain
+  security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k NotSoSecretAPwd build.keychain
+  # Actually sign
+  security find-identity -v build.keychain
+  export MACOS_IDENTITY=`security find-identity -v build.keychain | egrep -o '[0-9A-F]{40}'`
+  echo MACOS_IDENTITY = $MACOS_IDENTITY
+  codesign --force --keychain build.keychain -s $MACOS_IDENTITY "$PATH_TO_FILE" -v
+  codesign --verify --verbose "$PATH_TO_FILE"
+  
+  # --- Notarize LiveTraffic and XPMP2-Remote ---
+  
+  echo .
+  echo "--- Notarize ---"
+  echo .
+  
+  # Can only send zip archives to notarization
+  zip -v "$PATH_TO_FILE.zip" "$PATH_TO_FILE"
+  xcrun notarytool submit --wait --apple-id "$NOTAR_USER" --password "$NOTAR_PWD" --team-id "$NOTAR_TEAM" "$PATH_TO_FILE.zip"
+  rm "$PATH_TO_FILE.zip"
+  
+  # Note: No stapling possible to .xpl files
+  
+  echo .
+  echo "*** SIGNED and NOTARIZED ***"
+  exit 0

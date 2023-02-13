@@ -57,16 +57,16 @@ jobs:
             echo "secretspresent=true" >> $GITHUB_OUTPUT
           fi
 
-#      - name: Codesign and Notarization
-#        if: ${{ steps.checksecrets.outputs.secretspresent }}
-#        uses: ./.github/actions/sign-notarize
-#        with:
-#          xplFileName:    ${{ steps.build.outputs.xpl-file-name }}
-#          certificate:    ${{ secrets.MACOS_CERTIFICATE }}
-#          certPwd:        ${{ secrets.MACOS_CERT_PWD }}
-#          notarizeUser:   ${{ secrets.NOTARIZATION_USERNAME }}
-#          notarizeTeam:   ${{ secrets.NOTARIZATION_TEAM }}
-#          notarizeAppPwd: ${{ secrets.NOTARIZATION_PASSWORD }}
+      - name: Codesign and Notarization
+        if: ${{ steps.checksecrets.outputs.secretspresent }}
+        uses: ./.github/actions/sign-notarize
+        with:
+          xplFileName:    ${{ steps.build.outputs.xpl-file-name }}
+          certificate:    ${{ secrets.MACOS_CERTIFICATE }}
+          certPwd:        ${{ secrets.MACOS_CERT_PWD }}
+          notarizeUser:   ${{ secrets.NOTARIZATION_USERNAME }}
+          notarizeTeam:   ${{ secrets.NOTARIZATION_TEAM }}
+          notarizeAppPwd: ${{ secrets.NOTARIZATION_PASSWORD }}
 
       - name: Upload Artifact
         uses: ./.github/actions/plugin-upload
