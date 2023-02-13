@@ -1,0 +1,35 @@
+name: Plugin upload
+description: Organizes the plugin file in the correct structure and uploads it as an artifact
+author: mauer
+
+inputs:
+  pluginName:
+    description: "Name of the plugin"
+    required: true
+  archFolder:
+    description: "Subfolder in which the library will be placed in"
+    required: true
+  xplFileName:
+    description: "Path to the xpl plugin file"
+    required: true
+  pdbFileName:
+    description: "Path tot he pdb file"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare Deployment Structure
+      shell: bash
+      run: |
+        mkdir -p "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}/${{ inputs.archFolder }}"
+        mv "${{ inputs.xplFileName }}" "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}/${{ inputs.archFolder }}"
+        if [[ -n "${{ inputs.pdbFileName }}" ]]; then
+        mv "${{ inputs.pdbFileName }}" "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}/${{ inputs.archFolder }}"
+        fi
+    - name: Upload the plugin
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.pluginName }}
+        path: deploy-${{ inputs.pluginName }}/*
+        if-no-files-found: error

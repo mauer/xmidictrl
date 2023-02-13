@@ -6,6 +6,7 @@
 ##  VERSION 1.04
 + Added universal binary for macOS
 + Updated X-Plane SDK to version 4.0.0, Beta 1
++ Removed debug screen message when executing XMidiCtrl commands
 
 -----------------------------------------------------------------------------------------------------------------------
 

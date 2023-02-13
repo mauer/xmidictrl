@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -493,8 +493,6 @@ int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMComm
 {
     if (in_phase != xplm_CommandEnd)
         return 1;
-
-    plugin::instance().show_info_message("CMD", "Command executed");
 
     if (!strcmp((const char *) in_refcon, COMMAND_MESSAGE_WINDOW))
         plugin::instance().show_messages_window();

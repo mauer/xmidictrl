@@ -1,0 +1,33 @@
+name: Build all platforms
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  PRJ_NAME: XMidiCtrl
+
+jobs:
+  # Build Linux with GCC
+  build-lin:
+    runs-on: ubuntu-20.04
+    env:
+      platform: lin
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        uses: ./.github/actions/build-lin
+        id: build
+        with:
+          pluginName: ${{ env.PRJ_NAME }}
+
+      - name: Artifact upload
+        uses: ./.github/actions/plugin-upload
+        with:
+          pluginName: ${{ env.PRJ_NAME }}
+          archFolder: lin_x64
+          xplFileName: "${{ steps.build.outputs.xpl-file-nae }}"
