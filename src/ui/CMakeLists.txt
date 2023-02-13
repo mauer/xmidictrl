@@ -29,3 +29,12 @@ target_sources(${PROJECT_NAME} PRIVATE ${UI_SRC})
 
 # Include current directory
 include_directories(${CMAKE_CURRENT_LIST_DIR})
+
+# Apple deprecated OpenGL...yea, we know, keep quiet
+if (APPLE)
+    set_source_files_properties(
+            ImgFontAtlas.cpp
+            imgui_window.cpp
+            PROPERTIES
+            COMPILE_OPTIONS "-Wno-deprecated-declarations")
+endif()
