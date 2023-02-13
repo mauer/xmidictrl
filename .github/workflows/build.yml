@@ -31,3 +31,46 @@ jobs:
           pluginName: ${{ env.PRJ_NAME }}
           archFolder: lin_x64
           xplFileName: "${{ steps.build.outputs.xpl-file-name }}"
+
+  # MacOS with CMake/clang and sign/notarize in self-written script
+  build-mac:
+    runs-on: macos-11
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        uses: ./.github/actions/build-mac
+        id: build
+        with:
+          pluginName: ${{ env.PRJ_NAME }}
+
+      - name: Check if Secrets available
+        id: checksecrets
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        shell: bash
+        run: |
+          if [ "$MACOS_CERTIFICATE" == "" ]; then
+            echo "secretspresent=" >> $GITHUB_OUTPUT
+          else
+            echo "secretspresent=true" >> $GITHUB_OUTPUT
+          fi
+
+#      - name: Codesign and Notarization
+#        if: ${{ steps.checksecrets.outputs.secretspresent }}
+#        uses: ./.github/actions/sign-notarize
+#        with:
+#          xplFileName:    ${{ steps.build.outputs.xpl-file-name }}
+#          certificate:    ${{ secrets.MACOS_CERTIFICATE }}
+#          certPwd:        ${{ secrets.MACOS_CERT_PWD }}
+#          notarizeUser:   ${{ secrets.NOTARIZATION_USERNAME }}
+#          notarizeTeam:   ${{ secrets.NOTARIZATION_TEAM }}
+#          notarizeAppPwd: ${{ secrets.NOTARIZATION_PASSWORD }}
+
+      - name: Upload Artifact
+        uses: ./.github/actions/plugin-upload
+        with:
+          pluginName:   ${{ env.PRJ_NAME }}
+          archFolder:   mac_x64
+          xplFileName:  ${{ steps.build.outputs.xpl-file-name }}
