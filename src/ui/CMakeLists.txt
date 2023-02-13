@@ -33,8 +33,8 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
 # Apple deprecated OpenGL...yea, we know, keep quiet
 if (APPLE)
     set_source_files_properties(
-            ImgFontAtlas.cpp
-            imgui_window.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/ImgFontAtlas.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
             PROPERTIES
             COMPILE_OPTIONS "-Wno-deprecated-declarations")
 endif()
