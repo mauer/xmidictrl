@@ -91,7 +91,7 @@ jobs:
           pluginName: ${{ env.PRJ_NAME }}
 
       - name: Upload Artifact
-        uses: ./.github/actions/upload-plugin
+        uses: ./.github/actions/plugin-upload
         with:
           pluginName:   ${{ env.PRJ_NAME }}
           archFolder:   win_x64
