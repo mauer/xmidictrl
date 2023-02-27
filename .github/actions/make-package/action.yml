@@ -17,7 +17,7 @@ runs:
         cp -r ./resources/examples "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
         cp -r ./resources/templates "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
         cp ./docs/changelog.md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
-        cp ./docs/README-md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
+        cp ./docs/README.md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
         cp ./LICENSE "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
 
     - name: Upload the plugin
