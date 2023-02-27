@@ -71,9 +71,9 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/plugin-upload
         with:
-          pluginName:   ${{ env.PRJ_NAME }}
-          archFolder:   mac_x64
-          xplFileName:  ${{ steps.build.outputs.xpl-file-name }}
+          pluginName: ${{ env.PRJ_NAME }}
+          archFolder: mac_x64
+          xplFileName: ${{ steps.build.outputs.xpl-file-name }}
 
   # Windows with MS Visual Studio
   build-win:
@@ -93,6 +93,16 @@ jobs:
       - name: Upload Artifact
         uses: ./.github/actions/plugin-upload
         with:
-          pluginName:   ${{ env.PRJ_NAME }}
-          archFolder:   win_x64
+          pluginName:  ${{ env.PRJ_NAME }}
+          archFolder:  win_x64
           xplFileName:  "${{ steps.build.outputs.xpl-file-name }}"
+
+  # Make an installation package
+  make-package:
+    runs-on: ubuntu-20.04
+    env:
+      platform: lin
+    steps:
+      - name: Make an installation package
+        uses: ./.github/actions/make-package
+        pluginName: ${{ env.PRJ_NAME }}
