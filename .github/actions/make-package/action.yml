@@ -13,11 +13,11 @@ runs:
     - name: Copy required files into deployment path
       shell: bash
       run: |
-        cp -r ./resource/examples "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}
-        cp -r ./resource/templates "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}
-        cp ./docs/changelog.md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}
-        cp ./docs/README-md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}
-        cp ./LICENSE "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}
+        cp -r ./resources/examples "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
+        cp -r ./resources/templates "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
+        cp ./docs/changelog.md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
+        cp ./docs/README-md "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
+        cp ./LICENSE "deploy-${{ inputs.pluginName }}/${{ inputs.pluginName }}"
 
     - name: Upload the plugin
       uses: actions/upload-artifact@v3
