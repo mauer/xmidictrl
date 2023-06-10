@@ -5,6 +5,7 @@
 
 ##  VERSION 1.05
 + Added new outbound message type "constant"
++ Added option to delay encoders (parameter "delay") 
 
 -----------------------------------------------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -52,6 +52,9 @@ private:
     bool execute_command(midi_message &in_msg);
 
     encoder_mode m_mode {encoder_mode::relative};
+
+    int m_delay_counter {0};
+    int m_delay {-1};
 
     unsigned int m_velocity_prev {MIDI_NONE};
 

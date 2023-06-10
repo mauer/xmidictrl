@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -64,6 +64,10 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, device &
         m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
     else
         m_mode = in_device.default_encoder_mode();
+
+    // read the delay (if defined)
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY, false))
+        m_delay = toml_utils::read_int(in_log, in_data, CFG_KEY_DELAY, false);
 
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
@@ -175,6 +179,15 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
 {
     if (!check_sublayer(in_sl_value))
         return true;
+
+    if (m_delay > -1) {
+        if (m_delay_counter < m_delay) {
+            m_delay_counter++;
+            return true;
+        } else {
+            m_delay_counter = 0;
+        }
+    }
 
     if (!m_dataref.empty())
         return execute_dataref(in_msg);

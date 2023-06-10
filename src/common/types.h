@@ -95,6 +95,7 @@ const char *const CFG_KEY_DATAREF_PULL = "dataref_pull";
 const char *const CFG_KEY_DEBUG_MODE = "debug_mode";
 const char *const CFG_KEY_DEFAULT_MIDI_SORT = "default_midi_sort";
 const char *const CFG_KEY_DEFAULT_TEXT_SORT = "default_text_sort";
+const char *const CFG_KEY_DELAY = "delay";
 const char *const CFG_KEY_DEVICE = "device";
 const char *const CFG_KEY_ENCODER_MODE = "encoder_mode";
 const char *const CFG_KEY_LABEL = "label";

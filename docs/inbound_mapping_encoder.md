@@ -26,20 +26,22 @@ be sufficient in most cases.
 
 ### Optional Parameters
 
-| Parameter         | Description                                                                                          |
-|-------------------|------------------------------------------------------------------------------------------------------|
-| command_fast_up   | Command which will be executed when the knob is turned quite fast to the right (relative mode, only) |
-| command_fast_down | Command which will be executed when the knob is turned quite fast to the left  (relative mode, only) |
+| Parameter         | Description                                                                                                            |
+|-------------------|------------------------------------------------------------------------------------------------------------------------|
+| delay             | Adds a delay to the execution of the commands. A delay of 3 would execute the command after three turns of the encoder |
+| mode              | Range / relative, depending on your MIDI device (default is relative)                                                  |
+| command_fast_up   | Command which will be executed when the knob is turned quite fast to the right (relative mode, only)                   |
+| command_fast_down | Command which will be executed when the knob is turned quite fast to the left  (relative mode, only)                   |
 
 ### Examples
 
 ```
 { ch = 11, cc = 1, type = "enc", command_up = "sim/instruments/barometer_up", command_down = "sim/instruments/barometer_down" }
 
-{ ch = 11, cc = 4, type = "enc", command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
+{ ch = 11, cc = 4, type = "enc", delay = 2, command_up = "sim/autopilot/airspeed_up", command_down = "sim/autopilot/airspeed_down", command_fast_up = "FlyWithLua/airspeed_sel_10_up", command_fast_up = "FlyWithLua/airspeed_sel_10_down" }
 ```
 *The first example maps the altimeter setting to a knob. The second example maps the heading knob and uses two custom
-Lua commands for a faster heading up and down.*
+Lua commands for a faster heading up and down. It also adds a delay of 2, hence the commands get executed every second turn*
 
 ## Dataref Mapping
 
@@ -61,13 +63,14 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 
 ### Optional Parameters
 
-| Parameter          | Description                                                                                       |
-|--------------------|---------------------------------------------------------------------------------------------------|
-| mode               | range / relative, depending on your MIDI device (default is relative)                             |
-| modifier_fast_up   | Modifier which will be used when the knob is turned quite fast to the right (relative mode, only) |
-| modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  (relative mode, only) |
-| value_min          | Minimum value                                                                                     |
-| value_max          | Maximum value                                                                                     |
+| Parameter          | Description                                                                                                       |
+|--------------------|-------------------------------------------------------------------------------------------------------------------|
+| delay              | Adds a delay to the change of the dataref. A delay of 3 would change the dataref after three turns of the encoder |
+| mode               | range / relative, depending on your MIDI device (default is relative)                                             |
+| modifier_fast_up   | Modifier which will be used when the knob is turned quite fast to the right (relative mode, only)                 |
+| modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  (relative mode, only)                 |
+| value_min          | Minimum value                                                                                                     |
+| value_max          | Maximum value                                                                                                     |
 
 ### Examples
 
