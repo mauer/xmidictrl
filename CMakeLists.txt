@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 1.04 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
+project(XMidiCtrl VERSION 1.05 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
@@ -73,10 +73,6 @@ if (APPLE)
 
     # Apple deprecated OpenGL...yea, we know, keep quiet
     set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations")
-##    set(CMAKE_THREAD_LIBS_INIT "-lpthread")
-##    set(CMAKE_HAVE_THREADS_LIBRARY 1)
-##    set(CMMAKE_USE_PTHREADS_INIT 1)
-##    set(THREADS_PREFER_PTHREAD_FLAG ON)
 endif()
 
 # Add subdirectories

@@ -23,6 +23,7 @@
       * [Push&Pull](inbound_mapping_pushnpull.md)
       * [Sliders](inbound_mapping_slider.md)
   * [Outbound Mappings](outbound_mapping.md)
+      * [Constant](outbound_mapping_constant.md) 
       * [Datarefs](outbound_mapping_dataref.md)
 
 * **MIDI Devices**

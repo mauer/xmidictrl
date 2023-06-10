@@ -214,7 +214,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    conversions::create_preference_folders(*m_plugin_log, *m_env);
+    utils::create_preference_folders(*m_plugin_log, *m_env);
 }
 
 

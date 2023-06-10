@@ -26,6 +26,7 @@
 #include "map_in_enc.h"
 #include "map_in_pnp.h"
 #include "map_in_sld.h"
+#include "map_out_con.h"
 #include "map_out_drf.h"
 #include "midi_logger.h"
 #include "conversions.h"
@@ -525,6 +526,7 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
                     mapping = std::make_shared<map_in_sld>(env());
                     break;
 
+                case map_type::constant:
                 case map_type::none:
                     m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
                                          + " :: Invalid mapping type");
@@ -578,6 +580,10 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
+                case map_type::constant:
+                    mapping = std::make_shared<map_out_con>(env());
+                    break;
+
                 case map_type::dataref:
                     mapping = std::make_shared<map_out_drf>(env());
                     break;
@@ -621,6 +627,8 @@ map_type profile::translate_map_type(std::string_view in_type_str)
 
     if (in_type_str == CFG_MAPTYPE_COMMAND)
         type = map_type::command;
+    else if (in_type_str == CFG_MAPTYPE_CONSTANT)
+        type = map_type::constant;
     else if (in_type_str == CFG_MAPTYPE_SLIDER)
         type = map_type::slider;
     else if (in_type_str == CFG_MAPTYPE_DATAREF)

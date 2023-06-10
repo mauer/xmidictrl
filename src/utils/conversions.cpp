@@ -90,37 +90,4 @@ std::string conversions::create_map_key(const unsigned char ch, std::string_view
     return ss.str();
 }
 
-
-/**
- * Create all required preference folders
- */
-bool conversions::create_preference_folders(text_logger &in_log, environment &in_env)
-{
-    // check preference folder
-    if (!std::filesystem::exists(in_env.preferences_path())) {
-        in_log.info("Directory '" + in_env.preferences_path().string() + "' not found");
-
-        if (std::filesystem::create_directory(in_env.preferences_path())) {
-            in_log.info("Directory '" + in_env.preferences_path().string() + "' created");
-        } else {
-            in_log.error("Could not create directory '" + in_env.preferences_path().string() + "'");
-            return false;
-        }
-    }
-
-    // check profiles folder
-    if (!std::filesystem::exists(in_env.profiles_path())) {
-        in_log.info("Directory '" + in_env.profiles_path().string() + "' not found");
-
-        if (std::filesystem::create_directory(in_env.profiles_path())) {
-            in_log.info("Directory '" + in_env.profiles_path().string() + "' created");
-        } else {
-            in_log.error("Could not create directory '" + in_env.profiles_path().string() + "'");
-            return false;
-        }
-    }
-
-    return true;
-}
-
 } // Namespace xmidictrl

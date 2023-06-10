@@ -146,6 +146,7 @@ const char *const CFG_KEY_INFO_SECONDS = "info_seconds";
 
 // Mapping Types as strings
 const char *const CFG_MAPTYPE_COMMAND = "cmd";
+const char *const CFG_MAPTYPE_CONSTANT = "con";
 const char *const CFG_MAPTYPE_DATAREF = "drf";
 const char *const CFG_MAPTYPE_ENCODER = "enc";
 const char *const CFG_MAPTYPE_PUSH_PULL = "pnp";
@@ -191,6 +192,7 @@ enum class midi_msg_type {
 enum class map_type {
     none,
     command,
+    constant,
     dataref,
     encoder,
     push_pull,
