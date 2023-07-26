@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -96,6 +96,10 @@ void profile_window::create_tab_general()
         ImGui::Text("Author:");
         ImGui::SameLine(150);
         ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_author().c_str());
+
+        ImGui::Text("ACF Filename:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_acf_name().c_str()); 
 
         ImGui::NewLine();
         ImGui::NewLine();
