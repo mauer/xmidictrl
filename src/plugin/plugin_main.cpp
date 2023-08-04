@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -30,11 +30,11 @@
 /*
  *  The XPluginStart function is called by X-Plane right after the plugin's DLL is loaded.
  */
-PLUGIN_API int XPluginStart(char *outName, char *outSig, char *outDesc)
+PLUGIN_API int XPluginStart(char *out_name, char *out_sig, char *out_desc)
 {
-    strcpy(outName, XMIDICTRL_NAME);
-    strcpy(outSig, XMIDICTRL_SIGNATURE);
-    strcpy(outDesc, XMIDICTRL_DESCRIPTION);
+    strcpy_s(out_name, sizeof(XMIDICTRL_NAME), XMIDICTRL_NAME);
+    strcpy_s(out_sig, sizeof(XMIDICTRL_SIGNATURE),XMIDICTRL_SIGNATURE);
+    strcpy_s(out_desc, sizeof(XMIDICTRL_DESCRIPTION), XMIDICTRL_DESCRIPTION);
 
     XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 
@@ -75,16 +75,12 @@ PLUGIN_API void XPluginDisable(void)
 /**
  * Process messages from X-Plane
  */
-PLUGIN_API void XPluginReceiveMessage(XPLMPluginID i_from, int in_msg, void *inParam)
+PLUGIN_API void XPluginReceiveMessage(XPLMPluginID, int in_msg, void *)
 {
     switch (in_msg) {
         case XPLM_MSG_LIVERY_LOADED:
             xmidictrl::plugin::instance().load_profile();
             break;
-
-        /*case XPLM_MSG_AIRPORT_LOADED:
-            xmidictrl::plugin::instance().show_profile_message();
-            break;*/
 
         case XPLM_MSG_PLANE_UNLOADED:
             xmidictrl::plugin::instance().close_profile();

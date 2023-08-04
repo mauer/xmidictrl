@@ -25,7 +25,6 @@
 // XMidiCtrl
 #include "text_logger.h"
 
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -35,7 +34,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-env_xplane::env_xplane(text_logger &in_log)
+env_xplane::env_xplane(text_logger& in_log)
     : environment(in_log)
 {
     // access to X-Plane commands
@@ -71,9 +70,7 @@ std::filesystem::path env_xplane::xplane_path()
         char path[512];
         XPLMGetSystemPath(path);
 
-        m_xplane_path = std::string(path);
-
-        //LOG_DEBUG << "X-Plane Path = '" << m_xplane_path << "'" << LOG_END
+        m_xplane_path.assign(path);
     }
 
     return m_xplane_path;
@@ -90,14 +87,15 @@ std::filesystem::path env_xplane::plugin_path()
         XPLMGetPluginInfo(m_plugin_id, nullptr, path, nullptr, nullptr);
         m_plugin_path.assign(path);
 
+        log().debug("Plugin path = " + std::string(path));
+
         // remove file name
         m_plugin_path.assign(m_plugin_path.remove_filename());
+        log().debug("Plugin path (after filename removed) = " + m_plugin_path.string());
 
         // remove subdirectory
         m_plugin_path.assign(m_plugin_path.parent_path());
-
-        //std::string::size_type pos = m_plugin_path.rfind(XPLMGetDirectorySeparator());
-        //m_plugin_path.erase(pos + 1);
+        log().debug("Plugin path (after subdirectory removed) = " + m_plugin_path.string());
     }
 
     return m_plugin_path;
@@ -134,6 +132,7 @@ std::filesystem::path env_xplane::profiles_path()
 
     return m_profiles_path;
 }
+
 
 /**
  * Return the current aircraft path
@@ -220,7 +219,7 @@ std::string env_xplane::current_aircraft_descr()
 /**
  * Return the cmd object
  */
-commands &env_xplane::cmd()
+commands& env_xplane::cmd()
 {
     return *m_cmd;
 }
@@ -229,7 +228,7 @@ commands &env_xplane::cmd()
 /**
  * Return the dataref object
  */
-data &env_xplane::drf()
+data& env_xplane::drf()
 {
     return *m_drf;
 }

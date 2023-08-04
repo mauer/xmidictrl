@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -36,16 +36,6 @@ text_logger::text_logger(text_logger *in_parent)
 }
 
 
-/**
- * Destructor
- */
-text_logger::~text_logger()
-{
-    if (m_file_stream.is_open())
-        m_file_stream.close();
-}
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -55,7 +45,7 @@ text_logger::~text_logger()
 /**
  * Enable file logging
  */
-void text_logger::enable_file_logging(std::filesystem::path in_path)
+void text_logger::enable_file_logging(const std::filesystem::path& in_path)
 {
     if (!in_path.empty()) {
         std::string filename = in_path.string() + XMIDICTRL_NAME + LOGFILE_SUFFIX;
@@ -363,11 +353,12 @@ void text_logger::add_message(log_level in_level, std::string_view in_text)
 
     // get current date time stamp
     time_t t = std::time(nullptr);
-    struct tm *ltime = localtime(&t);
+    std::tm time_info {};
+    localtime_s(&time_info, &t);
 
     // format into a string
     char datetime_str[32];
-    std::strftime(&datetime_str[0], sizeof(datetime_str), "%Y-%m-%d %H:%M:%S", ltime);
+    std::strftime(&datetime_str[0], sizeof(datetime_str), "%Y-%m-%d %H:%M:%S", &time_info);
 
     // add message to internal list
     std::shared_ptr<text_log_msg> msg = std::make_shared<text_log_msg>();

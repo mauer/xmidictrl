@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Add a task to be executed
  */
-void inbound_worker::add_task(const std::shared_ptr<inbound_task> &in_task)
+void inbound_worker::add_task(const std::shared_ptr<inbound_task>& in_task)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);

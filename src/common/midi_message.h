@@ -45,7 +45,10 @@ public:
     text_logger &log();
 
     void clear();
+
     bool parse_message(std::vector<unsigned char> *in_msg);
+    void create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
+
     bool check();
 
     [[nodiscard]] size_t mapping_count() const;

@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENV_XPLANE_H
-#define ENV_XPLANE_H
+#ifndef XMC_ENV_XPLANE_H
+#define XMC_ENV_XPLANE_H
 
 // X-Plane SDK
 #include "XPLMDefs.h"
@@ -30,7 +30,7 @@ namespace xmidictrl {
 
 class env_xplane : public environment {
 public:
-    explicit env_xplane(text_logger &in_log);
+    explicit env_xplane(text_logger& in_log);
     ~env_xplane() override;
 
     std::filesystem::path xplane_path() override;
@@ -46,8 +46,8 @@ public:
     std::string current_aircraft_acf_name() override;
     std::string current_aircraft_descr() override;
 
-    commands &cmd() override;
-    data &drf() override;
+    commands& cmd() override;
+    data& drf() override;
 
 private:
     XPLMPluginID m_plugin_id {-1};
@@ -64,4 +64,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // ENV_XPLANE_H
+#endif // XMC_ENV_XPLANE_H

@@ -15,33 +15,49 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_IN_LIST_H
-#define XMC_MAP_IN_LIST_H
+#ifndef XMC_VIRTUAL_DEVICE_H
+#define XMC_VIRTUAL_DEVICE_H
 
 // Standard
-#include <memory>
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
 #include <map>
-#include <vector>
+#include <memory>
+#include <text_logger.h>
+#include <set>
+#include <string>
+#include <string_view>
+#include <thread>
+#include <queue>
 
 // XMidiCtrl
+#include "device.h"
 #include "map_in.h"
+#include "map_in_list.h"
+#include "midi_logger.h"
+#include "types.h"
 
 namespace xmidictrl {
 
-class map_in_list {
+class device_list;
+
+class virtual_device : public device {
 public:
-    explicit map_in_list() = default;
-    ~map_in_list();
+    virtual_device(text_logger& in_text_log,
+                   midi_logger& in_midi_log,
+                   std::string_view in_name);
+    ~virtual_device() = default;
 
-    void add(const std::shared_ptr<map_in>& in_map);
-    std::vector<std::shared_ptr<map_in>> find(const std::string &in_key);
+    // no copying or copy assignments are allowed
+    virtual_device(virtual_device const&) = delete;
+    virtual_device& operator=(virtual_device const&) = delete;
 
-    size_t size();
+    device_type type() override;
 
-protected:
-    std::multimap<std::string, std::shared_ptr<map_in>> m_list {};
+    void process_inbound_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_MAP_IN_LIST_H
+#endif // XMC_VIRTUAL_DEVICE_H

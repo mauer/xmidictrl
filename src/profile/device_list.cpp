@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -44,21 +44,37 @@ device_list::~device_list()
 /**
  * Create a new midi device
  */
-std::shared_ptr<device> device_list::create_device(text_logger &in_text_log,
-                                                   midi_logger &in_midi_log,
-                                                   std::string_view in_name,
-                                                   unsigned int in_port_in,
-                                                   unsigned int in_port_out,
-                                                   mode_out in_mode_out,
-                                                   encoder_mode in_default_enc_mode)
+std::shared_ptr<midi_device> device_list::create_midi_device(text_logger& in_text_log,
+                                                             midi_logger& in_midi_log,
+                                                             std::string_view in_name,
+                                                             unsigned int in_device_no,
+                                                             unsigned int in_port_in,
+                                                             unsigned int in_port_out,
+                                                             mode_out in_mode_out,
+                                                             encoder_mode in_default_enc_mode)
 {
-    std::shared_ptr<device> dev = std::make_shared<device>(in_text_log,
-                                                           in_midi_log,
-                                                           in_name,
-                                                           in_port_in,
-                                                           in_port_out,
-                                                           in_mode_out,
-                                                           in_default_enc_mode);
+    auto dev = std::make_shared<midi_device>(in_text_log,
+                                                                 in_midi_log,
+                                                                    in_name,
+                                                                    in_device_no,
+                                                                    in_port_in,
+                                                                    in_port_out,
+                                                                    in_mode_out,
+                                                                    in_default_enc_mode);
+    m_device_list.push_back(dev);
+
+    return dev;
+}
+
+
+/**
+ * Create a new virtual device
+ */
+std::shared_ptr<virtual_device> device_list::create_virtual_device(text_logger& in_text_log,
+                                                                   midi_logger& in_midi_log,
+                                                                   std::string_view in_name)
+{
+    auto dev = std::make_shared<virtual_device>(in_text_log, in_midi_log, in_name);
     m_device_list.push_back(dev);
 
     return dev;
@@ -72,9 +88,11 @@ bool device_list::open_connections()
 {
     bool result = true;
 
-    for (auto const &device: m_device_list) {
-        if (device != nullptr) {
-            if (!device->open_connections())
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::midi_device) {
+            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+
+            if (!midi_dev->open_connections())
                 result = false;
         }
     }
@@ -88,22 +106,43 @@ bool device_list::open_connections()
  */
 void device_list::close_connections()
 {
-    for (auto const &device: m_device_list) {
-        if (device != nullptr) {
-            device->close_connections();
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::midi_device) {
+            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+
+            midi_dev->close_connections();
         }
     }
 }
 
 
 /**
+ * Find and return the virtual device (if available, otherwise a nullptr)
+ */
+std::shared_ptr<virtual_device> device_list::find_virtual_device()
+{
+    std::shared_ptr<virtual_device> virtual_dev {nullptr};
+
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::virtual_device)
+            virtual_dev = std::static_pointer_cast<virtual_device>(device);
+    }
+
+    return virtual_dev;
+}
+
+
+/**
  * Process the midi init mappings
  */
-void device_list::process_init_mappings(text_logger &in_log)
+void device_list::process_init_mappings(text_logger& in_log)
 {
-    for (auto const &device: m_device_list) {
-        if (device != nullptr)
-            device->process_init_mappings(in_log);
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::midi_device) {
+            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+
+            midi_dev->process_init_mappings(in_log);
+        }
     }
 }
 
@@ -111,11 +150,14 @@ void device_list::process_init_mappings(text_logger &in_log)
 /**
  * Process the midi outbound mappings
  */
-void device_list::process_outbound_mappings(text_logger &in_log)
+void device_list::process_outbound_mappings(text_logger& in_log)
 {
-    for (auto const &device: m_device_list) {
-        if (device != nullptr)
-            device->process_outbound_mappings(in_log);
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::midi_device) {
+            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+
+            midi_dev->process_outbound_mappings(in_log);
+        }
     }
 }
 
@@ -125,9 +167,12 @@ void device_list::process_outbound_mappings(text_logger &in_log)
  */
 void device_list::process_outbound_reset()
 {
-    for (auto const &device: m_device_list) {
-        if (device != nullptr)
-            device->process_outbound_reset();
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && device->type() == device_type::midi_device) {
+            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+
+            midi_dev->process_outbound_reset();
+        }
     }
 }
 
@@ -146,7 +191,7 @@ void device_list::clear()
 /**
  * Return the number of devices
  */
-unsigned int device_list::size()
+size_t device_list::size()
 {
     return m_device_list.size();
 }

@@ -320,9 +320,9 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, const m
 
         if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
             || (m_send_on == send_mode::one && send_on_cnt > 0))
-            task->velocity = m_velocity_on;
+            task->velocity = static_cast<unsigned char>(m_velocity_on);
         else
-            task->velocity = m_velocity_off;
+            task->velocity = static_cast<unsigned char>(m_velocity_off);
 
 
         // add mapping to task

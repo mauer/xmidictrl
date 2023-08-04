@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef CONVERSIONS_H
-#define CONVERSIONS_H
+#ifndef XMC_CONVERSIONS_H
+#define XMC_CONVERSIONS_H
 
 // Standard
 #include <set>
@@ -34,17 +34,18 @@ namespace xmidictrl {
 
 class conversions {
 public:
-    static mode_out mode_out_from_int(int mode);
+    static mode_out mode_out_from_int(int in_mode);
 
     // move directly into mapping classes
-    static dataref_mode dataref_mode_from_code(std::string_view mode);
-    static encoder_mode encoder_mode_from_code(std::string_view mode);
+    static dataref_mode dataref_mode_from_code(std::string_view in_mode);
+    static encoder_mode encoder_mode_from_code(std::string_view in_mode);
 
-    static std::string time_to_string(time_point time);
+    static std::string time_to_string(time_point in_time);
+    static std::string int_to_string(int in_number, unsigned int in_length);
 
-    static std::string create_map_key(unsigned char ch, std::string_view type_code, unsigned char data);
+    static std::string create_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
 };
 
 } // Namespace xmidictrl
 
-#endif // CONVERSIONS_H
+#endif // XMC_CONVERSIONS_H

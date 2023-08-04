@@ -107,7 +107,7 @@ plugin::~plugin()
 /**
  * Create and return the plugin instance
  */
-plugin &plugin::instance()
+plugin& plugin::instance()
 {
     static plugin instance;
     return instance;
@@ -117,11 +117,11 @@ plugin &plugin::instance()
 /**
  * Callback for the flight loop
  */
-float plugin::callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void *in_refcon)
+float plugin::callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void* in_refcon)
 {
     // call instance method
     if (in_refcon != nullptr) {
-        auto instance = static_cast<plugin *>(in_refcon);
+        auto instance = static_cast<plugin*>(in_refcon);
         instance->process_flight_loop(in_elapsed_me, in_elapsed_sim, in_counter);
     }
 
@@ -292,9 +292,25 @@ void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, 
 
 
 /**
+ *
+ */
+void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity)
+{
+    if (m_profile->loaded()) {
+        auto virtual_dev = m_profile->devices().find_virtual_device();
+
+        if (virtual_dev != nullptr)
+            virtual_dev->process_inbound_message(static_cast<unsigned char>(m_settings->virtual_channel()),
+                                                 in_cc,
+                                                 in_velocity);
+    }
+}
+
+
+/**
  * Add an inbound task to the worker
  */
-void plugin::add_inbound_task(const std::shared_ptr<inbound_task> &in_task)
+void plugin::add_inbound_task(const std::shared_ptr<inbound_task>& in_task)
 {
     if (m_worker != nullptr)
         m_worker->add_task(in_task);
@@ -421,30 +437,50 @@ void plugin::remove_datarefs()
  */
 void plugin::create_commands()
 {
+    // general plugin commands
     m_cmd_show_messages = XPLMCreateCommand("xmidictrl/show_messages_window", "Show the messages window");
     XPLMRegisterCommandHandler(m_cmd_show_messages,
                                command_handler,
                                1,
-                               (void *) COMMAND_MESSAGE_WINDOW);
+                               (void*) COMMAND_MESSAGE_WINDOW);
 
     m_cmd_show_profile = XPLMCreateCommand("xmidictrl/show_profile_window", "Show the aircraft profile window");
     XPLMRegisterCommandHandler(m_cmd_show_profile,
                                command_handler,
                                1,
-                               (void *) COMMAND_PROFILE_WINDOW);
+                               (void*) COMMAND_PROFILE_WINDOW);
 
     m_cmd_reload_profile = XPLMCreateCommand("xmidictrl/reload_profile", "Reload the aircraft profile");
     XPLMRegisterCommandHandler(m_cmd_reload_profile,
                                command_handler,
                                1,
-                               (void *) COMMAND_RELOAD_PROFILE);
+                               (void*) COMMAND_RELOAD_PROFILE);
 
     m_cmd_toggle_sublayer = XPLMCreateCommand("xmidictrl/toggle_sublayer",
                                               "Toggle dataref 'xmidictrl/sublayer' between 0 and 1");
     XPLMRegisterCommandHandler(m_cmd_toggle_sublayer,
                                command_handler,
                                1,
-                               (void *) COMMAND_TOGGLE_SUBLAYER);
+                               (void*) COMMAND_TOGGLE_SUBLAYER);
+
+    // virtual midi commands
+    for (int i = 0; i <= 127; i++) {
+        std::string cmd_name = "xmidictrl/midi/send_midi_cc_msg_" + conversions::int_to_string(i, 3);
+
+        std::string cmd_descr = "Send virtual MIDI message (CH "
+                                + std::to_string(m_settings->virtual_channel()) + " CC "
+                                + std::to_string(i) + ")";
+
+        m_cmd_vmidi_message[i] = XPLMCreateCommand(cmd_name.data(), cmd_descr.data());
+
+        int* ptr = (int*) malloc(sizeof(int));
+        *ptr = i;
+
+        XPLMRegisterCommandHandler(m_cmd_vmidi_message[i],
+                                   virtual_midi_command_handler,
+                                   1,
+                                   ptr);
+    }
 }
 
 
@@ -457,16 +493,19 @@ void plugin::remove_commands()
     XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_toggle_sublayer, command_handler, 0, nullptr);
+
+    for (int i = 0; i <= 127; i++)
+        XPLMUnregisterCommandHandler(m_cmd_vmidi_message[i], nullptr, 0, nullptr);
 }
 
 
 /**
  * Read handler for dataref xmidictrl/sublayer
  */
-int plugin::read_drf_sublayer(void *in_refcon)
+int plugin::read_drf_sublayer(void* in_refcon)
 {
     if (in_refcon != nullptr) {
-        auto instance = static_cast<plugin *>(in_refcon);
+        auto instance = static_cast<plugin*>(in_refcon);
         return instance->sublayer();
     }
 
@@ -477,10 +516,10 @@ int plugin::read_drf_sublayer(void *in_refcon)
 /**
  * Write handler for dataref xmidictrl/sublayer
  */
-void plugin::write_drf_sublayer(void *in_refcon, int in_value)
+void plugin::write_drf_sublayer(void* in_refcon, int in_value)
 {
     if (in_refcon != nullptr) {
-        auto instance = static_cast<plugin *>(in_refcon);
+        auto instance = static_cast<plugin*>(in_refcon);
         instance->set_sublayer(in_value);
     }
 }
@@ -489,19 +528,47 @@ void plugin::write_drf_sublayer(void *in_refcon, int in_value)
 /**
  * Handler for custom commands
  */
-int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon)
+int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMCommandPhase in_phase, void* in_refcon)
 {
     if (in_phase != xplm_CommandEnd)
         return 1;
 
-    if (!strcmp((const char *) in_refcon, COMMAND_MESSAGE_WINDOW))
+    if (!strcmp((const char*) in_refcon, COMMAND_MESSAGE_WINDOW))
         plugin::instance().show_messages_window();
-    else if (!strcmp((const char *) in_refcon, COMMAND_PROFILE_WINDOW))
+    else if (!strcmp((const char*) in_refcon, COMMAND_PROFILE_WINDOW))
         plugin::instance().show_profile_window();
-    else if (!strcmp((const char *) in_refcon, COMMAND_RELOAD_PROFILE))
+    else if (!strcmp((const char*) in_refcon, COMMAND_RELOAD_PROFILE))
         plugin::instance().load_profile();
-    else if (!strcmp((const char *) in_refcon, COMMAND_TOGGLE_SUBLAYER))
+    else if (!strcmp((const char*) in_refcon, COMMAND_TOGGLE_SUBLAYER))
         plugin::instance().toggle_sublayer();
+
+    // disable further processing by X-Plane.
+    return 0;
+}
+
+
+/**
+ * Handler for virtual midi commands
+ */
+int plugin::virtual_midi_command_handler([[maybe_unused]] XPLMCommandRef in_command,
+                                         XPLMCommandPhase in_phase,
+                                         void* in_refcon)
+{
+    if (in_phase == xplm_CommandContinue)
+        return 1;
+
+    // get the cc number
+    int cc = *((int*) in_refcon);
+
+    switch (in_phase) {
+        case xplm_CommandBegin:
+            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_VELOCITY_MAX);
+            break;
+
+        case xplm_CommandEnd:
+            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_VELOCITY_MIN);
+            break;
+    }
 
     // disable further processing by X-Plane.
     return 0;
@@ -520,7 +587,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
         window = m_windows.at(in_type);
         window->show();
         return window;
-    } catch (std::out_of_range &) {
+    } catch (std::out_of_range&) {
         window = nullptr;
     }
 

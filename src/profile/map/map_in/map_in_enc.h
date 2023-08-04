@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_ENC_H
-#define MAP_IN_ENC_H
+#ifndef XMC_MAP_IN_ENC_H
+#define XMC_MAP_IN_ENC_H
 
 // Standard
 #include <string>
@@ -34,12 +34,12 @@ namespace xmidictrl {
 
 class map_in_enc : public map_in {
 public:
-    explicit map_in_enc(environment &in_env);
+    explicit map_in_enc(environment &in_env, encoder_mode in_default_enc_mode);
     ~map_in_enc() override = default;
 
     map_type type() override;
 
-    void read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config) override;
+    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
     bool check(text_logger &in_log) override;
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
@@ -81,4 +81,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // MAP_IN_ENC_H
+#endif // XMC_MAP_IN_ENC_H

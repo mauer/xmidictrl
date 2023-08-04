@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef XMC_SETTINGS_H
+#define XMC_SETTINGS_H
 
 // Standard
 #include <memory>
@@ -45,6 +45,9 @@ public:
 
     void set_show_messages(bool in_enabled);
     [[nodiscard]] bool show_messages() const;
+
+    void set_virtual_channel(int in_channel);
+    [[nodiscard]] int virtual_channel() const;
 
     void set_max_text_messages(int in_number);
     [[nodiscard]] int max_text_messages() const;
@@ -88,6 +91,8 @@ private:
     bool m_log_midi {true};
     bool m_show_messages {true};
 
+    int m_virtual_channel {16};
+
     int m_max_text_messages {1500};
     int m_max_midi_messages {150};
 
@@ -110,4 +115,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // SETTINGS_H
+#endif // XMC_SETTINGS_H

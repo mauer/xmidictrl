@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -26,8 +26,8 @@ namespace xmidictrl {
 /**
  * Check if the given key is in the config
  */
-bool toml_utils::contains(text_logger &in_log,
-                          toml::value &in_data,
+bool toml_utils::contains(text_logger& in_log,
+                          toml::value& in_data,
                           std::string_view in_name,
                           bool in_mandatory)
 {
@@ -47,7 +47,7 @@ bool toml_utils::contains(text_logger &in_log,
 
             return false;
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -60,7 +60,7 @@ bool toml_utils::contains(text_logger &in_log,
 /**
  * Check if the given key is an array
  */
-bool toml_utils::is_array(text_logger &in_log, toml::value &in_data, std::string_view in_name)
+bool toml_utils::is_array(text_logger& in_log, toml::value& in_data, std::string_view in_name)
 {
     if (in_name.empty()) {
         in_log.error("Internal error (toml_is_array --> name is empty");
@@ -77,7 +77,7 @@ bool toml_utils::is_array(text_logger &in_log, toml::value &in_data, std::string
         } else {
             return false;
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -90,8 +90,8 @@ bool toml_utils::is_array(text_logger &in_log, toml::value &in_data, std::string
 /**
  * Read the value of a string parameter
  */
-std::string toml_utils::read_string(text_logger &in_log,
-                                    toml::value &in_data,
+std::string toml_utils::read_string(text_logger& in_log,
+                                    toml::value& in_data,
                                     std::string_view in_name,
                                     bool in_mandatory)
 {
@@ -108,7 +108,7 @@ std::string toml_utils::read_string(text_logger &in_log,
             value = in_data[in_name.data()].as_string();
             in_log.debug_param(in_data.location().line(), std::string(in_name), value);
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -121,8 +121,8 @@ std::string toml_utils::read_string(text_logger &in_log,
 /**
  * Read the values of a string array and return as set
  */
-std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
-                                                     toml::value &in_data,
+std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
+                                                     toml::value& in_data,
                                                      std::string_view in_name,
                                                      bool in_mandatory)
 {
@@ -145,7 +145,7 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
                     list.insert(value.data());
             }
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -158,8 +158,8 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger &in_log,
 /**
  * Read the values of a string array and return as vector
  */
-std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
-                                                           toml::value &in_data,
+std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
+                                                           toml::value& in_data,
                                                            std::string_view in_name,
                                                            bool in_mandatory)
 {
@@ -182,7 +182,7 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
                     list.push_back(value);
             }
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -195,8 +195,8 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger &in_log,
 /**
  * Read the value of an integer
  */
-int toml_utils::read_int(text_logger &in_log,
-                         toml::value &in_data,
+int toml_utils::read_int(text_logger& in_log,
+                         toml::value& in_data,
                          std::string_view in_name,
                          bool in_mandatory)
 {
@@ -219,7 +219,7 @@ int toml_utils::read_int(text_logger &in_log,
                 in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
             }
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());
@@ -232,8 +232,8 @@ int toml_utils::read_int(text_logger &in_log,
 /**
  * Read the value of a float
  */
-float toml_utils::read_float(text_logger &in_log,
-                             toml::value &in_data,
+float toml_utils::read_float(text_logger& in_log,
+                             toml::value& in_data,
                              std::string_view in_name,
                              bool in_mandatory,
                              float in_fallback)
@@ -261,7 +261,7 @@ float toml_utils::read_float(text_logger &in_log,
                 in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
             }
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), in_data.location().line_str());
         in_log.error(" --> Error reading mapping");
         in_log.error(error.what());

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_IN_H
-#define MAP_IN_H
+#ifndef XMC_MAP_IN_H
+#define XMC_MAP_IN_H
 
 // Standard
 #include <memory>
@@ -31,8 +31,6 @@
 
 namespace xmidictrl {
 
-class device;
-
 class map_in : public map {
 public:
     explicit map_in(environment &in_env);
@@ -40,7 +38,7 @@ public:
 
     [[nodiscard]] std::string_view sl() const;
 
-    virtual void read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config);
+    virtual void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config);
 
     virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
 
@@ -62,4 +60,4 @@ private:
 
 } // Namespace xmiditrl
 
-#endif // MAP_IN_H
+#endif // XMC_MAP_IN_H

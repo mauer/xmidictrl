@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef XMC_PLUGIN_H
+#define XMC_PLUGIN_H
 
 // Standard
 #include <map>
@@ -55,6 +55,7 @@ public:
 
     void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
 
+    void add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity);
     void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
 
     void show_messages_window();
@@ -82,6 +83,7 @@ private:
     static void write_drf_sublayer(void *in_refcon, int in_value);
 
     static int command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
+    static int virtual_midi_command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
 
     std::shared_ptr<xplane_window> create_window(window_type in_type);
 
@@ -108,6 +110,8 @@ private:
     XPLMCommandRef m_cmd_reload_profile {nullptr};
     XPLMCommandRef m_cmd_toggle_sublayer {nullptr};
 
+    XPLMCommandRef m_cmd_vmidi_message[128] {nullptr};
+
     // internal sublayer number
     int m_sublayer {0};
 
@@ -117,4 +121,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // PLUGIN_H
+#endif // XMC_PLUGIN_H

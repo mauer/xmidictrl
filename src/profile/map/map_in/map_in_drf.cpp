@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -53,10 +53,10 @@ map_type map_in_drf::type()
 /**
  * Read settings from config
  */
-void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
+void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug(" --> Line " + std::to_string(in_data.location().line()) + " :: Read settings for type 'drf'");
-    map_in::read_config(in_log, in_data, in_device, in_config);
+    map_in::read_config(in_log, in_data, in_config);
 
     // read mode
     m_mode = conversions::dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));

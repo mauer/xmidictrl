@@ -32,7 +32,7 @@ namespace xmidictrl {
 class menu {
 public:
     menu() = default;
-    ~menu();
+    ~menu() = default;
 
     void create_menu();
     void remove_menu();

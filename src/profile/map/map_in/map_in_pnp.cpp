@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -75,10 +75,10 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
+void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'pnp'");
-    map_in::read_config(in_log, in_data, in_device, in_config);
+    map_in::read_config(in_log, in_data, in_config);
 
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH, false)) {
         // read dataref push

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -30,9 +30,9 @@ namespace xmidictrl {
 /**
  * Return the outbound mode for a given integer
  */
-mode_out conversions::mode_out_from_int(int mode)
+mode_out conversions::mode_out_from_int(int in_mode)
 {
-    if (mode == 1)
+    if (in_mode == 1)
         return mode_out::on_change;
     else
         return mode_out::permanent;
@@ -42,9 +42,9 @@ mode_out conversions::mode_out_from_int(int mode)
 /**
  * Return the dataref mode for a given string
  */
-dataref_mode conversions::dataref_mode_from_code(std::string_view mode)
+dataref_mode conversions::dataref_mode_from_code(std::string_view in_mode)
 {
-    if (mode == "momentary")
+    if (in_mode == "momentary")
         return dataref_mode::momentary;
     else
         return dataref_mode::toggle;
@@ -54,9 +54,9 @@ dataref_mode conversions::dataref_mode_from_code(std::string_view mode)
 /**
  * Return the encoder mode for a given string
  */
-encoder_mode conversions::encoder_mode_from_code(std::string_view mode)
+encoder_mode conversions::encoder_mode_from_code(std::string_view in_mode)
 {
-    if (mode == "range")
+    if (in_mode == "range")
         return encoder_mode::range;
     else
         return encoder_mode::relative;
@@ -66,26 +66,41 @@ encoder_mode conversions::encoder_mode_from_code(std::string_view mode)
 /**
  * Convert a time point into a string
  */
-std::string conversions::time_to_string(time_point time)
+std::string conversions::time_to_string(time_point in_time)
 {
-    std::time_t t = std::chrono::system_clock::to_time_t(time);
-    std::tm tm = *std::localtime(&t);
+    std::time_t t = std::chrono::system_clock::to_time_t(in_time);
+    std::tm time_info {};
+
+    localtime_s(&time_info, &t);
 
     // format into a string
     std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    oss << std::put_time(&time_info, "%Y-%m-%d %H:%M:%S");
 
     return oss.str();
 }
 
 
 /**
- * Create a unique key for mappings
+ * Convert an integer to an string with leading zeros
  */
-std::string conversions::create_map_key(const unsigned char ch, std::string_view type_code, const unsigned char data)
+std::string conversions::int_to_string(int in_number, unsigned int in_length)
 {
     std::stringstream ss;
-    ss << static_cast<int>(ch) << type_code << static_cast<int>(data);
+    ss << std::setw(in_length) << std::setfill('0') << in_number;
+    std::string str = ss.str();
+
+    return str;
+}
+
+
+/**
+ * Create a unique key for mappings
+ */
+std::string conversions::create_map_key(const unsigned char in_ch, std::string_view in_type_code, const unsigned char in_data)
+{
+    std::stringstream ss;
+    ss << static_cast<int>(in_ch) << in_type_code << static_cast<int>(in_data);
 
     return ss.str();
 }

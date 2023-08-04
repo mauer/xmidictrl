@@ -7,6 +7,9 @@
 + Added new outbound message type "constant"
 + Added option to delay encoders (parameter "delay") 
 + Display ACF-Filename in profile window
++ Removed depreciated mappings (cc / mapping)
++ Added virtual device
++ Updated X-Plane SDK to version 4.0.1
 
 -----------------------------------------------------------------------------------------------------------------------
 

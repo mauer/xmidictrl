@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PROFILE_H
-#define PROFILE_H
+#ifndef XMC_PROFILE_H
+#define XMC_PROFILE_H
 
 // Standard
 #include <memory>
@@ -61,6 +61,8 @@ public:
     std::string title();
     std::string version();
 
+    device_list& devices();
+
     std::string get_filename_aircraft_path(filename_prefix in_prefix);
     std::string get_filename_profiles_path(filename_prefix in_prefix);
 
@@ -75,9 +77,14 @@ private:
 
     void create_device_list();
 
-    void create_init_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
-    void create_inbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
-    void create_outbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device);
+    void create_virtual_device();
+    void create_midi_device();
+
+    void create_init_mapping(size_t in_dev_no, toml::array in_settings, const std::shared_ptr<midi_device> &in_device);
+    void create_inbound_mapping(toml::array in_settings, const std::shared_ptr<device> &in_device);
+    void create_outbound_mapping(size_t in_dev_no,
+                                 toml::array in_settings,
+                                 const std::shared_ptr<midi_device> &in_device);
 
     static map_type translate_map_type(std::string_view in_type_str);
     map_type read_mapping_type(toml::value &in_settings);
@@ -99,4 +106,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // PROFILE_H
+#endif // XMC_PROFILE_H

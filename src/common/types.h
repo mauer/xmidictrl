@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef XMC_TYPES_H
+#define XMC_TYPES_H
 
 // Standard
 #include <chrono>
@@ -78,7 +78,6 @@ const char *const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 
 // Keys for the config files
 const char *const CFG_KEY_CC = "cc";
-const char *const CFG_KEY_CC_DEPRECATED = "CC";
 const char *const CFG_KEY_CH = "ch";
 const char *const CFG_KEY_COMMAND = "command";
 const char *const CFG_KEY_COMMAND_DOWN = "command_down";
@@ -100,7 +99,6 @@ const char *const CFG_KEY_DEVICE = "device";
 const char *const CFG_KEY_ENCODER_MODE = "encoder_mode";
 const char *const CFG_KEY_LABEL = "label";
 const char *const CFG_KEY_LOG_MIDI = "log_midi";
-const char *const CFG_KEY_MAPPING = "mapping";
 const char *const CFG_KEY_MAPPING_IN = "mapping_in";
 const char *const CFG_KEY_MAPPING_INIT = "mapping_init";
 const char *const CFG_KEY_MAPPING_OUT = "mapping_out";
@@ -139,6 +137,8 @@ const char *const CFG_KEY_VELOCITY = "velocity";
 const char *const CFG_KEY_VELOCITY_ON = "velocity_on";
 const char *const CFG_KEY_VELOCITY_OFF = "velocity_off";
 const char *const CFG_KEY_VERSION = "version";
+const char *const CFG_KEY_VIRTUAL_CHANNEL = "virtual_channel";
+const char *const CFG_KEY_VIRTUAL_DEVICE = "virtual_device";
 const char *const CFG_KEY_INFO_DISABLED = "info_disabled";
 const char *const CFG_KEY_INFO_OFFSET_X = "info_offset_x";
 const char *const CFG_KEY_INFO_OFFSET_Y = "info_offset_y";
@@ -162,6 +162,12 @@ const char *const CFG_MAPTYPE_SLIDER = "sld";
 
 // time point
 using time_point = std::chrono::system_clock::time_point;
+
+// Device type
+enum class device_type {
+    virtual_device,
+    midi_device
+};
 
 // Log levels
 enum class log_level {
@@ -262,4 +268,4 @@ enum class window_type {
 
 } // Namespace xmidictrl
 
-#endif // TYPES_H
+#endif // XMC_TYPES_H

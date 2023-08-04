@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-midi_logger::midi_logger(settings &in_settings)
+midi_logger::midi_logger(settings& in_settings)
     : m_settings(in_settings)
 {
 }
@@ -69,7 +69,7 @@ size_t midi_logger::count()
 /**
  * Return a specific midi message
  */
-midi_message *midi_logger::message(int in_index)
+midi_message* midi_logger::message(int in_index)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
@@ -81,7 +81,7 @@ midi_message *midi_logger::message(int in_index)
 /**
  * Log a MIDI message
  */
-void midi_logger::add(const std::shared_ptr<midi_message> &in_msg)
+void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
 {
     if (!m_settings.log_midi())
         return;
@@ -94,6 +94,5 @@ void midi_logger::add(const std::shared_ptr<midi_message> &in_msg)
 
     m_messages.push_back(in_msg);
 }
-
 
 } // Namespace xmidictrl

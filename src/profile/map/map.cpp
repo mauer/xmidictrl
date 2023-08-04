@@ -213,14 +213,6 @@ void map::read_data(text_logger &in_log, toml::value &in_data)
 
             in_log.debug_line(in_data.location().line(),
                               "Parameter '" + std::string(CFG_KEY_CC) + "' = '" + std::to_string(m_data) + "'");
-        } else if (in_data.contains(CFG_KEY_CC_DEPRECATED)) {
-            m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC_DEPRECATED].as_integer());
-            m_data_type = map_data_type::control_change;
-
-            in_log.warn(" --> Line " + std::to_string(in_data.location().line()) + " :: "
-                        + "Parameter '" + CFG_KEY_CC_DEPRECATED + "' is deprecated, please rename it to '" + CFG_KEY_CC + "'");
-
-            in_log.debug_line(in_data.location().line(), "Parameter '" + std::string(CFG_KEY_CC_DEPRECATED) + "' = '" + std::to_string(m_data) + "'");
         } else if (in_data.contains(CFG_KEY_NOTE)) {
             m_data = static_cast<unsigned char>( in_data[CFG_KEY_NOTE].as_integer());
             m_data_type = map_data_type::note;

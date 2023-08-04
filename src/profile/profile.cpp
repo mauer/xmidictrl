@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -28,6 +28,7 @@
 #include "map_in_sld.h"
 #include "map_out_con.h"
 #include "map_out_drf.h"
+#include "midi_device.h"
 #include "midi_logger.h"
 #include "conversions.h"
 #include "toml_utils.h"
@@ -42,7 +43,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, environment &in_env, settings &in_settings)
+profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env, settings& in_settings)
     : config(in_env),
       m_settings(in_settings),
       m_plugin_log(in_text_log),
@@ -62,6 +63,8 @@ profile::profile(text_logger &in_text_log, midi_logger &in_midi_log, environment
 profile::~profile()
 {
     clear();
+
+    m_device_list.reset();
 }
 
 
@@ -158,7 +161,7 @@ std::string_view profile::filename() const
 /**
  * Return the log
  */
-text_logger &profile::log()
+text_logger& profile::log()
 {
     return *m_profile_log;
 }
@@ -188,6 +191,15 @@ std::string profile::title()
 std::string profile::version()
 {
     return toml::find_or<std::string>(m_config, CFG_KEY_VERSION, "");
+}
+
+
+/**
+ * Return the list of all device
+ */
+device_list& profile::devices()
+{
+    return *m_device_list;
 }
 
 
@@ -242,7 +254,7 @@ std::string_view profile::sl_dataref() const
 /**
  * Process all outbound mappings
  */
-void profile::process(text_logger &in_log)
+void profile::process(text_logger& in_log)
 {
     if (!m_init_send) {
         // process init mappings
@@ -347,11 +359,14 @@ void profile::create_device_list()
     if (m_config.type() == toml::value_t::empty)
         return;
 
+    // create the virtual device (if specified)
+    create_virtual_device();
+
     try {
-        // get all devices from the profile
+        // get all midi devices from the profile
         auto profile_dev = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
 
-        m_profile_log->info(std::to_string(profile_dev.size()) + " Device(s) found in aircraft profile");
+        m_profile_log->info(std::to_string(profile_dev.size()) + " MIDI device(s) found in aircraft profile");
 
         // parse every device
         for (size_t dev_no = 0; dev_no < profile_dev.size(); dev_no++) {
@@ -364,7 +379,7 @@ void profile::create_device_list()
             // read all parameters for the current device
             toml::value settings_dev = profile_dev[dev_no];
 
-            m_profile_log->debug("Read settings for device " + std::to_string(dev_no));
+            m_profile_log->debug("Read settings for MIDI device " + std::to_string(dev_no));
 
             try {
                 // name
@@ -404,14 +419,15 @@ void profile::create_device_list()
                                                                                                CFG_KEY_ENCODER_MODE,
                                                                                                false));
 
-                // create device
-                std::shared_ptr<device> device = m_device_list->create_device(m_plugin_log,
-                                                                              m_midi_log,
-                                                                              name,
-                                                                              port_in,
-                                                                              port_out,
-                                                                              mode_out,
-                                                                              default_enc_mode);
+                // create midi device
+                auto device = m_device_list->create_midi_device(m_plugin_log,
+                                                                m_midi_log,
+                                                                name,
+                                                                static_cast<unsigned int>(dev_no),
+                                                                port_in,
+                                                                port_out,
+                                                                mode_out,
+                                                                default_enc_mode);
 
                 if (device != nullptr) {
                     // create init mappings
@@ -419,14 +435,9 @@ void profile::create_device_list()
                         create_init_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_INIT].as_array(), device);
 
                     // create inbound mappings
-                    if (settings_dev.contains(CFG_KEY_MAPPING_IN)) {
-                        create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
-                    } else if (settings_dev.contains(CFG_KEY_MAPPING)) {
-                        m_profile_log->warn("Device " + std::to_string(dev_no) + " :: "
-                                            + "Key '" + CFG_KEY_MAPPING + "' is deprecated, please rename it to '"
-                                            + CFG_KEY_MAPPING_IN + "'");
-                        create_inbound_mapping(dev_no, settings_dev[CFG_KEY_MAPPING].as_array(), device);
-                    } else
+                    if (settings_dev.contains(CFG_KEY_MAPPING_IN))
+                        create_inbound_mapping(settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
+                    else
                         m_profile_log->info("Device " + std::to_string(dev_no) + " :: No inbound mappings found");
 
                     // create outbound mappings
@@ -435,15 +446,15 @@ void profile::create_device_list()
                     else
                         m_profile_log->info("Device " + std::to_string(dev_no) + " :: No outbound mappings found");
                 }
-            } catch (const std::out_of_range &error) {
+            } catch (const std::out_of_range& error) {
                 m_profile_log->error("Device " + std::to_string(dev_no) + " :: Error reading profile");
                 m_profile_log->error(error.what());
-            } catch (toml::type_error &error) {
+            } catch (toml::type_error& error) {
                 m_profile_log->error("Device " + std::to_string(dev_no) + " :: Error reading profile");
                 m_profile_log->error(error.what());
             }
         }
-    } catch (std::out_of_range &error) {
+    } catch (std::out_of_range& error) {
         m_profile_log->warn("No MIDI devices found in aircraft profile");
         m_profile_log->warn(error.what());
     }
@@ -451,9 +462,59 @@ void profile::create_device_list()
 
 
 /**
+ * Create the virtual device
+ */
+void profile::create_virtual_device()
+{
+    // do we have a virtual device?
+    try {
+        auto settings_dev = toml::find(m_config, CFG_KEY_VIRTUAL_DEVICE);
+
+        m_profile_log->info("Virtual device found in aircraft profile");
+
+        std::string name;
+        m_profile_log->debug("Read settings for virtual device");
+
+        try {
+            // name
+            name = toml_utils::read_string(*m_profile_log, settings_dev, CFG_KEY_NAME, false);
+
+            if (name.empty()) {
+                name = "<undefined>";
+                m_profile_log->warn("Virtual device :: Parameter '" + std::string(CFG_KEY_NAME) + "' is missing");
+            }
+
+            // create midi device
+            auto device = m_device_list->create_virtual_device(m_plugin_log,
+                                                               m_midi_log,
+                                                               name);
+
+            if (device != nullptr) {
+                // create inbound mappings
+                if (settings_dev.contains(CFG_KEY_MAPPING_IN))
+                    create_inbound_mapping(settings_dev[CFG_KEY_MAPPING_IN].as_array(), device);
+                else
+                    m_profile_log->info("Virtual device :: No inbound mappings found");
+            }
+        } catch (const std::out_of_range& error) {
+            m_profile_log->error("Virtual device :: Error reading profile");
+            m_profile_log->error(error.what());
+        } catch (toml::type_error& error) {
+            m_profile_log->error("Virtual device :: Error reading profile");
+            m_profile_log->error(error.what());
+        }
+    } catch (std::out_of_range&) {
+        m_profile_log->debug("No virtual device found in aircraft profile");
+    }
+}
+
+
+/**
  * Create the init mapping for a device and store it
  */
-void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
+void profile::create_init_mapping(size_t in_dev_no,
+                                  toml::array in_settings,
+                                  const std::shared_ptr<midi_device>& in_device)
 {
     m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
                         + std::to_string(in_settings.size()) + " init mapping(s) found");
@@ -463,7 +524,8 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
         std::shared_ptr<map_init> mapping;
 
         m_profile_log->debug(
-            "Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no) + " :: Reading config");
+            "Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+            + " :: Reading config");
 
         try {
             mapping = std::make_shared<map_init>(env());
@@ -471,13 +533,15 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
 
-            if (mapping->check(*m_profile_log))
-                out_device->add_init_map(mapping);
-            else
-                m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
-                                     + " :: Parameters incomplete or incorrect");
-
-        } catch (toml::type_error &error) {
+            if (mapping->check(*m_profile_log)) {
+                in_device->add_init_map(mapping);
+                m_profile_log->debug(" --> Mapping added");
+            } else {
+                m_profile_log->error(
+                    "Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                    + " :: Parameters incomplete or incorrect");
+            }
+        } catch (toml::type_error& error) {
             m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
                                  + " :: Error reading mapping");
             m_profile_log->error(error.what());
@@ -489,17 +553,28 @@ void profile::create_init_mapping(int in_dev_no, toml::array in_settings, const 
 /**
  * Create the inbound mapping for a device and store it
  */
-void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
+void profile::create_inbound_mapping(toml::array in_settings, const std::shared_ptr<device>& in_device)
 {
-    m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
-                        + std::to_string(in_settings.size()) + " inbound mapping(s) found");
+    if (in_device->type() == device_type::virtual_device)
+        m_profile_log->info("Virtual device :: "
+                            + std::to_string(in_settings.size()) + " inbound mapping(s) found");
+
+    else
+        m_profile_log->info("Device "
+                            + std::to_string(std::static_pointer_cast<midi_device>(in_device)->device_no())
+                            + " :: "
+                            + std::to_string(in_settings.size()) + " inbound mapping(s) found");
 
     // parse each mapping entry
     for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_in> mapping;
 
-        m_profile_log->debug(
-            "Device " + std::to_string(in_dev_no) + " :: Read settings for mapping " + std::to_string(map_no));
+        if (in_device->type() == device_type::virtual_device)
+            m_profile_log->debug("Virtual device :: Read settings for mapping " + std::to_string(map_no));
+        else
+            m_profile_log->debug("Device "
+                                 + std::to_string(std::static_pointer_cast<midi_device>(in_device)->device_no())
+                                 + " :: Read settings for mapping " + std::to_string(map_no));
 
         try {
             map_type type = read_mapping_type(in_settings[map_no]);
@@ -514,21 +589,32 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
                     mapping = std::make_shared<map_in_drf>(env());
                     break;
 
-                case map_type::encoder:
-                    mapping = std::make_shared<map_in_enc>(env());
-                    break;
-
                 case map_type::push_pull:
                     mapping = std::make_shared<map_in_pnp>(env());
                     break;
 
+                case map_type::encoder:
+                    if (in_device->type() == device_type::midi_device) {
+                        auto dev = std::static_pointer_cast<midi_device>(in_device);
+                        mapping = std::make_shared<map_in_enc>(env(), dev->default_encoder_mode());
+                    } else {
+                        m_profile_log->error("Virtual device :: Mapping " + std::to_string(map_no)
+                                             + " :: mapping type not supported for virtual devices");
+                    }
+                    break;
+
                 case map_type::slider:
-                    mapping = std::make_shared<map_in_sld>(env());
+                    if (in_device->type() == device_type::midi_device) {
+                        mapping = std::make_shared<map_in_sld>(env());
+                    } else {
+                        m_profile_log->error("Virtual device :: Mapping " + std::to_string(map_no)
+                                             + " :: mapping type not supported for virtual devices");
+                    }
                     break;
 
                 case map_type::constant:
                 case map_type::none:
-                    m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
+                    m_profile_log->error("Virtual device :: Mapping " + std::to_string(map_no)
                                          + " :: Invalid mapping type");
                     break;
             }
@@ -541,16 +627,17 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
             }
 
             // read the settings and check if everything we need was defined
-            mapping->read_config(*m_profile_log, in_settings[map_no], *out_device, m_config);
+            mapping->read_config(*m_profile_log, in_settings[map_no], m_config);
 
             if (mapping->check(*m_profile_log)) {
-                out_device->add_inbound_map(mapping);
+                in_device->add_inbound_map(mapping);
+                m_profile_log->debug(" --> Mapping added");
             } else {
                 m_profile_log->error("Line " + std::to_string(in_settings[map_no].location().line()) + " :: "
                                      + in_settings[map_no].location().line_str());
                 m_profile_log->error(" --> Parameters incomplete or incorrect");
             }
-        } catch (toml::type_error &error) {
+        } catch (toml::type_error& error) {
             m_profile_log->error("Line " + std::to_string(in_settings[map_no].location().line()) + " :: "
                                  + in_settings[map_no].location().line_str());
             m_profile_log->error(" --> Error reading config");
@@ -563,7 +650,9 @@ void profile::create_inbound_mapping(int in_dev_no, toml::array in_settings, con
 /**
  * Create the outbound mapping for a device and store it
  */
-void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, const std::shared_ptr<device> &out_device)
+void profile::create_outbound_mapping(size_t in_dev_no,
+                                      toml::array in_settings,
+                                      const std::shared_ptr<midi_device>& in_device)
 {
     m_profile_log->info("Device " + std::to_string(in_dev_no) + " :: "
                         + std::to_string(in_settings.size()) + " outbound mapping(s) found");
@@ -603,13 +692,14 @@ void profile::create_outbound_mapping(int in_dev_no, toml::array in_settings, co
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
 
-            if (mapping->check(*m_profile_log))
-                out_device->add_outbound_map(mapping);
-            else
+            if (mapping->check(*m_profile_log)) {
+                in_device->add_outbound_map(mapping);
+                m_profile_log->debug(" --> Mapping added");
+            } else {
                 m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
                                      + " :: Parameters incomplete or incorrect");
-
-        } catch (toml::type_error &error) {
+            }
+        } catch (toml::type_error& error) {
             m_profile_log->error("Device " + std::to_string(in_dev_no) + " :: Mapping " + std::to_string(map_no)
                                  + " :: Error reading mapping");
             m_profile_log->error(error.what());
@@ -645,7 +735,7 @@ map_type profile::translate_map_type(std::string_view in_type_str)
 /**
  * Read the mapping type
  */
-map_type profile::read_mapping_type(toml::value &in_settings)
+map_type profile::read_mapping_type(toml::value& in_settings)
 {
     map_type type = map_type::none;
 
@@ -663,7 +753,7 @@ map_type profile::read_mapping_type(toml::value &in_settings)
                 "Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
             m_profile_log->error(" --> Parameter '" + std::string(CFG_KEY_TYPE) + "' is missing");
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         m_profile_log->error(
             "Line " + std::to_string(in_settings.location().line()) + " :: " + in_settings.location().line_str());
         m_profile_log->error("Line " + std::to_string(in_settings.location().line()) + " :: Error reading mapping");

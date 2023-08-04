@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INBOUND_WORKER_H
-#define INBOUND_WORKER_H
+#ifndef XMC_INBOUND_WORKER_H
+#define XMC_INBOUND_WORKER_H
 
 // Standard
 #include <memory>
@@ -33,7 +33,7 @@ public:
     inbound_worker() = default;
     ~inbound_worker() = default;
 
-    void add_task(const std::shared_ptr<inbound_task> &in_task);
+    void add_task(const std::shared_ptr<inbound_task>& in_task);
 
     void process(std::string_view in_sl_value);
 
@@ -43,4 +43,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // INBOUND_WORKER_H
+#endif // XMC_INBOUND_WORKER_H

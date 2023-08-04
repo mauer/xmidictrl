@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MIDI_LOGGER_H
-#define MIDI_LOGGER_H
+#ifndef XMC_MIDI_LOGGER_H
+#define XMC_MIDI_LOGGER_H
 
 // Standard
 #include <deque>
@@ -30,21 +30,21 @@ namespace xmidictrl {
 
 class midi_logger {
 public:
-    explicit midi_logger(settings &in_settings);
+    explicit midi_logger(settings& in_settings);
     ~midi_logger() = default;
 
     void clear();
     size_t count();
-    midi_message *message(int in_index);
+    midi_message* message(int in_index);
 
-    void add(const std::shared_ptr<midi_message> &in_msg);
+    void add(const std::shared_ptr<midi_message>& in_msg);
 
 private:
-    settings &m_settings;
+    settings& m_settings;
 
     std::deque<std::shared_ptr<midi_message>> m_messages;
 };
 
 } // Namespace xmidictrl
 
-#endif // MIDI_LOGGER_H
+#endif // XMC_MIDI_LOGGER_H

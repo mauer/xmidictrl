@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef TEXT_LOGGER_H
-#define TEXT_LOGGER_H
+#ifndef XMC_TEXT_LOGGER_H
+#define XMC_TEXT_LOGGER_H
 
 // Standard
 #include <cstdarg>
@@ -35,28 +35,28 @@ namespace xmidictrl {
 
 class text_logger {
 public:
-    explicit text_logger(text_logger *in_parent = nullptr);
-    ~text_logger();
+    explicit text_logger(text_logger* in_parent = nullptr);
+    ~text_logger() = default;
 
-    void enable_file_logging(std::filesystem::path in_path);
+    void enable_file_logging(const std::filesystem::path& in_path);
 
     void set_debug_mode(bool in_mode);
-    bool debug_mode() const;
+    [[nodiscard]] bool debug_mode() const;
 
     void set_log_info(bool in_mode);
-    bool log_info() const;
+    [[nodiscard]] bool log_info() const;
 
     void set_max_size(int in_size);
-    int max_size() const;
+    [[nodiscard]] int max_size() const;
 
     void clear();
     size_t count();
-    text_log_msg *message(int in_index);
+    text_log_msg* message(int in_index);
 
     std::string messages_as_text();
 
-    bool has_errors() const;
-    bool has_warnings() const;
+    [[nodiscard]] bool has_errors() const;
+    [[nodiscard]] bool has_warnings() const;
 
     void debug(std::string_view in_text);
     void debug_line(std::uint_least32_t in_line, std::string_view in_text);
@@ -69,12 +69,12 @@ public:
     void error_line(std::uint_least32_t in_line, std::string_view in_text);
 
 private:
-    bool check_log_level(log_level in_level) const;
+    [[nodiscard]] bool check_log_level(log_level in_level) const;
 
     void create_message(log_level in_level, std::string_view in_text);
     void add_message(log_level in_level, std::string_view in_text);
 
-    text_logger *m_parent;
+    text_logger* m_parent;
 
     int m_error_count {0};
     int m_warn_count {0};
@@ -90,4 +90,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // TEXT_LOGGER_H
+#endif // XMC_TEXT_LOGGER_H

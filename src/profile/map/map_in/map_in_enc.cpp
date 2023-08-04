@@ -31,8 +31,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_enc::map_in_enc(environment &in_env)
-    : map_in(in_env)
+map_in_enc::map_in_enc(environment &in_env, encoder_mode in_default_enc_mode)
+    : map_in(in_env),
+      m_mode(in_default_enc_mode)
 {}
 
 
@@ -54,16 +55,14 @@ map_type map_in_enc::type()
 /**
  * Read settings from config
  */
-void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
+void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'enc'");
-    map_in::read_config(in_log, in_data, in_device, in_config);
+    map_in::read_config(in_log, in_data, in_config);
 
     // read the mode
     if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE, false))
         m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
-    else
-        m_mode = in_device.default_encoder_mode();
 
     // read the delay (if defined)
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY, false))
@@ -156,12 +155,15 @@ bool map_in_enc::check(text_logger &in_log)
 
         if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is expected to be less than parameter '" + std::string(CFG_KEY_VALUE_MAX) + "'");
+            in_log.error(
+                " --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is expected to be less than parameter '"
+                + std::string(CFG_KEY_VALUE_MAX) + "'");
             result = false;
         }
     } else {
         // command mode
-        if (m_command_up.empty() && m_command_down.empty() && m_command_fast_up.empty() && m_command_fast_down.empty()) {
+        if (m_command_up.empty() && m_command_down.empty() && m_command_fast_up.empty()
+            && m_command_fast_down.empty()) {
             in_log.error(source_line());
             in_log.error(" --> Commands (up/down) are not defined");
             result = false;
@@ -220,10 +222,12 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         if (in_msg.data_2() < 64) {
             // Down
             if (in_msg.data_2() < 61) {
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_down) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_down) + "'");
                 value = value + m_modifier_fast_down;
             } else {
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
                 value = value + m_modifier_down;
             }
 
@@ -232,10 +236,12 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         } else if (in_msg.data_2() > 64) {
             // Up
             if (in_msg.data_2() > 68) {
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_up) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_up) + "'");
                 value = value + m_modifier_fast_up;
             } else {
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                 value = value + m_modifier_up;
             }
 
@@ -252,7 +258,8 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
         switch (in_msg.data_2()) {
             case MIDI_VELOCITY_MIN:
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                 value = value + m_modifier_down;
 
                 if (m_value_min_defined && value < m_value_min)
@@ -261,7 +268,8 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
                 break;
 
             case MIDI_VELOCITY_MAX:
-                in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
+                in_msg.log().debug(
+                    " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                 value = value + m_modifier_up;
 
                 if (m_value_max_defined && value > m_value_max)
@@ -271,13 +279,15 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
             default:
                 if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
-                    in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
+                    in_msg.log().debug(
+                        " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                     value = value + m_modifier_up;
 
                     if (m_value_max_defined && value > m_value_max)
                         value = m_value_max;
                 } else {
-                    in_msg.log().debug(" --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
+                    in_msg.log().debug(
+                        " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
                     value = value + m_modifier_down;
 
                     if (m_value_min_defined && value < m_value_min)
@@ -293,7 +303,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         try {
             display_label(in_msg.log(), value);
         } catch (std::bad_alloc &ex) {
-            in_msg.log().error("Error converting float '" + std::to_string(value)+ "' value to string");
+            in_msg.log().error("Error converting float '" + std::to_string(value) + "' value to string");
             in_msg.log().error(ex.what());
         }
     } else {

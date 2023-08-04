@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -41,6 +41,8 @@ settings::settings(text_logger &in_text_log, environment &in_env)
         m_debug_mode = toml::find_or<bool>(m_config, CFG_KEY_DEBUG_MODE, false);
         m_log_midi = toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
         m_show_messages = toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+
+        m_virtual_channel = toml::find_or<int>(m_config, CFG_KEY_VIRTUAL_CHANNEL, 16);
 
         m_max_text_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
         m_max_midi_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 150);
@@ -130,6 +132,24 @@ void settings::set_show_messages(const bool in_enabled)
 bool settings::show_messages() const
 {
     return m_show_messages;
+}
+
+
+/**
+ * Set the channel for virtual MIDI messages
+ */
+void settings::set_virtual_channel(const int in_channel)
+{
+    m_virtual_channel = in_channel;
+}
+
+
+/**
+ * Return the channel for virtual MIDI messages
+ */
+int settings::virtual_channel() const
+{
+    return m_virtual_channel;
 }
 
 

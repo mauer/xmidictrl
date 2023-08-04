@@ -100,6 +100,21 @@ bool midi_message::parse_message(std::vector<unsigned char> *in_msg)
 
 
 /**
+ * Create a midi message
+ */
+void midi_message::create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity)
+{
+    clear();
+
+    m_status = (int) (0xb0 | (in_channel - 1));
+    m_data_1 = in_data;
+    m_data_2 = in_velocity;
+
+    this->set_time(std::chrono::system_clock::now());
+}
+
+
+/**
  * Check the MIDI message
  */
 bool midi_message::check()

@@ -36,13 +36,15 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings_window::settings_window(text_logger &in_log, environment &in_env, settings &in_settings)
-    : imgui_window(in_log, in_env, 1000, 550),
+settings_window::settings_window(text_logger& in_log, environment& in_env, settings& in_settings)
+    : imgui_window(in_log, in_env, 1000, 580),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
     m_log_midi = m_settings.log_midi();
     m_show_messages = m_settings.show_messages();
+
+    m_virtual_channel = m_settings.virtual_channel();
 
     m_max_text_messages = m_settings.max_text_messages();
     m_max_midi_messages = m_settings.max_midi_messages();
@@ -112,6 +114,9 @@ void settings_window::create_tab_general()
         ImGui::Checkbox("Show errors after loading an aircraft", &m_show_messages);
 
         ImGui::NewLine();
+
+        ImGui::SliderInt("Channel for virtual MIDI messages", &m_virtual_channel, 1, 16);
+
         ImGui::NewLine();
         ImGui::NewLine();
 
@@ -176,7 +181,7 @@ void settings_window::create_tab_general()
             m_info_position = window_position::bottom_left;
             m_info_offset_x = 50;
             m_info_offset_y = 50;
-            m_info_seconds  = 3;
+            m_info_seconds = 3;
         }
 
         ImGui::NewLine();
@@ -340,7 +345,8 @@ void settings_window::create_tab_paths()
 /**
  * Return the info position as text
  */
-std::string settings_window::info_position_as_text(window_position in_position) {
+std::string settings_window::info_position_as_text(window_position in_position)
+{
     switch (in_position) {
         case window_position::top_left:
             return "Top - Left";
@@ -375,6 +381,8 @@ void settings_window::save_settings()
 {
     m_settings.set_debug_mode(m_debug_mode);
     m_settings.set_log_midi(m_log_midi);
+
+    m_settings.set_virtual_channel(m_virtual_channel);
 
     m_settings.set_max_text_messages(m_max_text_messages);
     m_settings.set_max_midi_messages(m_max_midi_messages);

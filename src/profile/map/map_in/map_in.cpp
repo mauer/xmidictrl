@@ -18,7 +18,6 @@
 #include "map_in.h"
 
 // XMidiCtrl
-#include "device.h"
 #include "plugin.h"
 #include "toml_utils.h"
 
@@ -55,7 +54,7 @@ std::string_view map_in::sl() const
 /**
  * Read the config
  */
-void map_in::read_config(text_logger &in_log, toml::value &in_data, device &in_device, toml::value &in_config)
+void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     // read the common data
     read_common_config(in_log, in_data);
@@ -103,7 +102,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
         if (it != in_values.end()) {
             auto idx = std::distance(in_values.begin(), it);
 
-            if (idx < in_values.size() - 1)
+            if (idx < static_cast<int>(in_values.size()) - 1)
                 idx++;
             else
                 idx = 0;
@@ -148,7 +147,7 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
         std::string value_text = m_label->values.at(in_value.data());
         in_log.debug(" --> Found text '" + value_text + "' for value '" + std::string(in_value) + "'");
         plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
-    } catch (std::out_of_range &ex) {
+    } catch (std::out_of_range &) {
         plugin::instance().show_info_message(m_label->id, m_label->text + in_value.data());
     }
 }

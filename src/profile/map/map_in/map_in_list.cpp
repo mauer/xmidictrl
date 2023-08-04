@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -66,7 +66,7 @@ std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &in_key
 /**
  * Return the number of mapping
  */
-unsigned int map_in_list::size()
+size_t map_in_list::size()
 {
     return m_list.size();
 }
