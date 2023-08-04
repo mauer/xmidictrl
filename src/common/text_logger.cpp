@@ -354,7 +354,12 @@ void text_logger::add_message(log_level in_level, std::string_view in_text)
     // get current date time stamp
     time_t t = std::time(nullptr);
     std::tm time_info {};
+
+#ifdef WIN32
     localtime_s(&time_info, &t);
+#else
+    localtime_r(&time_info, &t);
+#endif
 
     // format into a string
     char datetime_str[32];

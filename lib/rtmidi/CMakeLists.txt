@@ -2,7 +2,7 @@
 # CopyPolicy: RtMidi license.
 
 # Set minimum CMake required version for this project.
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 
 # Define a C++ project.
 project(RtMidi LANGUAGES CXX C)
@@ -40,11 +40,10 @@ set(RTMIDI_TARGETNAME_UNINSTALL "uninstall" CACHE STRING "Name of 'uninstall' bu
 
 # API Options
 option(RTMIDI_API_JACK "Compile with JACK support." ${HAVE_JACK})
-if(UNIX AND NOT APPLE)
-  option(RTMIDI_API_ALSA "Compile with ALSA support." ON)
-endif()
 option(RTMIDI_API_WINMM "Compile with WINMM support." ${WIN32})
 option(RTMIDI_API_CORE "Compile with CoreMIDI support." ${APPLE})
+option(RTMIDI_API_ALSA "Compile with ALSA support." ${ALSA})
+option(RTMIDI_API_AMIDI "Compile with Android support." ${ANDROID})
 
 # Add -Wall if possible
 if (CMAKE_COMPILER_IS_GNUCXX)
@@ -70,7 +69,7 @@ foreach(_S ${CONFIGAC})
 endforeach()
 math(EXPR SO_current_minus_age "${SO_current} - ${SO_age}")
 set(SO_VER "${SO_current_minus_age}")
-set(FULL_VER "${SO_current_minus_age}.${SO_revision}.${SO_age}")
+set(FULL_VER "${SO_current_minus_age}.${SO_age}.${SO_revision}")
 
 # Read package version info from configure.ac
 set(R "AC_INIT\\(RtMidi, ([0-9\\.]+),.*\\)")
@@ -87,6 +86,7 @@ set(PKGCONFIG_REQUIRES)
 set(LIBS_REQUIRES)
 set(API_DEFS)
 set(API_LIST)
+set(PACKAGE_DEPENDENCIES)
 
 # Tweak API-specific configuration.
 
@@ -118,17 +118,15 @@ if(RTMIDI_API_JACK)
 endif()
 
 # ALSA
-if(RTMIDI_API_ALSA)
+find_package(ALSA)
+if(ALSA_FOUND OR ALSA)
   set(NEED_PTHREAD ON)
-  find_package(ALSA)
-  if (NOT ALSA_FOUND)
-    message(FATAL_ERROR "ALSA API requested but no ALSA dev libraries found")
-  endif()
   list(APPEND INCDIRS ${ALSA_INCLUDE_DIR})
-  list(APPEND LINKLIBS ${ALSA_LIBRARY})
+  list(APPEND LINKLIBS ALSA::ALSA)
   list(APPEND PKGCONFIG_REQUIRES "alsa")
   list(APPEND API_DEFS "-D__LINUX_ALSA__")
   list(APPEND API_LIST "alsa")
+  list(APPEND PACKAGE_DEPENDENCIES "find_dependency(ALSA)")
 endif()
 
 # WinMM
@@ -151,12 +149,25 @@ if(RTMIDI_API_CORE)
   list(APPEND LINKFLAGS "-Wl,-F/Library/Frameworks")
 endif()
 
+# Android AMIDI
+if(ANDROID)
+  set(NEED_PTHREAD ON)
+  set(JAVA_INCLUDE_PATH2 NotNeeded)
+  set(JAVA_AWT_INCLUDE_PATH NotNeeded)
+  find_package(JNI)
+#  find_library(ALOG_LIB log android)
+  list(APPEND API_DEFS "-D__AMIDI__")
+  list(APPEND API_LIST "amidi")
+  list(APPEND LINKLIBS log ${JNI_LIBRARIES} amidi)
+endif()
+
 # pthread
 if (NEED_PTHREAD)
   find_package(Threads REQUIRED
     CMAKE_THREAD_PREFER_PTHREAD
     THREADS_PREFER_PTHREAD_FLAG)
   list(APPEND PUBLICLINKLIBS Threads::Threads)
+  list(APPEND PACKAGE_DEPENDENCIES "find_dependency(Threads)")
 endif()
 
 # Create library targets.
@@ -187,6 +198,9 @@ set_target_properties(rtmidi PROPERTIES
   SOVERSION ${SO_VER}
   VERSION ${FULL_VER})
 
+# Set standard installation directories.
+include(GNUInstallDirs)
+
 # Set include paths, populate target interface.
 target_include_directories(rtmidi PRIVATE ${INCDIRS}
                                   PUBLIC
@@ -198,9 +212,6 @@ target_compile_definitions(rtmidi PRIVATE ${API_DEFS})
 target_compile_definitions(rtmidi PRIVATE RTMIDI_EXPORT)
 target_link_libraries(rtmidi PUBLIC ${PUBLICLINKLIBS} 
                              PRIVATE ${LINKLIBS})
-
-# Set standard installation directories.
-include(GNUInstallDirs)
 
 # Add tests if requested.
 option(RTMIDI_BUILD_TESTING "Build test programs" ON)
@@ -280,23 +291,25 @@ include(CMakePackageConfigHelpers)
 
 # Write cmake package version file
 write_basic_package_version_file(
-    RtMidi-config-version.cmake
+    rtmidi-config-version.cmake
     VERSION ${FULL_VER}
     COMPATIBILITY SameMajorVersion
 )
 
+string(REPLACE ";" "\n" package_dependencies "${PACKAGE_DEPENDENCIES}")
+
 # Write cmake package config file
 configure_package_config_file (
-    cmake/RtMidi-config.cmake.in
-    RtMidi-config.cmake
+    cmake/rtmidi-config.cmake.in
+    rtmidi-config.cmake
     INSTALL_DESTINATION "${RTMIDI_CMAKE_DESTINATION}"
 )
 
 # Install package files
 install (
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/RtMidi-config.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/RtMidi-config-version.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/rtmidi-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/rtmidi-config-version.cmake"
     DESTINATION
         "${RTMIDI_CMAKE_DESTINATION}"
 )

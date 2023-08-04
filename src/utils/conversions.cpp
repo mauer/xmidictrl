@@ -71,7 +71,11 @@ std::string conversions::time_to_string(time_point in_time)
     std::time_t t = std::chrono::system_clock::to_time_t(in_time);
     std::tm time_info {};
 
+#ifdef WIN32
     localtime_s(&time_info, &t);
+#else
+    localtime_r(&time_info, &t);
+#endif
 
     // format into a string
     std::ostringstream oss;

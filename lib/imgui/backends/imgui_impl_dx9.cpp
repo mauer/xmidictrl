@@ -3,7 +3,7 @@
 
 // Implemented features:
 //  [X] Renderer: User texture binding. Use 'LPDIRECT3DTEXTURE9' as ImTextureID. Read the FAQ about ImTextureID!
-//  [X] Renderer: Support for large meshes (64k+ vertices) with 16-bit indices.
+//  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
 
 // You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
 // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
@@ -32,6 +32,7 @@
 //  2018-02-06: Misc: Removed call to ImGui::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
 
 #include "imgui.h"
+#ifndef IMGUI_DISABLE
 #include "imgui_impl_dx9.h"
 
 // DirectX
@@ -304,6 +305,7 @@ void ImGui_ImplDX9_Shutdown()
     if (bd->pd3dDevice) { bd->pd3dDevice->Release(); }
     io.BackendRendererName = nullptr;
     io.BackendRendererUserData = nullptr;
+    io.BackendFlags &= ~ImGuiBackendFlags_RendererHasVtxOffset;
     IM_DELETE(bd);
 }
 
@@ -366,7 +368,7 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
         return;
     if (bd->pVB) { bd->pVB->Release(); bd->pVB = nullptr; }
     if (bd->pIB) { bd->pIB->Release(); bd->pIB = nullptr; }
-    if (bd->FontTexture) { bd->FontTexture->Release(); bd->FontTexture = nullptr; ImGui::GetIO().Fonts->SetTexID(nullptr); } // We copied bd->pFontTextureView to io.Fonts->TexID so let's clear that as well.
+    if (bd->FontTexture) { bd->FontTexture->Release(); bd->FontTexture = nullptr; ImGui::GetIO().Fonts->SetTexID(0); } // We copied bd->pFontTextureView to io.Fonts->TexID so let's clear that as well.
 }
 
 void ImGui_ImplDX9_NewFrame()
@@ -377,3 +379,7 @@ void ImGui_ImplDX9_NewFrame()
     if (!bd->FontTexture)
         ImGui_ImplDX9_CreateDeviceObjects();
 }
+
+//-----------------------------------------------------------------------------
+
+#endif // #ifndef IMGUI_DISABLE
