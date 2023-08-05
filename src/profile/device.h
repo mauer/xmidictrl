@@ -46,7 +46,7 @@ public:
     device(text_logger& in_text_log,
            midi_logger& in_midi_log,
            std::string_view in_name);
-    ~device() = default;
+    virtual ~device() = default;
 
     // no copying or copy assignments are allowed
     device(device const&) = delete;
