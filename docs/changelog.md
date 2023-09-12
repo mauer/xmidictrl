@@ -4,6 +4,7 @@
 -----------------------------------------------------------------------------------------------------------------------
 
 ##  VERSION 1.05
++ Fixed check for min/max value when modifier_up is negative
 + Added new outbound message type "constant"
 + Added option to delay encoders (parameter "delay") 
 + Display ACF-Filename in profile window

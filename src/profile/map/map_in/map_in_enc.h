@@ -51,6 +51,8 @@ private:
     bool execute_dataref(midi_message &in_msg);
     bool execute_command(midi_message &in_msg);
 
+    float check_value_min_max(float in_value, float in_modifier) const;
+
     encoder_mode m_mode {encoder_mode::relative};
 
     int m_delay_counter {0};

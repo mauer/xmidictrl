@@ -201,6 +201,51 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
 
 
 //---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_enc::build_mapping_text()
+{
+    std::string map_str = " ====== Encoder ======\n";
+
+    if (m_mode == encoder_mode::relative)
+        map_str.append("Mode = 'relative'\n");
+    else
+        map_str.append("Mode = 'range'\n");
+
+    if (!m_dataref.empty()) {
+        map_str.append("Dataref = '" + m_dataref + "'\n");
+        map_str.append("Modifier up = '" + std::to_string(m_modifier_up) + "'\n");
+
+        if (m_modifier_fast_up != 0)
+            map_str.append("Modifier up (fast) = '" + std::to_string(m_modifier_fast_up) + "'\n");
+
+        map_str.append("Modifier down = '" + std::to_string(m_modifier_down) + "'\n");
+
+        if (m_modifier_fast_down != 0)
+            map_str.append("Modifier down (fast) = '" + std::to_string(m_modifier_fast_down) + "'\n");
+    } else {
+        map_str.append("Command up = '" + m_command_up + "'\n");
+
+        if (!m_command_fast_up.empty())
+            map_str.append("Command up (fast) = '" + m_command_fast_up + "'\n");
+
+        map_str.append("Command down = '" + m_command_down + "'\n");
+
+        if (!m_command_fast_down.empty())
+            map_str.append("Command down (fast) = '" + m_command_fast_down + "'\n");
+    }
+
+    return map_str;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -210,6 +255,7 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
 bool map_in_enc::execute_dataref(midi_message &in_msg)
 {
     float value = 0.0f;
+    float modifier = 0.0f;
 
     // read current value
     if (!env().drf().read(in_msg.log(), m_dataref, value)) {
@@ -224,29 +270,23 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
             if (in_msg.data_2() < 61) {
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_down) + "'");
-                value = value + m_modifier_fast_down;
+                modifier = m_modifier_fast_down;
             } else {
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
-                value = value + m_modifier_down;
+                modifier = m_modifier_down;
             }
-
-            if (m_value_min_defined && value < m_value_min)
-                value = m_value_min;
         } else if (in_msg.data_2() > 64) {
             // Up
             if (in_msg.data_2() > 68) {
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_fast_up) + "'");
-                value = value + m_modifier_fast_up;
+                modifier = m_modifier_fast_up;
             } else {
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
-                value = value + m_modifier_up;
+                modifier = m_modifier_up;
             }
-
-            if (m_value_max_defined && value > m_value_max)
-                value = m_value_max;
         }
     } else {
         // range mode
@@ -260,20 +300,14 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
             case MIDI_VELOCITY_MIN:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
-                value = value + m_modifier_down;
-
-                if (m_value_min_defined && value < m_value_min)
-                    value = m_value_min;
+                modifier = m_modifier_down;
 
                 break;
 
             case MIDI_VELOCITY_MAX:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
-                value = value + m_modifier_up;
-
-                if (m_value_max_defined && value > m_value_max)
-                    value = m_value_max;
+                modifier = m_modifier_up;
 
                 break;
 
@@ -281,23 +315,22 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
                 if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
                     in_msg.log().debug(
                         " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
-                    value = value + m_modifier_up;
-
-                    if (m_value_max_defined && value > m_value_max)
-                        value = m_value_max;
+                    modifier = m_modifier_up;
                 } else {
                     in_msg.log().debug(
                         " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_down) + "'");
-                    value = value + m_modifier_down;
-
-                    if (m_value_min_defined && value < m_value_min)
-                        value = m_value_min;
+                    modifier = m_modifier_down;
                 }
+
                 break;
         }
     }
 
     m_velocity_prev = in_msg.data_2();
+
+    // change and check the value
+    value = value + modifier;
+    value = check_value_min_max(value, modifier);
 
     if (env().drf().write(in_msg.log(), m_dataref, value)) {
         try {
@@ -371,48 +404,24 @@ bool map_in_enc::execute_command(midi_message &in_msg)
 }
 
 
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PROTECTED
-//---------------------------------------------------------------------------------------------------------------------
-
 /**
- * Return the mapping as string
+ * Check if the value if within the min/max range
  */
-std::string map_in_enc::build_mapping_text()
+float map_in_enc::check_value_min_max(float in_value, float in_modifier) const
 {
-    std::string map_str = " ====== Encoder ======\n";
-
-    if (m_mode == encoder_mode::relative)
-        map_str.append("Mode = 'relative'\n");
-    else
-        map_str.append("Mode = 'range'\n");
-
-    if (!m_dataref.empty()) {
-        map_str.append("Dataref = '" + m_dataref + "'\n");
-        map_str.append("Modifier up = '" + std::to_string(m_modifier_up) + "'\n");
-
-        if (m_modifier_fast_up != 0)
-            map_str.append("Modifier up (fast) = '" + std::to_string(m_modifier_fast_up) + "'\n");
-
-        map_str.append("Modifier down = '" + std::to_string(m_modifier_down) + "'\n");
-
-        if (m_modifier_fast_down != 0)
-            map_str.append("Modifier down (fast) = '" + std::to_string(m_modifier_fast_down) + "'\n");
+    if (in_modifier < 0) {
+        // modifier is negative, so we use the minimum value
+        if (m_value_min_defined && in_value < m_value_min)
+            in_value = m_value_min;
+        else
+            return in_value;
     } else {
-        map_str.append("Command up = '" + m_command_up + "'\n");
-
-        if (!m_command_fast_up.empty())
-            map_str.append("Command up (fast) = '" + m_command_fast_up + "'\n");
-
-        map_str.append("Command down = '" + m_command_down + "'\n");
-
-        if (!m_command_fast_down.empty())
-            map_str.append("Command down (fast) = '" + m_command_fast_down + "'\n");
+        // modifier is positive, so we have to use the maximum value
+        if (m_value_max_defined && in_value > m_value_max)
+            in_value = m_value_max;
+        else
+            return in_value;
     }
-
-    return map_str;
 }
 
 } // Namespace xmidictrl
