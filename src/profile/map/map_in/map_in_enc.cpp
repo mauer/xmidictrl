@@ -412,16 +412,14 @@ float map_in_enc::check_value_min_max(float in_value, float in_modifier) const
     if (in_modifier < 0) {
         // modifier is negative, so we use the minimum value
         if (m_value_min_defined && in_value < m_value_min)
-            in_value = m_value_min;
-        else
-            return in_value;
+            return m_value_min;
     } else {
         // modifier is positive, so we have to use the maximum value
         if (m_value_max_defined && in_value > m_value_max)
-            in_value = m_value_max;
-        else
-            return in_value;
+            return m_value_max;
     }
+
+    return in_value;
 }
 
 } // Namespace xmidictrl
