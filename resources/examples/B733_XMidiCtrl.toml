@@ -36,7 +36,7 @@ mapping_in = [
   { ch = 11, cc = 6, type = "enc", command_up = "ixeg/733/autopilot/ALT_increase", command_down = "ixeg/733/autopilot/ALT_decrease" },
   { ch = 11, cc = 7, type = "enc", command_up = "ixeg/733/autopilot/VS_increase", command_down = "ixeg/733/autopilot/VS_decrease" },
   { ch = 11, cc = 8, type = "enc", command_up = "sim/radios/copilot_obs2_up", command_down = "sim/radios/copilot_obs2_down" },
-    
+  
   # Encoder Buttons
   { ch = 11, cc = 9,  type = "cmd", command = "xmidictrl/toggle_sublayer" },
   { ch = 11, cc = 10, type = "cmd", command = "xmidictrl/toggle_sublayer" },
@@ -46,13 +46,13 @@ mapping_in = [
   { ch = 11, cc = 14, type = "cmd", command = "ixeg/733/autopilot/ALTHLD_mode_toggle" },
   { ch = 11, cc = 15, type = "cmd", command = "ixeg/733/autopilot/VS_mode_toggle" },
   { ch = 11, cc = 16, type = "cmd", command = "ixeg/733/autopilot/FD_copilot_toggle" },
-    
+  
   # Buttons Upper Row
   { ch = 11, cc = 17, type = "drf", dataref = "ixeg/733/clock/clock_et_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 18, type = "drf", dataref = "ixeg/733/wxr/wxr_onoff_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 19, type = "cmd", command = "ixeg/733/autopilot/SPEED_mode_toggle" },
   { ch = 11, cc = 20, type = "cmd", command = "ixeg/733/autopilot/VNAV_mode_toggle" },
-  { channel = 11, cc = 21, type = "cmd", command = "ixeg/733/autopilot/HDG_mode_toggle" },
+  { ch = 11, cc = 21, type = "cmd", command = "ixeg/733/autopilot/HDG_mode_toggle" },
   { ch = 11, cc = 22, type = "cmd", command = "ixeg/733/autopilot/LNAV_mode_toggle" },
   { ch = 11, cc = 23, type = "cmd", command = "ixeg/733/autopilot/AP_A_cmd_toggle" },
   { ch = 11, cc = 24, type = "cmd", command = "ixeg/733/autopilot/AP_B_cmd_toggle" },
@@ -76,7 +76,7 @@ mapping_in = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
-
+  
   # Slider
   { ch = 11, cc = 50,  type = "sld", command_up = "ixeg/733/lights/dome_light_bright", command_middle = "ixeg/733/lights/dome_light_dim", command_down = "ixeg/733/lights/dome_light_off" },
   
@@ -90,7 +90,7 @@ mapping_in = [
   { ch = 11, cc = 56, type = "enc", command_up = "ixeg/733/autopilot/ALT_increase", command_down = "ixeg/733/autopilot/ALT_decrease" },
   { ch = 11, cc = 57, type = "enc", command_up = "ixeg/733/autopilot/VS_increase", command_down = "ixeg/733/autopilot/VS_decrease" },
   { ch = 11, cc = 58, type = "enc", command_up = "sim/radios/copilot_obs2_up", command_down = "sim/radios/copilot_obs2_down" },
-
+  
   # Encoder Buttons
   { ch = 11, cc = 59, type = "cmd", command = "xmidictrl/toggle_sublayer" },
   { ch = 11, cc = 61, type = "cmd", command = "ixeg/733/autopilot/FD_pilot_toggle" },
@@ -109,7 +109,7 @@ mapping_in = [
   { ch = 11, cc = 72, type = "drf", dataref = "ixeg/733/xpdr/xpdr_mode_act", value_on = "2" },
   { ch = 11, cc = 73, type = "drf", dataref = "ixeg/733/xpdr/xpdr_mode_act", value_on = "3" },
   { ch = 11, cc = 74, type = "drf", dataref = "ixeg/733/xpdr/xpdr_mode_act", value_on = "4" },
-    
+  
   # Buttons Lower Row
   { ch = 11, cc = 75, type = "drf", dataref = "ixeg/733/caution/caution_recall_act", value_on = "1" },
   { ch = 11, cc = 75, type = "drf", dataref = "ixeg/733/caution/caution_recall_act", value_on = "0" },
@@ -129,7 +129,7 @@ mapping_out = [
   # Encoder Buttons
   { ch = 11, cc = 6, type = "drf", dataref = "ixeg/733/MCP/mcp_alt_hold_ann", value_on = "1", value_off = "0" },
   { ch = 11, cc = 7, type = "drf", dataref = "ixeg/733/MCP/mcp_vs_ann", value_on = "1", value_off = "0" },
-
+  
   # Buttons Upper Row
   { ch = 11, cc = 17, type = "drf", dataref = "ixeg/733/clock/clock_et_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 18, type = "drf", dataref = "ixeg/733/wxr/wxr_onoff_act", value_on = "1", value_off = "0" },
@@ -152,11 +152,11 @@ mapping_out = [
   #--------------------------------------------------------------------------------------------------------------------
   # Layer B
   #--------------------------------------------------------------------------------------------------------------------
-
+  
   # Encoder Buttons
   { ch = 11, cc = 64, type = "drf", dataref = "ixeg/733/MCP/mcp_alt_hold_ann", value_on = "1", value_off = "0" },
   { ch = 11, cc = 65, type = "drf", dataref = "ixeg/733/MCP/mcp_vs_ann", value_on = "1", value_off = "0" },
-
+  
   # Buttons Upper Row
   { ch = 11, cc = 67, type = "drf", dataref = "ixeg/733/xpdr/xpdr_stby_act", value_on = "0" },
   { ch = 11, cc = 68, type = "drf", dataref = "ixeg/733/xpdr/xpdr_stby_act", value_on = "1" },
@@ -174,4 +174,4 @@ mapping_out = [
   { ch = 11, cc = 80, type = "drf", dataref = "ixeg/733/ehsi/ehsi_arpt_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 81, type = "drf", dataref = "ixeg/733/ehsi/ehsi_rtedta_pt_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 82, type = "drf", dataref = "ixeg/733/ehsi/ehsi_wpt_pt_act", value_on = "1", value_off = "0" }
-] 
+]
