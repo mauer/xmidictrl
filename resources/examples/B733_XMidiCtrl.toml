@@ -52,7 +52,7 @@ mapping_in = [
   { ch = 11, cc = 18, type = "drf", dataref = "ixeg/733/wxr/wxr_onoff_act", value_on = "1", value_off = "0" },
   { ch = 11, cc = 19, type = "cmd", command = "ixeg/733/autopilot/SPEED_mode_toggle" },
   { ch = 11, cc = 20, type = "cmd", command = "ixeg/733/autopilot/VNAV_mode_toggle" },
-  { channel = 11, cc = 21, type = "cmd", command = "ixeg/733/autopilot/HDG_mode_toggle" },
+  { ch = 11, cc = 21, type = "cmd", command = "ixeg/733/autopilot/HDG_mode_toggle" },
   { ch = 11, cc = 22, type = "cmd", command = "ixeg/733/autopilot/LNAV_mode_toggle" },
   { ch = 11, cc = 23, type = "cmd", command = "ixeg/733/autopilot/AP_A_cmd_toggle" },
   { ch = 11, cc = 24, type = "cmd", command = "ixeg/733/autopilot/AP_B_cmd_toggle" },
