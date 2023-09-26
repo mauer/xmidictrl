@@ -125,10 +125,12 @@ void map_out_sld::read_config(text_logger& in_log, toml::value& in_data)
     set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
 
     // read value min
-    set_value_min(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN, false))
+        set_value_min(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false));
 
     // read value max
-    set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX, false))
+        set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false));
 
     // read velocity min
     if (toml_utils::contains(in_log, in_data, CFG_KEY_VELOCITY_MIN, false))

@@ -1,4 +1,4 @@
-# Mapping Type: Dataref
+# Outbound Mapping Type: Dataref
 
 Read the given dataref and sends a MIDI message of the current value. It is also possible to define two datarefs for a 
 mapping. This can be useful if there are caution lights etc. for pilot and copilot.

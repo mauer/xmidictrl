@@ -1,4 +1,4 @@
-# Mapping: Encoder
+# Inbound Mapping Type: Encoder
 
 ## Description
 

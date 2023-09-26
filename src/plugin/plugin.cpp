@@ -568,6 +568,9 @@ int plugin::virtual_midi_command_handler([[maybe_unused]] XPLMCommandRef in_comm
         case xplm_CommandEnd:
             plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_VELOCITY_MIN);
             break;
+
+        default:
+            break;
     }
 
     // disable further processing by X-Plane.

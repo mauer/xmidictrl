@@ -1,4 +1,4 @@
-# Mapping: Slider
+# Inbound Mapping Type: Slider
 
 ## Description
 

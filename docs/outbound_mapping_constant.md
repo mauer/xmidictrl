@@ -1,4 +1,4 @@
-# Mapping Type: Constant
+# Outbound Mapping Type: Constant
 
 This mapping will always send the same message to the MIDI device. This can be useful to disable or enable certain
 functions, such as LEDs.

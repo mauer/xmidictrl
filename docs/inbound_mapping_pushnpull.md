@@ -1,4 +1,4 @@
-# Mapping Type: Push&pull
+# Inbound Mapping Type: Push&pull
 
 ## Description
 

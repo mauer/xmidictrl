@@ -1,4 +1,4 @@
-# Mapping Type: Command
+# Inbound Mapping Type: Command
 
 ## Description
 

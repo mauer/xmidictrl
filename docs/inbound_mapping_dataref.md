@@ -1,4 +1,4 @@
-# Mapping Type: Dataref
+# Inbound Mapping Type: Dataref
 
 ## Description
 
