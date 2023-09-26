@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -102,6 +102,7 @@ bool map_in_sld::check(text_logger &in_log)
             result = false;
         }
 
+        // value min/max
         if (m_value_min == m_value_max) {
             in_log.error(source_line());
             in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '" + std::string(CFG_KEY_VALUE_MAX) + "'");

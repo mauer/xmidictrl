@@ -3,14 +3,17 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
-##  VERSION 1.05
+##  VERSION 1.10
++ Fixed mapping error in 733 example
 + Fixed check for min/max value when modifier_up is negative
 + Added new outbound message type "constant"
-+ Added option to delay encoders (parameter "delay") 
++ Added new outbound message type "slider" for motorized hardware sliders
++ Added option to delay encoders (parameter "delay")
 + Display ACF-Filename in profile window
++ Updated X-Plane SDK to version 4.0.1
++ Updated Dear ImGUI and RtMidi components
 + Removed depreciated mappings (cc / mapping)
 + Added virtual device
-+ Updated X-Plane SDK to version 4.0.1
 
 -----------------------------------------------------------------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 #include "map_in_sld.h"
 #include "map_out_con.h"
 #include "map_out_drf.h"
+#include "map_out_sld.h"
 #include "midi_device.h"
 #include "midi_logger.h"
 #include "conversions.h"
@@ -675,6 +676,10 @@ void profile::create_outbound_mapping(size_t in_dev_no,
 
                 case map_type::dataref:
                     mapping = std::make_shared<map_out_drf>(env());
+                    break;
+
+                case map_type::slider:
+                    mapping = std::make_shared<map_out_sld>(env());
                     break;
 
                 default:

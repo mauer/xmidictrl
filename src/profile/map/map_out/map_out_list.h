@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_OUT_LIST_H
-#define MAP_OUT_LIST_H
+#ifndef XMC_MAP_OUT_LIST_H
+#define XMC_MAP_OUT_LIST_H
 
 // Standard
 #include <memory>
@@ -47,4 +47,4 @@ protected:
 
 } // Namespace xmidictrl
 
-#endif // MAP_OUT_LIST_H
+#endif // XMC_MAP_OUT_LIST_H

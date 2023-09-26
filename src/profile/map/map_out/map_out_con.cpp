@@ -138,7 +138,7 @@ std::shared_ptr<outbound_task> map_out_con::execute(text_logger &in_log, const m
 
     task->channel = channel();
     task->data = data();
-    task->velocity = m_velocity;
+    task->velocity = static_cast<char>(m_velocity);
 
     // add mapping to task
     task->mapping = shared_from_this();
