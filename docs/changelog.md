@@ -4,6 +4,7 @@
 -----------------------------------------------------------------------------------------------------------------------
 
 ##  VERSION 1.10
++ Fixed copyright year in about dialog
 + Fixed mapping error in 733 example
 + Fixed check for min/max value when modifier_up is negative
 + Added new outbound message type "constant"
