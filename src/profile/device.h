@@ -32,6 +32,7 @@
 #include <queue>
 
 // XMidiCtrl
+#include "device_settings.h"
 #include "map_in.h"
 #include "map_in_list.h"
 #include "midi_logger.h"
@@ -43,9 +44,7 @@ class device_list;
 
 class device {
 public:
-    device(text_logger& in_text_log,
-           midi_logger& in_midi_log,
-           std::string_view in_name);
+    device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings);
     virtual ~device() = default;
 
     // no copying or copy assignments are allowed
@@ -54,7 +53,7 @@ public:
 
     virtual device_type type() = 0;
 
-    std::string_view name();
+    device_settings& settings();
 
     void add_inbound_map(std::shared_ptr<map_in>& in_mapping);
 
@@ -68,7 +67,7 @@ private:
     text_logger& m_text_log;
     midi_logger& m_midi_log;
 
-    std::string m_name;
+    std::shared_ptr<device_settings> m_settings;
 
     map_in_list m_map_in;
 };

@@ -33,6 +33,8 @@ namespace xmidictrl {
 
 class toml_utils {
 public:
+    static bool load_file(text_logger &in_log, std::string_view in_filename, toml::value &out_config);
+
     static bool contains(text_logger& in_log,
                          toml::value& in_data,
                          std::string_view in_name,

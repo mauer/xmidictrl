@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -27,7 +27,6 @@
 #include <stdexcept>
 
 // X-Plane SDK
-#include <XPLMDataAccess.h>
 #include <XPLMDisplay.h>
 
 namespace xmidictrl {
@@ -202,7 +201,7 @@ bool xplane_window::is_visible() const
 /**
  * On click event
  */
-bool xplane_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
+bool xplane_window::on_click(int, int, XPLMMouseStatus)
 {
     return true;
 }
@@ -211,7 +210,7 @@ bool xplane_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
 /**
  * On right click event
  */
-bool xplane_window::on_right_click(int in_x, int in_y, XPLMMouseStatus in_status)
+bool xplane_window::on_right_click(int, int, XPLMMouseStatus)
 {
     return true;
 }
@@ -220,18 +219,15 @@ bool xplane_window::on_right_click(int in_x, int in_y, XPLMMouseStatus in_status
 /**
  * On key pressed event
  */
-void xplane_window::on_key(char in_key, XPLMKeyFlags in_flags, char in_virtual_key, bool in_losing_focus)
+void xplane_window::on_key(char, XPLMKeyFlags, char, bool)
 {
-    if (in_losing_focus) {
-        return;
-    }
 }
 
 
 /**
  * On cursor event
  */
-XPLMCursorStatus xplane_window::on_cursor(int in_x, int in_y)
+XPLMCursorStatus xplane_window::on_cursor(int, int)
 {
     // always return the default cursor
     return xplm_CursorDefault;
@@ -241,7 +237,7 @@ XPLMCursorStatus xplane_window::on_cursor(int in_x, int in_y)
 /**
  * On mouse wheel event
  */
-bool xplane_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_clicks)
+bool xplane_window::on_mouse_wheel(int, int, int, int)
 {
     return true;
 }
@@ -340,25 +336,25 @@ void xplane_window::create_window()
         params.decorateAsFloatingWindow = xplm_WindowDecorationRoundRectangle;
 
     // add callbacks for every event
-    params.drawWindowFunc = [](XPLMWindowID id, void *ref) {
+    params.drawWindowFunc = [](XPLMWindowID, void *ref) {
         reinterpret_cast<xplane_window *>(ref)->on_draw();
     };
 
-    params.handleMouseClickFunc = [](XPLMWindowID id, int x, int y, XPLMMouseStatus status, void *ref)->int {
+    params.handleMouseClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void *ref)->int {
         return reinterpret_cast<xplane_window *>(ref)->on_click(x, y, status);
     };
 
-    params.handleRightClickFunc = [](XPLMWindowID id, int x, int y, XPLMMouseStatus status, void *ref)->int {
+    params.handleRightClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void *ref)->int {
         return reinterpret_cast<xplane_window *>(ref)->on_right_click(x, y, status);
     };
 
-    params.handleKeyFunc = [](XPLMWindowID id, char key, XPLMKeyFlags flags, char vKey, void *ref, int losingFocus) {
+    params.handleKeyFunc = [](XPLMWindowID, char key, XPLMKeyFlags flags, char vKey, void *ref, int losingFocus) {
         reinterpret_cast<xplane_window *>(ref)->on_key(key, flags, vKey, losingFocus);
     };
-    params.handleCursorFunc = [](XPLMWindowID id, int x, int y, void *ref)->XPLMCursorStatus {
+    params.handleCursorFunc = [](XPLMWindowID, int x, int y, void *ref)->XPLMCursorStatus {
         return reinterpret_cast<xplane_window *>(ref)->on_cursor(x, y);
     };
-    params.handleMouseWheelFunc = [](XPLMWindowID id, int x, int y, int wheel, int clicks, void *ref)->int {
+    params.handleMouseWheelFunc = [](XPLMWindowID, int x, int y, int wheel, int clicks, void *ref)->int {
         return reinterpret_cast<xplane_window *>(ref)->on_mouse_wheel(x, y, wheel, clicks);
     };
 

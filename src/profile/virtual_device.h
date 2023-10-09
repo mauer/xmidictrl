@@ -46,8 +46,8 @@ class virtual_device : public device {
 public:
     virtual_device(text_logger& in_text_log,
                    midi_logger& in_midi_log,
-                   std::string_view in_name);
-    ~virtual_device() = default;
+                   const std::shared_ptr<device_settings>& in_settings);
+    ~virtual_device() override = default;
 
     // no copying or copy assignments are allowed
     virtual_device(virtual_device const&) = delete;

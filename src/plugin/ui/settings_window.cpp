@@ -37,7 +37,7 @@ namespace xmidictrl {
  * Constructor
  */
 settings_window::settings_window(text_logger& in_log, environment& in_env, settings& in_settings)
-    : imgui_window(in_log, in_env, 1000, 580),
+    : imgui_window(in_log, in_env, 1000, 540),
       m_settings(in_settings)
 {
     m_debug_mode = m_settings.debug_mode();
@@ -45,6 +45,7 @@ settings_window::settings_window(text_logger& in_log, environment& in_env, setti
     m_show_messages = m_settings.show_messages();
 
     m_virtual_channel = m_settings.virtual_channel();
+    m_default_outbound_delay = m_settings.default_outbound_delay();
 
     m_max_text_messages = m_settings.max_text_messages();
     m_max_midi_messages = m_settings.max_midi_messages();
@@ -66,6 +67,7 @@ settings_window::settings_window(text_logger& in_log, environment& in_env, setti
     m_path_plugin = in_env.plugin_path().string();
     m_path_preferences = in_env.preferences_path().string();
     m_path_profiles = in_env.profiles_path().string();
+    m_path_includes = in_env.includes_path().string();
 
     set_title(std::string(XMIDICTRL_NAME) + " - Settings");
 }
@@ -84,6 +86,7 @@ void settings_window::create_widgets()
 {
     if (ImGui::BeginTabBar("SETTINGS_TAB")) {
         create_tab_general();
+        create_tab_midi();
         create_tab_logging();
         create_tab_paths();
 
@@ -112,10 +115,6 @@ void settings_window::create_tab_general()
 
         ImGui::Checkbox("Use common aircraft profile", &m_use_common_profile);
         ImGui::Checkbox("Show errors after loading an aircraft", &m_show_messages);
-
-        ImGui::NewLine();
-
-        ImGui::SliderInt("Channel for virtual MIDI messages", &m_virtual_channel, 1, 16);
 
         ImGui::NewLine();
         ImGui::NewLine();
@@ -224,6 +223,45 @@ void settings_window::create_tab_general()
 
 
 /**
+ * Create tab for MIDI settings
+ */
+void settings_window::create_tab_midi()
+{
+    if (ImGui::BeginTabItem("MIDI")) {
+        ImGui::AlignTextToFramePadding();
+
+        ImGui::TextUnformatted("MIDI SETTINGS");
+        ImGui::Separator();
+        ImGui::NewLine();
+
+        ImGui::SliderInt("Channel for virtual MIDI messages", &m_virtual_channel, 1, 16);
+
+        ImGui::NewLine();
+
+        ImGui::SliderFloat("Default delay for outbound MIDI messages (in s)", &m_default_outbound_delay, 0, 3, "%.1f");
+
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
+
+        if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
+            save_settings();
+
+        ImGui::EndTabItem();
+    }
+}
+
+
+/**
  * Create tab for logging settings
  */
 void settings_window::create_tab_logging()
@@ -299,7 +337,6 @@ void settings_window::create_tab_logging()
         ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
-        ImGui::NewLine();
 
         if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
             save_settings();
@@ -336,6 +373,10 @@ void settings_window::create_tab_paths()
         ImGui::TextUnformatted("Profiles:");
         ImGui::SameLine(150);
         ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_profiles.c_str());
+
+        ImGui::TextUnformatted("Includes:");
+        ImGui::SameLine(150);
+        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_includes.c_str());
 
         ImGui::EndTabItem();
     }
@@ -383,6 +424,7 @@ void settings_window::save_settings()
     m_settings.set_log_midi(m_log_midi);
 
     m_settings.set_virtual_channel(m_virtual_channel);
+    m_settings.set_default_outbound_delay(m_default_outbound_delay);
 
     m_settings.set_max_text_messages(m_max_text_messages);
     m_settings.set_max_midi_messages(m_max_midi_messages);

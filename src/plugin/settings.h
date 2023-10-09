@@ -49,6 +49,9 @@ public:
     void set_virtual_channel(int in_channel);
     [[nodiscard]] int virtual_channel() const;
 
+    void set_default_outbound_delay(float in_delay);
+    [[nodiscard]] float default_outbound_delay() const;
+
     void set_max_text_messages(int in_number);
     [[nodiscard]] int max_text_messages() const;
 
@@ -92,6 +95,7 @@ private:
     bool m_show_messages {true};
 
     int m_virtual_channel {16};
+    float m_default_outbound_delay {0.5f};
 
     int m_max_text_messages {1500};
     int m_max_midi_messages {150};

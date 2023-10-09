@@ -41,7 +41,7 @@ public:
     void read_config(text_logger &in_log, toml::value &in_data);
     bool check(text_logger &in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger &in_log);
+    std::shared_ptr<outbound_task> execute();
 
 protected:
     std::string build_mapping_text() override;

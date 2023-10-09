@@ -35,10 +35,11 @@ protected:
 
 private:
     void create_tab_general();
+    void create_tab_midi();
     void create_tab_logging();
     void create_tab_paths();
 
-    std::string info_position_as_text(window_position in_position);
+    static std::string info_position_as_text(window_position in_position);
     void save_settings();
 
     settings& m_settings;
@@ -48,6 +49,7 @@ private:
     bool m_show_messages;
 
     int m_virtual_channel;
+    float m_default_outbound_delay;
 
     int m_max_text_messages;
     int m_max_midi_messages;
@@ -69,6 +71,7 @@ private:
     std::string m_path_plugin;
     std::string m_path_preferences;
     std::string m_path_profiles;
+    std::string m_path_includes;
 };
 
 } // Namespace xmidictrl

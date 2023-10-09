@@ -29,28 +29,43 @@ namespace xmidictrl {
 /**
  * Create all required preference folders
  */
-bool utils::create_preference_folders(text_logger &in_log, environment &in_env)
+bool utils::create_preference_folders(text_logger& in_log, environment& in_env)
 {
     // check preference folder
-    if (!std::filesystem::exists(in_env.preferences_path())) {
-        in_log.info("Directory '" + in_env.preferences_path().string() + "' not found");
-
-        if (std::filesystem::create_directory(in_env.preferences_path())) {
-            in_log.info("Directory '" + in_env.preferences_path().string() + "' created");
-        } else {
-            in_log.error("Could not create directory '" + in_env.preferences_path().string() + "'");
-            return false;
-        }
-    }
+    if (!create_directory(in_log, in_env.preferences_path()))
+        return false;
 
     // check profiles folder
-    if (!std::filesystem::exists(in_env.profiles_path())) {
-        in_log.info("Directory '" + in_env.profiles_path().string() + "' not found");
+    if (!create_directory(in_log, in_env.profiles_path()))
+        return false;
 
-        if (std::filesystem::create_directory(in_env.profiles_path())) {
-            in_log.info("Directory '" + in_env.profiles_path().string() + "' created");
+    // check includes folder
+    if (!create_directory(in_log, in_env.includes_path()))
+        return false;
+
+    return true;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Create a directory
+ */
+bool utils::create_directory(text_logger& in_log, const std::filesystem::path& in_path)
+{
+    // check includes folder
+    if (!std::filesystem::exists(in_path)) {
+        in_log.info("Directory '" + in_path.string() + "' not found");
+
+        if (std::filesystem::create_directory(in_path)) {
+            in_log.info("Directory '" + in_path.string() + "' created");
         } else {
-            in_log.error("Could not create directory '" + in_env.profiles_path().string() + "'");
+            in_log.error("Could not create directory '" + in_path.string() + "'");
             return false;
         }
     }

@@ -38,6 +38,7 @@ public:
     std::filesystem::path plugin_path() override;
     std::filesystem::path preferences_path() override;
     std::filesystem::path profiles_path() override;
+    std::filesystem::path includes_path() override;
 
     std::filesystem::path current_aircraft_path() override;
 

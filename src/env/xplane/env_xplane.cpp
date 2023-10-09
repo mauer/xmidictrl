@@ -135,6 +135,18 @@ std::filesystem::path env_xplane::profiles_path()
 
 
 /**
+ * Return the includes path within the preferences
+ */
+std::filesystem::path env_xplane::includes_path()
+{
+    if (m_profiles_path.empty())
+        m_profiles_path = preferences_path().string() + INCLUDES_DIRECTORY_NAME + "/";
+
+    return m_profiles_path;
+}
+
+
+/**
  * Return the current aircraft path
  */
 std::filesystem::path env_xplane::current_aircraft_path()

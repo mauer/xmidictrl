@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -20,6 +20,9 @@
 // Standard
 #include <filesystem>
 
+// XMidiCtrl
+#include "toml_utils.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -29,7 +32,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-config::config(environment &in_env)
+config::config(environment& in_env)
     : m_env(in_env)
 {
 }
@@ -44,7 +47,7 @@ config::config(environment &in_env)
 /**
  * Return the environment
  */
-environment &config::env() const
+environment& config::env() const
 {
     return m_env;
 }
@@ -53,39 +56,15 @@ environment &config::env() const
 /**
  * Load config from a file
  */
-bool config::load_file(text_logger &in_log, std::string_view in_filename)
+bool config::load_file(text_logger& in_log, std::string_view in_filename)
 {
     // just in case...
     close_file(in_log);
 
-    // check file name
-    if (in_filename.empty()) {
-        in_log.error("Cannot load file, because the given filename is empty");
-        return false;
-    }
-
-    // check if file exists
-    if (!std::filesystem::exists(in_filename)) {
-        in_log.error("File '" + std::string(in_filename) + "' not found!");
-        return false;
-    }
-
-    try {
-        // load config file
-        m_config = toml::parse(in_filename.data());
+    if (toml_utils::load_file(in_log, in_filename, m_config))
         m_filename = in_filename;
-
-        in_log.debug("File '" + m_filename + "' loaded successfully");
-    } catch (const toml::syntax_error &error) {
-        in_log.error("Error parsing file '" + std::string(in_filename) + "'");
-        in_log.error(error.what());
+    else
         return false;
-
-    } catch (const std::runtime_error &error) {
-        in_log.error("Error opening file '" + std::string(in_filename) + "'");
-        in_log.error(error.what());
-        return false;
-    }
 
     return true;
 }
@@ -94,7 +73,7 @@ bool config::load_file(text_logger &in_log, std::string_view in_filename)
 /**
  * Close the current config
  */
-void config::close_file(text_logger &in_log)
+void config::close_file(text_logger& in_log)
 {
     if (!m_filename.empty())
         in_log.debug("File '" + m_filename + "' closed");

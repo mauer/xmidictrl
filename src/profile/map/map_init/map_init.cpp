@@ -100,7 +100,7 @@ bool map_init::check(text_logger &in_log)
 /**
  * Create a MIDI outbound task
  */
-std::shared_ptr<outbound_task> map_init::execute(text_logger &in_log)
+std::shared_ptr<outbound_task> map_init::execute()
 {
     std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 

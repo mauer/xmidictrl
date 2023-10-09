@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_INIT_LIST_H
-#define MAP_INIT_LIST_H
+#ifndef XMC_MAP_INIT_LIST_H
+#define XM_CMAP_INIT_LIST_H
 
 // Standard
 #include <memory>
@@ -39,7 +39,7 @@ public:
     map_init_itr begin();
     map_init_itr end();
 
-    unsigned int size();
+    size_t size();
 
 protected:
     std::vector<std::shared_ptr<map_init>> m_list;

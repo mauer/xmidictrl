@@ -35,10 +35,10 @@ namespace xmidictrl {
  */
 virtual_device::virtual_device(text_logger& in_text_log,
                                midi_logger& in_midi_log,
-                               std::string_view in_name)
-    : device(in_text_log, in_midi_log, in_name)
+                               const std::shared_ptr<device_settings>& in_settings)
+    : device(in_text_log, in_midi_log, in_settings)
 {
-    in_text_log.info("Created new virtual MIDI device :: Name = '" + std::string(in_name) + "'");
+    in_text_log.info("Created new virtual MIDI device :: Name = '" + std::string(in_settings->name) + "'");
 }
 
 
@@ -68,7 +68,7 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
 
     // log MIDI in message
     midi_log().add(midi_msg);
-    text_log().debug("Inbound message from virtual device '" + std::string(name()) + "' :: "
+    text_log().debug("Inbound message from virtual device '" + settings().name + "' :: "
                      + "Status = '" + std::to_string(midi_msg->status()) + "', "
                      + "Data 1 = '" + std::to_string(midi_msg->data_1()) + "', "
                      + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");

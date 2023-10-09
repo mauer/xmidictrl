@@ -29,7 +29,10 @@ namespace xmidictrl {
 
 class utils {
 public:
-    static bool create_preference_folders(text_logger &in_log, environment &in_env);
+    static bool create_preference_folders(text_logger& in_log, environment& in_env);
+
+private:
+    static bool create_directory(text_logger& in_log, const std::filesystem::path& in_path);
 };
 
 } // Namespace xmidictrl

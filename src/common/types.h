@@ -51,8 +51,14 @@ const char* const LOGFILE_SUFFIX = "_Log.txt";
 // Suffix the general settings file
 const char* const SETTINGS_FILE_SUFFIX = "_Settings.toml";
 
+// Suffix for include files
+const char* const INCLUDE_FILE_SUFFIX = ".toml";
+
 // Profiles directory name
 const char* const PROFILES_DIRECTORY_NAME = "Profiles";
+
+// Includes directory name
+const char* const INCLUDES_DIRECTORY_NAME = "Includes";
 
 // Keys for mappings and MIDI message types
 const char* const KEY_CONTROL_CHANGE = "CC";
@@ -93,10 +99,12 @@ const char* const CFG_KEY_DATAREF_PUSH = "dataref_push";
 const char* const CFG_KEY_DATAREF_PULL = "dataref_pull";
 const char* const CFG_KEY_DEBUG_MODE = "debug_mode";
 const char* const CFG_KEY_DEFAULT_MIDI_SORT = "default_midi_sort";
+const char* const CFG_KEY_DEFAULT_OUTBOUND_DELAY = "default_outbound_delay";
 const char* const CFG_KEY_DEFAULT_TEXT_SORT = "default_text_sort";
 const char* const CFG_KEY_DELAY = "delay";
 const char* const CFG_KEY_DEVICE = "device";
 const char* const CFG_KEY_ENCODER_MODE = "encoder_mode";
+const char* const CFG_KEY_INCLUDE = "include";
 const char* const CFG_KEY_LABEL = "label";
 const char* const CFG_KEY_LOG_MIDI = "log_midi";
 const char* const CFG_KEY_MAPPING_IN = "mapping_in";
@@ -105,6 +113,7 @@ const char* const CFG_KEY_MAPPING_OUT = "mapping_out";
 const char* const CFG_KEY_MAX_MIDI_MESSAGES = "max_midi_messages";
 const char* const CFG_KEY_MAX_TEXT_MESSAGES = "max_text_messages";
 const char* const CFG_KEY_MODE = "mode";
+const char* const CFG_KEY_MODE_NOTE = "mode_note";
 const char* const CFG_KEY_MODE_OUT = "mode_out";
 const char* const CFG_KEY_MODIFIER_DOWN = "modifier_down";
 const char* const CFG_KEY_MODIFIER_FAST_DOWN = "modifier_fast_down";
@@ -113,6 +122,7 @@ const char* const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char* const CFG_KEY_NAME = "name";
 const char* const CFG_KEY_NOTE = "note";
 const char* const CFG_KEY_NOTE_NAME = "note";
+const char* const CFG_KEY_OUTBOUND_DELAY = "outbound_delay";
 const char* const CFG_KEY_PITCH_BEND = "pitch";
 const char* const CFG_KEY_PROGRAM_CHANGE = "prg";
 const char* const CFG_KEY_PORT_IN = "port_in";
@@ -215,6 +225,12 @@ enum class map_data_type {
     note,
     pitch_bend,
     program_change
+};
+
+// Outbound note mode (on off vs on)
+enum class mode_note {
+    on_off,
+    on
 };
 
 // Send mode outbound

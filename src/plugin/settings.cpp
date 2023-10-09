@@ -43,6 +43,7 @@ settings::settings(text_logger &in_text_log, environment &in_env)
         m_show_messages = toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
 
         m_virtual_channel = toml::find_or<int>(m_config, CFG_KEY_VIRTUAL_CHANNEL, 16);
+        m_default_outbound_delay = toml::find_or<float>(m_config, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
 
         m_max_text_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
         m_max_midi_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 150);
@@ -150,6 +151,24 @@ void settings::set_virtual_channel(const int in_channel)
 int settings::virtual_channel() const
 {
     return m_virtual_channel;
+}
+
+
+/**
+ * Set the default outbound delay MIDI messages
+ */
+void settings::set_default_outbound_delay(const float in_delay)
+{
+    m_default_outbound_delay = in_delay;
+}
+
+
+/**
+ * Return the default outbound delay MIDI messages
+ */
+float settings::default_outbound_delay() const
+{
+    return m_default_outbound_delay;
 }
 
 

@@ -25,6 +25,7 @@
 
 // XMidiCtrl
 #include "device.h"
+#include "device_settings.h"
 #include "inbound_task.h"
 #include "midi_device.h"
 #include "midi_logger.h"
@@ -40,23 +41,18 @@ public:
 
     std::shared_ptr<midi_device> create_midi_device(text_logger& in_text_log,
                                                     midi_logger& in_midi_log,
-                                                    std::string_view in_name,
-                                                    unsigned int in_device_no,
-                                                    unsigned int in_port_in,
-                                                    unsigned int in_port_out,
-                                                    mode_out in_mode_out,
-                                                    encoder_mode in_default_enc_mode);
+                                                    const std::shared_ptr<device_settings>& in_settings);
 
     std::shared_ptr<virtual_device> create_virtual_device(text_logger& in_text_log,
                                                           midi_logger& in_midi_log,
-                                                          std::string_view in_name);
+                                                          const std::shared_ptr<device_settings>& in_settings);
 
     bool open_connections();
     void close_connections();
 
     std::shared_ptr<virtual_device> find_virtual_device();
 
-    void process_init_mappings(text_logger& in_log);
+    void process_init_mappings();
     void process_outbound_mappings(text_logger& in_log);
     void process_outbound_reset();
 

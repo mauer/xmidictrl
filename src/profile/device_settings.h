@@ -15,38 +15,36 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_CONVERSIONS_H
-#define XMC_CONVERSIONS_H
+#ifndef XMC_DEVICE_SETTINGS_H
+#define XMC_DEVICE_SETTINGS_H
 
 // Standard
 #include <set>
 #include <string>
 
-// toml11
-#include <toml.hpp>
-
 // XMidiCtrl
-#include "environment.h"
-#include "text_logger.h"
 #include "types.h"
 
 namespace xmidictrl {
 
-class conversions {
-public:
-    static mode_note mode_note_from_code(std::string_view in_mode);
-    static mode_out mode_out_from_int(int in_mode);
+struct device_settings {
+    std::string name;
 
-    // move directly into mapping classes
-    static dataref_mode dataref_mode_from_code(std::string_view in_mode);
-    static encoder_mode encoder_mode_from_code(std::string_view in_mode);
+    int device_no {-1};
 
-    static std::string time_to_string(time_point in_time);
-    static std::string int_to_string(int in_number, unsigned int in_length);
+    int port_in {-1};
+    int port_out {-1};
 
-    static std::string create_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
+    std::set<std::string> include;
+
+    mode_note mode_note {mode_note::on_off};
+    mode_out mode_out {mode_out::permanent};
+
+    float outbound_delay {0.5f};
+
+    encoder_mode default_enc_mode {encoder_mode::relative};
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_CONVERSIONS_H
+#endif // XMC_DEVICE_SETTINGS_H

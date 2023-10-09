@@ -36,6 +36,7 @@
 
 // XMidiCtrl
 #include "device.h"
+#include "device_settings.h"
 #include "map_in.h"
 #include "map_in_list.h"
 #include "map_init.h"
@@ -56,23 +57,14 @@ class device_list;
 
 class midi_device : public device {
 public:
-    midi_device(text_logger& in_text_log,
-                midi_logger& in_midi_log,
-                std::string_view in_name,
-                unsigned int in_device_no,
-                unsigned int in_port_in,
-                unsigned int in_port_out,
-                mode_out in_mode_out,
-                encoder_mode in_default_enc_mode);
-    ~midi_device();
+    midi_device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings);
+    ~midi_device() override;
 
     // no copying or copy assignments are allowed
     midi_device(midi_device const&) = delete;
     midi_device& operator=(midi_device const&) = delete;
 
     device_type type() override;
-
-    unsigned int device_no() const;
 
     void add_init_map(std::shared_ptr<map_init>& in_mapping);
     void add_outbound_map(std::shared_ptr<map_out>& in_mapping);
@@ -84,28 +76,18 @@ public:
                               std::vector<unsigned char>* in_message,
                               void* in_userdata);
 
-    void process_init_mappings(text_logger& in_log);
+    void process_init_mappings();
 
     void process_inbound_message(std::vector<unsigned char>* in_message);
 
     void process_outbound_mappings(text_logger& in_log);
     void process_outbound_reset();
 
-    encoder_mode default_encoder_mode() const;
-
 private:
     void create_outbound_thread();
     void process_outbound_tasks();
 
     void add_outbound_task(const std::shared_ptr<outbound_task>& in_task);
-
-    unsigned int m_device_no;
-
-    unsigned int m_port_in;
-    unsigned int m_port_out;
-
-    mode_out m_mode_out;
-    encoder_mode m_default_enc_mode {encoder_mode::relative};
 
     time_point m_time_sent {time_point::min()};
 

@@ -17,6 +17,8 @@
 
 #include "device.h"
 
+#include <utility>
+
 // XMidiCtrl
 #include "map_in_cmd.h"
 #include "conversions.h"
@@ -30,12 +32,10 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(text_logger& in_text_log,
-               midi_logger& in_midi_log,
-               std::string_view in_name)
+device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings)
     : m_text_log(in_text_log),
       m_midi_log(in_midi_log),
-      m_name(in_name)
+      m_settings(std::move(in_settings))
 {
 }
 
@@ -47,11 +47,11 @@ device::device(text_logger& in_text_log,
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the device name
+ * Return the device settings
  */
-std::string_view device::name()
+device_settings& device::settings()
 {
-    return m_name;
+    return *m_settings;
 }
 
 

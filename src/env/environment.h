@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef ENV_H
-#define ENV_H
+#ifndef XMC_ENV_H
+#define XMC_ENV_H
 
 // Standard
 #include <filesystem>
@@ -37,6 +37,7 @@ public:
     virtual std::filesystem::path plugin_path() = 0;
     virtual std::filesystem::path preferences_path() = 0;
     virtual std::filesystem::path profiles_path() = 0;
+    virtual std::filesystem::path includes_path() = 0;
 
     virtual std::filesystem::path current_aircraft_path() = 0;
 
@@ -57,4 +58,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // ENV_H
+#endif // XMC_ENV_H

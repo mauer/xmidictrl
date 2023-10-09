@@ -71,7 +71,7 @@ map_out_itr map_out_list::end()
 /**
  * Return the number of mapping
  */
-unsigned int map_out_list::size()
+size_t map_out_list::size()
 {
     return m_list.size();
 }

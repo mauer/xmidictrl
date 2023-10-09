@@ -29,5 +29,5 @@ target_sources(${PROJECT_NAME} PRIVATE ${ENV_SRC})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # Add sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/standalone/CMakeLists.txt)
+##include(${CMAKE_CURRENT_LIST_DIR}/standalone/CMakeLists.txt) -- disabled as not used
 include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)

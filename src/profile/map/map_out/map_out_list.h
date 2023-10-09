@@ -39,7 +39,7 @@ public:
     map_out_itr begin();
     map_out_itr end();
 
-    unsigned int size();
+    size_t size();
 
 protected:
     std::vector<std::shared_ptr<map_out>> m_list;

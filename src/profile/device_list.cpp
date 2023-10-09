@@ -46,21 +46,9 @@ device_list::~device_list()
  */
 std::shared_ptr<midi_device> device_list::create_midi_device(text_logger& in_text_log,
                                                              midi_logger& in_midi_log,
-                                                             std::string_view in_name,
-                                                             unsigned int in_device_no,
-                                                             unsigned int in_port_in,
-                                                             unsigned int in_port_out,
-                                                             mode_out in_mode_out,
-                                                             encoder_mode in_default_enc_mode)
+                                                             const std::shared_ptr<device_settings>& in_settings)
 {
-    auto dev = std::make_shared<midi_device>(in_text_log,
-                                                                 in_midi_log,
-                                                                    in_name,
-                                                                    in_device_no,
-                                                                    in_port_in,
-                                                                    in_port_out,
-                                                                    in_mode_out,
-                                                                    in_default_enc_mode);
+    auto dev = std::make_shared<midi_device>(in_text_log, in_midi_log, in_settings);
     m_device_list.push_back(dev);
 
     return dev;
@@ -72,9 +60,9 @@ std::shared_ptr<midi_device> device_list::create_midi_device(text_logger& in_tex
  */
 std::shared_ptr<virtual_device> device_list::create_virtual_device(text_logger& in_text_log,
                                                                    midi_logger& in_midi_log,
-                                                                   std::string_view in_name)
+                                                                   const std::shared_ptr<device_settings>& in_settings)
 {
-    auto dev = std::make_shared<virtual_device>(in_text_log, in_midi_log, in_name);
+    auto dev = std::make_shared<virtual_device>(in_text_log, in_midi_log, in_settings);
     m_device_list.push_back(dev);
 
     return dev;
@@ -135,13 +123,13 @@ std::shared_ptr<virtual_device> device_list::find_virtual_device()
 /**
  * Process the midi init mappings
  */
-void device_list::process_init_mappings(text_logger& in_log)
+void device_list::process_init_mappings()
 {
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
             auto midi_dev = std::static_pointer_cast<midi_device>(device);
 
-            midi_dev->process_init_mappings(in_log);
+            midi_dev->process_init_mappings();
         }
     }
 }

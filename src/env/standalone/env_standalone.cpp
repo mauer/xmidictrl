@@ -95,6 +95,16 @@ std::filesystem::path env_standalone::profiles_path()
     return {};
 }
 
+
+/**
+ * Return the includes path within the preferences
+ */
+std::filesystem::path env_standalone::includes_path()
+{
+    return {};
+}
+
+
 /**
  * Return the current aircraft path
  */

@@ -24,6 +24,42 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Load a toml config from a given file
+ */
+bool toml_utils::load_file(text_logger &in_log, std::string_view in_filename, toml::value &out_config)
+{
+    // check file name
+    if (in_filename.empty()) {
+        in_log.error("Cannot load file, because the given filename is empty");
+        return false;
+    }
+
+    // check if file exists
+    if (!std::filesystem::exists(in_filename)) {
+        in_log.error("File '" + std::string(in_filename) + "' not found!");
+        return false;
+    }
+
+    try {
+        // load config file
+        out_config = toml::parse(in_filename.data());
+        in_log.debug("File '" + std::string(in_filename) + "' loaded successfully");
+    } catch (const toml::syntax_error &error) {
+        in_log.error("Error parsing file '" + std::string(in_filename) + "'");
+        in_log.error(error.what());
+        return false;
+
+    } catch (const std::runtime_error &error) {
+        in_log.error("Error opening file '" + std::string(in_filename) + "'");
+        in_log.error(error.what());
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
  * Check if the given key is in the config
  */
 bool toml_utils::contains(text_logger& in_log,

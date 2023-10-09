@@ -45,7 +45,7 @@ enum class filename_prefix {
 
 class profile : public config {
 public:
-    explicit profile(text_logger &in_text_log, midi_logger &in_midi_log, environment &in_env, settings &in_settings);
+    explicit profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env, settings& in_settings);
     ~profile() override;
 
     bool load();
@@ -55,7 +55,7 @@ public:
 
     [[nodiscard]] std::string_view filename() const;
 
-    text_logger &log();
+    text_logger& log();
     [[nodiscard]] bool has_errors() const;
 
     std::string title();
@@ -68,7 +68,7 @@ public:
 
     [[nodiscard]] std::string_view sl_dataref() const;
 
-    void process(text_logger &in_log);
+    void process(text_logger& in_log);
 
 private:
     void clear();
@@ -76,26 +76,34 @@ private:
     std::string find_profile();
 
     void create_device_list();
-
     void create_virtual_device();
-    void create_midi_device();
 
-    void create_init_mapping(size_t in_dev_no, toml::array in_settings, const std::shared_ptr<midi_device> &in_device);
-    void create_inbound_mapping(toml::array in_settings, const std::shared_ptr<device> &in_device);
-    void create_outbound_mapping(size_t in_dev_no,
-                                 toml::array in_settings,
-                                 const std::shared_ptr<midi_device> &in_device);
+    void create_device(const toml::value& in_params, bool in_is_virtual, size_t in_dev_no = 0);
+    std::shared_ptr<device_settings> create_device_settings(toml::value in_params,
+                                                            bool in_is_virtual,
+                                                            size_t in_dev_no = 0);
+
+    void add_mappings_from_include(const std::shared_ptr<device>& in_device);
+    void create_device_mappings(toml::value in_params, const std::shared_ptr<device>& in_device);
+
+    void create_init_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device);
+    void create_inbound_mapping(toml::array in_params, const std::shared_ptr<device>& in_device);
+    void create_outbound_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device);
 
     static map_type translate_map_type(std::string_view in_type_str);
-    map_type read_mapping_type(toml::value &in_settings);
+    map_type read_mapping_type(toml::value& in_params);
 
-    settings &m_settings;
+    static std::string get_log_prefix_from_device(const std::shared_ptr<device>& in_device);
+    static std::string get_log_prefix(bool in_is_virtual, size_t in_dev_no = 0);
+
+
+    settings& m_settings;
 
     bool m_loaded {false};
     bool m_init_send {false};
 
-    text_logger &m_plugin_log;
-    midi_logger &m_midi_log;
+    text_logger& m_plugin_log;
+    midi_logger& m_midi_log;
 
     std::unique_ptr<text_logger> m_profile_log;
     std::unique_ptr<device_list> m_device_list;
