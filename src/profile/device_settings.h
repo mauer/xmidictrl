@@ -37,8 +37,8 @@ struct device_settings {
 
     std::set<std::string> include;
 
-    mode_note mode_note {mode_note::on_off};
-    mode_out mode_out {mode_out::permanent};
+    outbound_note_mode note_mode {outbound_note_mode::on_off};
+    outbound_send_mode send_mode {outbound_send_mode::permanent};
 
     float outbound_delay {0.5f};
 

@@ -194,7 +194,7 @@ bool map_out_sld::check(text_logger& in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log, const mode_out in_mode)
+std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log, outbound_send_mode in_send_mode)
 {
     bool changed = false;
     bool send_msg = false;
@@ -211,10 +211,10 @@ std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log, const m
     if (m_first_execution)
         m_first_execution = false;
 
-    if (in_mode == mode_out::on_change) {
+    if (in_send_mode == outbound_send_mode::on_change) {
         if (changed)
             send_msg = true;
-    } else if (in_mode == mode_out::permanent) {
+    } else if (in_send_mode == outbound_send_mode::permanent) {
         send_msg = true;
     }
 

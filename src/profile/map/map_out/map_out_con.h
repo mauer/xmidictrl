@@ -45,7 +45,7 @@ public:
     void read_config(text_logger &in_log, toml::value &in_data) override;
     bool check(text_logger &in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out in_mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger &in_log, outbound_send_mode in_send_mode) override;
     std::shared_ptr<outbound_task> reset() override;
 
 protected:

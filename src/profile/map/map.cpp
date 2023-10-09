@@ -133,7 +133,7 @@ std::string map::get_key()
 /**
  * Check the mapping
  */
-bool map::check(text_logger &in_log)
+bool map::check(text_logger&)
 {
     if (m_channel != MIDI_NONE && m_data != MIDI_NONE && m_data_type != map_data_type::none)
         return true;

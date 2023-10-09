@@ -516,7 +516,7 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
             }
 
             // mode note
-            settings->mode_note = conversions::mode_note_from_code(toml_utils::read_string(*m_profile_log,
+            settings->note_mode = conversions::note_mode_from_code(toml_utils::read_string(*m_profile_log,
                                                                                            in_params,
                                                                                            CFG_KEY_MODE_NOTE,
                                                                                            false));
@@ -532,10 +532,10 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
                 settings->outbound_delay = m_settings.default_outbound_delay();
 
             // mode outbound
-            settings->mode_out = conversions::mode_out_from_int(toml_utils::read_int(*m_profile_log,
-                                                                                     in_params,
-                                                                                     CFG_KEY_MODE_OUT,
-                                                                                     false));
+            settings->send_mode = conversions::send_mode_from_code(toml_utils::read_string(*m_profile_log,
+                                                                                           in_params,
+                                                                                           CFG_KEY_MODE_OUT,
+                                                                                           false));
 
             // default encoder mode
             settings->default_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(*m_profile_log,

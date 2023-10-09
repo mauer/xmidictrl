@@ -308,7 +308,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
  */
 void midi_device::process_outbound_mappings(text_logger& in_log)
 {
-    if (settings().mode_out == mode_out::permanent) {
+    if (settings().send_mode == outbound_send_mode::permanent) {
         if (m_time_sent != time_point::min()) {
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_sent;
 
@@ -322,7 +322,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
         if (m_outbound_locked.contains(mapping->get_key()))
             continue;
 
-        std::shared_ptr<outbound_task> task = mapping->execute(in_log, settings().mode_out);
+        std::shared_ptr<outbound_task> task = mapping->execute(in_log, settings().send_mode);
 
         if (task == nullptr)
             continue;
@@ -331,7 +331,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
             add_outbound_task(task);
     }
 
-    if (settings().mode_out == mode_out::permanent)
+    if (settings().send_mode == outbound_send_mode::permanent)
         m_time_sent = std::chrono::system_clock::now();
 }
 
@@ -449,7 +449,7 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
 
         case midi_msg_type::note_off:
             // some MIDI device expect note_on for note_off with a velocity of 0. Lets check the settings
-            if (settings().mode_note == mode_note::on)
+            if (settings().note_mode == outbound_note_mode::on)
                 msg->set_status((int) (0x90 | (in_task->channel - 1)));
             else
                 msg->set_status((int) (0x80 | (in_task->channel - 1)));
@@ -471,7 +471,7 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
     msg->set_data_1(in_task->data);
 
     // some MIDI device expect note_on for note_off with a velocity of 0. Lets check the settings
-    if (in_task->type == midi_msg_type::note_off && settings().mode_note == mode_note::on)
+    if (in_task->type == midi_msg_type::note_off && settings().note_mode == outbound_note_mode::on)
         msg->set_data_2(MIDI_VELOCITY_MIN);
     else
         msg->set_data_2(in_task->velocity);

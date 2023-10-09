@@ -105,7 +105,7 @@ bool map_out_con::check(text_logger &in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_con::execute(text_logger &in_log, const mode_out in_mode)
+std::shared_ptr<outbound_task> map_out_con::execute(text_logger &, outbound_send_mode)
 {
     std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 

@@ -228,13 +228,13 @@ enum class map_data_type {
 };
 
 // Outbound note mode (on off vs on)
-enum class mode_note {
+enum class outbound_note_mode {
     on_off,
     on
 };
 
-// Send mode outbound
-enum class mode_out {
+// Outbound send mode
+enum class outbound_send_mode {
     on_change,
     permanent
 };

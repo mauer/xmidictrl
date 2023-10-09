@@ -36,7 +36,7 @@ public:
 
     virtual void read_config(text_logger &in_log, toml::value &in_data) = 0;
 
-    virtual std::shared_ptr<outbound_task> execute(text_logger &in_log, mode_out mode) = 0;
+    virtual std::shared_ptr<outbound_task> execute(text_logger &in_log, outbound_send_mode in_send_mode) = 0;
     virtual std::shared_ptr<outbound_task> reset() = 0;
 };
 

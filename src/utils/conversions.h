@@ -34,10 +34,10 @@ namespace xmidictrl {
 
 class conversions {
 public:
-    static mode_note mode_note_from_code(std::string_view in_mode);
-    static mode_out mode_out_from_int(int in_mode);
-
     // move directly into mapping classes
+    static outbound_note_mode note_mode_from_code(std::string_view in_mode);
+    static outbound_send_mode send_mode_from_code(std::string_view in_mode);
+
     static dataref_mode dataref_mode_from_code(std::string_view in_mode);
     static encoder_mode encoder_mode_from_code(std::string_view in_mode);
 
