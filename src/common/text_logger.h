@@ -44,10 +44,7 @@ public:
     [[nodiscard]] bool debug_mode() const;
 
     void set_log_info(bool in_mode);
-    [[nodiscard]] bool log_info() const;
-
     void set_max_size(int in_size);
-    [[nodiscard]] int max_size() const;
 
     void clear();
     size_t count();

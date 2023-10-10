@@ -139,10 +139,10 @@ std::filesystem::path env_xplane::profiles_path()
  */
 std::filesystem::path env_xplane::includes_path()
 {
-    if (m_profiles_path.empty())
-        m_profiles_path = preferences_path().string() + INCLUDES_DIRECTORY_NAME + "/";
+    if (m_includes_path.empty())
+        m_includes_path = preferences_path().string() + INCLUDES_DIRECTORY_NAME + "/";
 
-    return m_profiles_path;
+    return m_includes_path;
 }
 
 

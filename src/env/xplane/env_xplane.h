@@ -58,6 +58,7 @@ private:
     std::filesystem::path m_plugin_path;
     std::filesystem::path m_preferences_path;
     std::filesystem::path m_profiles_path;
+    std::filesystem::path m_includes_path;
 
     std::unique_ptr<cmd_xplane> m_cmd;
     std::unique_ptr<data_xplane> m_drf;

@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 
 #ifndef XMC_MAP_INIT_LIST_H
-#define XM_CMAP_INIT_LIST_H
+#define XMC_MAP_INIT_LIST_H
 
 // Standard
 #include <memory>
@@ -47,4 +47,4 @@ protected:
 
 } // Namespace xmidictrl
 
-#endif // MAP_INIT_LIST_H
+#endif // XMC_MAP_INIT_LIST_H

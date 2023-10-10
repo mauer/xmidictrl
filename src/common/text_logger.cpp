@@ -87,15 +87,6 @@ void text_logger::set_log_info(bool in_mode)
 
 
 /**
- * Return if info messages should be logged
- */
-bool text_logger::log_info() const
-{
-    return m_log_info;
-}
-
-
-/**
  * Set the max message size
  */
 void text_logger::set_max_size(int in_size)
@@ -107,18 +98,6 @@ void text_logger::set_max_size(int in_size)
 
     while (m_messages.size() > m_max_size)
         m_messages.pop_front();
-}
-
-
-/**
- * Return the max message size
- */
-int text_logger::max_size() const
-{
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-
-    return m_max_size;
 }
 
 
