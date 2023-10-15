@@ -3,6 +3,14 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 1.12
++ Added include files for aircraft profiles
++ Fixed several minor problems
++ Added option to delay outbound messages
++ Some refactoring
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 1.10
 + Fixed copyright year in about dialog
 + Fixed mapping error in 733 example

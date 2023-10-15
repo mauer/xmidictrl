@@ -155,6 +155,10 @@ bool map_in_cmd::execute(midi_message &in_msg, std::string_view in_sl_value)
 std::string map_in_cmd::build_mapping_text()
 {
     std::string map_str = " ====== Command ======\n";
+
+    if (!sl().empty())
+        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+
     map_str.append("Command = '" + m_command + "'\n");
 
     if (m_velocity_on != MIDI_VELOCITY_MAX)

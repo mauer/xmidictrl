@@ -1,3 +1,4 @@
  + Display mappings and devices in profile window
  + Allow selection of different ports when loading an aircraft
  + Label push/pull
+ + Check all mapping texts, especially pnp

@@ -270,6 +270,10 @@ void map_in_pnp::reset()
 std::string map_in_pnp::build_mapping_text()
 {
     std::string map_str = " ====== Push & Pull ======\n";
+
+    if (!sl().empty())
+        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+
     map_str.append("Command push = '" + m_command_push + "'\n");
     map_str.append("Command pull = '" + m_command_pull + "'\n");
 
