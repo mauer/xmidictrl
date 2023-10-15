@@ -35,6 +35,7 @@
   * [Aircraft Profiles](profile.md)
   * [Dataref Arrays](dataref_arrays.md)
   * [Sublayers](sublayers.md)
+  * [Include Files](include_files.md)
 
 * [Changelog](changelog.md)
 

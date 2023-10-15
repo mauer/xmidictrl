@@ -211,6 +211,9 @@ std::string map_in_enc::build_mapping_text()
 {
     std::string map_str = " ====== Encoder ======\n";
 
+    if (!sl().empty())
+        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+
     if (m_mode == encoder_mode::relative)
         map_str.append("Mode = 'relative'\n");
     else

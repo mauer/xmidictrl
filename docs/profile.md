@@ -17,7 +17,7 @@ If no profile has been located in the aircraft directory, it will search for the
 directory:
 
 ```
-../X-Plane 11/Output/preferences/XMidiCtrl/profiles
+<X-Plane Path>/Output/preferences/XMidiCtrl/Profiles
 ```
 
 ### 2.1 Profiles Directory - Designer and ICAO

@@ -20,6 +20,7 @@ ports and some mappings.
 | name                 | It's good practise to define a name for your device                                       |
 | mode_note            | on_off = send note on/off messages (default) / on = send note on messages only            | 
 | mode_out             | permanent = permanent mode (default) / on_change = on change mode (see description below) |
+| include              | Defines the include files to be included for the device (single or multiple)              |
 | mapping_in           | Mappings for inbound messages                                                             |
 | mapping_out          | Mappings for outbound messages                                                            |
 | outbound_delay       | Delays outbound messages by the specified number of seconds (default 0.5 sec)             |
