@@ -2,6 +2,7 @@
 
 [![build-all-platforms](https://github.com/mauer/xmidictrl/actions/workflows/build.yml/badge.svg)](https://github.com/mauer/xmidictrl/actions/workflows/build.yml)
 [![pages-build-deployment](https://github.com/mauer/xmidictrl/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/mauer/xmidictrl/actions/workflows/pages/pages-build-deployment)
+
 XMidiCtrl is a plugin for X-Plane 11/12 and allows the connection of MIDI devices to commands and datarefs without the
 need of additional software.
 
