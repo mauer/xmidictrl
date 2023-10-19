@@ -1,6 +1,7 @@
 # MIDI Controller plugin for X-Plane 11.50+ / 12
 
 [![build-all-platforms](https://github.com/mauer/xmidictrl/actions/workflows/build.yml/badge.svg)](https://github.com/mauer/xmidictrl/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mauer_xmidictrl&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mauer_xmidictrl)
 [![pages-build-deployment](https://github.com/mauer/xmidictrl/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/mauer/xmidictrl/actions/workflows/pages/pages-build-deployment)
 
 XMidiCtrl is a plugin for X-Plane 11/12 and allows the connection of MIDI devices to commands and datarefs without the
