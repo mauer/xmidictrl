@@ -43,9 +43,9 @@ public:
     plugin();
     ~plugin();
 
-    static plugin &instance();
+    static plugin& instance();
 
-    static float callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void *in_refcon);
+    static float callback_flight_loop(float in_elapsed_me, float in_elapsed_sim, int in_counter, void* in_refcon);
 
     void enable();
     void disable();
@@ -56,7 +56,7 @@ public:
     void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
 
     void add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity);
-    void add_inbound_task(const std::shared_ptr<inbound_task> &in_task);
+    void add_inbound_task(const std::shared_ptr<inbound_task>& in_task);
 
     void show_messages_window();
     void show_devices_window();
@@ -79,11 +79,11 @@ private:
     void create_commands();
     void remove_commands();
 
-    static int read_drf_sublayer(void *in_refcon);
-    static void write_drf_sublayer(void *in_refcon, int in_value);
+    static int read_drf_sublayer(void* in_refcon);
+    static void write_drf_sublayer(void* in_refcon, int in_value);
 
-    static int command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
-    static int virtual_midi_command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void *in_refcon);
+    static int command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void* in_refcon);
+    static int virtual_midi_command_handler(XPLMCommandRef in_command, XPLMCommandPhase in_phase, void* in_refcon);
 
     std::shared_ptr<xplane_window> create_window(window_type in_type);
 

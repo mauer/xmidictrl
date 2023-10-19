@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MIDI_MESSAGE_H
-#define MIDI_MESSAGE_H
+#ifndef XMC_MIDI_MESSAGE_H
+#define XMC_MIDI_MESSAGE_H
 
 // Standard
 #include <chrono>
@@ -34,26 +34,26 @@ enum class midi_direction {
     out
 };
 
-const char* const sharp_note_names[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-const char* const flat_note_names[]  = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+const char* const sharp_note_names[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+const char* const flat_note_names[] = {"C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"};
 
 class midi_message {
 public:
-    midi_message(text_logger &in_log, midi_direction in_direction);
+    midi_message(text_logger& in_log, midi_direction in_direction);
     ~midi_message();
 
-    text_logger &log();
+    text_logger& log();
 
     void clear();
 
-    bool parse_message(std::vector<unsigned char> *in_msg);
+    bool parse_message(std::vector<unsigned char>* in_msg);
     void create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
 
     bool check();
 
     [[nodiscard]] size_t mapping_count() const;
     std::string mappings_as_string();
-    void add_mapping(const std::shared_ptr<map> &in_map);
+    void add_mapping(const std::shared_ptr<map>& in_map);
 
     void set_time(time_point in_time);
     [[nodiscard]] std::string time() const;
@@ -98,4 +98,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // MIDI_MESSAGE_H
+#endif // XMC_MIDI_MESSAGE_H

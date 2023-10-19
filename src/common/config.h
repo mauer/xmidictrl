@@ -32,19 +32,19 @@ namespace xmidictrl {
 
 class config {
 public:
-    explicit config(environment &in_emv);
+    explicit config(environment& in_emv);
     virtual ~config() = default;
 
 protected:
-    [[nodiscard]] environment &env() const;
+    [[nodiscard]] environment& env() const;
 
-    bool load_file(text_logger &in_log, std::string_view in_filename);
-    void close_file(text_logger &in_log);
+    bool load_file(text_logger& in_log, std::string_view in_filename);
+    void close_file(text_logger& in_log);
 
     toml::value m_config {};
 
 private:
-    environment &m_env;
+    environment& m_env;
 
     std::string m_filename {};
 };

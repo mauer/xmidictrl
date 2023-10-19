@@ -252,6 +252,8 @@ void settings_window::create_tab_midi()
         ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
+        ImGui::NewLine();
+        ImGui::NewLine();
 
         if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
             save_settings();

@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-text_logger::text_logger(text_logger *in_parent)
+text_logger::text_logger(text_logger* in_parent)
     : m_parent(in_parent)
 {
 }
@@ -131,7 +131,7 @@ size_t text_logger::count()
 /**
  * Return a specific text message
  */
-text_log_msg *text_logger::message(int in_index)
+text_log_msg* text_logger::message(int in_index)
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
@@ -152,7 +152,7 @@ std::string text_logger::messages_as_text()
         return {m_messages.at(0)->text};
 
     std::string text;
-    for (auto &msg : m_messages) {
+    for (auto& msg: m_messages) {
         if (text.empty()) {
             text = msg->text;
         } else {
@@ -325,10 +325,10 @@ void text_logger::add_message(log_level in_level, std::string_view in_text)
     std::lock_guard<std::mutex> lock(mutex);
 
     if (in_level == log_level::warn)
-    	m_warn_count++;
-    	
+        m_warn_count++;
+
     if (in_level == log_level::error)
-    	m_error_count++;		
+        m_error_count++;
 
     // get current date time stamp
     time_t t = std::time(nullptr);

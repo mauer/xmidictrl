@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-midi_message::midi_message(text_logger &in_log, midi_direction in_direction)
+midi_message::midi_message(text_logger& in_log, midi_direction in_direction)
     : m_direction(in_direction)
 {
     m_log = std::make_unique<text_logger>(&in_log);
@@ -55,7 +55,7 @@ midi_message::~midi_message()
 /**
  * Return the message log
  */
-text_logger &midi_message::log()
+text_logger& midi_message::log()
 {
     return *m_log;
 }
@@ -80,7 +80,7 @@ void midi_message::clear()
 /**
  * Parse the given message
  */
-bool midi_message::parse_message(std::vector<unsigned char> *in_msg)
+bool midi_message::parse_message(std::vector<unsigned char>* in_msg)
 {
     clear();
 
@@ -159,7 +159,7 @@ std::string midi_message::mappings_as_string()
         return m_mappings.at(0)->as_text().data();
 
     std::string map_str;
-    for (auto &mapping: m_mappings) {
+    for (auto& mapping: m_mappings) {
         if (map_str.empty()) {
             map_str = mapping->as_text();
         } else {
@@ -175,7 +175,7 @@ std::string midi_message::mappings_as_string()
 /**
  * Add mapping to MIDI message
  */
-void midi_message::add_mapping(const std::shared_ptr<map> &in_map)
+void midi_message::add_mapping(const std::shared_ptr<map>& in_map)
 {
     m_mappings.push_back(in_map);
 }
