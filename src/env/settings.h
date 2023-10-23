@@ -98,6 +98,8 @@ public:
 private:
     std::string get_settings_filename();
 
+    text_logger& m_text_log;
+
     std::filesystem::path m_settings_path {};
     toml::value m_settings_file {};
 
@@ -127,8 +129,6 @@ private:
 
     ImVec4 m_value_color {ImColor(255, 127, 39)};
     ImVec4 m_title_color {ImColor(75, 160, 255)};
-
-    text_logger& m_text_log;
 };
 
 } // Namespace xmidictrl
