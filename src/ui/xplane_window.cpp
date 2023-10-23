@@ -38,8 +38,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-xplane_window::xplane_window(text_logger &in_log,
-                             environment &in_env,
+xplane_window::xplane_window(text_logger& in_log,
+                             environment& in_env,
                              int in_width,
                              int in_height,
                              window_position in_position,
@@ -79,7 +79,7 @@ xplane_window::~xplane_window()
 /**
  * Return multi matrix
  */
-void xplane_window::multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float> &in_m, const GLfloat in_v[4])
+void xplane_window::multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float>& in_m, const GLfloat in_v[4])
 {
     in_dst[0] = in_v[0] * in_m[0] + in_v[1] * in_m[4] + in_v[2] * in_m[8] + in_v[3] * in_m[12];
     in_dst[1] = in_v[0] * in_m[1] + in_v[1] * in_m[5] + in_v[2] * in_m[9] + in_v[3] * in_m[13];
@@ -91,7 +91,7 @@ void xplane_window::multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<floa
 /**
  * Return the log
  */
-text_logger &xplane_window::log()
+text_logger& xplane_window::log()
 {
     return m_log;
 }
@@ -100,7 +100,7 @@ text_logger &xplane_window::log()
 /**
  * Return the environment
  */
-environment &xplane_window::env()
+environment& xplane_window::env()
 {
     return m_env;
 }
@@ -252,7 +252,7 @@ bool xplane_window::on_mouse_wheel(int, int, int, int)
 /**
  * Calculate the a new window position
  */
-void xplane_window::calc_window_position(int &out_left, int &out_right, int &out_top, int &out_bottom)
+void xplane_window::calc_window_position(int& out_left, int& out_right, int& out_top, int& out_bottom)
 {
     // get the X-Plane screen boundaries in boxels
     int screen_left, screen_top, screen_right, screen_bottom;
@@ -336,26 +336,26 @@ void xplane_window::create_window()
         params.decorateAsFloatingWindow = xplm_WindowDecorationRoundRectangle;
 
     // add callbacks for every event
-    params.drawWindowFunc = [](XPLMWindowID, void *ref) {
-        reinterpret_cast<xplane_window *>(ref)->on_draw();
+    params.drawWindowFunc = [](XPLMWindowID, void* ref) {
+        reinterpret_cast<xplane_window*>(ref)->on_draw();
     };
 
-    params.handleMouseClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void *ref)->int {
-        return reinterpret_cast<xplane_window *>(ref)->on_click(x, y, status);
+    params.handleMouseClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void* ref)->int {
+        return reinterpret_cast<xplane_window*>(ref)->on_click(x, y, status);
     };
 
-    params.handleRightClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void *ref)->int {
-        return reinterpret_cast<xplane_window *>(ref)->on_right_click(x, y, status);
+    params.handleRightClickFunc = [](XPLMWindowID, int x, int y, XPLMMouseStatus status, void* ref)->int {
+        return reinterpret_cast<xplane_window*>(ref)->on_right_click(x, y, status);
     };
 
-    params.handleKeyFunc = [](XPLMWindowID, char key, XPLMKeyFlags flags, char vKey, void *ref, int losingFocus) {
-        reinterpret_cast<xplane_window *>(ref)->on_key(key, flags, vKey, losingFocus);
+    params.handleKeyFunc = [](XPLMWindowID, char key, XPLMKeyFlags flags, char vKey, void* ref, int losingFocus) {
+        reinterpret_cast<xplane_window*>(ref)->on_key(key, flags, vKey, losingFocus);
     };
-    params.handleCursorFunc = [](XPLMWindowID, int x, int y, void *ref)->XPLMCursorStatus {
-        return reinterpret_cast<xplane_window *>(ref)->on_cursor(x, y);
+    params.handleCursorFunc = [](XPLMWindowID, int x, int y, void* ref)->XPLMCursorStatus {
+        return reinterpret_cast<xplane_window*>(ref)->on_cursor(x, y);
     };
-    params.handleMouseWheelFunc = [](XPLMWindowID, int x, int y, int wheel, int clicks, void *ref)->int {
-        return reinterpret_cast<xplane_window *>(ref)->on_mouse_wheel(x, y, wheel, clicks);
+    params.handleMouseWheelFunc = [](XPLMWindowID, int x, int y, int wheel, int clicks, void* ref)->int {
+        return reinterpret_cast<xplane_window*>(ref)->on_mouse_wheel(x, y, wheel, clicks);
     };
 
     // create the window
@@ -404,7 +404,7 @@ void xplane_window::update_matrices()
 /**
  * Convert boxels to native resolution
  */
-void xplane_window::boxels_to_native(int in_x, int in_y, int &out_x, int &out_y)
+void xplane_window::boxels_to_native(int in_x, int in_y, int& out_x, int& out_y)
 {
     GLfloat boxel_pos[4] = {(GLfloat) in_x, (GLfloat) in_y, 0, 1};
     GLfloat eye[4], ndc[4];

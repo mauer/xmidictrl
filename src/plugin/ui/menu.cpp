@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -37,27 +37,31 @@ void menu::create_menu()
     m_menu_container = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, nullptr, 0);
     m_menu_id = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menu_container, event_handler, this);
 
-    XPLMAppendMenuItem(m_menu_id, "Show MIDI Devices", (void *) MENUITEM_DEVICES_WINDOW, 0);
-    XPLMAppendMenuItem(m_menu_id, "Show Messages", (void *) MENUITEM_MESSAGES_WINDOW, 0);
-
-    XPLMAppendMenuSeparator(m_menu_id);
-    XPLMAppendMenuItem(m_menu_id, "Show Aircraft Profile", (void*) MENUITEM_PROFILE_WINDOW, 0);
-
-    XPLMAppendMenuItem(m_menu_id, "Reload Aircraft Profile", (void *) MENUITEM_RELOAD_PROFILE, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show MIDI Devices", (void*) menu_show_devices_window, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
-    XPLMAppendMenuItem(m_menu_id, "Settings", (void *) MENUITEM_SETTINGS_WINDOW, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show Logger", (void*) menu_show_log_window, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show MIDI Messages", (void*) menu_show_midi_msg_window, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
-    XPLMAppendMenuItem(m_menu_id, "Documentation", (void *) MENUITEM_SHOW_DOCUMENTATION, 0);
-    XPLMAppendMenuItem(m_menu_id, "Support", (void *) MENUITEM_SHOW_SUPPORT, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show Aircraft Profile", (void*) menu_show_profile_window, 0);
+    XPLMAppendMenuItem(m_menu_id, "Reload Aircraft Profile", (void*) menu_reload_profile, 0);
+
+    XPLMAppendMenuSeparator(m_menu_id);
+
+    XPLMAppendMenuItem(m_menu_id, "Settings", (void*) menu_show_settings_window, 0);
+
+    XPLMAppendMenuSeparator(m_menu_id);
+
+    XPLMAppendMenuItem(m_menu_id, "Documentation", (void*) menu_show_documentation, 0);
+    XPLMAppendMenuItem(m_menu_id, "Support", (void*) menu_show_support_forum, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
     XPLMAppendMenuItem(m_menu_id, std::string_view("About " + std::string(XMIDICTRL_NAME)).data(),
-                       (void *) MENUITEM_ABOUT_WINDOW, 0);
+                       (void*) menu_show_about_window, 0);
 }
 
 
@@ -86,24 +90,50 @@ void menu::remove_menu()
 /**
  * Event handler fpr the menu
  */
-void menu::event_handler([[maybe_unused]] void *in_menu_ref, void *in_item_ref)
+void menu::event_handler(void*, void* in_item_ref)
 {
-    if (!strcmp((const char *) in_item_ref, MENUITEM_DEVICES_WINDOW))
-        plugin::instance().show_devices_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_MESSAGES_WINDOW))
-        plugin::instance().show_messages_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_PROFILE_WINDOW))
-        plugin::instance().show_profile_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_RELOAD_PROFILE))
-        plugin::instance().load_profile();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_SETTINGS_WINDOW))
-        plugin::instance().show_settings_window();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_DOCUMENTATION))
-        show_documentation();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_SHOW_SUPPORT))
-        show_support();
-    else if (!strcmp((const char *) in_item_ref, MENUITEM_ABOUT_WINDOW))
-        plugin::instance().show_about_window();
+    auto cmd = (intptr_t) in_item_ref;
+
+    switch (cmd) {
+        case menu_show_devices_window:
+            plugin::instance().show_devices_window();
+            break;
+
+        case menu_show_log_window:
+            plugin::instance().show_log_window();
+            break;
+
+        case menu_show_midi_msg_window:
+            plugin::instance().show_messages_window();
+            break;
+
+        case menu_show_profile_window:
+            plugin::instance().show_profile_window();
+            break;
+
+        case menu_reload_profile:
+            plugin::instance().load_profile();
+            break;
+
+        case menu_show_settings_window:
+            plugin::instance().show_settings_window();
+            break;
+
+        case menu_show_documentation:
+            show_documentation();
+            break;
+
+        case menu_show_support_forum:
+            show_support_forum();
+            break;
+
+        case menu_show_about_window:
+            plugin::instance().show_about_window();
+            break;
+
+        default:
+            break;
+    }
 }
 
 
@@ -125,7 +155,7 @@ void menu::show_documentation()
 /**
  * Open the plugin support forum
  */
-void menu::show_support()
+void menu::show_support_forum()
 {
     std::string linkChar = "https://forums.x-pilot.com/forums/forum/274-xmidictrl/";
 

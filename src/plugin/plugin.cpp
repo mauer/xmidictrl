@@ -22,6 +22,7 @@
 #include "conversions.h"
 #include "devices_window.h"
 #include "info_window.h"
+#include "log_window.h"
 #include "messages_window.h"
 #include "profile_window.h"
 #include "settings_window.h"
@@ -45,14 +46,11 @@ plugin::plugin()
     // create the environment for X-Plane
     m_env = std::make_unique<env_xplane>(*m_plugin_log);
 
-    // load general settings
-    m_settings = std::make_unique<settings>(*m_plugin_log, *m_env);
-
     // initialize our logging system
     if (utils::create_preference_folders(*m_plugin_log, *m_env)) {
         m_plugin_log->enable_file_logging(m_env->preferences_path());
-        m_plugin_log->set_debug_mode(m_settings->debug_mode());
-        m_plugin_log->set_max_size(m_settings->max_text_messages());
+        m_plugin_log->set_debug_mode(m_env->settings().debug_mode());
+        m_plugin_log->set_max_size(m_env->settings().max_text_messages());
     } else {
         m_plugin_log->info("Cannot create preference folder for " XMIDICTRL_FULL_NAME);
         XPLMDebugString(std::string_view("Cannot create preference folder for " XMIDICTRL_FULL_NAME).data());
@@ -65,10 +63,10 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the midi log
-    m_midi_log = std::make_unique<midi_logger>(*m_settings);
+    m_midi_log = std::make_unique<midi_logger>(m_env->settings());
 
     // create the aircraft profile
-    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_env, *m_settings);
+    m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_env);
 
     // create the inbound worker
     m_worker = std::make_unique<inbound_worker>();
@@ -251,8 +249,8 @@ void plugin::disable()
 void plugin::load_profile()
 {
     if (!m_profile->load() || m_profile->has_errors()) {
-        if (m_settings->show_messages())
-            show_messages_window();
+        if (m_env->settings().show_errors())
+            show_log_window();
     }
 }
 
@@ -271,13 +269,13 @@ void plugin::close_profile()
  */
 void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
 {
-    if (m_settings->info_disabled())
+    if (m_env->settings().info_disabled())
         return;
 
     std::shared_ptr<info_msg> msg;
 
     if (in_seconds == -1)
-        msg = std::make_shared<info_msg>(m_settings->info_seconds());
+        msg = std::make_shared<info_msg>(m_env->settings().info_seconds());
     else
         msg = std::make_shared<info_msg>(in_seconds);
 
@@ -300,7 +298,7 @@ void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_velo
         auto virtual_dev = m_profile->devices().find_virtual_device();
 
         if (virtual_dev != nullptr)
-            virtual_dev->process_inbound_message(static_cast<unsigned char>(m_settings->virtual_channel()),
+            virtual_dev->process_inbound_message(static_cast<unsigned char>(m_env->settings().virtual_channel()),
                                                  in_cc,
                                                  in_velocity);
     }
@@ -314,6 +312,16 @@ void plugin::add_inbound_task(const std::shared_ptr<inbound_task>& in_task)
 {
     if (m_worker != nullptr)
         m_worker->add_task(in_task);
+}
+
+
+/**
+ * Show the log window
+ */
+void plugin::show_log_window()
+{
+    auto window = create_window(window_type::log_window);
+    window->show();
 }
 
 
@@ -438,7 +446,13 @@ void plugin::remove_datarefs()
 void plugin::create_commands()
 {
     // general plugin commands
-    m_cmd_show_messages = XPLMCreateCommand("xmidictrl/show_messages_window", "Show the messages window");
+    m_cmd_show_log = XPLMCreateCommand("xmidictrl/show_log_window", "Show the log messages window");
+    XPLMRegisterCommandHandler(m_cmd_show_log,
+                               command_handler,
+                               1,
+                               (void*) COMMAND_LOG_WINDOW);
+
+    m_cmd_show_messages = XPLMCreateCommand("xmidictrl/show_messages_window", "Show the MIDI messages window");
     XPLMRegisterCommandHandler(m_cmd_show_messages,
                                command_handler,
                                1,
@@ -468,7 +482,7 @@ void plugin::create_commands()
         std::string cmd_name = "xmidictrl/midi/send_midi_cc_msg_" + conversions::int_to_string(i, 3);
 
         std::string cmd_descr = "Send virtual MIDI message (CH "
-                                + std::to_string(m_settings->virtual_channel()) + " CC "
+                                + std::to_string(m_env->settings().virtual_channel()) + " CC "
                                 + std::to_string(i) + ")";
 
         m_cmd_vmidi_message[i] = XPLMCreateCommand(cmd_name.data(), cmd_descr.data());
@@ -489,6 +503,7 @@ void plugin::create_commands()
  */
 void plugin::remove_commands()
 {
+    XPLMUnregisterCommandHandler(m_cmd_show_log, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, nullptr);
@@ -533,7 +548,9 @@ int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMComm
     if (in_phase != xplm_CommandEnd)
         return 1;
 
-    if (!strcmp((const char*) in_refcon, COMMAND_MESSAGE_WINDOW))
+    if (!strcmp((const char*) in_refcon, COMMAND_LOG_WINDOW))
+        plugin::instance().show_log_window();
+    else if (!strcmp((const char*) in_refcon, COMMAND_MESSAGE_WINDOW))
         plugin::instance().show_messages_window();
     else if (!strcmp((const char*) in_refcon, COMMAND_PROFILE_WINDOW))
         plugin::instance().show_profile_window();
@@ -600,8 +617,12 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             window = std::make_shared<about_window>(*m_plugin_log, *m_env);
             break;
 
+        case window_type::log_window:
+            window = std::make_shared<log_window>(*m_plugin_log, *m_env);
+            break;
+
         case window_type::messages_window:
-            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_env, *m_settings);
+            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_env);
             break;
 
         case window_type::devices_window:
@@ -609,7 +630,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             break;
 
         case window_type::info_window:
-            window = std::make_shared<info_window>(*m_plugin_log, *m_env, *m_settings, m_info_msg);
+            window = std::make_shared<info_window>(*m_plugin_log, *m_env, m_info_msg);
             break;
 
         case window_type::profile_window:
@@ -617,7 +638,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             break;
 
         case window_type::settings_window:
-            window = std::make_shared<settings_window>(*m_plugin_log, *m_env, *m_settings);
+            window = std::make_shared<settings_window>(*m_plugin_log, *m_env);
             break;
     }
 

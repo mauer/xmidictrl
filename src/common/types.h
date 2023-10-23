@@ -29,8 +29,20 @@ namespace xmidictrl {
 //   CONSTANTS
 //---------------------------------------------------------------------------------------------------------------------
 
-// Colour for Values im ImGui
-#define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
+// Colour for values in Dear ImGui
+//#define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
+
+// Colour for captions in Dear ImGui
+//#define COL_TEXT_CAPTION (ImVec4) ImColor(75, 160, 255)
+//#define COL_TEXT_CAPTION (ImVec4) ImColor(0, 255, 255)
+//#define COL_TEXT_CAPTION2 (ImVec4) ImColor(255, 196, 86)
+#define COL_TEXT_CAPTION3 (ImVec4) ImColor(98, 151, 85)
+
+// Spacer 2
+#define UI_SPACER_2 "  "
+
+// Spacer 3
+#define UI_SPACER_3 "   "
 
 // MIDI unsigned int none
 const unsigned char MIDI_NONE(255);
@@ -66,17 +78,8 @@ const char* const KEY_NOTE = "NOTE";
 const char* const KEY_PITCH_BEND = "PITCH";
 const char* const KEY_PROGRAM_CHANGE = "PRG";
 
-// Menu items
-const char* const MENUITEM_ABOUT_WINDOW = "ABOUT_WINDOW";
-const char* const MENUITEM_RELOAD_PROFILE = "RELOAD_PROFILE";
-const char* const MENUITEM_MESSAGES_WINDOW = "MESSAGES_WINDOW";
-const char* const MENUITEM_DEVICES_WINDOW = "DEVICES_WINDOW";
-const char* const MENUITEM_SETTINGS_WINDOW = "SETTINGS_WINDOW";
-const char* const MENUITEM_SHOW_DOCUMENTATION = "SHOW_DOCUMENTATION";
-const char* const MENUITEM_SHOW_SUPPORT = "SHOW_SUPPORT";
-const char* const MENUITEM_PROFILE_WINDOW = "PROFILE_WINDOW";
-
 // Custom commands
+const char* const COMMAND_LOG_WINDOW = "LOG_WINDOW";
 const char* const COMMAND_MESSAGE_WINDOW = "MESSAGES_WINDOW";
 const char* const COMMAND_PROFILE_WINDOW = "PROFILE_WINDOW";
 const char* const COMMAND_RELOAD_PROFILE = "RELOAD_PROFILE";
@@ -284,6 +287,7 @@ enum class window_position {
 // Window types
 enum class window_type {
     about_window,
+    log_window,
     messages_window,
     devices_window,
     info_window,

@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-about_window::about_window(text_logger &in_log, environment &in_env)
+about_window::about_window(text_logger& in_log, environment& in_env)
     : imgui_window(in_log, in_env, 850, 460)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - About");
@@ -48,9 +48,9 @@ about_window::about_window(text_logger &in_log, environment &in_env)
 void about_window::create_widgets()
 {
     ImGui::NewLine();
-    ImGui::TextUnformatted(XMIDICTRL_NAME " - " XMIDICTRL_DESCRIPTION);
+    ImGui::TextColored(title_color(), "%s", XMIDICTRL_NAME " - " XMIDICTRL_DESCRIPTION);
     ImGui::NewLine();
-    ImGui::TextUnformatted("Version " XMIDICTRL_VERSION_STR);
+    ImGui::TextColored(title_color(), "%s", "Version " XMIDICTRL_VERSION_STR);
     ImGui::NewLine();
     ImGui::Separator();
     ImGui::NewLine();

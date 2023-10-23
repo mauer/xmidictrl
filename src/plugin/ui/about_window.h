@@ -27,7 +27,7 @@ namespace xmidictrl {
 
 class about_window : public imgui_window {
 public:
-    about_window(text_logger &in_log, environment &in_env);
+    about_window(text_logger& in_log, environment& in_env);
     ~about_window() override = default;
 
 protected:

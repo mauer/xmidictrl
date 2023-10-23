@@ -7,7 +7,8 @@ buttons or keyboard events.
 
 | Command                        | Description                                             |
 |--------------------------------|---------------------------------------------------------|
-| xmidictrl/show_messages_window | Show the messages window                                |
+| xmidictrl/show_log_window      | Show the log messages window                            |
+| xmidictrl/show_messages_window | Show the MIDI messages window                           |
 | xmidictrl/show_profile_window  | Show the aircraft profile window                        |
 | xmidictrl/reload_profile       | Reload the aircraft profile                             |
 | xmidictrl/toggle_sublayer      | Toggle the dataref 'xmidictrl/sublayer' between 0 and 1 | 

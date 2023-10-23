@@ -20,6 +20,7 @@ message("---- Directory: src/env")
 # Set sources
 set(ENV_SRC
         ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
         )
 
 # Add sources to target

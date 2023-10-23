@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-devices_window::devices_window(text_logger &in_log, environment &in_env)
+devices_window::devices_window(text_logger& in_log, environment& in_env)
     : imgui_window(in_log, in_env, 700, 350)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - MIDI Devices");
@@ -53,7 +53,7 @@ devices_window::~devices_window() = default;
  */
 void devices_window::create_widgets()
 {
-    ImGui::Text("  " ICON_FA_ARROW_LEFT "   INBOUND PORTS");
+    ImGui::TextColored(title_color(), "%s", UI_SPACER_2 ICON_FA_ARROW_RIGHT_TO_BRACKET UI_SPACER_3 "INBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 
@@ -79,7 +79,7 @@ void devices_window::create_widgets()
         }
 
         ImGui::EndTable();
-    } catch (RtMidiError &error) {
+    } catch (RtMidiError& error) {
         ImGui::Text("Error: ");
         ImGui::TextWrapped("%s", error.what());
     }
@@ -88,7 +88,9 @@ void devices_window::create_widgets()
     ImGui::NewLine();
     ImGui::NewLine();
 
-    ImGui::Text("  " ICON_FA_ARROW_RIGHT "   OUTBOUND PORTS");
+    ImGui::TextColored(title_color(),
+                       "%s",
+                       UI_SPACER_2 ICON_FA_ARROW_RIGHT_FROM_BRACKET UI_SPACER_3 "OUTBOUND PORTS");
     ImGui::Separator();
     ImGui::NewLine();
 
@@ -114,7 +116,7 @@ void devices_window::create_widgets()
         }
 
         ImGui::EndTable();
-    } catch (RtMidiError &error) {
+    } catch (RtMidiError& error) {
         ImGui::Text("Error: ");
         ImGui::TextWrapped("%s", error.what());
     }

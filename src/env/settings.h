@@ -19,23 +19,25 @@
 #define XMC_SETTINGS_H
 
 // Standard
+#include <filesystem>
 #include <memory>
 
 // toml11
 #include <toml.hpp>
 
+// ImGui
+#include <imgui.h>
+
 // XMidiCtrl
-#include "config.h"
-#include "environment.h"
 #include "text_logger.h"
 #include "types.h"
 
 namespace xmidictrl {
 
-class settings : public config {
+class settings {
 public:
-    explicit settings(text_logger &in_text_log, environment &in_env);
-    ~settings() override;
+    explicit settings(text_logger& in_text_log, std::filesystem::path in_path);
+    ~settings() = default;
 
     void set_debug_mode(bool in_enabled);
     [[nodiscard]] bool debug_mode() const;
@@ -43,8 +45,8 @@ public:
     void set_log_midi(bool in_enabled);
     [[nodiscard]] bool log_midi() const;
 
-    void set_show_messages(bool in_enabled);
-    [[nodiscard]] bool show_messages() const;
+    void set_show_errors(bool in_enabled);
+    [[nodiscard]] bool show_errors() const;
 
     void set_virtual_channel(int in_channel);
     [[nodiscard]] int virtual_channel() const;
@@ -85,14 +87,23 @@ public:
     void set_info_seconds(int in_seconds);
     [[nodiscard]] int info_seconds() const;
 
+    void set_title_color(ImVec4 in_color);
+    [[nodiscard]] ImVec4 title_color() const;
+
+    void set_value_color(ImVec4 in_color);
+    [[nodiscard]] ImVec4 value_color() const;
+
     void save_settings();
 
 private:
     std::string get_settings_filename();
 
+    std::filesystem::path m_settings_path {};
+    toml::value m_settings_file {};
+
     bool m_debug_mode {false};
     bool m_log_midi {true};
-    bool m_show_messages {true};
+    bool m_show_errors {true};
 
     int m_virtual_channel {16};
     float m_default_outbound_delay {0.5f};
@@ -114,7 +125,10 @@ private:
     int m_info_offset_y {50};
     int m_info_seconds {3};
 
-    text_logger &m_text_log;
+    ImVec4 m_value_color {ImColor(255, 127, 39)};
+    ImVec4 m_title_color {ImColor(75, 160, 255)};
+
+    text_logger& m_text_log;
 };
 
 } // Namespace xmidictrl

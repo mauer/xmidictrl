@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef INFO_WINDOW_H
-#define INFO_WINDOW_H
+#ifndef XMC_INFO_WINDOW_H
+#define XMC_INFO_WINDOW_H
 
 // Standard
 #include <map>
@@ -32,10 +32,9 @@ namespace xmidictrl {
 
 class info_window : public imgui_window {
 public:
-    info_window(text_logger &in_log,
-                environment &in_env,
-                settings &in_settings,
-                std::map<std::string, std::shared_ptr<info_msg>> &in_msg);
+    info_window(text_logger& in_log,
+                environment& in_env,
+                std::map<std::string, std::shared_ptr<info_msg>>& in_msg);
     ~info_window() override = default;
 
     void show() override;
@@ -45,10 +44,9 @@ protected:
 
     const int ROW_HEIGHT = 25;
 
-    settings &m_settings;
-    std::map<std::string, std::shared_ptr<info_msg>> &m_messages;
+    std::map<std::string, std::shared_ptr<info_msg>>& m_messages;
 };
 
 } // Namespace xmidictrl
 
-#endif // INFO_WINDOW_H
+#endif // XMC_INFO_WINDOW_H

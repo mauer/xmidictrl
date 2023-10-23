@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -26,10 +26,10 @@
 //   Copyright (C) 2018, Christopher Collins
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef IMGUI_WINDOW_H
-#define IMGUI_WINDOW_H
+#ifndef XMC_IMGUI_WINDOW_H
+#define XMC_IMGUI_WINDOW_H
 
-// Standord
+// Standard
 #include <memory>
 #include <string>
 
@@ -66,6 +66,10 @@ public:
                  bool in_translucent = false);
     ~imgui_window() override;
 
+    ImVec4 text_color();
+    ImVec4 value_color();
+    ImVec4 title_color();
+
 protected:
     void on_draw() override;
     bool on_click(int in_x, int in_y, XPLMMouseStatus in_status) override;
@@ -84,7 +88,7 @@ private:
 
     const float IMGUI_FONT_SIZE = 18.0f;
 
-    static std::shared_ptr<ImGuiFontAtlas> m_font;
+    static std::shared_ptr<ImGuiFontAtlas> s_font;
 
     //GLuint m_font_texture_id {};
     int m_font_texture_id {};
@@ -100,4 +104,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // IMGUI_WINDOW_H
+#endif // XMC_IMGUI_WINDOW_H

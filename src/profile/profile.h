@@ -27,7 +27,6 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "config.h"
 #include "device_list.h"
 #include "environment.h"
 #include "map.h"
@@ -43,10 +42,10 @@ enum class filename_prefix {
     acf_name
 };
 
-class profile : public config {
+class profile {
 public:
-    explicit profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env, settings& in_settings);
-    ~profile() override;
+    explicit profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env);
+    ~profile();
 
     bool load();
     void close();
@@ -96,8 +95,9 @@ private:
     static std::string get_log_prefix_from_device(const std::shared_ptr<device>& in_device);
     static std::string get_log_prefix(bool in_is_virtual, size_t in_dev_no = 0);
 
+    toml::value m_config {};
 
-    settings& m_settings;
+    environment& m_env;
 
     bool m_loaded {false};
     bool m_init_send {false};

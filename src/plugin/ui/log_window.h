@@ -15,40 +15,38 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_CONFIG_H
-#define XMC_CONFIG_H
+#ifndef XMC_LOG_WINDOW_H
+#define XMC_LOG_WINDOW_H
 
 // Standard
-#include <string_view>
-
-// toml11
-#include <toml.hpp>
+#include <memory>
 
 // XMidiCtrl
 #include "environment.h"
+#include "imgui_window.h"
+#include "midi_logger.h"
+#include "settings.h"
 #include "text_logger.h"
+#include "types.h"
 
 namespace xmidictrl {
 
-class config {
+class log_window : public imgui_window {
 public:
-    explicit config(environment& in_emv);
-    virtual ~config() = default;
+    log_window(text_logger& in_text_log, environment& in_env);
+    ~log_window() = default;
 
 protected:
-    [[nodiscard]] environment& env() const;
-
-    bool load_file(text_logger& in_log, std::string_view in_filename);
-    void close_file(text_logger& in_log);
-
-    toml::value m_config {};
+    void create_widgets() override;
 
 private:
-    environment& m_env;
+    void add_log_row(text_log_msg* in_msg);
 
-    std::string m_filename {};
+    sort_mode m_log_sort_mode {sort_mode::ascending};
+
+    ImGuiTableColumnFlags m_log_msg_flags;
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_CONFIG_H
+#endif // XMC_LOG_WINDOW_H

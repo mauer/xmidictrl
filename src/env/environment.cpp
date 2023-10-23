@@ -37,6 +37,26 @@ environment::environment(text_logger &in_log)
  */
 environment::~environment()
 {
+    m_settings.reset();
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Returns the current plugin settings
+ */
+xmidictrl::settings& environment::settings()
+{
+    if (m_settings == nullptr)
+        // plugin settings
+        m_settings = std::make_unique<xmidictrl::settings>(log(), preferences_path());
+
+    return *m_settings;
 }
 
 

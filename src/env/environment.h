@@ -24,14 +24,17 @@
 // XMidiCtrl
 #include "commands.h"
 #include "data.h"
+#include "settings.h"
 #include "text_logger.h"
 
 namespace xmidictrl {
 
 class environment {
 public:
-    explicit environment(text_logger &in_log);
+    explicit environment(text_logger& in_log);
     virtual ~environment();
+
+    xmidictrl::settings& settings();
 
     virtual std::filesystem::path xplane_path() = 0;
     virtual std::filesystem::path plugin_path() = 0;
@@ -46,14 +49,16 @@ public:
     virtual std::string current_aircraft_acf_name() = 0;
     virtual std::string current_aircraft_descr() = 0;
 
-    virtual commands &cmd() = 0;
-    virtual data &drf() = 0;
+    virtual commands& cmd() = 0;
+    virtual data& drf() = 0;
 
 protected:
-    [[nodiscard]] text_logger &log() const;
+    [[nodiscard]] text_logger& log() const;
+
+    std::unique_ptr<xmidictrl::settings> m_settings;
 
 private:
-    text_logger &m_log;
+    text_logger& m_log;
 };
 
 } // Namespace xmidictrl

@@ -46,9 +46,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env, settings& in_settings)
-    : config(in_env),
-      m_settings(in_settings),
+profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env)
+    : m_env(in_env),
       m_plugin_log(in_text_log),
       m_midi_log(in_midi_log)
 {
@@ -97,7 +96,8 @@ bool profile::load()
     m_profile_log->info("Aircraft Profile '" + filename + "' found");
 
     // load the profile and create all devices with their mappings
-    if (load_file(*m_profile_log, filename)) {
+    m_config = toml::value();
+    if (toml_utils::load_file(*m_profile_log, filename, m_config)) {
         m_filename = filename;
 
         // load general settings for the profile
@@ -106,7 +106,7 @@ bool profile::load()
         if (!m_sl_dataref.empty()) {
             m_profile_log->info("Sublayer mode activated");
 
-            if (!env().drf().check(m_sl_dataref)) {
+            if (!m_env.drf().check(m_sl_dataref)) {
                 m_profile_log->error("Dataref '" + std::string(m_sl_dataref) + "' not found");
                 return false;
             }
@@ -120,6 +120,7 @@ bool profile::load()
 
     // open the midi connections
     if (m_device_list->open_connections()) {
+        m_filename = filename;
         m_loaded = true;
         return true;
     } else {
@@ -136,7 +137,12 @@ void profile::close()
     m_device_list->process_outbound_reset();
 
     clear();
-    close_file(*m_profile_log);
+
+    if (!m_filename.empty())
+        m_profile_log->debug("File '" + m_filename + "' closed");
+
+    m_config = toml::value();
+    m_filename.clear();
 
     m_loaded = false;
 }
@@ -213,15 +219,15 @@ std::string profile::get_filename_aircraft_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return env().current_aircraft_path().string() + env().current_aircraft_icao() + "_"
+            return m_env.current_aircraft_path().string() + m_env.current_aircraft_icao() + "_"
                    + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return env().current_aircraft_path().string() + env().current_aircraft_acf_name() + "_"
+            return m_env.current_aircraft_path().string() + m_env.current_aircraft_acf_name() + "_"
                    + std::string(FILENAME_PROFILE);
 
         default:
-            return env().current_aircraft_path().string() + std::string(FILENAME_PROFILE);
+            return m_env.current_aircraft_path().string() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -233,14 +239,14 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return env().profiles_path().string() + env().current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
+            return m_env.profiles_path().string() + m_env.current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
-            return env().profiles_path().string() + env().current_aircraft_acf_name() + "_"
+            return m_env.profiles_path().string() + m_env.current_aircraft_acf_name() + "_"
                    + std::string(FILENAME_PROFILE);
 
         default:
-            return env().profiles_path().string() + std::string(FILENAME_PROFILE);
+            return m_env.profiles_path().string() + std::string(FILENAME_PROFILE);
     }
 }
 
@@ -335,7 +341,7 @@ std::string profile::find_profile()
         return filename;
 
     // check for the common profile (if activated)
-    if (m_settings.use_common_profile()) {
+    if (m_env.settings().use_common_profile()) {
         filename = get_filename_profiles_path(filename_prefix::none);
 
         m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
@@ -506,9 +512,9 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
                                                                   in_params,
                                                                   CFG_KEY_OUTBOUND_DELAY,
                                                                   false,
-                                                                  m_settings.default_outbound_delay());
+                                                                  m_env.settings().default_outbound_delay());
             else
-                settings->outbound_delay = m_settings.default_outbound_delay();
+                settings->outbound_delay = m_env.settings().default_outbound_delay();
 
             // mode outbound
             settings->send_mode = conversions::send_mode_from_code(toml_utils::read_string(*m_profile_log,
@@ -552,7 +558,7 @@ void profile::add_mappings_from_include(const std::shared_ptr<device>& in_device
             continue;
 
         // build the filename
-        std::string filename = env().includes_path().string() + inc_name + INCLUDE_FILE_SUFFIX;
+        std::string filename = m_env.includes_path().string() + inc_name + INCLUDE_FILE_SUFFIX;
 
         // load include file
         toml::value inc_file;
@@ -616,7 +622,7 @@ void profile::create_init_mapping(toml::array in_settings,
             + " :: Reading config");
 
         try {
-            mapping = std::make_shared<map_init>(env());
+            mapping = std::make_shared<map_init>(m_env);
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
@@ -659,21 +665,21 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::command:
-                    mapping = std::make_shared<map_in_cmd>(env());
+                    mapping = std::make_shared<map_in_cmd>(m_env);
                     break;
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_in_drf>(env());
+                    mapping = std::make_shared<map_in_drf>(m_env);
                     break;
 
                 case map_type::push_pull:
-                    mapping = std::make_shared<map_in_pnp>(env());
+                    mapping = std::make_shared<map_in_pnp>(m_env);
                     break;
 
                 case map_type::encoder:
                     if (in_device->type() == device_type::midi_device) {
                         auto dev = std::static_pointer_cast<midi_device>(in_device);
-                        mapping = std::make_shared<map_in_enc>(env(), dev->settings().default_enc_mode);
+                        mapping = std::make_shared<map_in_enc>(m_env, dev->settings().default_enc_mode);
                     } else {
                         m_profile_log->error(log_prefix + "Mapping " + std::to_string(map_no)
                                              + " :: mapping type not supported for virtual devices");
@@ -682,7 +688,7 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
 
                 case map_type::slider:
                     if (in_device->type() == device_type::midi_device) {
-                        mapping = std::make_shared<map_in_sld>(env());
+                        mapping = std::make_shared<map_in_sld>(m_env);
                     } else {
                         m_profile_log->error(log_prefix + "Mapping " + std::to_string(map_no)
                                              + " :: mapping type not supported for virtual devices");
@@ -745,15 +751,15 @@ void profile::create_outbound_mapping(toml::array in_params, const std::shared_p
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
                 case map_type::constant:
-                    mapping = std::make_shared<map_out_con>(env());
+                    mapping = std::make_shared<map_out_con>(m_env);
                     break;
 
                 case map_type::dataref:
-                    mapping = std::make_shared<map_out_drf>(env());
+                    mapping = std::make_shared<map_out_drf>(m_env);
                     break;
 
                 case map_type::slider:
-                    mapping = std::make_shared<map_out_sld>(env());
+                    mapping = std::make_shared<map_out_sld>(m_env);
                     break;
 
                 default:

@@ -17,11 +17,8 @@
 
 #include "settings.h"
 
-// Standard
-#include <filesystem>
-
 // XMidiCtrl
-#include "utils.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -32,46 +29,37 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings::settings(text_logger &in_text_log, environment &in_env)
-    : config(in_env),
-      m_text_log(in_text_log)
+settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
+    : m_text_log(in_text_log),
+      m_settings_path(in_path)
 {
     // build name for general settings file
-    if (load_file(m_text_log, get_settings_filename())) {
-        m_debug_mode = toml::find_or<bool>(m_config, CFG_KEY_DEBUG_MODE, false);
-        m_log_midi = toml::find_or<bool>(m_config, CFG_KEY_LOG_MIDI, true);
-        m_show_messages = toml::find_or<bool>(m_config, CFG_KEY_SHOW_MSG_DIALOG, true);
+    if (toml_utils::load_file(m_text_log, get_settings_filename(), m_settings_file)) {
+        m_debug_mode = toml::find_or<bool>(m_settings_file, CFG_KEY_DEBUG_MODE, false);
+        m_log_midi = toml::find_or<bool>(m_settings_file, CFG_KEY_LOG_MIDI, true);
+        m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_MSG_DIALOG, true);
 
-        m_virtual_channel = toml::find_or<int>(m_config, CFG_KEY_VIRTUAL_CHANNEL, 16);
-        m_default_outbound_delay = toml::find_or<float>(m_config, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
+        m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
+        m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
 
-        m_max_text_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
-        m_max_midi_messages = toml::find_or<int>(m_config, CFG_KEY_MAX_MIDI_MESSAGES, 150);
+        m_max_text_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
+        m_max_midi_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_MIDI_MESSAGES, 150);
 
-        m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_config, CFG_KEY_NOTE_NAME, 0));
+        m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_settings_file, CFG_KEY_NOTE_NAME, 0));
 
-        m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_TEXT_SORT, 0));
-        m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_config, CFG_KEY_DEFAULT_MIDI_SORT, 0));
+        m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_TEXT_SORT, 0));
+        m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_MIDI_SORT, 0));
 
-        m_use_common_profile = toml::find_or<bool>(m_config, CFG_KEY_COMMON_PROFILE, true);
+        m_use_common_profile = toml::find_or<bool>(m_settings_file, CFG_KEY_COMMON_PROFILE, true);
 
-        m_info_disabled = toml::find_or<bool>(m_config, CFG_KEY_INFO_DISABLED, false);
-        m_info_position = static_cast<window_position>(toml::find_or<int>(m_config, CFG_KEY_INFO_POSITION, 1));
-        m_info_offset_x = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_X, 50);
-        m_info_offset_y = toml::find_or<int>(m_config, CFG_KEY_INFO_OFFSET_Y, 50);
-        m_info_seconds = toml::find_or<int>(m_config, CFG_KEY_INFO_SECONDS, 3);
+        m_info_disabled = toml::find_or<bool>(m_settings_file, CFG_KEY_INFO_DISABLED, false);
+        m_info_position = static_cast<window_position>(toml::find_or<int>(m_settings_file, CFG_KEY_INFO_POSITION, 1));
+        m_info_offset_x = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_X, 50);
+        m_info_offset_y = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_Y, 50);
+        m_info_seconds = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_SECONDS, 3);
     } else {
         m_text_log.warn(" --> Will use default settings");
     }
-}
-
-
-/**
- * Destructor
- */
-settings::~settings()
-{
-    close_file(m_text_log);
 }
 
 
@@ -119,20 +107,20 @@ bool settings::log_midi() const
 
 
 /**
- * Set if the messages dialog should be displayed in case of error
+ * Sets if the log dialog should be displayed in case of error
  */
-void settings::set_show_messages(const bool in_enabled)
+void settings::set_show_errors(const bool in_enabled)
 {
-    m_show_messages = in_enabled;
+    m_show_errors = in_enabled;
 }
 
 
 /**
- * Return if the messages dialog should be displayed in case of error
+ * Return if the log dialog should be displayed in case of error
  */
-bool settings::show_messages() const
+bool settings::show_errors() const
 {
-    return m_show_messages;
+    return m_show_errors;
 }
 
 
@@ -376,25 +364,28 @@ int settings::info_seconds() const
  */
 void settings::save_settings()
 {
-    m_config[CFG_KEY_DEBUG_MODE] = m_debug_mode;
-    m_config[CFG_KEY_LOG_MIDI] = m_log_midi;
-    m_config[CFG_KEY_SHOW_MSG_DIALOG] = m_show_messages;
+    m_settings_file[CFG_KEY_DEBUG_MODE] = m_debug_mode;
+    m_settings_file[CFG_KEY_LOG_MIDI] = m_log_midi;
+    m_settings_file[CFG_KEY_SHOW_MSG_DIALOG] = m_show_errors;
 
-    m_config[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
-    m_config[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
+    m_settings_file[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
+    m_settings_file[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
 
-    m_config[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
+    m_settings_file[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
 
-    m_config[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
-    m_config[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);
+    m_settings_file[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
+    m_settings_file[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);
 
-    m_config[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
+    m_settings_file[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
 
-    m_config[CFG_KEY_INFO_DISABLED] = m_info_disabled;
-    m_config[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
-    m_config[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
-    m_config[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;
-    m_config[CFG_KEY_INFO_SECONDS] = m_info_seconds;
+    m_settings_file[CFG_KEY_INFO_DISABLED] = m_info_disabled;
+    m_settings_file[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
+    m_settings_file[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
+    m_settings_file[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;
+    m_settings_file[CFG_KEY_INFO_SECONDS] = m_info_seconds;
+
+    //IMGUI_API ImVec4        ColorConvertU32ToFloat4(ImU32 in);
+    //IMGUI_API ImU32         ColorConvertFloat4ToU32(const ImVec4& in);
 
     std::ofstream stream;
     std::string filename = get_settings_filename();
@@ -404,10 +395,6 @@ void settings::save_settings()
         return;
     }
 
-    // check if our directory already exists in the preference folder
-    if (!utils::create_preference_folders(m_text_log, env()))
-        return;
-
     stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
     if (!stream.is_open()) {
@@ -415,17 +402,59 @@ void settings::save_settings()
         return;
     }
 
-    stream << m_config;
+    stream << m_settings_file;
     stream.close();
 }
 
+
+/**
+ * Sets the text color of titles
+ */
+void settings::set_title_color(ImVec4 in_color)
+{
+    m_title_color = in_color;
+}
+
+
+/**
+ * Returns the text color of titles
+ */
+ImVec4 settings::title_color() const
+{
+    return m_title_color;
+}
+
+
+/**
+ * Sets the text color of values
+ */
+void settings::set_value_color(ImVec4 in_color)
+{
+    m_value_color = in_color;
+}
+
+
+/**
+ * Returns the text color of values
+ */
+ImVec4 settings::value_color() const
+{
+    return m_value_color;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Returns the file name for the general settings
  */
 std::string settings::get_settings_filename()
 {
-    std::string filename = env().preferences_path().string() + std::string(XMIDICTRL_NAME) +
+    std::string filename = m_settings_path.string() + std::string(XMIDICTRL_NAME) +
                            std::string(SETTINGS_FILE_SUFFIX);
 
     return filename;

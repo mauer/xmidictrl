@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2022 Marco Auer
+#   Copyright (c) 2021-2023 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -22,6 +22,7 @@ set(UI_SRC
         ${CMAKE_CURRENT_LIST_DIR}/about_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/devices_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/info_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/log_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/menu.cpp
         ${CMAKE_CURRENT_LIST_DIR}/messages_window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/profile_window.cpp

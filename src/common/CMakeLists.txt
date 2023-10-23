@@ -19,7 +19,6 @@ message("---- Directory: src/common")
 
 # Add sources
 set(COMMON_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/config.cpp
         ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_message.cpp

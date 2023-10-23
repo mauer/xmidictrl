@@ -33,13 +33,14 @@
 
 // OpenGL
 #if defined(__APPLE__)
-#include <OpenGL/gl.h>
+    #include <OpenGL/gl.h>
 #elif defined(_MSC_VER)
-#include <windows.h>
-#include <GL/gl.h>
+    #include <windows.h>
+    #include <GL/gl.h>
+
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
 #endif
 
 // X-Plane SDK
@@ -56,8 +57,8 @@ namespace xmidictrl {
 
 class xplane_window {
 public:
-    xplane_window(text_logger &in_log,
-                  environment &in_env,
+    xplane_window(text_logger& in_log,
+                  environment& in_env,
                   int in_width,
                   int in_height,
                   window_position in_position = window_position::top_left,
@@ -66,11 +67,11 @@ public:
                   bool in_translucent = false);
     virtual ~xplane_window();
 
-    static void multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float> &in_m, const GLfloat in_v[4]);
+    static void multi_matrix_vec4f(GLfloat in_dst[4], const std::vector<float>& in_m, const GLfloat in_v[4]);
 
-    text_logger &log();
+    text_logger& log();
 
-    environment &env();
+    environment& env();
 
     XPLMWindowID window_id();
     [[nodiscard]] bool translucent() const;
@@ -78,7 +79,11 @@ public:
     virtual void show();
     void hide();
 
-    void set_window_position(window_position in_position, int in_width, int in_height, int in_offset_x, int in_offset_y);
+    void set_window_position(window_position in_position,
+                             int in_width,
+                             int in_height,
+                             int in_offset_x,
+                             int in_offset_y);
 
     void set_title(std::string_view in_title);
     [[nodiscard]] bool is_visible() const;
@@ -86,7 +91,7 @@ public:
     bool has_keyboard_focus();
     void request_keyboard_focus(bool in_request);
 
-    void boxels_to_native(int in_x, int in_y, int &out_x, int &out_y);
+    void boxels_to_native(int in_x, int in_y, int& out_x, int& out_y);
 
 protected:
     virtual void on_draw() = 0;
@@ -99,13 +104,13 @@ protected:
     void update_matrices();
 
 private:
-    void calc_window_position(int &out_left, int &out_right, int &out_top, int &out_bottom);
+    void calc_window_position(int& out_left, int& out_right, int& out_top, int& out_bottom);
 
     void create_window();
 
-    text_logger &m_log;
+    text_logger& m_log;
 
-    environment &m_env;
+    environment& m_env;
     XPLMWindowID m_window_id {nullptr};
 
     int m_width {};

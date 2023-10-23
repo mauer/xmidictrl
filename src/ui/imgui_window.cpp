@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -46,7 +46,7 @@ namespace xmidictrl {
 //   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
-std::shared_ptr<ImGuiFontAtlas> imgui_window::m_font = nullptr;
+std::shared_ptr<ImGuiFontAtlas> imgui_window::s_font = nullptr;
 
 
 /**
@@ -63,10 +63,10 @@ imgui_window::imgui_window(text_logger &in_log,
     : xplane_window(in_log, in_env, in_width, in_height, in_position, in_offset_x, in_offset_y, in_translucent)
 {
     // font atlas for Dear ImGui
-    if (!m_font) {
-        m_font = std::make_shared<ImGuiFontAtlas>();
+    if (!s_font) {
+        s_font = std::make_shared<ImGuiFontAtlas>();
 
-        if (!m_font->AddFontFromFileTTF("./Resources/fonts/DejaVuSans.ttf", IMGUI_FONT_SIZE))
+        if (!s_font->AddFontFromFileTTF("./Resources/fonts/DejaVuSans.ttf", IMGUI_FONT_SIZE))
             in_log.warn("Error loading font 'DejaVuSans' for Dear ImGui");
 
         // merge icons
@@ -78,7 +78,9 @@ imgui_window::imgui_window(text_logger &in_log,
         ImFontGlyphRangesBuilder builder;
         builder.AddText(ICON_FA_ARROW_LEFT
                         ICON_FA_ARROW_RIGHT
-                        ICON_FA_BAN
+                        ICON_FA_ARROW_RIGHT_FROM_BRACKET
+                        ICON_FA_ARROW_RIGHT_TO_BRACKET
+                        ICON_FA_SQUARE_XMARK
                         ICON_FA_TRIANGLE_EXCLAMATION
                         ICON_FA_CIRCLE_CHECK
                         ICON_FA_CHECK
@@ -89,7 +91,7 @@ imgui_window::imgui_window(text_logger &in_log,
                         ICON_FA_ROTATE_RIGHT);
         builder.BuildRanges(&icon_ranges);
 
-        if (!m_font->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data,
+        if (!s_font->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data,
                                                     fa_solid_900_compressed_size,
                                                     IMGUI_FONT_SIZE,
                                                     &config,
@@ -98,9 +100,9 @@ imgui_window::imgui_window(text_logger &in_log,
     }
 
     // check if a font atlas was supplied
-    if (m_font) {
-        m_font->bindTexture();
-        m_context = ImGui::CreateContext(m_font->getAtlas());
+    if (s_font) {
+        s_font->bindTexture();
+        m_context = ImGui::CreateContext(s_font->getAtlas());
     } else {
         m_context = ImGui::CreateContext();
     }
@@ -144,8 +146,7 @@ imgui_window::imgui_window(text_logger &in_log,
     io.KeyMap[ImGuiKey_Z] = XPLM_VK_Z;
 
     // bind our font
-    if (m_font) {
-        //m_font_texture_id = static_cast<GLuint>(reinterpret_cast<intptr_t>(io.Fonts->TexID));
+    if (s_font) {
         m_font_texture_id = static_cast<int>(reinterpret_cast<intptr_t>(io.Fonts->TexID));
     } else {
         uint8_t *pixels;
@@ -181,7 +182,40 @@ imgui_window::~imgui_window()
 
     glDeleteTextures(1, reinterpret_cast<const GLuint *>(&m_font_texture_id));
 
-    m_font.reset();
+    //s_font.reset();
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Returns the normal text color
+ */
+ImVec4 imgui_window::text_color()
+{
+    return ImColor(255, 255, 255);
+}
+
+
+/**
+ * Returns the text color of values
+ */
+ImVec4 imgui_window::value_color()
+{
+    return ImColor(255, 127, 39);
+}
+
+
+/**
+ * Returns the text color of titles
+ */
+ImVec4 imgui_window::title_color()
+{
+    return ImColor(75, 160, 255);
 }
 
 

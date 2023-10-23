@@ -27,7 +27,7 @@ namespace xmidictrl {
 
 class settings_window : public imgui_window {
 public:
-    settings_window(text_logger& in_log, environment& in_env, settings& in_settings);
+    settings_window(text_logger& in_log, environment& in_env);
     ~settings_window() override = default;
 
 protected:
@@ -42,11 +42,9 @@ private:
     static std::string info_position_as_text(window_position in_position);
     void save_settings();
 
-    settings& m_settings;
-
     bool m_debug_mode;
     bool m_log_midi;
-    bool m_show_messages;
+    bool m_show_errors;
 
     int m_virtual_channel;
     float m_default_outbound_delay;

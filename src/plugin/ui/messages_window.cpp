@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -32,34 +32,20 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-messages_window::messages_window(text_logger &in_text_log,
-                                 midi_logger &in_midi_log,
-                                 environment &in_env,
-                                 settings &in_settings)
+messages_window::messages_window(text_logger& in_text_log,
+                                 midi_logger& in_midi_log,
+                                 environment& in_env)
     : imgui_window(in_text_log, in_env, 1400, 700),
-      m_settings(in_settings),
       m_midi_log(in_midi_log)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Messages");
 
-    m_text_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
-    if (m_settings.default_text_sort() == sort_mode::ascending)
-        m_text_msg_flags = m_text_msg_flags | ImGuiTableColumnFlags_PreferSortAscending;
-    else
-        m_text_msg_flags = m_text_msg_flags | ImGuiTableColumnFlags_PreferSortDescending;
-
     m_midi_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
-    if (m_settings.default_midi_sort() == sort_mode::ascending)
+    if (env().settings().default_midi_sort() == sort_mode::ascending)
         m_midi_msg_flags = m_midi_msg_flags | ImGuiTableColumnFlags_PreferSortAscending;
     else
         m_midi_msg_flags = m_midi_msg_flags | ImGuiTableColumnFlags_PreferSortDescending;
 }
-
-
-/**
- * Destructor
- */
-messages_window::~messages_window() = default;
 
 
 
@@ -73,12 +59,63 @@ messages_window::~messages_window() = default;
  */
 void messages_window::create_widgets()
 {
-    if (ImGui::BeginTabBar("MESSAGES_TAB")) {
-        create_tab_text_msg();
-        create_tab_midi_msg();
+    ImGui::Text("MIDI Logging:");
+    ImGui::SameLine(150);
 
-        ImGui::EndTabBar();
+    if (env().settings().log_midi())
+        ImGui::TextColored(value_color(), "Enabled (%i)", static_cast<int>(m_midi_log.count()));
+    else
+        ImGui::TextColored(value_color(), "Disabled");
+
+    ImGui::SameLine(ImGui::GetWindowWidth() - 190);
+
+    if (ImGui::Button(UI_SPACER_2 ICON_FA_TRASH_CAN UI_SPACER_2 "Clear Messages" UI_SPACER_2))
+        m_midi_log.clear();
+
+    ImGui::NewLine();
+    ImGui::TextColored(title_color(), "%s", "MESSAGES");
+    ImGui::Separator();
+
+    ImGui::BeginChild("TEXT_TABLE");
+
+    ImGui::BeginTable("tableMidiMessages", 10,
+                      ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
+    ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
+    ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
+    ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
+    ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 160);
+    ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+    ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 80);
+    ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 80);
+    ImGui::TableSetupColumn("Mappings", ImGuiTableColumnFlags_WidthFixed, 100);
+    ImGui::TableSetupColumn("Log", ImGuiTableColumnFlags_WidthFixed, 50);
+    ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableHeadersRow();
+
+    if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs()) {
+        if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
+            auto spec = sort_specs->Specs[0];
+            if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
+                m_midi_sort_mode = sort_mode::ascending;
+            else
+                m_midi_sort_mode = sort_mode::descending;
+        }
     }
+
+    if (m_midi_sort_mode == sort_mode::ascending) {
+        for (size_t i = 0; i < m_midi_log.count(); i++) {
+            auto msg = m_midi_log.message(static_cast<int>(i));
+            add_midi_row(msg);
+        }
+    } else if (m_midi_log.count() > 0) {
+        for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
+            auto msg = m_midi_log.message(static_cast<int>(i));
+            add_midi_row(msg);
+        }
+    }
+
+    ImGui::EndTable();
+    ImGui::EndChild();
 }
 
 
@@ -88,156 +125,11 @@ void messages_window::create_widgets()
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
-/**
- * Create tab for text messages
- */
-void messages_window::create_tab_text_msg()
-{
-    if (ImGui::BeginTabItem("General Log")) {
-        ImGui::Text("Debug Mode:");
-        ImGui::SameLine(150);
-        if (log().debug_mode())
-            ImGui::TextColored(COL_TEXT_VALUE, "Enabled (%i)", static_cast<int>(log().count()));
-        else
-            ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
-        ImGui::SameLine(ImGui::GetWindowWidth() - 190);
-
-        if (ImGui::Button("  " ICON_FA_TRASH_CAN "  Clear Messages  "))
-            log().clear();
-
-        ImGui::NewLine();
-        ImGui::Text("MESSAGES");
-        ImGui::Separator();
-
-        ImGui::BeginChild("TEXT_TABLE");
-
-        ImGui::BeginTable("tableTextMessages", 3,
-                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
-
-        ImGui::TableSetupColumn("Date/Time", m_text_msg_flags,200);
-        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 120);
-        ImGui::TableSetupColumn("Message", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
-
-        if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
-            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
-                auto spec = sort_specs->Specs[0];
-                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                    m_text_sort_mode = sort_mode::ascending;
-                else
-                    m_text_sort_mode = sort_mode::descending;
-            }
-        }
-
-        if (m_text_sort_mode == sort_mode::ascending) {
-            for (size_t i = 0; i < log().count(); i++) {
-                auto msg = log().message(static_cast<int>(i));
-                add_text_row(msg);
-            }
-        } else if (log().count() > 0) {
-            for (size_t i = log().count() - 1; i > 0; i--) {
-                auto msg = log().message(static_cast<int>(i));
-                add_text_row(msg);
-            }
-        }
-
-        ImGui::EndTable();
-        ImGui::EndChild();
-        ImGui::EndTabItem();
-    }
-}
-
-
-/**
- * Create tab for midi messages
- */
-void messages_window::create_tab_midi_msg()
-{
-    if (ImGui::BeginTabItem("MIDI Messages")) {
-        ImGui::Text("MIDI Logging:");
-        ImGui::SameLine(150);
-
-        if (m_settings.log_midi())
-            ImGui::TextColored(COL_TEXT_VALUE, "Enabled (%i)", static_cast<int>(m_midi_log.count()));
-        else
-            ImGui::TextColored(COL_TEXT_VALUE, "Disabled");
-
-        ImGui::SameLine(ImGui::GetWindowWidth() - 190);
-
-        if (ImGui::Button("  " ICON_FA_TRASH_CAN "  Clear Messages  "))
-            m_midi_log.clear();
-
-        ImGui::NewLine();
-        ImGui::Text("MESSAGES");
-        ImGui::Separator();
-
-        ImGui::BeginChild("TEXT_TABLE");
-
-        ImGui::BeginTable("tableMidiMessages", 10,
-                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
-        ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
-        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
-        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
-        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 160);
-        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
-        ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 80);
-        ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 80);
-        ImGui::TableSetupColumn("Mappings", ImGuiTableColumnFlags_WidthFixed, 100);
-        ImGui::TableSetupColumn("Log", ImGuiTableColumnFlags_WidthFixed, 50);
-        ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
-
-        if (ImGuiTableSortSpecs *sort_specs = ImGui::TableGetSortSpecs()) {
-            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
-                auto spec = sort_specs->Specs[0];
-                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                    m_midi_sort_mode = sort_mode::ascending;
-                else
-                    m_midi_sort_mode = sort_mode::descending;
-            }
-        }
-
-        if (m_midi_sort_mode == sort_mode::ascending) {
-            for (size_t i = 0; i < m_midi_log.count(); i++) {
-                auto msg = m_midi_log.message(static_cast<int>(i));
-                add_midi_row(msg);
-            }
-        } else if (m_midi_log.count() > 0) {
-            for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
-                auto msg = m_midi_log.message(static_cast<int>(i));
-                add_midi_row(msg);
-            }
-        }
-
-        ImGui::EndTable();
-        ImGui::EndChild();
-        ImGui::EndTabItem();
-    }
-}
-
-
-/**
- * Add a text message to the table
- */
-void messages_window::add_text_row(text_log_msg *in_msg)
-{
-    ImGui::TableNextRow();
-
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(in_msg->time.c_str());
-
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(in_msg->get_log_level_text().c_str());
-
-    ImGui::TableNextColumn();
-    ImGui::TextUnformatted(in_msg->text.c_str());
-}
-
 
 /**
  * Add a MIDI message to the table
  */
-void messages_window::add_midi_row(midi_message *in_msg)
+void messages_window::add_midi_row(midi_message* in_msg)
 {
     ImGui::TableNextRow();
 
@@ -246,9 +138,9 @@ void messages_window::add_midi_row(midi_message *in_msg)
 
     ImGui::TableNextColumn();
     if (in_msg->direction() == midi_direction::in)
-        draw_icon(ICON_FA_ARROW_LEFT, "Inbound");
+        draw_icon(ICON_FA_ARROW_RIGHT_TO_BRACKET, "Inbound");
     else
-        draw_icon(ICON_FA_ARROW_RIGHT, "Outbound");
+        draw_icon(ICON_FA_ARROW_RIGHT_FROM_BRACKET, "Outbound");
 
     ImGui::TableNextColumn();
     ImGui::Text("%i", in_msg->port());
@@ -262,7 +154,7 @@ void messages_window::add_midi_row(midi_message *in_msg)
 
     ImGui::TableNextColumn();
     if (in_msg->data_1() != MIDI_NONE)
-        ImGui::Text("%s", in_msg->data_1_as_text(m_settings.note_name()).c_str());
+        ImGui::Text("%s", in_msg->data_1_as_text(env().settings().note_name()).c_str());
 
     ImGui::TableNextColumn();
     if (in_msg->data_2() != MIDI_NONE)
@@ -277,13 +169,13 @@ void messages_window::add_midi_row(midi_message *in_msg)
 
     ImGui::TableNextColumn();
     if (in_msg->log().has_errors())
-        draw_icon(ICON_FA_BAN, in_msg->log().messages_as_text().c_str());
+        draw_icon(ICON_FA_SQUARE_XMARK, in_msg->log().messages_as_text().c_str());
     else if (in_msg->log().has_warnings())
         draw_icon(ICON_FA_TRIANGLE_EXCLAMATION, in_msg->log().messages_as_text().c_str());
     else if (in_msg->log().count() > 0)
         draw_icon(ICON_FA_CIRCLE_CHECK, in_msg->log().messages_as_text().c_str());
     else if (in_msg->log().count() == 0 && map_count > 0)
-        draw_icon(ICON_FA_CIRCLE_CHECK, "");
+        draw_icon(ICON_FA_CIRCLE_CHECK);
 
     ImGui::TableNextColumn();
     if (in_msg->data_2() != MIDI_NONE)
@@ -296,7 +188,7 @@ void messages_window::add_midi_row(midi_message *in_msg)
 /**
  * Draw an icon with a popup text
  */
-void messages_window::draw_icon(const char *in_icon, std::string_view in_text)
+void messages_window::draw_icon(const char* in_icon, std::string_view in_text)
 {
     ImGui::TextUnformatted(in_icon);
 

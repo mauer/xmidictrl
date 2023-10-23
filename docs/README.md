@@ -21,12 +21,16 @@ Most MIDI controllers should work, as long as they can send and receive standard
 
 ## Supported Operating Systems
 
-This version supports Microsoft Windows 10/11, Ubuntu Linux 20.04 and macOS 10.15+.
+This version supports Microsoft Windows 10/11, Linux and macOS 10.15+.
 
 ## Logging
 
 XMidiCtrl does not log directly in the **Log.txt** of X-Plane. Instead, it's using its own logfile called
-**XMidiCtrl_log.txt**. The logfile gets written into the X-Plane base folder.
+**XMidiCtrl_Log.txt**. The logfile gets written into the XMidiCtrl preference folder, which can be found here:
+
+```
+<X-Plane Path>/Output/preferences/XMidiCtrl
+```
 
 ## Templates
 
@@ -49,7 +53,7 @@ don't hesitate to contact me if you run into problems.
 
 ## Examples
 
-I have included examples of my profiles in the **examples** folder.
+Some examples for aircraft profiles can be found in the **examples** folder of the XMidiCtrl installation.
 
 ## Documentation
 

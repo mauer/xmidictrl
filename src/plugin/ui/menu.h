@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,17 +15,14 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MENU_H
-#define MENU_H
+#ifndef XMC_MENU_H
+#define XMC_MENU_H
 
 // Standard
-#include <memory>
+#include <string>
 
 // X-Plane SDK
 #include "XPLMMenus.h"
-
-// XMidiCtrl
-#include "types.h"
 
 namespace xmidictrl {
 
@@ -38,10 +35,22 @@ public:
     void remove_menu();
 
 private:
-    static void event_handler([[maybe_unused]] void *in_menu_ref, void *in_item_ref);
+    enum {
+        menu_show_devices_window,
+        menu_show_log_window,
+        menu_show_midi_msg_window,
+        menu_show_profile_window,
+        menu_reload_profile,
+        menu_show_settings_window,
+        menu_show_documentation,
+        menu_show_support_forum,
+        menu_show_about_window
+    };
+
+    static void event_handler(void* in_menu_ref, void* in_item_ref);
 
     static void show_documentation();
-    static void show_support();
+    static void show_support_forum();
 
     int m_menu_container = -1;
     XPLMMenuID m_menu_id = nullptr;
@@ -49,4 +58,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // MENU_H
+#endif // XMC_MENU_H

@@ -58,6 +58,7 @@ public:
     void add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity);
     void add_inbound_task(const std::shared_ptr<inbound_task>& in_task);
 
+    void show_log_window();
     void show_messages_window();
     void show_devices_window();
     void show_profile_window();
@@ -95,7 +96,6 @@ private:
     std::map<std::string, std::shared_ptr<info_msg>> m_info_msg;
 
     std::unique_ptr<env_xplane> m_env;
-    std::unique_ptr<settings> m_settings;
     std::unique_ptr<profile> m_profile;
 
     std::unique_ptr<menu> m_menu;
@@ -105,6 +105,7 @@ private:
     XPLMDataRef m_drf_sublayer {nullptr};
 
     // references for custom commands
+    XPLMCommandRef m_cmd_show_log {nullptr};
     XPLMCommandRef m_cmd_show_messages {nullptr};
     XPLMCommandRef m_cmd_show_profile {nullptr};
     XPLMCommandRef m_cmd_reload_profile {nullptr};

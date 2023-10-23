@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -36,38 +36,37 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-settings_window::settings_window(text_logger& in_log, environment& in_env, settings& in_settings)
-    : imgui_window(in_log, in_env, 1000, 540),
-      m_settings(in_settings)
+settings_window::settings_window(text_logger& in_log, environment& in_env)
+    : imgui_window(in_log, in_env, 1000, 540)
 {
-    m_debug_mode = m_settings.debug_mode();
-    m_log_midi = m_settings.log_midi();
-    m_show_messages = m_settings.show_messages();
+    m_debug_mode = env().settings().debug_mode();
+    m_log_midi = env().settings().log_midi();
+    m_show_errors = env().settings().show_errors();
 
-    m_virtual_channel = m_settings.virtual_channel();
-    m_default_outbound_delay = m_settings.default_outbound_delay();
+    m_virtual_channel = env().settings().virtual_channel();
+    m_default_outbound_delay = env().settings().default_outbound_delay();
 
-    m_max_text_messages = m_settings.max_text_messages();
-    m_max_midi_messages = m_settings.max_midi_messages();
+    m_max_text_messages = env().settings().max_text_messages();
+    m_max_midi_messages = env().settings().max_midi_messages();
 
-    m_note_name = static_cast<int>(m_settings.note_name());
+    m_note_name = static_cast<int>(env().settings().note_name());
 
-    m_default_text_sort = static_cast<int>(m_settings.default_text_sort());
-    m_default_midi_sort = static_cast<int>(m_settings.default_midi_sort());
+    m_default_text_sort = static_cast<int>(env().settings().default_text_sort());
+    m_default_midi_sort = static_cast<int>(env().settings().default_midi_sort());
 
-    m_use_common_profile = m_settings.use_common_profile();
+    m_use_common_profile = env().settings().use_common_profile();
 
-    m_info_disabled = m_settings.info_disabled();
-    m_info_position = m_settings.info_position();
-    m_info_offset_x = m_settings.info_offset_x();
-    m_info_offset_y = m_settings.info_offset_y();
-    m_info_seconds = m_settings.info_seconds();
+    m_info_disabled = env().settings().info_disabled();
+    m_info_position = env().settings().info_position();
+    m_info_offset_x = env().settings().info_offset_x();
+    m_info_offset_y = env().settings().info_offset_y();
+    m_info_seconds = env().settings().info_seconds();
 
-    m_path_xplane = in_env.xplane_path().string();
-    m_path_plugin = in_env.plugin_path().string();
-    m_path_preferences = in_env.preferences_path().string();
-    m_path_profiles = in_env.profiles_path().string();
-    m_path_includes = in_env.includes_path().string();
+    m_path_xplane = env().xplane_path().string();
+    m_path_plugin = env().plugin_path().string();
+    m_path_preferences = env().preferences_path().string();
+    m_path_profiles = env().profiles_path().string();
+    m_path_includes = env().includes_path().string();
 
     set_title(std::string(XMIDICTRL_NAME) + " - Settings");
 }
@@ -109,17 +108,17 @@ void settings_window::create_tab_general()
     if (ImGui::BeginTabItem("General")) {
         ImGui::AlignTextToFramePadding();
 
-        ImGui::TextUnformatted("GENERAL SETTINGS");
+        ImGui::TextColored(title_color(), "%s", "GENERAL SETTINGS");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::Checkbox("Use common aircraft profile", &m_use_common_profile);
-        ImGui::Checkbox("Show errors after loading an aircraft", &m_show_messages);
+        ImGui::Checkbox("Show errors after loading an aircraft", &m_show_errors);
 
         ImGui::NewLine();
         ImGui::NewLine();
 
-        ImGui::TextUnformatted("INFO WINDOW");
+        ImGui::TextColored(title_color(), "%s", "INFO WINDOW");
         ImGui::Separator();
         ImGui::NewLine();
 
@@ -176,7 +175,7 @@ void settings_window::create_tab_general()
         }
 
         ImGui::SameLine(600);
-        if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reset to default  ")) {
+        if (ImGui::Button(UI_SPACER_2 ICON_FA_ROTATE_RIGHT UI_SPACER_2 "Reset to default" UI_SPACER_2 )) {
             m_info_position = window_position::bottom_left;
             m_info_offset_x = 50;
             m_info_offset_y = 50;
@@ -206,7 +205,7 @@ void settings_window::create_tab_general()
         }
 
         ImGui::SameLine(600);
-        if (ImGui::Button("  " ICON_FA_INFO "  Test info window  ")) {
+        if (ImGui::Button(UI_SPACER_2 ICON_FA_INFO UI_SPACER_2 "Test info window" UI_SPACER_2)) {
             save_settings();
             plugin::instance().show_info_message("TEST_MESSAGE", "This is a test message");
         }
@@ -230,19 +229,21 @@ void settings_window::create_tab_midi()
     if (ImGui::BeginTabItem("MIDI")) {
         ImGui::AlignTextToFramePadding();
 
-        ImGui::TextUnformatted("MIDI SETTINGS");
+        ImGui::TextColored(title_color(), "%s", "VIRTUAL MIDI DEVICE SETTINGS");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::SliderInt("Channel for virtual MIDI messages", &m_virtual_channel, 1, 16);
 
         ImGui::NewLine();
+        ImGui::NewLine();
+
+        ImGui::TextColored(title_color(), "%s", "DEFAULT MIDI DEVICE SETTINGS");
+        ImGui::Separator();
+        ImGui::NewLine();
 
         ImGui::SliderFloat("Default delay for outbound MIDI messages (in s)", &m_default_outbound_delay, 0, 3, "%.1f");
 
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
         ImGui::NewLine();
@@ -271,7 +272,7 @@ void settings_window::create_tab_logging()
     if (ImGui::BeginTabItem("Logging")) {
         ImGui::AlignTextToFramePadding();
 
-        ImGui::TextUnformatted("GENERAL LOGGING");
+        ImGui::TextColored(title_color(), "%s", "GENERAL LOGGING");
         ImGui::Separator();
         ImGui::NewLine();
 
@@ -301,7 +302,7 @@ void settings_window::create_tab_logging()
         ImGui::NewLine();
         ImGui::NewLine();
 
-        ImGui::TextUnformatted("MIDI LOGGING");
+        ImGui::TextColored(title_color(), "%s", "MIDI LOGGING");
         ImGui::Separator();
         ImGui::NewLine();
 
@@ -356,29 +357,29 @@ void settings_window::create_tab_paths()
     if (ImGui::BeginTabItem("Paths")) {
         ImGui::AlignTextToFramePadding();
 
-        ImGui::TextUnformatted("PATHS");
+        ImGui::TextColored(title_color(), "%s", "PATHS");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::TextUnformatted("X-Plane:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_xplane.c_str());
+        ImGui::TextColored(value_color(), "%s", m_path_xplane.c_str());
 
         ImGui::TextUnformatted("Plugin:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_plugin.c_str());
+        ImGui::TextColored(value_color(), "%s", m_path_plugin.c_str());
 
         ImGui::TextUnformatted("Preferences:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_preferences.c_str());
+        ImGui::TextColored(value_color(), "%s", m_path_preferences.c_str());
 
         ImGui::TextUnformatted("Profiles:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_profiles.c_str());
+        ImGui::TextColored(value_color(), "%s", m_path_profiles.c_str());
 
         ImGui::TextUnformatted("Includes:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_path_includes.c_str());
+        ImGui::TextColored(value_color(), "%s", m_path_includes.c_str());
 
         ImGui::EndTabItem();
     }
@@ -422,31 +423,31 @@ std::string settings_window::info_position_as_text(window_position in_position)
  */
 void settings_window::save_settings()
 {
-    m_settings.set_debug_mode(m_debug_mode);
-    m_settings.set_log_midi(m_log_midi);
+    env().settings().set_debug_mode(m_debug_mode);
+    env().settings().set_log_midi(m_log_midi);
 
-    m_settings.set_virtual_channel(m_virtual_channel);
-    m_settings.set_default_outbound_delay(m_default_outbound_delay);
+    env().settings().set_virtual_channel(m_virtual_channel);
+    env().settings().set_default_outbound_delay(m_default_outbound_delay);
 
-    m_settings.set_max_text_messages(m_max_text_messages);
-    m_settings.set_max_midi_messages(m_max_midi_messages);
+    env().settings().set_max_text_messages(m_max_text_messages);
+    env().settings().set_max_midi_messages(m_max_midi_messages);
 
-    m_settings.set_note_name(static_cast<note_name_type>(m_note_name));
+    env().settings().set_note_name(static_cast<note_name_type>(m_note_name));
 
-    m_settings.set_default_text_sort(static_cast<sort_mode>(m_default_text_sort));
-    m_settings.set_default_midi_sort(static_cast<sort_mode>(m_default_midi_sort));
+    env().settings().set_default_text_sort(static_cast<sort_mode>(m_default_text_sort));
+    env().settings().set_default_midi_sort(static_cast<sort_mode>(m_default_midi_sort));
 
-    m_settings.set_show_messages(m_show_messages);
+    env().settings().set_show_errors(m_show_errors);
 
-    m_settings.set_use_common_profile(m_use_common_profile);
+    env().settings().set_use_common_profile(m_use_common_profile);
 
-    m_settings.set_info_disabled(m_info_disabled);
-    m_settings.set_info_position(m_info_position);
-    m_settings.set_info_offset_x(m_info_offset_x);
-    m_settings.set_info_offset_y(m_info_offset_y);
-    m_settings.set_info_seconds(m_info_seconds);
+    env().settings().set_info_disabled(m_info_disabled);
+    env().settings().set_info_position(m_info_position);
+    env().settings().set_info_offset_x(m_info_offset_x);
+    env().settings().set_info_offset_y(m_info_offset_y);
+    env().settings().set_info_seconds(m_info_seconds);
 
-    m_settings.save_settings();
+    env().settings().save_settings();
 }
 
 } // Namespace xmidictrl

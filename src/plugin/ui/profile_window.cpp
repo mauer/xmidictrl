@@ -75,7 +75,7 @@ void profile_window::create_widgets()
 void profile_window::create_tab_general()
 {
     if (ImGui::BeginTabItem("General Information")) {
-        ImGui::Text("AIRCRAFT INFORMATION");
+        ImGui::TextColored(title_color(), "%s", "AIRCRAFT INFORMATION");
 
         ImGui::SameLine(ImGui::GetWindowWidth() - 240);
 
@@ -87,84 +87,82 @@ void profile_window::create_tab_general()
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_icao().c_str());
+        ImGui::TextColored(value_color(), "%s", env().current_aircraft_icao().c_str());
 
         ImGui::Text("Description:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_descr().c_str());
+        ImGui::TextColored(value_color(), "%s", env().current_aircraft_descr().c_str());
 
         ImGui::Text("Author:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_author().c_str());
+        ImGui::TextColored(value_color(), "%s", env().current_aircraft_author().c_str());
 
         ImGui::Text("ACF Filename:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", env().current_aircraft_acf_name().c_str()); 
+        ImGui::TextColored(value_color(), "%s", env().current_aircraft_acf_name().c_str());
 
         ImGui::NewLine();
         ImGui::NewLine();
-        ImGui::NewLine();
 
-        ImGui::Text("CURRENT PROFILE");
+        ImGui::TextColored(title_color(), "%s", "CURRENT PROFILE");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::Text("Title:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.title().data());
+        ImGui::TextColored(value_color(), "%s", m_profile.title().data());
 
         ImGui::Text("Version:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.version().data());
+        ImGui::TextColored(value_color(), "%s", m_profile.version().data());
 
         ImGui::Text("Filename:");
         ImGui::SameLine(150);
 
         if (m_profile.filename().empty())
-            ImGui::TextColored(COL_TEXT_VALUE, "<not loaded>");
+            ImGui::TextColored(value_color(), "<not loaded>");
         else
-            ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.filename().data());
+            ImGui::TextColored(value_color(), "%s", m_profile.filename().data());
 
         ImGui::NewLine();
         ImGui::NewLine();
-        ImGui::NewLine();
 
-        ImGui::Text("POSSIBLE PROFILE NAMES - AIRCRAFT FOLDER");
+        ImGui::TextColored(title_color(), "%s", "POSSIBLE PROFILE NAMES - AIRCRAFT FOLDER");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::Text("Without prefix:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::none).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::none).data());
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::icao).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_aircraft_path(filename_prefix::acf_name).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
         ImGui::NewLine();
 
-        ImGui::Text("POSSIBLE PROFILE NAMES - PROFILES FOLDER");
+        ImGui::TextColored(title_color(), "%s", "POSSIBLE PROFILE NAMES - PROFILES FOLDER");
         ImGui::Separator();
         ImGui::NewLine();
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::icao).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::acf_name).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
 
         ImGui::Text("Common Profile:");
         ImGui::SameLine(150);
-        ImGui::TextColored(COL_TEXT_VALUE, "%s", m_profile.get_filename_profiles_path(filename_prefix::none).data());
+        ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::none).data());
 
         ImGui::EndTabItem();
     }
@@ -181,9 +179,9 @@ void profile_window::create_tab_errors_warnings()
         ImGui::SameLine(150);
 
         if (m_profile.log().has_errors())
-            ImGui::TextColored(COL_TEXT_VALUE, "Yes");
+            ImGui::TextColored(value_color(), "Yes");
         else
-            ImGui::TextColored(COL_TEXT_VALUE, "No");
+            ImGui::TextColored(value_color(), "No");
 
         ImGui::SameLine(ImGui::GetWindowWidth() - 240);
 
@@ -194,12 +192,12 @@ void profile_window::create_tab_errors_warnings()
         ImGui::SameLine(150);
 
         if (m_profile.log().has_warnings())
-            ImGui::TextColored(COL_TEXT_VALUE, "Yes");
+            ImGui::TextColored(value_color(), "Yes");
         else
-            ImGui::TextColored(COL_TEXT_VALUE, "No");
+            ImGui::TextColored(value_color(), "No");
 
         ImGui::NewLine();
-        ImGui::Text("MESSAGES");
+        ImGui::TextColored(title_color(), "%s", "MESSAGES");
         ImGui::Separator();
 
         ImGui::BeginChild("TEXT_TABLE");
