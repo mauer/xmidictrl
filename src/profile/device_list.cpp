@@ -121,6 +121,22 @@ std::shared_ptr<virtual_device> device_list::find_virtual_device()
 
 
 /**
+ * Update the sublayer datarefs in all devices
+ */
+void device_list::update_sl_values(text_logger& in_log, environment& in_env)
+{
+    for (auto const& device: m_device_list) {
+        if (device != nullptr && !device->settings().sl_dataref.empty()) {
+            std::string sl_value {};
+            in_env.drf().read(in_log, device->settings().sl_dataref, sl_value);
+
+            device->set_sl_value(sl_value);
+        }
+    }
+}
+
+
+/**
  * Process the midi init mappings
  */
 void device_list::process_init_mappings()

@@ -53,6 +53,8 @@ protected:
     std::string build_mapping_text() override;
 
 private:
+    static constexpr std::string_view CFG_KEY_COMMAND {"command"};
+
     std::string m_command {};
 
     unsigned int m_velocity_on {MIDI_VELOCITY_MAX};

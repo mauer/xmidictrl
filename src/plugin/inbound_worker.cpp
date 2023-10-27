@@ -41,7 +41,7 @@ void inbound_worker::add_task(const std::shared_ptr<inbound_task>& in_task)
 /**
  * Process inbound tasks
  */
-void inbound_worker::process(std::string_view sl_value)
+void inbound_worker::process()
 {
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
@@ -56,7 +56,7 @@ void inbound_worker::process(std::string_view sl_value)
             continue;
 
         // perform the action related to the mapping
-        if (!task->map->execute(*task->msg, sl_value)) {
+        if (!task->map->execute(*task->msg, task->sl_value)) {
             // store in temp list
             temp_list.push(task);
         }

@@ -35,7 +35,7 @@ namespace xmidictrl {
 
 class map_out_sld : public map_out {
 public:
-    explicit map_out_sld(environment &in_env);
+    explicit map_out_sld(environment& in_env);
     ~map_out_sld() override;
 
     map_type type() override;
@@ -48,10 +48,12 @@ public:
     void set_velocity_min(int in_velocity_min);
     void set_velocity_max(int in_velocity_max);
 
-    void read_config(text_logger &in_log, toml::value &in_data) override;
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data) override;
+    bool check(text_logger& in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger &in_log, outbound_send_mode in_send_mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger& in_log,
+                                           outbound_send_mode in_send_mode,
+                                           std::string_view in_sl_value) override;
     std::shared_ptr<outbound_task> reset() override;
 
 protected:

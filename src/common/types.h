@@ -36,7 +36,7 @@ namespace xmidictrl {
 //#define COL_TEXT_CAPTION (ImVec4) ImColor(75, 160, 255)
 //#define COL_TEXT_CAPTION (ImVec4) ImColor(0, 255, 255)
 //#define COL_TEXT_CAPTION2 (ImVec4) ImColor(255, 196, 86)
-#define COL_TEXT_CAPTION3 (ImVec4) ImColor(98, 151, 85)
+//#define COL_TEXT_CAPTION3 (ImVec4) ImColor(98, 151, 85)
 
 // Spacer 2
 #define UI_SPACER_2 "  "
@@ -86,9 +86,6 @@ const char* const COMMAND_RELOAD_PROFILE = "RELOAD_PROFILE";
 const char* const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 
 // Keys for the config files
-const char* const CFG_KEY_CC = "cc";
-const char* const CFG_KEY_CH = "ch";
-const char* const CFG_KEY_COMMAND = "command";
 const char* const CFG_KEY_COMMAND_DOWN = "command_down";
 const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
 const char* const CFG_KEY_COMMAND_FAST_UP = "command_fast_up";
@@ -132,7 +129,7 @@ const char* const CFG_KEY_PORT_IN = "port_in";
 const char* const CFG_KEY_PORT_OUT = "port_out";
 const char* const CFG_KEY_SEND_ON = "send_on";
 const char* const CFG_KEY_SEND_OFF = "send_off";
-const char* const CFG_KEY_SHOW_MSG_DIALOG = "show_message_dialog";
+const char* const CFG_KEY_SHOW_ERRORS = "show_message_dialog";
 const char* const CFG_KEY_SL = "sl";
 const char* const CFG_KEY_SL_DATAREF = "sl_dataref";
 const char* const CFG_KEY_TEXT = "text";
@@ -237,17 +234,7 @@ enum class map_data_type {
     program_change
 };
 
-// Outbound note mode (on off vs on)
-enum class outbound_note_mode {
-    on_off,
-    on
-};
 
-// Outbound send mode
-enum class outbound_send_mode {
-    on_change,
-    permanent
-};
 
 // Dataref mode
 enum class dataref_mode {

@@ -20,8 +20,8 @@
 #include <utility>
 
 // XMidiCtrl
-#include "map_in_cmd.h"
 #include "conversions.h"
+#include "map_in_cmd.h"
 
 namespace xmidictrl {
 
@@ -52,6 +52,24 @@ device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_p
 device_settings& device::settings()
 {
     return *m_settings;
+}
+
+
+/**
+ * Return the current sublayer dataref value
+ */
+std::string device::sl_value() const
+{
+    return m_sl_value;
+}
+
+
+/**
+ * Set the sublayer dataref value
+ */
+void device::set_sl_value(std::string_view in_sl_value)
+{
+    m_sl_value = in_sl_value;
 }
 
 

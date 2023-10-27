@@ -20,6 +20,9 @@
 // Standard
 #include <string>
 
+// Dear ImGui
+#include <imgui.h>
+
 // Font Awesome
 #include <IconsFontAwesome6.h>
 
@@ -62,6 +65,9 @@ settings_window::settings_window(text_logger& in_log, environment& in_env)
     m_info_offset_y = env().settings().info_offset_y();
     m_info_seconds = env().settings().info_seconds();
 
+    m_value_color = env().settings().value_color();
+    m_title_color = env().settings().title_color();
+
     m_path_xplane = env().xplane_path().string();
     m_path_plugin = env().plugin_path().string();
     m_path_preferences = env().preferences_path().string();
@@ -87,10 +93,17 @@ void settings_window::create_widgets()
         create_tab_general();
         create_tab_midi();
         create_tab_logging();
+        create_tab_colors();
         create_tab_paths();
 
         ImGui::EndTabBar();
     }
+
+    ImGui::NewLine();
+    ImGui::NewLine();
+
+    if (ImGui::Button(UI_SPACER_2 ICON_FA_FLOPPY_DISK UI_SPACER_2 "Save Settings" UI_SPACER_2 ))
+        save_settings();
 }
 
 
@@ -175,7 +188,7 @@ void settings_window::create_tab_general()
         }
 
         ImGui::SameLine(600);
-        if (ImGui::Button(UI_SPACER_2 ICON_FA_ROTATE_RIGHT UI_SPACER_2 "Reset to default" UI_SPACER_2 )) {
+        if (ImGui::Button(UI_SPACER_2 ICON_FA_ROTATE_RIGHT UI_SPACER_2 "Reset to default" UI_SPACER_2)) {
             m_info_position = window_position::bottom_left;
             m_info_offset_x = 50;
             m_info_offset_y = 50;
@@ -210,12 +223,6 @@ void settings_window::create_tab_general()
             plugin::instance().show_info_message("TEST_MESSAGE", "This is a test message");
         }
 
-        ImGui::NewLine();
-        ImGui::NewLine();
-
-        if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
-            save_settings();
-
         ImGui::EndTabItem();
     }
 }
@@ -243,21 +250,6 @@ void settings_window::create_tab_midi()
         ImGui::NewLine();
 
         ImGui::SliderFloat("Default delay for outbound MIDI messages (in s)", &m_default_outbound_delay, 0, 3, "%.1f");
-
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-        ImGui::NewLine();
-
-        if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
-            save_settings();
 
         ImGui::EndTabItem();
     }
@@ -337,12 +329,25 @@ void settings_window::create_tab_logging()
         ImGui::SameLine();
         ImGui::RadioButton("Flat names (e.g. Eb)", &m_note_name, 1);
 
-        ImGui::NewLine();
-        ImGui::NewLine();
+        ImGui::EndTabItem();
+    }
+}
+
+
+/**
+ * Create tab for colors
+ */
+void settings_window::create_tab_colors()
+{
+    if (ImGui::BeginTabItem("Colours")) {
+        ImGui::AlignTextToFramePadding();
+
+        ImGui::TextColored(title_color(), "%s", "GENERAL COLOURS");
+        ImGui::Separator();
         ImGui::NewLine();
 
-        if (ImGui::Button("  " ICON_FA_FLOPPY_DISK "  Save Settings  "))
-            save_settings();
+        ImGui::ColorEdit3("Colour for values", (float*) &m_value_color);
+        ImGui::ColorEdit3("Colour for titles", (float*) &m_title_color);
 
         ImGui::EndTabItem();
     }
@@ -365,9 +370,13 @@ void settings_window::create_tab_paths()
         ImGui::SameLine(150);
         ImGui::TextColored(value_color(), "%s", m_path_xplane.c_str());
 
+        ImGui::NewLine();
+
         ImGui::TextUnformatted("Plugin:");
         ImGui::SameLine(150);
         ImGui::TextColored(value_color(), "%s", m_path_plugin.c_str());
+
+        ImGui::NewLine();
 
         ImGui::TextUnformatted("Preferences:");
         ImGui::SameLine(150);
@@ -446,6 +455,9 @@ void settings_window::save_settings()
     env().settings().set_info_offset_x(m_info_offset_x);
     env().settings().set_info_offset_y(m_info_offset_y);
     env().settings().set_info_seconds(m_info_seconds);
+
+    env().settings().set_value_color(m_value_color);
+    env().settings().set_title_color(m_title_color);
 
     env().settings().save_settings();
 }

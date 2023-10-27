@@ -37,6 +37,7 @@ private:
     void create_tab_general();
     void create_tab_midi();
     void create_tab_logging();
+    void create_tab_colors();
     void create_tab_paths();
 
     static std::string info_position_as_text(window_position in_position);
@@ -64,6 +65,9 @@ private:
     int m_info_offset_x;
     int m_info_offset_y;
     int m_info_seconds;
+
+    ImVec4 m_value_color;
+    ImVec4 m_title_color;
 
     std::string m_path_xplane;
     std::string m_path_plugin;

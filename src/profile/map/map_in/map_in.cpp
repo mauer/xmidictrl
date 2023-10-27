@@ -43,15 +43,6 @@ map_in::map_in(environment &in_env)
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the sublayer name
- */
-std::string_view map_in::sl() const
-{
-    return m_sl;
-}
-
-
-/**
  * Read the config
  */
 void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
@@ -60,7 +51,6 @@ void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value 
     read_common_config(in_log, in_data);
 
     // additional config
-    read_sublayer(in_log, in_data);
     read_label(in_log, in_data, in_config);
 }
 
@@ -70,18 +60,6 @@ void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value 
 //---------------------------------------------------------------------------------------------------------------------
 //   PROTECTED
 //---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Check if the command is defined for the current sublayer
- */
-bool map_in::check_sublayer(std::string_view in_sl_value)
-{
-    if (in_sl_value != m_sl && !m_sl.empty())
-        return false;
-
-    return true;
-}
-
 
 /**
  * Toggle dataref between values
@@ -158,27 +136,6 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Read parameter sl
- */
-void map_in::read_sublayer(text_logger &in_log, toml::value &in_data)
-{
-    m_sl.clear();
-
-    try {
-        // read sublayer
-        if (in_data.contains(CFG_KEY_SL)) {
-            m_sl = in_data[CFG_KEY_SL].as_string();
-
-            in_log.debug_param(in_data.location().line(), CFG_KEY_SL, m_sl);
-        }
-    } catch (toml::type_error &error) {
-        in_log.error_line(in_data.location().line(), "Error reading mapping");
-        in_log.error(error.what());
-    }
-}
-
 
 /**
  * Read label definition

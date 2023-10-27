@@ -100,18 +100,6 @@ bool profile::load()
     if (toml_utils::load_file(*m_profile_log, filename, m_config)) {
         m_filename = filename;
 
-        // load general settings for the profile
-        m_sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
-
-        if (!m_sl_dataref.empty()) {
-            m_profile_log->info("Sublayer mode activated");
-
-            if (!m_env.drf().check(m_sl_dataref)) {
-                m_profile_log->error("Dataref '" + std::string(m_sl_dataref) + "' not found");
-                return false;
-            }
-        }
-
         create_device_list();
     } else {
         clear();
@@ -135,7 +123,6 @@ bool profile::load()
 void profile::close()
 {
     m_device_list->process_outbound_reset();
-
     clear();
 
     if (!m_filename.empty())
@@ -252,15 +239,6 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 
 
 /**
- * Return the name of the sublayer dataref
- */
-std::string_view profile::sl_dataref() const
-{
-    return m_sl_dataref;
-}
-
-
-/**
  * Process all outbound mappings
  */
 void profile::process(text_logger& in_log)
@@ -287,13 +265,12 @@ void profile::process(text_logger& in_log)
  */
 void profile::clear()
 {
+    m_filename.clear();
+
     m_loaded = false;
     m_init_send = false;
 
     m_config = toml::value();
-
-    m_sl_dataref.clear();
-    m_filename.clear();
 
     m_profile_log->clear();
     m_device_list->clear();
@@ -501,10 +478,10 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
             }
 
             // mode note
-            settings->note_mode = conversions::note_mode_from_code(toml_utils::read_string(*m_profile_log,
-                                                                                           in_params,
-                                                                                           CFG_KEY_MODE_NOTE,
-                                                                                           false));
+            settings->note_mode = device_settings::note_mode_from_code(toml_utils::read_string(*m_profile_log,
+                                                                                               in_params,
+                                                                                               CFG_KEY_MODE_NOTE,
+                                                                                               false));
 
             // outbound delay
             if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_OUTBOUND_DELAY, false))
@@ -517,10 +494,23 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
                 settings->outbound_delay = m_env.settings().default_outbound_delay();
 
             // mode outbound
-            settings->send_mode = conversions::send_mode_from_code(toml_utils::read_string(*m_profile_log,
-                                                                                           in_params,
-                                                                                           CFG_KEY_MODE_OUT,
-                                                                                           false));
+            settings->send_mode = device_settings::send_mode_from_code(toml_utils::read_string(*m_profile_log,
+                                                                                               in_params,
+                                                                                               CFG_KEY_MODE_OUT,
+                                                                                               false));
+
+            // load general settings for the profile
+            settings->sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
+
+            if (!settings->sl_dataref.empty()) {
+                m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");
+
+                if (!m_env.drf().check(settings->sl_dataref)) {
+                    m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no)
+                                         + "Dataref '" + settings->sl_dataref + "' not found");
+                    return {};
+                }
+            }
 
             // default encoder mode
             settings->default_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(*m_profile_log,

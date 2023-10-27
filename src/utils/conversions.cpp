@@ -28,30 +28,6 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the outbound note mode for a given code
- */
-outbound_note_mode conversions::note_mode_from_code(std::string_view in_mode)
-{
-    if (in_mode == "on")
-        return outbound_note_mode::on;
-    else
-        return outbound_note_mode::on_off;
-}
-
-
-/**
- * Return the outbound mode for a given code
- */
-outbound_send_mode conversions::send_mode_from_code(std::string_view in_mode)
-{
-    if (in_mode == "on_change")
-        return outbound_send_mode::on_change;
-    else
-        return outbound_send_mode::permanent;
-}
-
-
-/**
  * Return the dataref mode for a given string
  */
 dataref_mode conversions::dataref_mode_from_code(std::string_view in_mode)

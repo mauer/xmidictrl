@@ -21,6 +21,7 @@
 
 // Standard
 #include <memory>
+#include <string>
 
 // XMidiCtrl
 #include "map_in.h"
@@ -30,6 +31,7 @@ namespace xmidictrl {
 
 struct inbound_task {
     std::shared_ptr<midi_message> msg;
+    std::string sl_value;
     std::shared_ptr<map_in> map;
 };
 

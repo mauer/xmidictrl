@@ -24,6 +24,7 @@ ports and some mappings.
 | mapping_in           | Mappings for inbound messages                                                             |
 | mapping_out          | Mappings for outbound messages                                                            |
 | outbound_delay       | Delays outbound messages by the specified number of seconds (default 0.5 sec)             |
+| sl_dataref           | Defines the dataref to be used for sublayer mappings                                      |
 | default_encoder_mode | Default encoder mode for the device (range/relative), default is relative                 |
 
 # Which ports should be used?

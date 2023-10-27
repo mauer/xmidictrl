@@ -26,6 +26,7 @@
 // XMidiCtrl
 #include "device.h"
 #include "device_settings.h"
+#include "environment.h"
 #include "inbound_task.h"
 #include "midi_device.h"
 #include "midi_logger.h"
@@ -51,6 +52,8 @@ public:
     void close_connections();
 
     std::shared_ptr<virtual_device> find_virtual_device();
+
+    void update_sl_values(text_logger& in_log, environment& in_env);
 
     void process_init_mappings();
     void process_outbound_mappings(text_logger& in_log);

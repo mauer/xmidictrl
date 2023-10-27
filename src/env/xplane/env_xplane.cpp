@@ -37,6 +37,9 @@ namespace xmidictrl {
 env_xplane::env_xplane(text_logger& in_log)
     : environment(in_log)
 {
+    // get the plugin id
+    m_plugin_id = XPLMGetMyID();
+
     // access to X-Plane commands
     m_cmd = std::make_unique<cmd_xplane>();
 

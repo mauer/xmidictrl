@@ -55,6 +55,9 @@ public:
 
     device_settings& settings();
 
+    std::string sl_value() const;
+    void set_sl_value(std::string_view in_sl_value);
+
     void add_inbound_map(std::shared_ptr<map_in>& in_mapping);
 
 protected:
@@ -68,6 +71,8 @@ private:
     midi_logger& m_midi_log;
 
     std::shared_ptr<device_settings> m_settings;
+
+    std::string m_sl_value;
 
     map_in_list m_map_in;
 };

@@ -36,24 +36,18 @@ public:
     explicit map_in(environment &in_env);
     ~map_in() override = default;
 
-    [[nodiscard]] std::string_view sl() const;
-
     virtual void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config);
 
     virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
 
 protected:
-    bool check_sublayer(std::string_view in_sl_value);
     void toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values);
 
     void display_label(text_logger &in_log, float in_value);
     void display_label(text_logger &in_log, std::string_view in_value);
 
 private:
-    void read_sublayer(text_logger &in_log, toml::value &in_data);
     void read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config);
-
-    std::string m_sl {};
 
     std::unique_ptr<label> m_label {};
 };

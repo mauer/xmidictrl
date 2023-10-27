@@ -194,8 +194,13 @@ bool map_out_sld::check(text_logger& in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log, outbound_send_mode in_send_mode)
+std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log,
+                                                    outbound_send_mode in_send_mode,
+                                                    std::string_view in_sl_value)
 {
+    if (!check_sublayer(in_sl_value))
+        return {};
+
     bool changed = false;
     bool send_msg = false;
 

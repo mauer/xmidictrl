@@ -22,6 +22,7 @@
 #include <memory>
 
 // XMidiCtrl
+#include "device_settings.h"
 #include "environment.h"
 #include "map.h"
 #include "outbound_task.h"
@@ -29,14 +30,16 @@
 
 namespace xmidictrl {
 
-class map_out: public map {
+class map_out : public map {
 public:
-    explicit map_out(environment &in_env);
+    explicit map_out(environment& in_env);
     ~map_out() override = default;
 
-    virtual void read_config(text_logger &in_log, toml::value &in_data) = 0;
+    virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
 
-    virtual std::shared_ptr<outbound_task> execute(text_logger &in_log, outbound_send_mode in_send_mode) = 0;
+    virtual std::shared_ptr<outbound_task> execute(text_logger& in_log,
+                                                   outbound_send_mode in_send_mode,
+                                                   std::string_view in_sl_value) = 0;
     virtual std::shared_ptr<outbound_task> reset() = 0;
 };
 

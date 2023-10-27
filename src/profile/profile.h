@@ -108,7 +108,6 @@ private:
     std::unique_ptr<text_logger> m_profile_log;
     std::unique_ptr<device_list> m_device_list;
 
-    std::string m_sl_dataref {};
     std::string m_filename {};
 };
 

@@ -37,7 +37,7 @@ settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
     if (toml_utils::load_file(m_text_log, get_settings_filename(), m_settings_file)) {
         m_debug_mode = toml::find_or<bool>(m_settings_file, CFG_KEY_DEBUG_MODE, false);
         m_log_midi = toml::find_or<bool>(m_settings_file, CFG_KEY_LOG_MIDI, true);
-        m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_MSG_DIALOG, true);
+        m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_ERRORS, true);
 
         m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
         m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
@@ -366,7 +366,7 @@ void settings::save_settings()
 {
     m_settings_file[CFG_KEY_DEBUG_MODE] = m_debug_mode;
     m_settings_file[CFG_KEY_LOG_MIDI] = m_log_midi;
-    m_settings_file[CFG_KEY_SHOW_MSG_DIALOG] = m_show_errors;
+    m_settings_file[CFG_KEY_SHOW_ERRORS] = m_show_errors;
 
     m_settings_file[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
     m_settings_file[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;

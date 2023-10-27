@@ -296,6 +296,9 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
                 task->msg = midi_msg;
                 task->map = mapping;
 
+                // set the current dataref value
+                task->sl_value = sl_value();
+
                 plugin::instance().add_inbound_task(task);
             }
         }
@@ -322,7 +325,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
         if (m_outbound_locked.contains(mapping->get_key()))
             continue;
 
-        std::shared_ptr<outbound_task> task = mapping->execute(in_log, settings().send_mode);
+        std::shared_ptr<outbound_task> task = mapping->execute(in_log, settings().send_mode, sl_value());
 
         if (task == nullptr)
             continue;

@@ -35,17 +35,19 @@ namespace xmidictrl {
 
 class map_out_con : public map_out {
 public:
-    explicit map_out_con(environment &in_env);
+    explicit map_out_con(environment& in_env);
     ~map_out_con() override;
 
     map_type type() override;
 
     void set_velocity(int in_velocity);
 
-    void read_config(text_logger &in_log, toml::value &in_data) override;
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data) override;
+    bool check(text_logger& in_log) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger &in_log, outbound_send_mode in_send_mode) override;
+    std::shared_ptr<outbound_task> execute(text_logger& in_log,
+                                           outbound_send_mode in_send_mode,
+                                           std::string_view in_sl_value) override;
     std::shared_ptr<outbound_task> reset() override;
 
 protected:

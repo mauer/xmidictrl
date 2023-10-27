@@ -134,14 +134,11 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
                                  [[maybe_unused]] float in_elapsed_sim,
                                  [[maybe_unused]] int in_counter)
 {
-    std::string sl_value {};
-
-    // are sublayers active?
-    if (!m_profile->sl_dataref().empty())
-        m_env->drf().read(*m_plugin_log, m_profile->sl_dataref(), sl_value);
+    // update all sublayer datarefs
+    m_profile->devices().update_sl_values(*m_plugin_log, *m_env);
 
     // process inbound tasks
-    m_worker->process(sl_value);
+    m_worker->process();
 
     // process outbound tasks
     m_profile->process(*m_plugin_log);

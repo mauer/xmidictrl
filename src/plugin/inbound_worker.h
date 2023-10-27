@@ -35,7 +35,7 @@ public:
 
     void add_task(const std::shared_ptr<inbound_task>& in_task);
 
-    void process(std::string_view in_sl_value);
+    void process();
 
 private:
     std::queue<std::shared_ptr<inbound_task>> m_tasks {};

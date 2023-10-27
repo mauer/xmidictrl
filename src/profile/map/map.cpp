@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map::map(environment &in_env)
+map::map(environment& in_env)
     : m_env(in_env)
 {}
 
@@ -73,6 +73,15 @@ map_data_type map::data_type() const
 unsigned char map::data() const
 {
     return m_data;
+}
+
+
+/**
+ * Return the sublayer name
+ */
+std::string_view map::sl() const
+{
+    return m_sl;
 }
 
 
@@ -151,7 +160,7 @@ bool map::check(text_logger&)
 /**
  * Return the xplane framework
  */
-environment &map::env() const
+environment& map::env() const
 {
     return m_env;
 }
@@ -160,7 +169,7 @@ environment &map::env() const
 /**
  * Read the common config
  */
-void map::read_common_config(text_logger &in_log, toml::value &in_data)
+void map::read_common_config(text_logger& in_log, toml::value& in_data)
 {
     // set source line
     m_source_line = std::to_string(in_data.location().line()) + " :: " + in_data.location().line_str();
@@ -168,29 +177,48 @@ void map::read_common_config(text_logger &in_log, toml::value &in_data)
     // required config
     read_channel(in_log, in_data);
     read_data(in_log, in_data);
+
+    // optional config
+    read_sublayer(in_log, in_data);
 }
 
 
 /**
+ * Check if the mapping is defined for the current sublayer
+ */
+bool map::check_sublayer(std::string_view in_sl_value)
+{
+    if (in_sl_value != m_sl && !m_sl.empty())
+        return false;
+
+    return true;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
  * Read parameter channel
  */
-void map::read_channel(text_logger &in_log, toml::value &in_data)
+void map::read_channel(text_logger& in_log, toml::value& in_data)
 {
     m_channel = 11; // default channel 11
 
     try {
         // read channel
-        if (in_data.contains(CFG_KEY_CH)) {
-            m_channel = static_cast<unsigned char>( in_data[CFG_KEY_CH].as_integer());
+        if (in_data.contains(CFG_KEY_CH.data())) {
+            m_channel = static_cast<unsigned char>( in_data[CFG_KEY_CH.data()].as_integer());
 
-            in_log.debug_param(in_data.location().line(), std::string(CFG_KEY_CH), std::to_string(m_channel));
+            in_log.debug_param(in_data.location().line(), CFG_KEY_CH, std::to_string(m_channel));
         } else {
             in_log.info(" --> Line " + std::to_string(in_data.location().line()) + " :: "
-                        + "Parameter '" + CFG_KEY_CH + "' is missing, will use default channel '11'");
+                        + "Parameter '" + CFG_KEY_CH.data() + "' is missing, will use default channel '11'");
             in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(CFG_KEY_CH) + "' = '" + std::to_string(m_channel) + "' (Default Value)");
+                              "Parameter '" + std::string(CFG_KEY_CH) + "' = '" + std::to_string(m_channel)
+                              + "' (Default Value)");
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
     }
@@ -200,15 +228,15 @@ void map::read_channel(text_logger &in_log, toml::value &in_data)
 /**
  * Read parameter data
  */
-void map::read_data(text_logger &in_log, toml::value &in_data)
+void map::read_data(text_logger& in_log, toml::value& in_data)
 {
     m_data = MIDI_NONE;
     m_data_type = map_data_type::none;
 
     try {
         // read control change
-        if (in_data.contains(CFG_KEY_CC)) {
-            m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC].as_integer());
+        if (in_data.contains(CFG_KEY_CC.data())) {
+            m_data = static_cast<unsigned char>( in_data[CFG_KEY_CC.data()].as_integer());
             m_data_type = map_data_type::control_change;
 
             in_log.debug_line(in_data.location().line(),
@@ -218,7 +246,7 @@ void map::read_data(text_logger &in_log, toml::value &in_data)
             m_data_type = map_data_type::note;
 
             in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(CFG_KEY_NOTE) + "' = '"+ std::to_string(m_data) + "'");
+                              "Parameter '" + std::string(CFG_KEY_NOTE) + "' = '" + std::to_string(m_data) + "'");
         } else if (in_data.contains(CFG_KEY_PITCH_BEND)) {
             m_data = 0;   // fixed value for pitch bend messages
             m_data_type = map_data_type::pitch_bend;
@@ -231,11 +259,33 @@ void map::read_data(text_logger &in_log, toml::value &in_data)
             m_data_type = map_data_type::program_change;
 
             in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(CFG_KEY_PROGRAM_CHANGE) + "' = '" + std::to_string(m_data) + "'");
+                              "Parameter '" + std::string(CFG_KEY_PROGRAM_CHANGE) + "' = '" + std::to_string(m_data)
+                              + "'");
         } else {
             in_log.error_line(in_data.location().line(), "Parameter for MIDI type is missing");
         }
 
+    } catch (toml::type_error& error) {
+        in_log.error_line(in_data.location().line(), "Error reading mapping");
+        in_log.error(error.what());
+    }
+}
+
+
+/**
+ * Read parameter sl
+ */
+void map::read_sublayer(text_logger &in_log, toml::value &in_data)
+{
+    m_sl.clear();
+
+    try {
+        // read sublayer
+        if (in_data.contains(CFG_KEY_SL)) {
+            m_sl = in_data[CFG_KEY_SL].as_string();
+
+            in_log.debug_param(in_data.location().line(), CFG_KEY_SL, m_sl);
+        }
     } catch (toml::type_error &error) {
         in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());

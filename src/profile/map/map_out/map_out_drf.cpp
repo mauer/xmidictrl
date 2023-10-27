@@ -32,7 +32,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out_drf::map_out_drf(environment &in_env)
+map_out_drf::map_out_drf(environment& in_env)
     : map_out(in_env)
 {}
 
@@ -112,7 +112,7 @@ void map_out_drf::set_velocity_off(int in_velocity_off)
 /**
  * Read settings from config
  */
-void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
+void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'drf'");
 
@@ -172,7 +172,7 @@ void map_out_drf::read_config(text_logger &in_log, toml::value &in_data)
 /**
  * Check the mapping
  */
-bool map_out_drf::check(text_logger &in_log)
+bool map_out_drf::check(text_logger& in_log)
 {
     bool result = true;
 
@@ -187,11 +187,12 @@ bool map_out_drf::check(text_logger &in_log)
 
     if (m_values_on.empty() && m_values_off.empty()) {
         in_log.error(source_line());
-        in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF) + "' are not defined");
+        in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF)
+                     + "' are not defined");
         result = false;
     }
 
-    for (const auto &dataref: m_datarefs) {
+    for (const auto& dataref: m_datarefs) {
         if (!env().drf().check(dataref)) {
             in_log.error(source_line());
             in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
@@ -202,14 +203,16 @@ bool map_out_drf::check(text_logger &in_log)
     if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
         in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_ON) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
+                     + std::to_string(MIDI_VELOCITY_MAX));
         result = false;
     }
 
     if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
         in_log.error(source_line());
         in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_OFF) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and " + std::to_string(MIDI_VELOCITY_MAX));
+                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
+                     + std::to_string(MIDI_VELOCITY_MAX));
         result = false;
     }
 
@@ -220,8 +223,13 @@ bool map_out_drf::check(text_logger &in_log)
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, outbound_send_mode in_send_mode)
+std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
+                                                    outbound_send_mode in_send_mode,
+                                                    std::string_view in_sl_value)
 {
+    if (!check_sublayer(in_sl_value))
+        return {};
+
     bool changed = false;
 
     bool send_msg = false;
@@ -229,7 +237,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, outboun
     int send_off_cnt = 0;
 
     // if one value has been changed, all other values have to be checked as well
-    for (auto &dataref: m_datarefs) {
+    for (auto& dataref: m_datarefs) {
         // get the current value from X-Plane
         std::string value_current;
 
@@ -260,7 +268,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger &in_log, outboun
         return {};
 
     // alright, some have been changed, let's check what we have to send out
-    for (auto &dataref: m_datarefs) {
+    for (auto& dataref: m_datarefs) {
         std::string value_current = m_xp_values[dataref];
 
         // value_on has been defined
@@ -395,7 +403,7 @@ std::string map_out_drf::build_mapping_text()
         map_str.append("Datarefs = [");
 
         std::string data_str;
-        for (auto &str: m_datarefs) {
+        for (auto& str: m_datarefs) {
             if (!data_str.empty())
                 data_str.append(", ");
 
@@ -412,7 +420,7 @@ std::string map_out_drf::build_mapping_text()
         map_str.append("Values on = [");
 
         std::string values_str;
-        for (auto &str: m_values_on) {
+        for (auto& str: m_values_on) {
             if (!values_str.empty())
                 values_str.append(", ");
 
@@ -429,7 +437,7 @@ std::string map_out_drf::build_mapping_text()
         map_str.append("Values off = [");
 
         std::string values_str;
-        for (auto &str: m_values_off) {
+        for (auto& str: m_values_off) {
             if (!values_str.empty())
                 values_str.append(", ");
 
