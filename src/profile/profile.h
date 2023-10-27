@@ -65,8 +65,6 @@ public:
     std::string get_filename_aircraft_path(filename_prefix in_prefix);
     std::string get_filename_profiles_path(filename_prefix in_prefix);
 
-    [[nodiscard]] std::string_view sl_dataref() const;
-
     void process(text_logger& in_log);
 
 private:
