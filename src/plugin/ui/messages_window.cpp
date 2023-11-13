@@ -78,39 +78,42 @@ void messages_window::create_widgets()
 
     ImGui::BeginChild("TEXT_TABLE");
 
-    ImGui::BeginTable("tableMidiMessages", 10,
-                      ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
-    ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
-    ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
-    ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
-    ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 160);
-    ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
-    ImGui::TableSetupColumn("Data", ImGuiTableColumnFlags_WidthFixed, 80);
-    ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed, 80);
-    ImGui::TableSetupColumn("Mappings", ImGuiTableColumnFlags_WidthFixed, 100);
-    ImGui::TableSetupColumn("Log", ImGuiTableColumnFlags_WidthFixed, 50);
-    ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
-    ImGui::TableHeadersRow();
+    if (ImGui::BeginTable("tableMidiMessages", 10,
+                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable | ImGuiTableFlags_ScrollY)) {
+        ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
+        ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
+        ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 160);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 2", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Mappings", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Log", ImGuiTableColumnFlags_WidthFixed, 50);
+        ImGui::TableSetupColumn("Raw Data", ImGuiTableColumnFlags_WidthStretch);
 
-    if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs()) {
-        if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
-            auto spec = sort_specs->Specs[0];
-            if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                m_midi_sort_mode = sort_mode::ascending;
-            else
-                m_midi_sort_mode = sort_mode::descending;
-        }
-    }
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableHeadersRow();
 
-    if (m_midi_sort_mode == sort_mode::ascending) {
-        for (size_t i = 0; i < m_midi_log.count(); i++) {
-            auto msg = m_midi_log.message(static_cast<int>(i));
-            add_midi_row(msg);
+        if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs()) {
+            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
+                auto spec = sort_specs->Specs[0];
+                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
+                    m_midi_sort_mode = sort_mode::ascending;
+                else
+                    m_midi_sort_mode = sort_mode::descending;
+            }
         }
-    } else if (m_midi_log.count() > 0) {
-        for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
-            auto msg = m_midi_log.message(static_cast<int>(i));
-            add_midi_row(msg);
+
+        if (m_midi_sort_mode == sort_mode::ascending) {
+            for (size_t i = 0; i < m_midi_log.count(); i++) {
+                auto msg = m_midi_log.message(static_cast<int>(i));
+                add_midi_row(msg);
+            }
+        } else if (m_midi_log.count() > 0) {
+            for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
+                auto msg = m_midi_log.message(static_cast<int>(i));
+                add_midi_row(msg);
+            }
         }
     }
 

@@ -11,6 +11,7 @@
 * **Getting started**
   * [Create a profile](create_profile.md)
   * [Use the included examples](use_examples.md)
+  * [What is a MIDI message?](midi_message.md)
   * [FAQ](faq.md)
 
 * **Mappings**

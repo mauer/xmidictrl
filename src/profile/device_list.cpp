@@ -70,6 +70,24 @@ std::shared_ptr<virtual_device> device_list::create_virtual_device(text_logger& 
 
 
 /**
+ * Return the begin iterator
+ */
+std::vector<std::shared_ptr<device>>::iterator device_list::begin()
+{
+    return m_device_list.begin();
+}
+
+
+/**
+ * Return the end iterator
+ */
+std::vector<std::shared_ptr<device>>::iterator device_list::end()
+{
+    return m_device_list.end();
+}
+
+
+/**
  * Open all midi connections
  */
 bool device_list::open_connections()

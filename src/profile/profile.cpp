@@ -177,7 +177,7 @@ bool profile::has_errors() const
  */
 std::string profile::title()
 {
-    return toml::find_or<std::string>(m_config, CFG_KEY_TITLE, "");
+    return toml::find_or<std::string>(m_config, c_cfg_title.data(), "");
 }
 
 
@@ -186,7 +186,7 @@ std::string profile::title()
  */
 std::string profile::version()
 {
-    return toml::find_or<std::string>(m_config, CFG_KEY_VERSION, "");
+    return toml::find_or<std::string>(m_config, c_cfg_version.data(), "");
 }
 
 
@@ -265,6 +265,7 @@ void profile::process(text_logger& in_log)
  */
 void profile::clear()
 {
+    // TODO : combine clear and close
     m_filename.clear();
 
     m_loaded = false;
@@ -445,11 +446,11 @@ std::shared_ptr<device_settings> profile::create_device_settings(toml::value in_
         }
 
         // include files
-        if (toml_utils::is_array(*m_profile_log, in_params, CFG_KEY_INCLUDE)) {
-            settings->include = toml_utils::read_str_set_array(*m_profile_log, in_params, CFG_KEY_INCLUDE, false);
+        if (toml_utils::is_array(*m_profile_log, in_params, c_cfg_include)) {
+            settings->include = toml_utils::read_str_set_array(*m_profile_log, in_params, c_cfg_include, false);
         } else {
             settings->include.clear();
-            std::string include_name = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_INCLUDE, false);
+            std::string include_name = toml_utils::read_string(*m_profile_log, in_params, c_cfg_include, false);
 
             settings->include.insert(include_name);
         }
@@ -560,7 +561,7 @@ void profile::add_mappings_from_include(const std::shared_ptr<device>& in_device
 
         m_profile_log->debug("Device " + std::to_string(in_device->settings().device_no)
                              + " ::  Finished adding mappings from include file '" + inc_name + "'");
-    };
+    }
 }
 
 
@@ -650,23 +651,23 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
         m_profile_log->debug(log_prefix + "Read settings for mapping " + std::to_string(map_no));
 
         try {
-            auto type = read_mapping_type(in_settings[map_no]);
+            auto type = read_map_in_type(in_settings[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
-                case map_type::command:
+                case map_in_type::command:
                     mapping = std::make_shared<map_in_cmd>(m_env);
                     break;
 
-                case map_type::dataref:
+                case map_in_type::dataref:
                     mapping = std::make_shared<map_in_drf>(m_env);
                     break;
 
-                case map_type::push_pull:
+                case map_in_type::push_pull:
                     mapping = std::make_shared<map_in_pnp>(m_env);
                     break;
 
-                case map_type::encoder:
+                case map_in_type::encoder:
                     if (in_device->type() == device_type::midi_device) {
                         auto dev = std::static_pointer_cast<midi_device>(in_device);
                         mapping = std::make_shared<map_in_enc>(m_env, dev->settings().default_enc_mode);
@@ -676,7 +677,7 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
                     }
                     break;
 
-                case map_type::slider:
+                case map_in_type::slider:
                     if (in_device->type() == device_type::midi_device) {
                         mapping = std::make_shared<map_in_sld>(m_env);
                     } else {
@@ -685,8 +686,7 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
                     }
                     break;
 
-                case map_type::constant:
-                case map_type::none:
+                case map_in_type::none:
                     m_profile_log->error(log_prefix + "Mapping " + std::to_string(map_no)
                                          + " :: Invalid mapping type");
                     break;
@@ -736,19 +736,19 @@ void profile::create_outbound_mapping(toml::array in_params, const std::shared_p
         m_profile_log->debug(log_prefix + "Mapping " + std::to_string(map_no) + " :: Reading config");
 
         try {
-            map_type type = read_mapping_type(in_params[map_no]);
+            map_out_type type = read_map_out_type(in_params[map_no]);
 
             // depending on the mapping type, we have to read some additional settings
             switch (type) {
-                case map_type::constant:
+                case map_out_type::constant:
                     mapping = std::make_shared<map_out_con>(m_env);
                     break;
 
-                case map_type::dataref:
+                case map_out_type::dataref:
                     mapping = std::make_shared<map_out_drf>(m_env);
                     break;
 
-                case map_type::slider:
+                case map_out_type::slider:
                     mapping = std::make_shared<map_out_sld>(m_env);
                     break;
 
@@ -783,49 +783,97 @@ void profile::create_outbound_mapping(toml::array in_params, const std::shared_p
 
 
 /**
- * Translate a type string to an enum value
+ * Translate the type string for inbound mappings to an enum value
  */
-map_type profile::translate_map_type(std::string_view in_type_str)
+map_in_type profile::translate_map_in_type(std::string_view in_type_str)
 {
-    map_type type = map_type::none;
+    map_in_type type = map_in_type::none;
 
     if (in_type_str == CFG_MAPTYPE_COMMAND)
-        type = map_type::command;
-    else if (in_type_str == CFG_MAPTYPE_CONSTANT)
-        type = map_type::constant;
+        type = map_in_type::command;
     else if (in_type_str == CFG_MAPTYPE_SLIDER)
-        type = map_type::slider;
+        type = map_in_type::slider;
     else if (in_type_str == CFG_MAPTYPE_DATAREF)
-        type = map_type::dataref;
+        type = map_in_type::dataref;
     else if (in_type_str == CFG_MAPTYPE_PUSH_PULL)
-        type = map_type::push_pull;
+        type = map_in_type::push_pull;
     else if (in_type_str == CFG_MAPTYPE_ENCODER)
-        type = map_type::encoder;
+        type = map_in_type::encoder;
 
     return type;
 }
 
 
 /**
- * Read the mapping type
+ * Translate the type string for inbound mappings to an enum value
  */
-map_type profile::read_mapping_type(toml::value& in_params)
+map_out_type profile::translate_map_out_type(std::string_view in_type_str)
 {
-    map_type type = map_type::none;
+    map_out_type type = map_out_type::none;
+
+    if (in_type_str == CFG_MAPTYPE_CONSTANT)
+        type = map_out_type::constant;
+    else if (in_type_str == CFG_MAPTYPE_SLIDER)
+        type = map_out_type::slider;
+    else if (in_type_str == CFG_MAPTYPE_DATAREF)
+        type = map_out_type::dataref;
+
+    return type;
+}
+
+
+/**
+ * Read the inbound mapping type
+ */
+map_in_type profile::read_map_in_type(toml::value& in_params)
+{
+    map_in_type type = map_in_type::none;
 
     try {
         // read type
-        if (in_params.contains(CFG_KEY_TYPE)) {
-            std::string type_str {in_params[CFG_KEY_TYPE].as_string()};
+        if (in_params.contains(c_cfg_type.data())) {
+            std::string type_str {in_params[c_cfg_type.data()].as_string()};
 
             m_profile_log->debug_line(in_params.location().line(), "Parameter type = '" + type_str + "'");
 
             // get the mapping type
-            type = translate_map_type(type_str);
+            type = translate_map_in_type(type_str);
         } else {
             m_profile_log->error(
                 "Line " + std::to_string(in_params.location().line()) + " :: " + in_params.location().line_str());
-            m_profile_log->error(" --> Parameter '" + std::string(CFG_KEY_TYPE) + "' is missing");
+            m_profile_log->error(" --> Parameter '" + std::string(c_cfg_type.data()) + "' is missing");
+        }
+    } catch (toml::type_error& error) {
+        m_profile_log->error(
+            "Line " + std::to_string(in_params.location().line()) + " :: " + in_params.location().line_str());
+        m_profile_log->error("Line " + std::to_string(in_params.location().line()) + " :: Error reading mapping");
+        m_profile_log->error(error.what());
+    }
+
+    return type;
+}
+
+
+/**
+ * Read the outbound mapping type
+ */
+map_out_type profile::read_map_out_type(toml::value& in_params)
+{
+    map_out_type type = map_out_type::none;
+
+    try {
+        // read type
+        if (in_params.contains(c_cfg_type.data())) {
+            std::string type_str {in_params[c_cfg_type.data()].as_string()};
+
+            m_profile_log->debug_line(in_params.location().line(), "Parameter type = '" + type_str + "'");
+
+            // get the mapping type
+            type = translate_map_out_type(type_str);
+        } else {
+            m_profile_log->error(
+                "Line " + std::to_string(in_params.location().line()) + " :: " + in_params.location().line_str());
+            m_profile_log->error(" --> Parameter '" + std::string(c_cfg_type.data()) + "' is missing");
         }
     } catch (toml::type_error& error) {
         m_profile_log->error(

@@ -43,9 +43,18 @@ map_in_pnp::map_in_pnp(environment &in_env)
 /**
  * Return the mapping type
  */
-map_type map_in_pnp::type()
+map_in_type map_in_pnp::type()
 {
-    return map_type::push_pull;
+    return map_in_type::push_pull;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_in_pnp::type_as_string()
+{
+    return "Push&Pull";
 }
 
 
@@ -267,7 +276,7 @@ void map_in_pnp::reset()
 /**
  * Return the mapping as string
  */
-std::string map_in_pnp::build_mapping_text()
+std::string map_in_pnp::build_mapping_text(bool in_short)
 {
     std::string map_str = " ====== Push & Pull ======\n";
 

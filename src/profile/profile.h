@@ -36,11 +36,22 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
 enum class filename_prefix {
     none,
     icao,
     acf_name
 };
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
 class profile {
 public:
@@ -87,12 +98,22 @@ private:
     void create_inbound_mapping(toml::array in_params, const std::shared_ptr<device>& in_device);
     void create_outbound_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device);
 
-    static map_type translate_map_type(std::string_view in_type_str);
-    map_type read_mapping_type(toml::value& in_params);
+    static map_in_type translate_map_in_type(std::string_view in_type_str);
+    static map_out_type translate_map_out_type(std::string_view in_type_str);
+
+    map_in_type read_map_in_type(toml::value& in_params);
+    map_out_type read_map_out_type(toml::value& in_params);
 
     static std::string get_log_prefix_from_device(const std::shared_ptr<device>& in_device);
     static std::string get_log_prefix(bool in_is_virtual, size_t in_dev_no = 0);
 
+    // constants
+    static constexpr std::string_view c_cfg_include {"include"};
+    static constexpr std::string_view c_cfg_title {"title"};
+    static constexpr std::string_view c_cfg_type {"type"};
+    static constexpr std::string_view c_cfg_version {"version"};
+
+    // members
     toml::value m_config {};
 
     environment& m_env;

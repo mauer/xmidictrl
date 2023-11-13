@@ -85,16 +85,16 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
         midi_msg->add_mapping(mapping);
 
         // for push and pull we have to wait until the command has ended
-        if (mapping->type() == map_type::push_pull) {
+        if (mapping->type() == map_in_type::push_pull) {
             switch (midi_msg->data_2()) {
-                case MIDI_VELOCITY_MAX: {
+                case MIDI_DATA_2_MAX: {
                     std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
                     pnp->set_time_received();
                     add_task = true;
                     break;
                 }
 
-                case MIDI_VELOCITY_MIN: {
+                case MIDI_DATA_2_MIN: {
                     // no additional task is required, it's already in the event queue waiting for the
                     // release time point
                     std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
@@ -108,7 +108,7 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
                     break;
             }
 
-        } else if (mapping->type() == map_type::command) {
+        } else if (mapping->type() == map_in_type::command) {
             std::shared_ptr<map_in_cmd> cmd = std::static_pointer_cast<map_in_cmd>(mapping);
             add_task = true;
         } else {

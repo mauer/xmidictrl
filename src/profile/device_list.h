@@ -35,6 +35,10 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class device_list {
 public:
     explicit device_list() = default;
@@ -47,6 +51,9 @@ public:
     std::shared_ptr<virtual_device> create_virtual_device(text_logger& in_text_log,
                                                           midi_logger& in_midi_log,
                                                           const std::shared_ptr<device_settings>& in_settings);
+
+    std::vector<std::shared_ptr<device>>::iterator begin();
+    std::vector<std::shared_ptr<device>>::iterator end();
 
     bool open_connections();
     void close_connections();

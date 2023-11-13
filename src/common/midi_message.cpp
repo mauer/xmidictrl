@@ -156,15 +156,15 @@ size_t midi_message::mapping_count() const
 std::string midi_message::mappings_as_string()
 {
     if (m_mappings.size() == 1)
-        return m_mappings.at(0)->as_text().data();
+        return m_mappings.at(0)->map_text().data();
 
     std::string map_str;
     for (auto& mapping: m_mappings) {
         if (map_str.empty()) {
-            map_str = mapping->as_text();
+            map_str = mapping->map_text();
         } else {
             map_str.append("\n");
-            map_str.append(mapping->as_text());
+            map_str.append(mapping->map_text());
         }
     }
 
@@ -267,22 +267,22 @@ unsigned char midi_message::data_1() const
  */
 std::string midi_message::data_1_as_text(note_name_type in_type) const
 {
-    std::string m_data_1_string = std::to_string(m_data_1);
+    std::string str = std::to_string(m_data_1);
 
     switch (type()) {
         case midi_msg_type::note_off:
         case midi_msg_type::note_on:
             if (in_type == note_name_type::sharp)
-                m_data_1_string.append(" (" + std::string(sharp_note_names[static_cast<int>(m_data_1) % 12]) + ")");
+                str.append(" (" + std::string(sharp_note_names[static_cast<int>(m_data_1) % 12]) + ")");
             else
-                m_data_1_string.append(" (" + std::string(flat_note_names[static_cast<int>(m_data_1) % 12]) + ")");
+                str.append(" (" + std::string(flat_note_names[static_cast<int>(m_data_1) % 12]) + ")");
             break;
 
         default:
             break;
     }
 
-    return m_data_1_string;
+    return str;
 }
 
 

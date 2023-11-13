@@ -32,9 +32,15 @@
  */
 PLUGIN_API int XPluginStart(char *out_name, char *out_sig, char *out_desc)
 {
+#ifdef _MSC_VER
+    strcpy_s(out_name, sizeof(XMIDICTRL_NAME), XMIDICTRL_NAME);
+    strcpy_s(out_sig, sizeof(XMIDICTRL_SIGNATURE), XMIDICTRL_SIGNATURE);
+    strcpy_s(out_desc, sizeof(XMIDICTRL_DESCRIPTION), XMIDICTRL_DESCRIPTION);
+#else
     strcpy(out_name, XMIDICTRL_NAME);
     strcpy(out_sig, XMIDICTRL_SIGNATURE);
     strcpy(out_desc, XMIDICTRL_DESCRIPTION);
+#endif
 
     XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 

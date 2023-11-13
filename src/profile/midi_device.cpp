@@ -86,6 +86,24 @@ device_type midi_device::type()
 
 
 /**
+ * Return the init mapping list
+ */
+map_init_list& midi_device::mapping_init()
+{
+    return m_map_init;
+}
+
+
+/**
+ * Return the outbound mapping list
+ */
+map_out_list& midi_device::mapping_out()
+{
+    return m_map_out;
+}
+
+
+/**
  * Add a new init mapping to the device
  */
 void midi_device::add_init_map(std::shared_ptr<map_init>& in_mapping)
@@ -253,16 +271,16 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
             midi_msg->add_mapping(mapping);
 
             // for push and pull we have to wait until the command has ended
-            if (mapping->type() == map_type::push_pull) {
+            if (mapping->type() == map_in_type::push_pull) {
                 switch (midi_msg->data_2()) {
-                    case MIDI_VELOCITY_MAX: {
+                    case MIDI_DATA_2_MAX: {
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
                         pnp->set_time_received();
                         add_task = true;
                         break;
                     }
 
-                    case MIDI_VELOCITY_MIN: {
+                    case MIDI_DATA_2_MIN: {
                         // no additional task is required, it's already in the event queue waiting for the
                         // release time point
                         std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
@@ -276,13 +294,13 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
                         break;
                 }
 
-            } else if (mapping->type() == map_type::command) {
+            } else if (mapping->type() == map_in_type::command) {
                 std::shared_ptr<map_in_cmd> cmd = std::static_pointer_cast<map_in_cmd>(mapping);
 
                 // lock the current channel and midi type for outgoing messages
-                if (midi_msg->data_2() == cmd->velocity_on())
+                if (midi_msg->data_2() == cmd->data_2_on())
                     m_outbound_locked.insert(midi_msg->key());
-                else if (midi_msg->data_2() == cmd->velocity_off())
+                else if (midi_msg->data_2() == cmd->data_2_off())
                     m_outbound_locked.erase(midi_msg->key());
 
                 add_task = true;
@@ -471,13 +489,13 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
 
     }
 
-    msg->set_data_1(in_task->data);
+    msg->set_data_1(in_task->data_1);
 
     // some MIDI device expect note_on for note_off with a velocity of 0. Lets check the settings
     if (in_task->type == midi_msg_type::note_off && settings().note_mode == outbound_note_mode::on)
-        msg->set_data_2(MIDI_VELOCITY_MIN);
+        msg->set_data_2(MIDI_DATA_2_MIN);
     else
-        msg->set_data_2(in_task->velocity);
+        msg->set_data_2(in_task->data_2);
 
     msg->add_mapping(in_task->mapping);
 

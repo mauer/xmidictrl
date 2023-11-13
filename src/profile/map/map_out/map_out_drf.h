@@ -33,18 +33,23 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_out_drf : public map_out {
 public:
     explicit map_out_drf(environment& in_env);
     ~map_out_drf() override;
 
-    map_type type() override;
+    map_out_type type() override;
+    std::string type_as_string() override;
 
     void set_dataref(std::string_view in_dataref);
     void set_dataref(std::vector<std::string> in_dataref);
 
-    void set_velocity_on(int in_velocity_on);
-    void set_velocity_off(int in_velocity_off);
+    void set_data_2_on(int in_data_2_on);
+    void set_data_2_off(int in_data_2_off);
 
     void read_config(text_logger& in_log, toml::value& in_data) override;
     bool check(text_logger& in_log) override;
@@ -55,9 +60,14 @@ public:
     std::shared_ptr<outbound_task> reset() override;
 
 protected:
-    std::string build_mapping_text() override;
+    std::string build_mapping_text(bool in_short) override;
 
 private:
+    // constants
+    static constexpr std::string_view c_cfg_data_2_off {"data_2_off"};
+    static constexpr std::string_view c_cfg_data_2_on {"data_2_on"};
+
+    // members
     std::vector<std::string> m_datarefs {};
     std::map<std::string, std::string> m_xp_values {};
 
@@ -67,8 +77,8 @@ private:
     send_mode m_send_on {send_mode::one};
     send_mode m_send_off {send_mode::all};
 
-    unsigned int m_velocity_on {127};
-    unsigned int m_velocity_off {0};
+    unsigned int m_data_2_on {MIDI_DATA_2_MAX};
+    unsigned int m_data_2_off {MIDI_DATA_2_MIN};
 };
 
 } // Namespace xmidictrl

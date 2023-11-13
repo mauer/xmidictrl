@@ -27,21 +27,34 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
 typedef std::vector<std::shared_ptr<map_out>>::iterator map_out_itr;
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
 class map_out_list {
 public:
     explicit map_out_list() = default;
     ~map_out_list();
 
-    void add(const std::shared_ptr<map_out> &map);
+    void add(const std::shared_ptr<map_out>& in_map);
 
     map_out_itr begin();
     map_out_itr end();
 
     size_t size();
 
-protected:
+private:
+    unsigned int m_last_map_no {0};
+
     std::vector<std::shared_ptr<map_out>> m_list;
 };
 

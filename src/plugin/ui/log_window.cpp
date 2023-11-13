@@ -73,36 +73,37 @@ void log_window::create_widgets()
 
     ImGui::BeginChild("LOG_TABLE");
 
-    ImGui::BeginTable("tableLogMessages", 3,
-                      ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable);
+    if (ImGui::BeginTable("tableLogMessages", 3,
+                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable | ImGuiTableFlags_ScrollY)) {
+        ImGui::TableSetupColumn("Date/Time", m_log_msg_flags, 200);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 120);
+        ImGui::TableSetupColumn("Message", ImGuiTableColumnFlags_WidthStretch);
 
-    ImGui::TableSetupColumn("Date/Time", m_log_msg_flags, 200);
-    ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 120);
-    ImGui::TableSetupColumn("Message", ImGuiTableColumnFlags_WidthStretch);
-    ImGui::TableHeadersRow();
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableHeadersRow();
 
-    if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs()) {
-        if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
-            auto spec = sort_specs->Specs[0];
-            if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
-                m_log_sort_mode = sort_mode::ascending;
-            else
-                m_log_sort_mode = sort_mode::descending;
+        if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs()) {
+            if (sort_specs->SpecsDirty && sort_specs->SpecsCount > 0) {
+                auto spec = sort_specs->Specs[0];
+                if (spec.ColumnIndex == 0 && spec.SortDirection == ImGuiSortDirection_Ascending)
+                    m_log_sort_mode = sort_mode::ascending;
+                else
+                    m_log_sort_mode = sort_mode::descending;
+            }
+        }
+
+        if (m_log_sort_mode == sort_mode::ascending) {
+            for (size_t i = 0; i < log().count(); i++) {
+                auto msg = log().message(static_cast<int>(i));
+                add_log_row(msg);
+            }
+        } else if (log().count() > 0) {
+            for (size_t i = log().count() - 1; i > 0; i--) {
+                auto msg = log().message(static_cast<int>(i));
+                add_log_row(msg);
+            }
         }
     }
-
-    if (m_log_sort_mode == sort_mode::ascending) {
-        for (size_t i = 0; i < log().count(); i++) {
-            auto msg = log().message(static_cast<int>(i));
-            add_log_row(msg);
-        }
-    } else if (log().count() > 0) {
-        for (size_t i = log().count() - 1; i > 0; i--) {
-            auto msg = log().message(static_cast<int>(i));
-            add_log_row(msg);
-        }
-    }
-
     ImGui::EndTable();
     ImGui::EndChild();
 }

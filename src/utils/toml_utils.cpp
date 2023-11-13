@@ -67,6 +67,7 @@ bool toml_utils::contains(text_logger& in_log,
                           std::string_view in_name,
                           bool in_mandatory)
 {
+    // TODO: Remove parameter in_mandatory
     if (in_name.empty()) {
         in_log.error("Internal error (toml_contains --> name is empty");
         return false;

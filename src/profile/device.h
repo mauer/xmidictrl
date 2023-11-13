@@ -40,7 +40,22 @@
 
 namespace xmidictrl {
 
-class device_list;
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPE
+//---------------------------------------------------------------------------------------------------------------------
+
+// Device type
+enum class device_type {
+    virtual_device,
+    midi_device
+};
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
 class device {
 public:
@@ -54,8 +69,9 @@ public:
     virtual device_type type() = 0;
 
     device_settings& settings();
+    map_in_list& mapping_in();
 
-    std::string sl_value() const;
+    [[nodiscard]] std::string sl_value() const;
     void set_sl_value(std::string_view in_sl_value);
 
     void add_inbound_map(std::shared_ptr<map_in>& in_mapping);
@@ -63,8 +79,6 @@ public:
 protected:
     text_logger& text_log();
     midi_logger& midi_log();
-
-    map_in_list& mapping_in();
 
 private:
     text_logger& m_text_log;
@@ -74,6 +88,7 @@ private:
 
     std::string m_sl_value;
 
+    // TODO: unique pointer
     map_in_list m_map_in;
 };
 

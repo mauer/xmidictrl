@@ -30,7 +30,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(environment &in_env)
+map_in_drf::map_in_drf(environment& in_env)
     : map_in(in_env)
 {}
 
@@ -44,16 +44,25 @@ map_in_drf::map_in_drf(environment &in_env)
 /**
  * Return the mapping type
  */
-map_type map_in_drf::type()
+map_in_type map_in_drf::type()
 {
-    return map_type::dataref;
+    return map_in_type::dataref;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_in_drf::type_as_string()
+{
+    return "Dataref";
 }
 
 
 /**
  * Read settings from config
  */
-void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     in_log.debug(" --> Line " + std::to_string(in_data.location().line()) + " :: Read settings for type 'drf'");
     map_in::read_config(in_log, in_data, in_config);
@@ -87,7 +96,7 @@ void map_in_drf::read_config(text_logger &in_log, toml::value &in_data, toml::va
 /**
  * Check the mapping
  */
-bool map_in_drf::check(text_logger &in_log)
+bool map_in_drf::check(text_logger& in_log)
 {
     bool result = true;
 
@@ -114,7 +123,8 @@ bool map_in_drf::check(text_logger &in_log)
 
     if (m_mode == dataref_mode::momentary && m_values.size() != 2) {
         in_log.error(source_line());
-        in_log.error(" --> When parameter '" + std::string(CFG_KEY_MODE) + "' is 'momentary', two values (on/off) are expected");
+        in_log.error(
+            " --> When parameter '" + std::string(CFG_KEY_MODE) + "' is 'momentary', two values (on/off) are expected");
         result = false;
     }
 
@@ -125,18 +135,18 @@ bool map_in_drf::check(text_logger &in_log)
 /**
  * Execute the action in X-Plane
  */
-bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
+bool map_in_drf::execute(midi_message& in_msg, std::string_view in_sl_value)
 {
     if (!check_sublayer(in_sl_value))
         return true;
 
     // if toggle mode then only process key pressed event
-    if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_VELOCITY_MAX)
+    if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_DATA_2_MAX)
         return true;
 
     if (m_values.size() == 2 && m_mode == dataref_mode::momentary) {
         std::string value;
-        if (in_msg.data_2() == MIDI_VELOCITY_MAX)
+        if (in_msg.data_2() == MIDI_DATA_2_MAX)
             value = m_values[0];
         else
             value = m_values[1];
@@ -163,26 +173,32 @@ bool map_in_drf::execute(midi_message &in_msg, std::string_view in_sl_value)
 /**
  * Return the mapping as string
  */
-std::string map_in_drf::build_mapping_text()
+std::string map_in_drf::build_mapping_text(bool in_short)
 {
-    std::string map_str = " ====== Dataref ======\n";
+    std::string map_str {};
+    std::string sep_str {", "};
 
-    if (!sl().empty())
-        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+    if (!in_short) {
+        sep_str = "\n";
+        map_str = " ====== Dataref ======" + sep_str;
 
-    map_str.append("Dataref = '" + m_dataref + "'\n");
+        if (!sl().empty())
+            map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
+    }
 
-    if (m_mode == dataref_mode::toggle)
-        map_str.append("Mode = 'toggle'\n");
-    else
-        map_str.append("Mode = 'momentary'\n");
+    map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
 
     map_str.append("Values = [");
 
-    for (auto &value: m_values)
+    for (auto& value: m_values)
         map_str.append(" '" + value + "'");
 
-    map_str.append("]\n");
+    map_str.append("]" + sep_str);
+
+    if (m_mode == dataref_mode::toggle)
+        map_str.append("Mode = 'toggle'");
+    else
+        map_str.append("Mode = 'momentary'");
 
     return map_str;
 }

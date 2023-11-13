@@ -32,9 +32,9 @@ By default, the values for a Dataref are toggled (`mode = "toggle"`). That means
 device will toggle between those two values. This method also works with more than two possible values, such as toggling
 through all autobrake settings.
 
-Settings the mode to `momentary` requires you to define exactly two possible values. When you press the button on your
+If the mode is set to `momentary` it requires you to define exactly two values. When you press the button on your
 MIDI Device the defined Dataref will be set to `value_on` or the first value in `values`. As soon as you release the 
-button Dataref will be set to `value_off` or the second value in `values`.
+button the Dataref will be set to `value_off` or the second value in `values`.
 
 ## Examples
 

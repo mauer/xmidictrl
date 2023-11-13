@@ -28,6 +28,10 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_in_list {
 public:
     explicit map_in_list() = default;
@@ -38,8 +42,14 @@ public:
 
     size_t size();
 
-protected:
-    std::multimap<std::string, std::shared_ptr<map_in>> m_list {};
+    std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator begin();
+    std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator end();
+
+private:
+    unsigned int m_last_map_no {0};
+
+    std::multimap<std::string, std::shared_ptr<map_in>> m_list_key {};
+    std::map<unsigned int, std::shared_ptr<map_in>> m_list_no {};
 };
 
 } // Namespace xmidictrl

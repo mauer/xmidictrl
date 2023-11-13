@@ -31,22 +31,45 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
+// Mapping data type
+enum class map_data_1_type {
+    none,
+    control_change,
+    note,
+    pitch_bend,
+    program_change
+};
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map : public std::enable_shared_from_this<map> {
 public:
     explicit map(environment& in_env);
     virtual ~map() = default;
 
-    virtual map_type type();
+    void set_no(unsigned int in_no);
+    unsigned int no() const;
 
     [[nodiscard]] unsigned char channel() const;
-    [[nodiscard]] map_data_type data_type() const;
-    [[nodiscard]] unsigned char data() const;
+    [[nodiscard]] map_data_1_type data_1_type() const;
+    [[nodiscard]] unsigned char data_1() const;
+
+    std::string data_1_as_string();
 
     [[nodiscard]] std::string_view sl() const;
 
     std::string_view source_line() const;
 
-    std::string_view as_text();
+    std::string_view map_text(bool in_short = false);
 
     std::string get_key();
 
@@ -55,31 +78,39 @@ public:
 protected:
     environment& env() const;
 
-    void read_common_config(text_logger& in_log, toml::value& in_data);
+    void read_common_config(text_logger& in_log, toml::value& in_data, bool in_read_sl = true);
 
     bool check_sublayer(std::string_view in_sl_value);
 
-    virtual std::string build_mapping_text() = 0;
+    virtual std::string build_mapping_text(bool in_short) = 0;
 
 private:
     void read_channel(text_logger& in_log, toml::value& in_data);
-    void read_data(text_logger& in_log, toml::value& in_data);
+    void read_data_1(text_logger& in_log, toml::value& in_data);
     void read_sublayer(text_logger& in_log, toml::value& in_data);
 
-    static constexpr std::string_view CFG_KEY_CC {"cc"};
-    static constexpr std::string_view CFG_KEY_CH {"ch"};
+    std::string data_1_type_as_string();
+
+    static constexpr std::string_view c_cfg_ch {"ch"};
+    static constexpr std::string_view c_cfg_cc {"cc"};
+    static constexpr std::string_view c_cfg_note {"note"};
+    static constexpr std::string_view c_cfg_sl {"sl"};
 
     environment& m_env;
 
+    unsigned int m_no {0};
+
     unsigned char m_channel {MIDI_NONE};
 
-    map_data_type m_data_type {map_data_type::none};
-    unsigned char m_data {MIDI_NONE};
+    map_data_1_type m_data_1_type {map_data_1_type::none};
+    unsigned char m_data_1 {MIDI_NONE};
 
     std::string m_sl {};
 
     std::string m_source_line {};
-    std::string m_mapping_text {};
+
+    std::string m_map_text_long {};
+    std::string m_map_text_short {};
 };
 
 } // Namespace xmidictrl

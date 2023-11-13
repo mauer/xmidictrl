@@ -35,13 +35,14 @@
 
 // OpenGL
 #if defined(__APPLE__)
-#include <OpenGL/gl.h>
+    #include <OpenGL/gl.h>
 #elif defined(_MSC_VER)
-#include <windows.h>
-#include <GL/gl.h>
+    #include <windows.h>
+    #include <GL/gl.h>
+
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
 #endif
 
 // Dear ImGui
@@ -56,8 +57,8 @@ namespace xmidictrl {
 
 class imgui_window : public xplane_window {
 public:
-    imgui_window(text_logger &in_log,
-                 environment &in_env,
+    imgui_window(text_logger& in_log,
+                 environment& in_env,
                  int in_width,
                  int in_height,
                  window_position in_position = window_position::top_left,
@@ -83,8 +84,8 @@ private:
     void build_window();
     void show_window();
 
-    void translate_imgui_to_boxel(float in_x, float in_y, int &out_x, int &out_y) const;
-    void translate_to_imgui_space(int in_x, int in_y, float &out_x, float &out_y) const;
+    void translate_imgui_to_boxel(float in_x, float in_y, int& out_x, int& out_y) const;
+    void translate_to_imgui_space(int in_x, int in_y, float& out_x, float& out_y) const;
 
     const float IMGUI_FONT_SIZE = 18.0f;
 
@@ -92,7 +93,7 @@ private:
 
     //GLuint m_font_texture_id {};
     int m_font_texture_id {};
-    ImGuiContext *m_context {nullptr};
+    ImGuiContext* m_context {nullptr};
 
     int m_left {0};
     int m_top {0};

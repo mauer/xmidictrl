@@ -576,11 +576,11 @@ int plugin::virtual_midi_command_handler([[maybe_unused]] XPLMCommandRef in_comm
 
     switch (in_phase) {
         case xplm_CommandBegin:
-            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_VELOCITY_MAX);
+            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_DATA_2_MAX);
             break;
 
         case xplm_CommandEnd:
-            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_VELOCITY_MIN);
+            plugin::instance().add_virtual_midi_message(static_cast<unsigned char>(cc), MIDI_DATA_2_MIN);
             break;
 
         default:

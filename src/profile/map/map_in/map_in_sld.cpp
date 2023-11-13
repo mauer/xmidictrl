@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_sld::map_in_sld(environment &in_env)
+map_in_sld::map_in_sld(environment& in_env)
     : map_in(in_env)
 {}
 
@@ -43,16 +43,25 @@ map_in_sld::map_in_sld(environment &in_env)
 /**
  * Return the mapping type
  */
-map_type map_in_sld::type()
+map_in_type map_in_sld::type()
 {
-    return map_type::slider;
+    return map_in_type::slider;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_in_sld::type_as_string()
+{
+    return "Slider";
 }
 
 
 /**
  * Read settings from config
  */
-void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_sld::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'sld'");
     map_in::read_config(in_log, in_data, in_config);
@@ -87,7 +96,7 @@ void map_in_sld::read_config(text_logger &in_log, toml::value &in_data, toml::va
 /**
  * Check the mapping
  */
-bool map_in_sld::check(text_logger &in_log)
+bool map_in_sld::check(text_logger& in_log)
 {
     bool result = true;
 
@@ -105,14 +114,17 @@ bool map_in_sld::check(text_logger &in_log)
         // value min/max
         if (m_value_min == m_value_max) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '" + std::string(CFG_KEY_VALUE_MAX) + "'");
+            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '"
+                         + std::string(CFG_KEY_VALUE_MAX) + "'");
             result = false;
         }
     } else {
         // command mode
         if (m_command_up.empty() && m_command_down.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '" + std::string(CFG_KEY_COMMAND_DOWN) + "' are not defined");
+            in_log.error(
+                " --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '" + std::string(CFG_KEY_COMMAND_DOWN)
+                + "' are not defined");
             result = false;
         }
     }
@@ -124,7 +136,7 @@ bool map_in_sld::check(text_logger &in_log)
 /**
  * Execute the action in X-Plane
  */
-bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
+bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
 {
     if (!check_sublayer(in_sl_value))
         return true;
@@ -133,9 +145,9 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
         // dataref mode
         float value;
 
-        if (in_msg.data_2() == MIDI_VELOCITY_MIN)
+        if (in_msg.data_2() == MIDI_DATA_2_MIN)
             value = m_value_min;
-        else if (in_msg.data_2() == MIDI_VELOCITY_MAX)
+        else if (in_msg.data_2() == MIDI_DATA_2_MAX)
             value = m_value_max;
         else
             value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
@@ -145,7 +157,7 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
         if (env().drf().write(in_msg.log(), m_dataref, value)) {
             try {
                 display_label(in_msg.log(), std::to_string(value));
-            } catch (std::bad_alloc &ex) {
+            } catch (std::bad_alloc& ex) {
                 in_msg.log().error("Error converting float '" + std::to_string(value) + "' value to string");
                 in_msg.log().error(ex.what());
             }
@@ -196,20 +208,27 @@ bool map_in_sld::execute(midi_message &in_msg, std::string_view in_sl_value)
 /**
  * Return the mapping as string
  */
-std::string map_in_sld::build_mapping_text()
+std::string map_in_sld::build_mapping_text(bool in_short)
 {
-    std::string map_str = " ====== Slider ======\n";
+    std::string map_str {};
+    std::string sep_str {", "};
+
+    if (!in_short) {
+        sep_str = "\n";
+        map_str = " ====== Slider ======" + sep_str;
+    }
 
     if (!m_dataref.empty()) {
-        map_str.append("Dataref = '" + m_dataref + "'\n");
-        map_str.append("Value min = '" + std::to_string(m_value_min) + "\n");
-        map_str.append("Value max = '" + std::to_string(m_value_max) + "'\n");
+        map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
+        map_str.append("Value min = " + std::to_string(m_value_min) + sep_str);
+        map_str.append("Value max = " + std::to_string(m_value_max));
     } else {
         if (!m_command_middle.empty())
-            map_str.append("Command down = '" + m_command_down + "'\nCommand middle = '" + m_command_middle +
-                           "'\nCommand up = '" + m_command_up + "'\n");
+            map_str.append("Command down = '" + m_command_down + "'" + sep_str
+                           + "Command middle = '" + m_command_middle + "'" + sep_str
+                           + "Command up = '" + m_command_up + "'");
         else
-            map_str.append("Command down = '" + m_command_down + "'\nCommand up = '" + m_command_up + "'\n");
+            map_str.append("Command down = '" + m_command_down + "'" + sep_str + "Command up = '" + m_command_up + "'");
     }
 
     return map_str;

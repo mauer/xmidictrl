@@ -33,6 +33,7 @@ namespace xmidictrl {
 map_in::map_in(environment &in_env)
     : map(in_env)
 {
+    m_label = std::make_unique<label>();
 }
 
 
@@ -41,6 +42,33 @@ map_in::map_in(environment &in_env)
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping type
+ */
+map_in_type map_in::type()
+{
+    return map_in_type::none;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_in::type_as_string()
+{
+    return {};
+}
+
+
+/*
+ * Return the labels information
+ */
+label& map_in::labels()
+{
+    return *m_label;
+}
+
 
 /**
  * Read the config
@@ -143,15 +171,15 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
 void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config)
 {
     // is a label defined?
-    if (!in_data.contains(CFG_KEY_LABEL))
+    if (!in_data.contains(c_cfg_label.data()))
         return;
 
     try {
-        std::string label_id = in_data[CFG_KEY_LABEL].as_string();
+        std::string label_id = in_data[c_cfg_label.data()].as_string();
 
         if (label_id.empty()) {
             in_log.error_line(in_data.location().line(), "Error reading mapping");
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_LABEL) + "' is empty");
+            in_log.error(" --> Parameter '" + std::string(c_cfg_label.data()) + "' is empty");
             return;
         }
 
@@ -163,8 +191,8 @@ void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &
 
         toml::value label_section = toml::find(in_config, label_id);
 
-        // start created the label
-        m_label = std::make_unique<label>();
+        // set the label id
+        m_label->id = label_id;
 
         // read the label text
         m_label->text = toml_utils::read_string(in_log, label_section, CFG_KEY_TEXT);

@@ -47,9 +47,9 @@ namespace xmidictrl {
 // MIDI unsigned int none
 const unsigned char MIDI_NONE(255);
 
-const unsigned char MIDI_VELOCITY_MIN(0);
+const unsigned char MIDI_DATA_2_MIN(0);
 
-const unsigned char MIDI_VELOCITY_MAX(127);
+const unsigned char MIDI_DATA_2_MAX(127);
 
 // Interval of flight loop
 const float FLIGHTLOOP_INTERVAL(-1.0f);
@@ -104,8 +104,6 @@ const char* const CFG_KEY_DEFAULT_TEXT_SORT = "default_text_sort";
 const char* const CFG_KEY_DELAY = "delay";
 const char* const CFG_KEY_DEVICE = "device";
 const char* const CFG_KEY_ENCODER_MODE = "encoder_mode";
-const char* const CFG_KEY_INCLUDE = "include";
-const char* const CFG_KEY_LABEL = "label";
 const char* const CFG_KEY_LOG_MIDI = "log_midi";
 const char* const CFG_KEY_MAPPING_IN = "mapping_in";
 const char* const CFG_KEY_MAPPING_INIT = "mapping_init";
@@ -120,7 +118,6 @@ const char* const CFG_KEY_MODIFIER_FAST_DOWN = "modifier_fast_down";
 const char* const CFG_KEY_MODIFIER_FAST_UP = "modifier_fast_up";
 const char* const CFG_KEY_MODIFIER_UP = "modifier_up";
 const char* const CFG_KEY_NAME = "name";
-const char* const CFG_KEY_NOTE = "note";
 const char* const CFG_KEY_NOTE_NAME = "note";
 const char* const CFG_KEY_OUTBOUND_DELAY = "outbound_delay";
 const char* const CFG_KEY_PITCH_BEND = "pitch";
@@ -130,11 +127,8 @@ const char* const CFG_KEY_PORT_OUT = "port_out";
 const char* const CFG_KEY_SEND_ON = "send_on";
 const char* const CFG_KEY_SEND_OFF = "send_off";
 const char* const CFG_KEY_SHOW_ERRORS = "show_message_dialog";
-const char* const CFG_KEY_SL = "sl";
 const char* const CFG_KEY_SL_DATAREF = "sl_dataref";
 const char* const CFG_KEY_TEXT = "text";
-const char* const CFG_KEY_TITLE = "title";
-const char* const CFG_KEY_TYPE = "type";
 const char* const CFG_KEY_VALUE = "value";
 const char* const CFG_KEY_VALUES = "values";
 const char* const CFG_KEY_VALUES_PUSH = "values_push";
@@ -143,12 +137,6 @@ const char* const CFG_KEY_VALUE_MIN = "value_min";
 const char* const CFG_KEY_VALUE_MAX = "value_max";
 const char* const CFG_KEY_VALUE_ON = "value_on";
 const char* const CFG_KEY_VALUE_OFF = "value_off";
-const char* const CFG_KEY_VELOCITY = "velocity";
-const char* const CFG_KEY_VELOCITY_MAX = "velocity_max";
-const char* const CFG_KEY_VELOCITY_MIN = "velocity_min";
-const char* const CFG_KEY_VELOCITY_ON = "velocity_on";
-const char* const CFG_KEY_VELOCITY_OFF = "velocity_off";
-const char* const CFG_KEY_VERSION = "version";
 const char* const CFG_KEY_VIRTUAL_CHANNEL = "virtual_channel";
 const char* const CFG_KEY_VIRTUAL_DEVICE = "virtual_device";
 const char* const CFG_KEY_INFO_DISABLED = "info_disabled";
@@ -182,12 +170,6 @@ using time_point = std::chrono::system_clock::time_point;
 //   ENUMERATIONS
 //---------------------------------------------------------------------------------------------------------------------
 
-// Device type
-enum class device_type {
-    virtual_device,
-    midi_device
-};
-
 // Log levels
 enum class log_level {
     error,
@@ -213,27 +195,6 @@ enum class midi_msg_type {
     program_change,
     none
 };
-
-// MIDI mapping types
-enum class map_type {
-    none,
-    command,
-    constant,
-    dataref,
-    encoder,
-    push_pull,
-    slider
-};
-
-// Mapping data type
-enum class map_data_type {
-    none,
-    control_change,
-    note,
-    pitch_bend,
-    program_change
-};
-
 
 
 // Dataref mode

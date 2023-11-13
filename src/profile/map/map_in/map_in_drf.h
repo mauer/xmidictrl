@@ -33,12 +33,17 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_in_drf : public map_in {
 public:
     explicit map_in_drf(environment &in_env);
     ~map_in_drf() override = default;
 
-    map_type type() override;
+    map_in_type type() override;
+    std::string type_as_string() override;
 
     void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
     bool check(text_logger &in_log) override;
@@ -46,7 +51,7 @@ public:
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
 protected:
-    std::string build_mapping_text() override;
+    std::string build_mapping_text(bool in_short) override;
 
 private:
     dataref_mode m_mode {dataref_mode::toggle};

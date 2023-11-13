@@ -33,20 +33,25 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_out_sld : public map_out {
 public:
     explicit map_out_sld(environment& in_env);
     ~map_out_sld() override;
 
-    map_type type() override;
+    map_out_type type() override;
+    std::string type_as_string() override;
 
     void set_dataref(std::string_view in_dataref);
 
     void set_value_min(float in_value_min);
     void set_value_max(float in_value_max);
 
-    void set_velocity_min(int in_velocity_min);
-    void set_velocity_max(int in_velocity_max);
+    void set_data_2_min(int in_data_2_min);
+    void set_data_2_max(int in_data_2_max);
 
     void read_config(text_logger& in_log, toml::value& in_data) override;
     bool check(text_logger& in_log) override;
@@ -57,9 +62,14 @@ public:
     std::shared_ptr<outbound_task> reset() override;
 
 protected:
-    std::string build_mapping_text() override;
+    std::string build_mapping_text(bool in_short) override;
 
 private:
+    // constants
+    static constexpr std::string_view c_cfg_data_2_max {"data_2_max"};
+    static constexpr std::string_view c_cfg_data_2_min {"data_2_min"};
+
+    // members
     std::string m_dataref {};
 
     bool m_first_execution {true};
@@ -69,8 +79,8 @@ private:
     float m_value_min {0.0f};
     float m_value_max {1.0f};
 
-    unsigned int m_velocity_min {MIDI_VELOCITY_MIN};
-    unsigned int m_velocity_max {MIDI_VELOCITY_MAX};
+    unsigned int m_data_2_min {MIDI_DATA_2_MIN};
+    unsigned int m_data_2_max {MIDI_DATA_2_MAX};
 };
 
 } // Namespace xmidictrl

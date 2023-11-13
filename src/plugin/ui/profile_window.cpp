@@ -35,7 +35,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-profile_window::profile_window(text_logger &in_log, environment &in_env, profile &in_profile)
+profile_window::profile_window(text_logger& in_log, environment& in_env, profile& in_profile)
     : imgui_window(in_log, in_env, 1200, 750),
       m_profile(in_profile)
 {
@@ -56,6 +56,7 @@ void profile_window::create_widgets()
 {
     if (ImGui::BeginTabBar("PROFILE_TAB")) {
         create_tab_general();
+        create_tab_devices();
         create_tab_errors_warnings();
 
         ImGui::EndTabBar();
@@ -170,6 +171,119 @@ void profile_window::create_tab_general()
 
 
 /**
+ * Create tabs for all devices
+ */
+void profile_window::create_tab_devices()
+{
+    // check if there are any devices
+    if (m_profile.devices().size() == 0)
+        return;
+
+    for (auto const& device: m_profile.devices()) {
+        if (device != nullptr)
+            create_tab_device(device);
+    }
+}
+
+
+/**
+ * Create tab for a device
+ */
+void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
+{
+    std::string tab_title = in_device->settings().name;
+
+    if (ImGui::BeginTabItem(tab_title.data())) {
+        create_title("SETTINGS");
+
+        // TODO: Make three columns instead of two
+
+        if (in_device->type() == device_type::midi_device) {
+            ImGui::Text("Inbound Port:");
+            ImGui::SameLine(180);
+            ImGui::TextColored(value_color(), "%i", in_device->settings().port_in);
+
+            ImGui::SameLine(400);
+            ImGui::Text("Outbound Delay:");
+            ImGui::SameLine(600);
+            ImGui::TextColored(value_color(), "%0.f", in_device->settings().outbound_delay);
+
+            ImGui::SameLine(800);
+            ImGui::Text("Default Encoder Mode:");
+            ImGui::SameLine(1000);
+
+            if (in_device->settings().default_enc_mode == encoder_mode::relative)
+                ImGui::TextColored(value_color(), "Relative");
+            else
+                ImGui::TextColored(value_color(), "Range");
+
+            ImGui::Text("Outbound Port:");
+            ImGui::SameLine(180);
+            ImGui::TextColored(value_color(), "%i", in_device->settings().port_out);
+
+            ImGui::SameLine(400);
+            ImGui::Text("Outbound Note Mode:");
+            ImGui::SameLine(600);
+
+            if (in_device->settings().note_mode == outbound_note_mode::on)
+                ImGui::TextColored(value_color(), "Note On only");
+            else
+                ImGui::TextColored(value_color(), "Note On/Off");
+        }
+
+        ImGui::Text("Sublayer Dataref:");
+        ImGui::SameLine(180);
+
+        if (!in_device->settings().sl_dataref.empty())
+            ImGui::TextColored(value_color(), "%s", in_device->settings().sl_dataref.c_str());
+        else
+            ImGui::TextColored(value_color(), "<none>");
+
+        if (in_device->type() == device_type::midi_device) {
+            ImGui::SameLine(400);
+            ImGui::Text("Outbound Send Mode:");
+            ImGui::SameLine(600);
+
+            if (in_device->settings().send_mode == outbound_send_mode::permanent)
+                ImGui::TextColored(value_color(), "Permanent");
+            else
+                ImGui::TextColored(value_color(), "On change");
+        }
+
+        // Include files
+        // TODO
+
+        // Add mappings
+        ImGui::NewLine();
+
+        create_title("MAPPINGS", false);
+
+        if (ImGui::BeginTable("mappings", 1, ImGuiTableFlags_ScrollY)) {
+            ImGui::TableSetupColumn("column-mappings");
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+
+            // Init mappings
+            if (in_device->type() == device_type::midi_device)
+                create_table_mapping_init(in_device);
+
+            // Inbound mappings
+            create_table_mapping_in(in_device);
+
+            // Outbound mappings
+            if (in_device->type() == device_type::midi_device)
+                create_table_mapping_out(in_device);
+
+            ImGui::EndTable();
+        }
+
+        ImGui::EndTabItem();
+    }
+}
+
+
+/**
  * Create tab for errors and warnings
  */
 void profile_window::create_tab_errors_warnings()
@@ -197,38 +311,218 @@ void profile_window::create_tab_errors_warnings()
             ImGui::TextColored(value_color(), "No");
 
         ImGui::NewLine();
-        ImGui::TextColored(title_color(), "%s", "MESSAGES");
+        ImGui::TextColored(title_color(), "MESSAGES");
         ImGui::Separator();
 
         ImGui::BeginChild("TEXT_TABLE");
 
-        ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
-        ImGui::TableSetupColumn("Message Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
-        ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
-        ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
+// if (ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
+        if (ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
+            ImGui::TableSetupColumn("Message Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
+            ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
+            ImGui::TableSetupColumn("Message Text", ImGuiTableColumnFlags_WidthStretch);
 
-        for (size_t i = 0; i < m_profile.log().count(); i++) {
-            auto msg = m_profile.log().message(static_cast<int>(i));
+            ImGui::TableSetupScrollFreeze(0, 1);
+            ImGui::TableHeadersRow();
 
-            if (msg == nullptr)
-                continue;
+            for (size_t i = 0; i < m_profile.log().count(); i++) {
+                auto msg = m_profile.log().message(static_cast<int>(i));
 
-            ImGui::TableNextRow();
+                if (msg == nullptr)
+                    continue;
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->time.c_str());
+                ImGui::TableNextRow();
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->get_log_level_text().c_str());
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", msg->time.c_str());
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", msg->text.c_str());
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", msg->get_log_level_text().c_str());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", msg->text.c_str());
+            }
         }
-
         ImGui::EndTable();
         ImGui::EndChild();
+
         ImGui::EndTabItem();
+    }
+}
+
+
+/**
+ * Create a title with separator
+ */
+void profile_window::create_title(std::string_view in_title, bool in_newline)
+{
+    ImGui::TextColored(title_color(), "%s", in_title.data());
+    ImGui::Separator();
+
+    if (in_newline)
+        ImGui::NewLine();
+}
+
+
+/**
+ * Create a table for all init mappings
+ */
+void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in_device)
+{
+    // Init mappings available for MIDI devices only
+    if (in_device->type() != device_type::midi_device)
+        return;
+
+    auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
+
+    if (midi_dev->mapping_init().size() == 0)
+        return;
+
+    if (ImGui::CollapsingHeader("Init Mappings")) {
+        ImVec2 height = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 9);
+
+        if (ImGui::BeginTable("mapping_init",
+                              4,
+                              ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY,
+                              height)) {
+            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Data 2");
+
+            ImGui::TableSetupScrollFreeze(0, 1);
+            ImGui::TableHeadersRow();
+
+            for (const auto& mapping: midi_dev->mapping_init()) {
+                ImGui::TableNextRow();
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%03i", mapping->no());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", mapping->channel());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping->data_1_as_string().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", mapping->data_2());
+            }
+
+            ImGui::EndTable();
+        }
+    }
+}
+
+
+/**
+ * Create a table for all inbound mappings
+ */
+void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_device)
+{
+    if (in_device->mapping_in().size() == 0)
+        return;
+
+    if (ImGui::CollapsingHeader("Inbound Mappings")) {
+        if (ImGui::BeginTable("mapping_in",
+                              7,ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
+            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100);
+            ImGui::TableSetupColumn("Mapping");
+
+            ImGui::TableSetupScrollFreeze(0, 1);
+            ImGui::TableHeadersRow();
+
+            for (const auto& mapping: in_device->mapping_in()) {
+                ImGui::TableNextRow();
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%03i", mapping.second->no());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", mapping.second->channel());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->data_1_as_string().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->sl().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->labels().id.data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->type_as_string().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->map_text(true).data());
+            }
+
+            ImGui::EndTable();
+        }
+    }
+}
+
+
+/**
+ * Create a table for all outbound mappings
+ */
+void profile_window::create_table_mapping_out(const std::shared_ptr<device>& in_device)
+{
+    // Outbound mappings available for MIDI devices only
+    if (in_device->type() != device_type::midi_device)
+        return;
+
+    auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
+
+    if (midi_dev->mapping_out().size() == 0)
+        return;
+
+    if (ImGui::CollapsingHeader("Outbound Mappings")) {
+        ImVec2 height = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 9);
+
+        if (ImGui::BeginTable("mapping_out",
+                              6,
+                              ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY,
+                              height)) {
+            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 80);
+            ImGui::TableSetupColumn("Mapping");
+
+            ImGui::TableSetupScrollFreeze(0, 1);
+            ImGui::TableHeadersRow();
+
+            for (const auto& mapping: midi_dev->mapping_out()) {
+                ImGui::TableNextRow();
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%03i", mapping->no());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", mapping->channel());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping->data_1_as_string().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping->sl().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping->type_as_string().data());
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping->map_text(true).data());
+            }
+
+            ImGui::EndTable();
+        }
     }
 }
 

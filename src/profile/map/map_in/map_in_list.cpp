@@ -28,7 +28,8 @@ namespace xmidictrl {
  */
 map_in_list::~map_in_list()
 {
-    m_list.clear();
+    m_list_key.clear();
+    m_list_no.clear();
 }
 
 
@@ -41,20 +42,24 @@ map_in_list::~map_in_list()
 /**
  * Add a new mapping
  */
-void map_in_list::add(const std::shared_ptr<map_in> &in_map)
+void map_in_list::add(const std::shared_ptr<map_in>& in_map)
 {
-    m_list.insert({in_map->get_key(), in_map});
+    m_last_map_no++;
+    in_map->set_no(m_last_map_no);
+
+    m_list_key.insert({in_map->get_key(), in_map});
+    m_list_no.insert({in_map->no(), in_map});
 }
 
 
 /**
  * Retrieve all mappings for a given key
  */
-std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &in_key)
+std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string& in_key)
 {
     std::vector<std::shared_ptr<map_in>> result {};
 
-    auto search_result = m_list.equal_range(in_key);
+    auto search_result = m_list_key.equal_range(in_key);
 
     for (auto it = search_result.first; it != search_result.second; it++)
         result.push_back(it->second);
@@ -68,7 +73,25 @@ std::vector<std::shared_ptr<map_in>> map_in_list::find(const std::string &in_key
  */
 size_t map_in_list::size()
 {
-    return m_list.size();
+    return m_list_key.size();
+}
+
+
+/**
+ * Return the begin iterator
+ */
+std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator map_in_list::begin()
+{
+    return m_list_no.begin();
+}
+
+
+/**
+ * Return the end iterator
+ */
+std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator map_in_list::end()
+{
+    return m_list_no.end();
 }
 
 } // Namespace xmidictrl

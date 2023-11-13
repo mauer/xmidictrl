@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -27,21 +27,34 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
 typedef std::vector<std::shared_ptr<map_init>>::iterator map_init_itr;
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
 class map_init_list {
 public:
     explicit map_init_list() = default;
     ~map_init_list();
 
-    void add(const std::shared_ptr<map_init> &map);
+    void add(const std::shared_ptr<map_init>& in_map);
 
     map_init_itr begin();
     map_init_itr end();
 
     size_t size();
 
-protected:
+private:
+    unsigned int m_last_map_no {0};
+
     std::vector<std::shared_ptr<map_init>> m_list;
 };
 

@@ -44,9 +44,12 @@ map_init_list::~map_init_list()
 /**
  * Add a new mapping
  */
-void map_init_list::add(const std::shared_ptr<map_init> &map)
+void map_init_list::add(const std::shared_ptr<map_init>& in_map)
 {
-    m_list.push_back(map);
+    m_last_map_no++;
+    in_map->set_no(m_last_map_no);
+
+    m_list.push_back(in_map);
 }
 
 

@@ -61,23 +61,22 @@ void devices_window::create_widgets()
         if (m_midi_in == nullptr)
             m_midi_in = std::make_unique<RtMidiIn>();
 
-        ImGui::BeginTable("tableInbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
+        if (ImGui::BeginTable("tableInbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable)) {
+            ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
+            ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableHeadersRow();
 
-        ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
+            // check inbound ports
+            unsigned int port_count = m_midi_in->getPortCount();
 
-        // check inbound ports
-        unsigned int port_count = m_midi_in->getPortCount();
-
-        for (unsigned int i = 0; i < port_count; i++) {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::Text("%i", i);
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", m_midi_in->getPortName(i).c_str());
+            for (unsigned int i = 0; i < port_count; i++) {
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", i);
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", m_midi_in->getPortName(i).c_str());
+            }
         }
-
         ImGui::EndTable();
     } catch (RtMidiError& error) {
         ImGui::Text("Error: ");
@@ -98,23 +97,22 @@ void devices_window::create_widgets()
         if (m_midi_out == nullptr)
             m_midi_out = std::make_unique<RtMidiOut>();
 
-        ImGui::BeginTable("tableOutbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable);
+        if (ImGui::BeginTable("tableOutbound", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable)) {
+            ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
+            ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableHeadersRow();
 
-        ImGui::TableSetupColumn("Port No.", ImGuiTableColumnFlags_WidthFixed, 150);
-        ImGui::TableSetupColumn("MIDI Device", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
+            // check outbound ports
+            unsigned int portCount = m_midi_out->getPortCount();
 
-        // check outbound ports
-        unsigned int portCount = m_midi_out->getPortCount();
-
-        for (unsigned int i = 0; i < portCount; i++) {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::Text("%i", i);
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", m_midi_out->getPortName(i).c_str());
+            for (unsigned int i = 0; i < portCount; i++) {
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                ImGui::Text("%i", i);
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", m_midi_out->getPortName(i).c_str());
+            }
         }
-
         ImGui::EndTable();
     } catch (RtMidiError& error) {
         ImGui::Text("Error: ");

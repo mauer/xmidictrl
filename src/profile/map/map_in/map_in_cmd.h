@@ -34,31 +34,41 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_in_cmd : public map_in {
 public:
-    explicit map_in_cmd(environment &in_env);
+    explicit map_in_cmd(environment& in_env);
     ~map_in_cmd() override = default;
 
-    map_type type() override;
+    map_in_type type() override;
+    std::string type_as_string() override;
 
-    [[nodiscard]] unsigned int velocity_on() const;
-    [[nodiscard]] unsigned int velocity_off() const;
+    [[nodiscard]] unsigned int data_2_on() const;
+    [[nodiscard]] unsigned int data_2_off() const;
 
-    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
+    bool check(text_logger& in_log) override;
 
-    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
 protected:
-    std::string build_mapping_text() override;
+    std::string build_mapping_text(bool in_short) override;
 
 private:
-    static constexpr std::string_view CFG_KEY_COMMAND {"command"};
+    // constants
+    static constexpr std::string_view c_cfg_command {"command"};
 
+    static constexpr std::string_view c_cfg_data_2_on {"data_2_on"};
+    static constexpr std::string_view c_cfg_data_2_off {"data_2_off"};
+
+    // members
     std::string m_command {};
 
-    unsigned int m_velocity_on {MIDI_VELOCITY_MAX};
-    unsigned int m_velocity_off {MIDI_VELOCITY_MIN};
+    unsigned int m_data_2_on {MIDI_DATA_2_MAX};
+    unsigned int m_data_2_off {MIDI_DATA_2_MIN};
 };
 
 } // Namespace xmidictrl

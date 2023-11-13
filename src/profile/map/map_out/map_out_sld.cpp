@@ -55,9 +55,18 @@ map_out_sld::~map_out_sld()
 /**
  * Return the mapping type
  */
-map_type map_out_sld::type()
+map_out_type map_out_sld::type()
 {
-    return map_type::slider;
+    return map_out_type::slider;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_out_sld::type_as_string()
+{
+    return "Slider";
 }
 
 
@@ -89,26 +98,26 @@ void map_out_sld::set_value_max(float in_value_max)
 
 
 /**
- * Set min velocity
+ * Set min data 2
  */
-void map_out_sld::set_velocity_min(int in_velocity_min)
+void map_out_sld::set_data_2_min(int in_data_2_min)
 {
-    if (in_velocity_min >= MIDI_VELOCITY_MIN && in_velocity_min <= MIDI_VELOCITY_MAX)
-        m_velocity_min = in_velocity_min;
+    if (in_data_2_min >= MIDI_DATA_2_MIN && in_data_2_min <= MIDI_DATA_2_MAX)
+        m_data_2_min = in_data_2_min;
     else
-        m_velocity_min = MIDI_VELOCITY_MIN;
+        m_data_2_min = MIDI_DATA_2_MIN;
 }
 
 
 /**
- * Set max velocity
+ * Set max data 2
  */
-void map_out_sld::set_velocity_max(int in_velocity_max)
+void map_out_sld::set_data_2_max(int in_data_2_max)
 {
-    if (in_velocity_max >= MIDI_VELOCITY_MIN && in_velocity_max <= MIDI_VELOCITY_MAX)
-        m_velocity_max = in_velocity_max;
+    if (in_data_2_max >= MIDI_DATA_2_MIN && in_data_2_max <= MIDI_DATA_2_MAX)
+        m_data_2_max = in_data_2_max;
     else
-        m_velocity_max = MIDI_VELOCITY_MIN;
+        m_data_2_max = MIDI_DATA_2_MIN;
 }
 
 
@@ -132,13 +141,13 @@ void map_out_sld::read_config(text_logger& in_log, toml::value& in_data)
     if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX, false))
         set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false));
 
-    // read velocity min
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_VELOCITY_MIN, false))
-        set_velocity_min(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_MIN, false));
+    // read data 2 min
+    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_min, false))
+        set_data_2_min(toml_utils::read_int(in_log, in_data, c_cfg_data_2_min, false));
 
-    // read velocity max
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_VELOCITY_MAX, false))
-        set_velocity_max(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_MAX, false));
+    // read data 2 max
+    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_max, false))
+        set_data_2_max(toml_utils::read_int(in_log, in_data, c_cfg_data_2_max, false));
 }
 
 
@@ -171,19 +180,19 @@ bool map_out_sld::check(text_logger& in_log)
         result = false;
     }
 
-    if (m_velocity_min < MIDI_VELOCITY_MIN || m_velocity_min > MIDI_VELOCITY_MAX) {
+    if (m_data_2_min < MIDI_DATA_2_MIN || m_data_2_min > MIDI_DATA_2_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_MIN) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
-                     + std::to_string(MIDI_VELOCITY_MAX));
+        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_min) + "', "
+                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+                     + std::to_string(MIDI_DATA_2_MAX));
         result = false;
     }
 
-    if (m_velocity_max < MIDI_VELOCITY_MIN || m_velocity_max > MIDI_VELOCITY_MAX) {
+    if (m_data_2_max < MIDI_DATA_2_MIN || m_data_2_max > MIDI_DATA_2_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_MAX) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
-                     + std::to_string(MIDI_VELOCITY_MAX));
+        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_max) + "', "
+                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+                     + std::to_string(MIDI_DATA_2_MAX));
         result = false;
     }
 
@@ -228,41 +237,41 @@ std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log,
 
     // alright, dataref has been changed, let's check what we have to send out
     float percent_value = (m_xp_value - m_value_min) * 100 / (m_value_max - m_value_min);
-    float velocity = static_cast<float>((m_velocity_max - m_velocity_min)) * percent_value / 100
-                     + static_cast<float>(m_velocity_min);
+    float data_2 = static_cast<float>((m_data_2_max - m_data_2_min)) * percent_value / 100
+                   + static_cast<float>(m_data_2_min);
 
     std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
 
     task->data_changed = changed;
 
-    switch (data_type()) {
-        case map_data_type::control_change:
+    switch (data_1_type()) {
+        case map_data_1_type::control_change:
             task->type = midi_msg_type::control_change;
             break;
 
-        case map_data_type::note:
-            if (static_cast<unsigned int>(velocity) == m_velocity_max)
+        case map_data_1_type::note:
+            if (static_cast<unsigned int>(data_2) == m_data_2_max)
                 task->type = midi_msg_type::note_on;
             else
                 task->type = midi_msg_type::note_off;
             break;
 
-        case map_data_type::pitch_bend:
+        case map_data_1_type::pitch_bend:
             task->type = midi_msg_type::pitch_bend;
             break;
 
-        case map_data_type::program_change:
+        case map_data_1_type::program_change:
             task->type = midi_msg_type::program_change;
             break;
 
-        case map_data_type::none:
+        case map_data_1_type::none:
             task->type = midi_msg_type::none;
             break;
     }
 
     task->channel = channel();
-    task->data = data();
-    task->velocity = static_cast<unsigned char>(velocity);
+    task->data_1 = data_1();
+    task->data_2 = static_cast<unsigned char>(data_2);
 
     // add mapping to task
     task->mapping = shared_from_this();
@@ -280,32 +289,31 @@ std::shared_ptr<outbound_task> map_out_sld::reset()
 
     task->data_changed = true;
 
-    switch (data_type()) {
-        case map_data_type::control_change:
+    switch (data_1_type()) {
+        case map_data_1_type::control_change:
             task->type = midi_msg_type::control_change;
             break;
 
-        case map_data_type::note:
+        case map_data_1_type::note:
             task->type = midi_msg_type::note_off;
             break;
 
-        case map_data_type::pitch_bend:
+        case map_data_1_type::pitch_bend:
             task->type = midi_msg_type::pitch_bend;
             break;
 
-        case map_data_type::program_change:
+        case map_data_1_type::program_change:
             task->type = midi_msg_type::program_change;
             break;
 
-        case map_data_type::none:
+        case map_data_1_type::none:
             task->type = midi_msg_type::none;
             break;
     }
 
     task->channel = channel();
-    task->data = data();
-
-    task->velocity = MIDI_VELOCITY_MIN;
+    task->data_1 = data_1();
+    task->data_2 = MIDI_DATA_2_MIN;
 
     return task;
 }
@@ -320,20 +328,29 @@ std::shared_ptr<outbound_task> map_out_sld::reset()
 /**
  * Return the mapping as string
  */
-std::string map_out_sld::build_mapping_text()
+std::string map_out_sld::build_mapping_text(bool in_short)
 {
-    std::string map_str = " ====== Slider ======\n";
+    std::string map_str {};
+    std::string sep_str {", "};
+
+    if (!in_short) {
+        sep_str = "\n";
+        map_str = " ====== Slider ======" + sep_str;
+    }
 
     // Dataref
-    map_str.append("Dataref = '" + m_dataref + "'\n");
+    map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
 
     // Value min/max
-    map_str.append("Value min = '" + std::to_string(m_value_min) + "\n");
-    map_str.append("Value max = '" + std::to_string(m_value_max) + "'\n");
+    map_str.append("Value min = " + std::to_string(m_value_min) + sep_str);
+    map_str.append("Value max = " + std::to_string(m_value_max));
 
-    // Velocity min/max
-    map_str.append("Velocity min = '" + std::to_string(m_velocity_min) + "\n");
-    map_str.append("Velocity max = '" + std::to_string(m_velocity_max) + "'\n");
+    // Data 2 min/max
+    if (m_data_2_min != MIDI_DATA_2_MIN)
+        map_str.append(sep_str + "Data 2 min = " + std::to_string(m_data_2_min));
+
+    if (m_data_2_max != MIDI_DATA_2_MAX)
+        map_str.append(sep_str + "Data 2 max = " + std::to_string(m_data_2_max));
 
     return map_str;
 }

@@ -31,10 +31,36 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
+// Inbound mapping types
+enum class map_in_type {
+    none,
+    command,
+    dataref,
+    encoder,
+    push_pull,
+    slider
+};
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_in : public map {
 public:
     explicit map_in(environment &in_env);
     ~map_in() override = default;
+
+    virtual map_in_type type();
+    virtual std::string type_as_string();
+
+    label& labels();
 
     virtual void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config);
 
@@ -49,7 +75,11 @@ protected:
 private:
     void read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config);
 
-    std::unique_ptr<label> m_label {};
+    // constants
+    static constexpr std::string_view c_cfg_label {"label"};
+
+    // members
+    std::unique_ptr<label> m_label;
 };
 
 } // Namespace xmiditrl

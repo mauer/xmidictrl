@@ -14,7 +14,7 @@
 //   You should have received a copy of the GNU Affero General Public License along with XMidiCtrl.
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
-
+// TODO: Name to MIDI Watcher
 #ifndef XMC_MESSAGES_WINDOW_H
 #define XMC_MESSAGES_WINDOW_H
 

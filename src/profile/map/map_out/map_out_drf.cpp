@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -34,7 +34,8 @@ namespace xmidictrl {
  */
 map_out_drf::map_out_drf(environment& in_env)
     : map_out(in_env)
-{}
+{
+}
 
 
 /**
@@ -60,9 +61,18 @@ map_out_drf::~map_out_drf()
 /**
  * Return the mapping type
  */
-map_type map_out_drf::type()
+map_out_type map_out_drf::type()
 {
-    return map_type::dataref;
+    return map_out_type::dataref;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_out_drf::type_as_string()
+{
+    return "Dataref";
 }
 
 
@@ -86,26 +96,26 @@ void map_out_drf::set_dataref(std::vector<std::string> in_dataref)
 
 
 /**
- * Set velocity on
+ * Set data 2 on
  */
-void map_out_drf::set_velocity_on(int in_velocity_on)
+void map_out_drf::set_data_2_on(int in_data_2_on)
 {
-    if (in_velocity_on >= MIDI_VELOCITY_MIN && in_velocity_on <= MIDI_VELOCITY_MAX)
-        m_velocity_on = in_velocity_on;
+    if (in_data_2_on >= MIDI_DATA_2_MIN && in_data_2_on <= MIDI_DATA_2_MAX)
+        m_data_2_on = in_data_2_on;
     else
-        m_velocity_on = MIDI_VELOCITY_MAX;
+        m_data_2_on = MIDI_DATA_2_MAX;
 }
 
 
 /**
- * Set velocity off
+ * Set data 2 off
  */
-void map_out_drf::set_velocity_off(int in_velocity_off)
+void map_out_drf::set_data_2_off(int in_data_2_off)
 {
-    if (in_velocity_off >= MIDI_VELOCITY_MIN && in_velocity_off <= MIDI_VELOCITY_MAX)
-        m_velocity_off = in_velocity_off;
+    if (in_data_2_off >= MIDI_DATA_2_MIN && in_data_2_off <= MIDI_DATA_2_MAX)
+        m_data_2_off = in_data_2_off;
     else
-        m_velocity_off = MIDI_VELOCITY_MIN;
+        m_data_2_off = MIDI_DATA_2_MIN;
 }
 
 
@@ -149,19 +159,21 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
             m_values_off.insert(value);
     }
 
-    // read velocity on
-    set_velocity_on(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_ON, false));
+    // read data 2 on
+    set_data_2_on(toml_utils::read_int(in_log, in_data, c_cfg_data_2_on, false));
 
-    // read velocity off
-    set_velocity_off(toml_utils::read_int(in_log, in_data, CFG_KEY_VELOCITY_OFF, false));
+    // read data 2 off
+    set_data_2_off(toml_utils::read_int(in_log, in_data, c_cfg_data_2_off, false));
 
     // read send on
+    // TODO - Default value in device (or XMidiCtrl)
     if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_ON, false)) {
         if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_ON) == "all")
             m_send_on = send_mode::all;
     }
 
     // read send off
+    // TODO - Default value in device (or XMidiCtrl)
     if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_OFF, false)) {
         if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_OFF) == "one")
             m_send_off = send_mode::one;
@@ -200,19 +212,19 @@ bool map_out_drf::check(text_logger& in_log)
         }
     }
 
-    if (m_velocity_on < MIDI_VELOCITY_MIN || m_velocity_on > MIDI_VELOCITY_MAX) {
+    if (m_data_2_on < MIDI_DATA_2_MIN || m_data_2_on > MIDI_DATA_2_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_ON) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
-                     + std::to_string(MIDI_VELOCITY_MAX));
+        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_on) + "', "
+                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+                     + std::to_string(MIDI_DATA_2_MAX));
         result = false;
     }
 
-    if (m_velocity_off < MIDI_VELOCITY_MIN || m_velocity_off > MIDI_VELOCITY_MAX) {
+    if (m_data_2_off < MIDI_DATA_2_MIN || m_data_2_off > MIDI_DATA_2_MAX) {
         in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(CFG_KEY_VELOCITY_OFF) + "', "
-                     + "velocity has to be between " + std::to_string(MIDI_VELOCITY_MIN) + " and "
-                     + std::to_string(MIDI_VELOCITY_MAX));
+        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_off) + "', "
+                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+                     + std::to_string(MIDI_DATA_2_MAX));
         result = false;
     }
 
@@ -297,12 +309,12 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
 
         task->data_changed = changed;
 
-        switch (data_type()) {
-            case map_data_type::control_change:
+        switch (data_1_type()) {
+            case map_data_1_type::control_change:
                 task->type = midi_msg_type::control_change;
                 break;
 
-            case map_data_type::note:
+            case map_data_1_type::note:
                 if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
                     || (m_send_on == send_mode::one && send_on_cnt > 0))
                     task->type = midi_msg_type::note_on;
@@ -310,27 +322,27 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
                     task->type = midi_msg_type::note_off;
                 break;
 
-            case map_data_type::pitch_bend:
+            case map_data_1_type::pitch_bend:
                 task->type = midi_msg_type::pitch_bend;
                 break;
 
-            case map_data_type::program_change:
+            case map_data_1_type::program_change:
                 task->type = midi_msg_type::program_change;
                 break;
 
-            case map_data_type::none:
+            case map_data_1_type::none:
                 task->type = midi_msg_type::none;
                 break;
         }
 
         task->channel = channel();
-        task->data = data();
+        task->data_1 = data_1();
 
         if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
             || (m_send_on == send_mode::one && send_on_cnt > 0))
-            task->velocity = static_cast<unsigned char>(m_velocity_on);
+            task->data_2 = static_cast<unsigned char>(m_data_2_on);
         else
-            task->velocity = static_cast<unsigned char>(m_velocity_off);
+            task->data_2 = static_cast<unsigned char>(m_data_2_off);
 
 
         // add mapping to task
@@ -352,32 +364,31 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 
     task->data_changed = true;
 
-    switch (data_type()) {
-        case map_data_type::control_change:
+    switch (data_1_type()) {
+        case map_data_1_type::control_change:
             task->type = midi_msg_type::control_change;
             break;
 
-        case map_data_type::note:
+        case map_data_1_type::note:
             task->type = midi_msg_type::note_off;
             break;
 
-        case map_data_type::pitch_bend:
+        case map_data_1_type::pitch_bend:
             task->type = midi_msg_type::pitch_bend;
             break;
 
-        case map_data_type::program_change:
+        case map_data_1_type::program_change:
             task->type = midi_msg_type::program_change;
             break;
 
-        case map_data_type::none:
+        case map_data_1_type::none:
             task->type = midi_msg_type::none;
             break;
     }
 
     task->channel = channel();
-    task->data = data();
-
-    task->velocity = MIDI_VELOCITY_MIN;
+    task->data_1 = data_1();
+    task->data_2 = MIDI_DATA_2_MIN;
 
     return task;
 }
@@ -392,13 +403,19 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 /**
  * Return the mapping as string
  */
-std::string map_out_drf::build_mapping_text()
+std::string map_out_drf::build_mapping_text(bool in_short)
 {
-    std::string map_str = " ====== Dataref ======\n";
+    std::string map_str {};
+    std::string sep_str {", "};
+
+    if (!in_short) {
+        sep_str = "\n";
+        map_str = " ====== Dataref ======" + sep_str;
+    }
 
     // Dataref
     if (m_datarefs.size() == 1) {
-        map_str.append("Dataref = '" + m_datarefs[0] + "'\n");
+        map_str.append("Dataref = '" + m_datarefs[0] + "'");
     } else {
         map_str.append("Datarefs = [");
 
@@ -410,14 +427,14 @@ std::string map_out_drf::build_mapping_text()
             data_str.append("'" + str + "'");
         }
 
-        map_str.append(data_str + "]\n");
+        map_str.append(data_str + "]");
     }
 
     // Values on
     if (m_values_on.size() == 1) {
-        map_str.append("Value on = '" + *m_values_on.begin() + "'\n");
+        map_str.append(sep_str + "Value on = '" + *m_values_on.begin() + "'");
     } else if (m_values_on.size() > 1) {
-        map_str.append("Values on = [");
+        map_str.append(sep_str + "Values on = [");
 
         std::string values_str;
         for (auto& str: m_values_on) {
@@ -427,14 +444,14 @@ std::string map_out_drf::build_mapping_text()
             values_str.append("'" + str + "'");
         }
 
-        map_str.append(values_str + "]\n");
+        map_str.append(values_str + "]");
     }
 
     // Values off
     if (m_values_off.size() == 1) {
-        map_str.append("Value off = '" + *m_values_off.begin() + "'\n");
+        map_str.append(sep_str + "Value off = '" + *m_values_off.begin() + "'");
     } else if (m_values_off.size() > 1) {
-        map_str.append("Values off = [");
+        map_str.append(sep_str + "Values off = [");
 
         std::string values_str;
         for (auto& str: m_values_off) {
@@ -444,28 +461,30 @@ std::string map_out_drf::build_mapping_text()
             values_str.append("'" + str + "'");
         }
 
-        map_str.append(values_str + "]\n");
+        map_str.append(values_str + "]");
     }
 
-    // Velocity on
-    if (m_velocity_on != MIDI_VELOCITY_MAX)
-        map_str.append("Velocity on = '" + std::to_string(m_velocity_on) + "'\n");
+    // Data 2 on
+    if (m_data_2_on != MIDI_DATA_2_MAX)
+        map_str.append(sep_str + "Data 2 on = " + std::to_string(m_data_2_on));
 
-    // Velocity off
-    if (m_velocity_off != MIDI_VELOCITY_MIN)
-        map_str.append("Velocity off = '" + std::to_string(m_velocity_off) + "'\n");
+    // Data 2 off
+    if (m_data_2_off != MIDI_DATA_2_MIN)
+        map_str.append(sep_str + "Data 2 off = " + std::to_string(m_data_2_off));
 
     // Send on
-    if (m_send_on == send_mode::all)
-        map_str.append("Send on = 'all'\n");
-    else
-        map_str.append("Send on = 'one'\n");
+    if (m_datarefs.size() > 1) {
+        if (m_send_on == send_mode::all)
+            map_str.append(sep_str + "Send on = 'all'");
+        else
+            map_str.append(sep_str + "Send on = 'one'");
 
-    // Send off
-    if (m_send_off == send_mode::all)
-        map_str.append("Send off = 'all'");
-    else
-        map_str.append("Send off = 'one'");
+        // Send off
+        if (m_send_off == send_mode::all)
+            map_str.append(sep_str + "Send off = 'all'");
+        else
+            map_str.append(sep_str + "Send off = 'one'");
+    }
 
     return map_str;
 }

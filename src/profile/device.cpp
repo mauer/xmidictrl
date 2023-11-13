@@ -56,6 +56,15 @@ device_settings& device::settings()
 
 
 /**
+ * Return the inbound mapping list
+ */
+map_in_list& device::mapping_in()
+{
+    return m_map_in;
+}
+
+
+/**
  * Return the current sublayer dataref value
  */
 std::string device::sl_value() const
@@ -103,15 +112,6 @@ text_logger& device::text_log()
 midi_logger& device::midi_log()
 {
     return m_midi_log;
-}
-
-
-/**
- * Return the inbound mapping list
- */
-map_in_list& device::mapping_in()
-{
-    return m_map_in;
 }
 
 } // Namespace xmidictrl

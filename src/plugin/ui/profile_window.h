@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2023 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef PROFILE_WINDOW_H
-#define PROFILE_WINDOW_H
+#ifndef XMC_PROFILE_WINDOW_H
+#define XMC_PROFILE_WINDOW_H
 
 // XMidiCtrl
 #include "environment.h"
@@ -27,7 +27,7 @@ namespace xmidictrl {
 
 class profile_window : public imgui_window {
 public:
-    profile_window(text_logger &in_log, environment &in_env, profile &in_profile);
+    profile_window(text_logger& in_log, environment& in_env, profile& in_profile);
     ~profile_window() override = default;
 
 protected:
@@ -35,11 +35,19 @@ protected:
 
 private:
     void create_tab_general();
+    void create_tab_devices();
+    void create_tab_device(const std::shared_ptr<device>& in_device);
     void create_tab_errors_warnings();
 
-    profile &m_profile;
+    void create_title(std::string_view in_title, bool in_no_newline = true);
+
+    void create_table_mapping_init(const std::shared_ptr<device>& in_device);
+    void create_table_mapping_in(const std::shared_ptr<device>& in_device);
+    void create_table_mapping_out(const std::shared_ptr<device>& in_device);
+
+    profile& m_profile;
 };
 
 } // Namespace xmidictrl
 
-#endif // profile_WINDOW_H
+#endif // XMC_PROFILE_WINDOW_H

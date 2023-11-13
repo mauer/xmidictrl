@@ -53,7 +53,9 @@
 
 namespace xmidictrl {
 
-class device_list;
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
 class midi_device : public device {
 public:
@@ -65,6 +67,9 @@ public:
     midi_device& operator=(midi_device const&) = delete;
 
     device_type type() override;
+
+    map_init_list& mapping_init();
+    map_out_list& mapping_out();
 
     void add_init_map(std::shared_ptr<map_init>& in_mapping);
     void add_outbound_map(std::shared_ptr<map_out>& in_mapping);
@@ -91,6 +96,7 @@ private:
 
     time_point m_time_sent {time_point::min()};
 
+    // TODO: unique pointer
     map_init_list m_map_init;
     map_out_list m_map_out;
 

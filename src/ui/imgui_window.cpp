@@ -52,8 +52,8 @@ std::shared_ptr<ImGuiFontAtlas> imgui_window::s_font = nullptr;
 /**
  * Constructor
  */
-imgui_window::imgui_window(text_logger &in_log,
-                           environment &in_env,
+imgui_window::imgui_window(text_logger& in_log,
+                           environment& in_env,
                            int in_width,
                            int in_height,
                            window_position in_position,
@@ -111,11 +111,11 @@ imgui_window::imgui_window(text_logger &in_log,
     ImGui::SetCurrentContext(m_context);
 
     // disable window rounding since the frame gets rendered by X-Plane
-    auto &style = ImGui::GetStyle();
+    auto& style = ImGui::GetStyle();
     style.WindowRounding = 0;
 
     // Disable ImGui ini-file
-    auto &io = ImGui::GetIO();
+    auto& io = ImGui::GetIO();
     io.IniFilename = nullptr;
 
     // io.OptMacOSXBehaviors = false;
@@ -149,7 +149,7 @@ imgui_window::imgui_window(text_logger &in_log,
     if (s_font) {
         m_font_texture_id = static_cast<int>(reinterpret_cast<intptr_t>(io.Fonts->TexID));
     } else {
-        uint8_t *pixels;
+        uint8_t* pixels;
         int font_tex_width, font_tex_height;
         io.Fonts->GetTexDataAsAlpha8(&pixels, &font_tex_width, &font_tex_height);
 
@@ -168,7 +168,7 @@ imgui_window::imgui_window(text_logger &in_log,
                      GL_ALPHA,
                      GL_UNSIGNED_BYTE,
                      pixels);
-        io.Fonts->TexID = (void *) (intptr_t) (m_font_texture_id);
+        io.Fonts->TexID = (void*) (intptr_t) (m_font_texture_id);
     }
 }
 
@@ -180,7 +180,7 @@ imgui_window::~imgui_window()
 {
     ImGui::DestroyContext(m_context);
 
-    glDeleteTextures(1, reinterpret_cast<const GLuint *>(&m_font_texture_id));
+    glDeleteTextures(1, reinterpret_cast<const GLuint*>(&m_font_texture_id));
 
     //s_font.reset();
 }
@@ -239,7 +239,7 @@ void imgui_window::on_draw()
     try {
         build_window();
         show_window();
-    } catch (const std::exception &ex) {
+    } catch (const std::exception& ex) {
         log().error("Error drawing Dear ImGui window:");
         log().error(ex.what());
 
@@ -248,7 +248,7 @@ void imgui_window::on_draw()
 
     ImGui::SetCurrentContext(m_context);
 
-    auto &io = ImGui::GetIO();
+    auto& io = ImGui::GetIO();
     bool focus = has_keyboard_focus();
 
     if (io.WantTextInput && !focus) {
@@ -273,7 +273,7 @@ void imgui_window::on_draw()
 void imgui_window::build_window()
 {
     ImGui::SetCurrentContext(m_context);
-    auto &io = ImGui::GetIO();
+    auto& io = ImGui::GetIO();
 
     // transfer the window geometry to ImGui
     XPLMGetWindowGeometry(window_id(), &m_left, &m_top, &m_right, &m_bottom);
@@ -324,9 +324,9 @@ void imgui_window::build_window()
 void imgui_window::show_window()
 {
     ImGui::SetCurrentContext(m_context);
-    auto &io = ImGui::GetIO();
+    auto& io = ImGui::GetIO();
 
-    ImDrawData *draw_data = ImGui::GetDrawData();
+    ImDrawData* draw_data = ImGui::GetDrawData();
 
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
@@ -352,25 +352,25 @@ void imgui_window::show_window()
 
     // Render command lists
     for (int n = 0; n < draw_data->CmdListsCount; n++) {
-        const ImDrawList *cmd_list = draw_data->CmdLists[n];
-        const ImDrawVert *vtx_buffer = cmd_list->VtxBuffer.Data;
-        const ImDrawIdx *idx_buffer = cmd_list->IdxBuffer.Data;
+        const ImDrawList* cmd_list = draw_data->CmdLists[n];
+        const ImDrawVert* vtx_buffer = cmd_list->VtxBuffer.Data;
+        const ImDrawIdx* idx_buffer = cmd_list->IdxBuffer.Data;
 
         glVertexPointer(2,
                         GL_FLOAT,
                         sizeof(ImDrawVert),
-                        (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, pos)));
+                        (const GLvoid*) ((const char*) vtx_buffer + IM_OFFSETOF(ImDrawVert, pos)));
         glTexCoordPointer(2,
                           GL_FLOAT,
                           sizeof(ImDrawVert),
-                          (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, uv)));
+                          (const GLvoid*) ((const char*) vtx_buffer + IM_OFFSETOF(ImDrawVert, uv)));
         glColorPointer(4,
                        GL_UNSIGNED_BYTE,
                        sizeof(ImDrawVert),
-                       (const GLvoid *) ((const char *) vtx_buffer + IM_OFFSETOF(ImDrawVert, col)));
+                       (const GLvoid*) ((const char*) vtx_buffer + IM_OFFSETOF(ImDrawVert, col)));
 
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
-            const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
             if (pcmd->UserCallback) {
                 pcmd->UserCallback(cmd_list, pcmd);
             } else {
@@ -409,7 +409,7 @@ void imgui_window::show_window()
 bool imgui_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
 {
     ImGui::SetCurrentContext(m_context);
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
     float my_x, my_y;
     translate_to_imgui_space(in_x, in_y, my_x, my_y);
@@ -436,7 +436,7 @@ bool imgui_window::on_click(int in_x, int in_y, XPLMMouseStatus in_status)
 bool imgui_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_clicks)
 {
     ImGui::SetCurrentContext(m_context);
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
     float my_x, my_y;
     translate_to_imgui_space(in_x, in_y, my_x, my_y);
@@ -462,7 +462,7 @@ bool imgui_window::on_mouse_wheel(int in_x, int in_y, int in_wheel, int in_click
 XPLMCursorStatus imgui_window::on_cursor(int in_x, int in_y)
 {
     ImGui::SetCurrentContext(m_context);
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
     float my_x, my_y;
     translate_to_imgui_space(in_x, in_y, my_x, my_y);
@@ -479,7 +479,7 @@ void imgui_window::on_key(char in_key, XPLMKeyFlags in_flags, char in_virtual_ke
     }
 
     ImGui::SetCurrentContext(m_context);
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     if (io.WantTextInput) {
         // If you press and hold a key, the flags will actually be down, 0, 0, ..., up
         // So the key always has to be considered as pressed unless the up flag is set
@@ -504,14 +504,14 @@ void imgui_window::on_key(char in_key, XPLMKeyFlags in_flags, char in_virtual_ke
 }
 
 
-void imgui_window::translate_imgui_to_boxel(float in_x, float in_y, int &out_x, int &out_y) const
+void imgui_window::translate_imgui_to_boxel(float in_x, float in_y, int& out_x, int& out_y) const
 {
     out_x = m_left + static_cast<int>(in_x);
     out_y = m_top - static_cast<int>(in_y);
 }
 
 
-void imgui_window::translate_to_imgui_space(int in_x, int in_y, float &out_x, float &out_y) const
+void imgui_window::translate_to_imgui_space(int in_x, int in_y, float& out_x, float& out_y) const
 {
     out_x = static_cast<float>(in_x - m_left);
     if (out_x < 0.0f || out_x > (float) (m_right - m_left)) {

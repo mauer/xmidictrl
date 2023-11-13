@@ -29,14 +29,17 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class map_init : public map {
 public:
     explicit map_init(environment &in_env);
     ~map_init() override = default;
 
-    map_type type() override;
-
-    void set_velocity(int in_velocity);
+    void set_data_2(unsigned char in_data_2);
+    unsigned char data_2() const;
 
     void read_config(text_logger &in_log, toml::value &in_data);
     bool check(text_logger &in_log) override;
@@ -44,10 +47,15 @@ public:
     std::shared_ptr<outbound_task> execute();
 
 protected:
-    std::string build_mapping_text() override;
+    std::string build_mapping_text(bool in_short) override;
 
 private:
-    unsigned int m_velocity {127};
+    // constants
+    static constexpr std::string_view c_cfg_data_2 {"data_2"};
+    static constexpr std::string_view c_cfg_velocity {"velocity"};
+
+    // members
+    unsigned char m_data_2 {MIDI_DATA_2_MAX};
 };
 
 } // Namespace xmidictrl

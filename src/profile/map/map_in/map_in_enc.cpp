@@ -46,9 +46,18 @@ map_in_enc::map_in_enc(environment &in_env, encoder_mode in_default_enc_mode)
 /**
  * Return the mapping type
  */
-map_type map_in_enc::type()
+map_in_type map_in_enc::type()
 {
-    return map_type::encoder;
+    return map_in_type::encoder;
+}
+
+
+/**
+ * Return the mapping type as string
+ */
+std::string map_in_enc::type_as_string()
+{
+    return "Encoder";
 }
 
 
@@ -207,39 +216,45 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
 /**
  * Return the mapping as string
  */
-std::string map_in_enc::build_mapping_text()
+std::string map_in_enc::build_mapping_text(bool in_short)
 {
-    std::string map_str = " ====== Encoder ======\n";
+    std::string map_str {};
+    std::string sep_str {", "};
 
-    if (!sl().empty())
-        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+    if (!in_short) {
+        sep_str = "\n";
+        map_str = " ====== Encoder ======" + sep_str;
+
+        if (!sl().empty())
+            map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
+    }
 
     if (m_mode == encoder_mode::relative)
-        map_str.append("Mode = 'relative'\n");
+        map_str.append("Mode = 'relative'" + sep_str);
     else
-        map_str.append("Mode = 'range'\n");
+        map_str.append("Mode = 'range'" + sep_str);
 
     if (!m_dataref.empty()) {
-        map_str.append("Dataref = '" + m_dataref + "'\n");
-        map_str.append("Modifier up = '" + std::to_string(m_modifier_up) + "'\n");
+        map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
+        map_str.append("Modifier up = " + std::format("{}", m_modifier_up));
 
         if (m_modifier_fast_up != 0)
-            map_str.append("Modifier up (fast) = '" + std::to_string(m_modifier_fast_up) + "'\n");
+            map_str.append(sep_str + "Modifier up (fast) = " + std::to_string(m_modifier_fast_up));
 
-        map_str.append("Modifier down = '" + std::to_string(m_modifier_down) + "'\n");
+        map_str.append(sep_str + "Modifier down = " + std::to_string(m_modifier_down));
 
         if (m_modifier_fast_down != 0)
-            map_str.append("Modifier down (fast) = '" + std::to_string(m_modifier_fast_down) + "'\n");
+            map_str.append(sep_str + "Modifier down (fast) = " + std::to_string(m_modifier_fast_down));
     } else {
-        map_str.append("Command up = '" + m_command_up + "'\n");
+        map_str.append("Command up = '" + m_command_up + "'" + sep_str);
 
         if (!m_command_fast_up.empty())
-            map_str.append("Command up (fast) = '" + m_command_fast_up + "'\n");
+            map_str.append("Command up (fast) = '" + m_command_fast_up + "'" + sep_str);
 
-        map_str.append("Command down = '" + m_command_down + "'\n");
+        map_str.append("Command down = '" + m_command_down + "'");
 
         if (!m_command_fast_down.empty())
-            map_str.append("Command down (fast) = '" + m_command_fast_down + "'\n");
+            map_str.append(sep_str + "Command down (fast) = '" + m_command_fast_down + "'");
     }
 
     return map_str;
@@ -300,14 +315,14 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         }
 
         switch (in_msg.data_2()) {
-            case MIDI_VELOCITY_MIN:
+            case MIDI_DATA_2_MIN:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                 modifier = m_modifier_down;
 
                 break;
 
-            case MIDI_VELOCITY_MAX:
+            case MIDI_DATA_2_MAX:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                 modifier = m_modifier_up;
@@ -379,12 +394,12 @@ bool map_in_enc::execute_command(midi_message &in_msg)
     } else {
         // range mode
         switch (in_msg.data_2()) {
-            case MIDI_VELOCITY_MIN:
+            case MIDI_DATA_2_MIN:
                 in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
                 env().cmd().execute(in_msg.log(), m_command_down);
                 break;
 
-            case MIDI_VELOCITY_MAX:
+            case MIDI_DATA_2_MAX:
                 in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
                 env().cmd().execute(in_msg.log(), m_command_up);
                 break;
