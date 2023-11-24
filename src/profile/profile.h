@@ -92,11 +92,19 @@ private:
                                                             size_t in_dev_no = 0);
 
     void add_mappings_from_include(const std::shared_ptr<device>& in_device);
-    void create_device_mappings(toml::value in_params, const std::shared_ptr<device>& in_device);
+    void create_device_mappings(toml::value in_params,
+                                const std::shared_ptr<device>& in_device,
+                                std::string_view in_inc_name = {});
 
-    void create_init_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device);
-    void create_inbound_mapping(toml::array in_params, const std::shared_ptr<device>& in_device);
-    void create_outbound_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device);
+    void create_init_mapping(toml::array in_params,
+                             const std::shared_ptr<midi_device>& in_device,
+                             std::string_view in_inc_name = {});
+    void create_inbound_mapping(toml::array in_params,
+                                const std::shared_ptr<device>& in_device,
+                                std::string_view in_inc_name = {});
+    void create_outbound_mapping(toml::array in_params,
+                                 const std::shared_ptr<midi_device>& in_device,
+                                 std::string_view in_inc_name = {});
 
     static map_in_type translate_map_in_type(std::string_view in_type_str);
     static map_out_type translate_map_out_type(std::string_view in_type_str);

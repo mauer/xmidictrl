@@ -83,8 +83,11 @@ void map_out_con::read_config(text_logger& in_log, toml::value& in_data)
     // check for depreciated velocity parameter
     if (toml_utils::contains(in_log, in_data, c_cfg_velocity, false)) {
         // read velocity
-        in_log.warn(" --> Parameter '" + std::string(c_cfg_velocity) + "' "
-                    + "is depreciated and was replaced by parameter '" + std::string(c_cfg_data_2) + "'");
+        in_log.warn("File: " + in_data.location().file_name());
+        in_log.warn_line(in_data.location().line(), in_data.location().line_str());
+        in_log.warn_line(in_data.location().line(), " --> Parameter '" + std::string(c_cfg_velocity) + "' "
+                                                    + "is depreciated and was replaced by parameter '"
+                                                    + std::string(c_cfg_data_2) + "'");
         set_data_2(toml_utils::read_int(in_log, in_data, c_cfg_velocity, true));
     } else {
         // read data 2
@@ -203,6 +206,24 @@ std::shared_ptr<outbound_task> map_out_con::reset()
 }
 
 
+/**
+ * Return mapped dataref
+ */
+std::string map_out_con::map_text_drf()
+{
+    return {};
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_out_con::map_text_parameter()
+{
+    return "Data 2 = " + std::to_string(m_data_2);
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -219,8 +240,7 @@ std::string map_out_con::build_mapping_text(bool in_short)
     if (!in_short)
         map_str = " ====== Constant ======\n";
 
-    // Data 2
-    map_str.append("Data 2 = " + std::to_string(m_data_2));
+    map_str.append("Data 2: " + std::to_string(m_data_2));
 
     return map_str;
 }

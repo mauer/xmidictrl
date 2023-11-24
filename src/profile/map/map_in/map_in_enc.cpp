@@ -207,6 +207,64 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
 }
 
 
+/**
+ * Return mapped commands/dataref
+ */
+std::string map_in_enc::map_text_cmd_drf()
+{
+    std::string map_str {};
+
+    if (!m_dataref.empty()) {
+        map_str.append(m_dataref);
+    } else {
+        map_str.append(m_command_up + "   (up)");
+        map_str.append("\n" + m_command_down + "   (down)");
+
+        if (!m_command_fast_up.empty() && m_command_up != m_command_fast_up)
+            map_str.append("\n" + m_command_fast_up + "   (fast up)");
+
+        if (!m_command_fast_down.empty() && m_command_down != m_command_fast_down)
+            map_str.append("\n" + m_command_fast_down + "   (fast down)");
+    }
+
+    return map_str;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_in_enc::map_text_parameter()
+{
+    std::string map_str {};
+
+    if (!m_dataref.empty()) {
+        map_str.append("Modifier up = " + conversions::float_to_string(m_modifier_up));
+        map_str.append("   |   ");
+
+        if (m_modifier_fast_up != 0) {
+            map_str.append("Modifier up (fast) = " + conversions::float_to_string(m_modifier_fast_up));
+            map_str.append("   |   ");
+        }
+
+        map_str.append("Modifier down = " + conversions::float_to_string(m_modifier_down));
+        map_str.append("   |   ");
+
+        if (m_modifier_fast_down != 0) {
+            map_str.append("Modifier down (fast) = " + conversions::float_to_string(m_modifier_fast_down));
+            map_str.append("   |   ");
+        }
+    }
+
+    if (m_mode == encoder_mode::relative)
+        map_str.append("Mode = relative");
+    else
+        map_str.append("Mode = range");
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -229,22 +287,17 @@ std::string map_in_enc::build_mapping_text(bool in_short)
             map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
     }
 
-    if (m_mode == encoder_mode::relative)
-        map_str.append("Mode = 'relative'" + sep_str);
-    else
-        map_str.append("Mode = 'range'" + sep_str);
-
     if (!m_dataref.empty()) {
         map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
-        map_str.append("Modifier up = " + std::format("{}", m_modifier_up));
+        map_str.append("Modifier up = " + conversions::float_to_string(m_modifier_up));
 
         if (m_modifier_fast_up != 0)
-            map_str.append(sep_str + "Modifier up (fast) = " + std::to_string(m_modifier_fast_up));
+            map_str.append(sep_str + "Modifier up (fast) = " + conversions::float_to_string(m_modifier_fast_up));
 
-        map_str.append(sep_str + "Modifier down = " + std::to_string(m_modifier_down));
+        map_str.append(sep_str + "Modifier down = " + conversions::float_to_string(m_modifier_down));
 
         if (m_modifier_fast_down != 0)
-            map_str.append(sep_str + "Modifier down (fast) = " + std::to_string(m_modifier_fast_down));
+            map_str.append(sep_str + "Modifier down (fast) = " + conversions::float_to_string(m_modifier_fast_down));
     } else {
         map_str.append("Command up = '" + m_command_up + "'" + sep_str);
 
@@ -256,6 +309,11 @@ std::string map_in_enc::build_mapping_text(bool in_short)
         if (!m_command_fast_down.empty())
             map_str.append(sep_str + "Command down (fast) = '" + m_command_fast_down + "'");
     }
+
+    if (m_mode == encoder_mode::relative)
+        map_str.append(sep_str + "Mode = 'relative'");
+    else
+        map_str.append(sep_str + "Mode = 'range'");
 
     return map_str;
 }

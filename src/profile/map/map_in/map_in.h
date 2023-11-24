@@ -66,6 +66,9 @@ public:
 
     virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
 
+    virtual std::string map_text_cmd_drf() = 0;
+    virtual std::string map_text_parameter() = 0;
+
 protected:
     void toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values);
 

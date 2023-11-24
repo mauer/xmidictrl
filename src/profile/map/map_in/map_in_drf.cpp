@@ -164,6 +164,49 @@ bool map_in_drf::execute(midi_message& in_msg, std::string_view in_sl_value)
 }
 
 
+/**
+ * Return mapped datarefs
+ */
+std::string map_in_drf::map_text_cmd_drf()
+{
+    return m_dataref;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_in_drf::map_text_parameter()
+{
+    std::string map_str {};
+
+    // Values
+    if (m_values.size() == 1) {
+        map_str.append("Value = " + m_values[0]);
+    } else {
+        map_str.append("Values = ");
+
+        std::string val_str {};
+
+        for (auto& value: m_values) {
+            if (!val_str.empty())
+                val_str.append(", ");
+
+            val_str.append("Value = " + value);
+        }
+
+        map_str.append(val_str);
+    }
+
+    if (m_mode == dataref_mode::toggle)
+        map_str.append("   |   Mode = 'toggle'");
+    else
+        map_str.append("   |   Mode = 'momentary'");
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -191,7 +234,7 @@ std::string map_in_drf::build_mapping_text(bool in_short)
     map_str.append("Values = [");
 
     for (auto& value: m_values)
-        map_str.append(" '" + value + "'");
+        map_str.append(" '" + value + "', ");
 
     map_str.append("]" + sep_str);
 

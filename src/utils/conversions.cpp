@@ -68,12 +68,25 @@ std::string conversions::time_to_string(time_point in_time)
 
 
 /**
- * Convert an integer to an string with leading zeros
+ * Convert an integer to a string with leading zeros
  */
 std::string conversions::int_to_string(int in_number, unsigned int in_length)
 {
     std::stringstream ss;
     ss << std::setw(in_length) << std::setfill('0') << in_number;
+    std::string str = ss.str();
+
+    return str;
+}
+
+
+/**
+ * Convert an float to a string with a number of decimals
+ */
+std::string conversions::float_to_string(float in_number, unsigned int in_precision)
+{
+    std::stringstream ss;
+    ss << std::setprecision(in_precision) << in_number;
     std::string str = ss.str();
 
     return str;

@@ -248,6 +248,67 @@ bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
 }
 
 
+/**
+ * Return mapped command
+ */
+std::string map_in_pnp::map_text_cmd_drf()
+{
+    std::string map_str {};
+
+    if (!m_dataref_push.empty())
+        map_str.append(m_dataref_push + "   (dataref push)");
+    else
+        map_str.append(m_command_push + "   (command push)");
+
+    if (!m_dataref_pull.empty())
+        map_str.append("\n" + m_dataref_pull + "   (dataref pull)");
+    else
+        map_str.append("\n" + m_command_pull + "   (command pull)");
+
+    return map_str;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_in_pnp::map_text_parameter()
+{
+    std::string map_str {};
+
+    return map_str;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the mapping as string
+ */
+std::string map_in_pnp::build_mapping_text(bool in_short)
+{
+    std::string map_str;
+
+    if (!in_short) {
+        map_str = " ====== Push & Pull ======\n";
+
+        if (!sl().empty())
+            map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
+    }
+
+    // TODO: Add dataref option
+
+    map_str.append("Cmd Push: " + m_command_push + "\n");
+    map_str.append("Cmd Pull: " + m_command_pull);
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -264,29 +325,6 @@ void map_in_pnp::reset()
 
     m_time_received.store(time_point::min());
     m_time_released.store(time_point::min());
-}
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   PROTECTED
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Return the mapping as string
- */
-std::string map_in_pnp::build_mapping_text(bool in_short)
-{
-    std::string map_str = " ====== Push & Pull ======\n";
-
-    if (!sl().empty())
-        map_str.append("Sublayer = '" + std::string(sl()) + "'\n");
-
-    map_str.append("Command push = '" + m_command_push + "'\n");
-    map_str.append("Command pull = '" + m_command_pull + "'\n");
-
-    return map_str;
 }
 
 } // Namespace xmidictrl

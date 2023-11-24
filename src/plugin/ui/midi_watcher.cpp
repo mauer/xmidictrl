@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "messages_window.h"
+#include "midi_watcher.h"
 
 // Font Awesome
 #include <IconsFontAwesome6.h>
@@ -32,13 +32,13 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-messages_window::messages_window(text_logger& in_text_log,
-                                 midi_logger& in_midi_log,
-                                 environment& in_env)
+midi_watcher::midi_watcher(text_logger& in_text_log,
+                           midi_logger& in_midi_log,
+                           environment& in_env)
     : imgui_window(in_text_log, in_env, 1400, 700),
       m_midi_log(in_midi_log)
 {
-    set_title(std::string(XMIDICTRL_NAME) + " - Messages");
+    set_title(std::string(XMIDICTRL_NAME) + " - MIDI Watcher");
 
     m_midi_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
     if (env().settings().default_midi_sort() == sort_mode::ascending)
@@ -57,7 +57,7 @@ messages_window::messages_window(text_logger& in_text_log,
 /**
  * Create widgets
  */
-void messages_window::create_widgets()
+void midi_watcher::create_widgets()
 {
     ImGui::Text("MIDI Logging:");
     ImGui::SameLine(150);
@@ -79,7 +79,8 @@ void messages_window::create_widgets()
     ImGui::BeginChild("TEXT_TABLE");
 
     if (ImGui::BeginTable("tableMidiMessages", 10,
-                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable | ImGuiTableFlags_ScrollY)) {
+                          ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_Sortable
+                          | ImGuiTableFlags_ScrollY)) {
         ImGui::TableSetupColumn("Date/Time", m_midi_msg_flags, 200);
         ImGui::TableSetupColumn("Direction", ImGuiTableColumnFlags_WidthFixed, 90);
         ImGui::TableSetupColumn("Port", ImGuiTableColumnFlags_WidthFixed, 50);
@@ -132,7 +133,7 @@ void messages_window::create_widgets()
 /**
  * Add a MIDI message to the table
  */
-void messages_window::add_midi_row(midi_message* in_msg)
+void midi_watcher::add_midi_row(midi_message* in_msg)
 {
     ImGui::TableNextRow();
 
@@ -191,7 +192,7 @@ void messages_window::add_midi_row(midi_message* in_msg)
 /**
  * Draw an icon with a popup text
  */
-void messages_window::draw_icon(const char* in_icon, std::string_view in_text)
+void midi_watcher::draw_icon(const char* in_icon, std::string_view in_text)
 {
     ImGui::TextUnformatted(in_icon);
 

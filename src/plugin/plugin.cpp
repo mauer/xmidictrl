@@ -22,8 +22,8 @@
 #include "conversions.h"
 #include "devices_window.h"
 #include "info_window.h"
-#include "log_window.h"
-#include "messages_window.h"
+#include "log_viewer.h"
+#include "midi_watcher.h"
 #include "profile_window.h"
 #include "settings_window.h"
 #include "version.h"
@@ -247,7 +247,7 @@ void plugin::load_profile()
 {
     if (!m_profile->load() || m_profile->has_errors()) {
         if (m_env->settings().show_errors())
-            show_log_window();
+            show_log_viewer();
     }
 }
 
@@ -313,21 +313,21 @@ void plugin::add_inbound_task(const std::shared_ptr<inbound_task>& in_task)
 
 
 /**
- * Show the log window
+ * Show the log viewer
  */
-void plugin::show_log_window()
+void plugin::show_log_viewer()
 {
-    auto window = create_window(window_type::log_window);
+    auto window = create_window(window_type::log_viewer);
     window->show();
 }
 
 
 /**
- * Show the log messages dialog
+ * Show the MIDI watcher
  */
-void plugin::show_messages_window()
+void plugin::show_midi_watcher()
 {
-    auto window = create_window(window_type::messages_window);
+    auto window = create_window(window_type::midi_watcher);
     window->show();
 }
 
@@ -443,17 +443,17 @@ void plugin::remove_datarefs()
 void plugin::create_commands()
 {
     // general plugin commands
-    m_cmd_show_log = XPLMCreateCommand("xmidictrl/show_log_window", "Show the log messages window");
-    XPLMRegisterCommandHandler(m_cmd_show_log,
+    m_cmd_log_viewer = XPLMCreateCommand("xmidictrl/show_log_viewer", "Show the log viewer");
+    XPLMRegisterCommandHandler(m_cmd_log_viewer,
                                command_handler,
                                1,
-                               (void*) COMMAND_LOG_WINDOW);
+                               (void*) COMMAND_LOG_VIEWER);
 
-    m_cmd_show_messages = XPLMCreateCommand("xmidictrl/show_messages_window", "Show the MIDI messages window");
-    XPLMRegisterCommandHandler(m_cmd_show_messages,
+    m_cmd_midi_watcher = XPLMCreateCommand("xmidictrl/show_midi_watcher", "Show the MIDI watcher");
+    XPLMRegisterCommandHandler(m_cmd_midi_watcher,
                                command_handler,
                                1,
-                               (void*) COMMAND_MESSAGE_WINDOW);
+                               (void*) COMMAND_MIDI_WATCHER);
 
     m_cmd_show_profile = XPLMCreateCommand("xmidictrl/show_profile_window", "Show the aircraft profile window");
     XPLMRegisterCommandHandler(m_cmd_show_profile,
@@ -500,8 +500,8 @@ void plugin::create_commands()
  */
 void plugin::remove_commands()
 {
-    XPLMUnregisterCommandHandler(m_cmd_show_log, command_handler, 0, nullptr);
-    XPLMUnregisterCommandHandler(m_cmd_show_messages, command_handler, 0, nullptr);
+    XPLMUnregisterCommandHandler(m_cmd_log_viewer, command_handler, 0, nullptr);
+    XPLMUnregisterCommandHandler(m_cmd_midi_watcher, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_show_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_reload_profile, command_handler, 0, nullptr);
     XPLMUnregisterCommandHandler(m_cmd_toggle_sublayer, command_handler, 0, nullptr);
@@ -545,10 +545,10 @@ int plugin::command_handler([[maybe_unused]] XPLMCommandRef in_command, XPLMComm
     if (in_phase != xplm_CommandEnd)
         return 1;
 
-    if (!strcmp((const char*) in_refcon, COMMAND_LOG_WINDOW))
-        plugin::instance().show_log_window();
-    else if (!strcmp((const char*) in_refcon, COMMAND_MESSAGE_WINDOW))
-        plugin::instance().show_messages_window();
+    if (!strcmp((const char*) in_refcon, COMMAND_LOG_VIEWER))
+        plugin::instance().show_log_viewer();
+    else if (!strcmp((const char*) in_refcon, COMMAND_MIDI_WATCHER))
+        plugin::instance().show_midi_watcher();
     else if (!strcmp((const char*) in_refcon, COMMAND_PROFILE_WINDOW))
         plugin::instance().show_profile_window();
     else if (!strcmp((const char*) in_refcon, COMMAND_RELOAD_PROFILE))
@@ -614,12 +614,12 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             window = std::make_shared<about_window>(*m_plugin_log, *m_env);
             break;
 
-        case window_type::log_window:
-            window = std::make_shared<log_window>(*m_plugin_log, *m_env);
+        case window_type::log_viewer:
+            window = std::make_shared<log_viewer>(*m_plugin_log, *m_env);
             break;
 
-        case window_type::messages_window:
-            window = std::make_shared<messages_window>(*m_plugin_log, *m_midi_log, *m_env);
+        case window_type::midi_watcher:
+            window = std::make_shared<midi_watcher>(*m_plugin_log, *m_midi_log, *m_env);
             break;
 
         case window_type::devices_window:

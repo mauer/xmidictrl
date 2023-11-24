@@ -25,6 +25,23 @@
 
 namespace xmidictrl {
 
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
+enum class map_page {
+    init,
+    inbound,
+    outbound
+};
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
+
 class profile_window : public imgui_window {
 public:
     profile_window(text_logger& in_log, environment& in_env, profile& in_profile);
@@ -44,6 +61,8 @@ private:
     void create_table_mapping_init(const std::shared_ptr<device>& in_device);
     void create_table_mapping_in(const std::shared_ptr<device>& in_device);
     void create_table_mapping_out(const std::shared_ptr<device>& in_device);
+
+    map_page m_current_map_page {map_page::inbound};
 
     profile& m_profile;
 };

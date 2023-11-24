@@ -319,6 +319,35 @@ std::shared_ptr<outbound_task> map_out_sld::reset()
 }
 
 
+/**
+ * Return mapped dataref
+ */
+std::string map_out_sld::map_text_drf()
+{
+    return m_dataref;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_out_sld::map_text_parameter()
+{
+    std::string map_str = "Value min = " + std::to_string(m_value_min);
+    map_str.append("   |   ");
+    map_str.append("Value max = " + std::to_string(m_value_max));
+
+    // Data 2 min/max
+    if (m_data_2_min != MIDI_DATA_2_MAX)
+        map_str.append("   |   Data 2 min = " + std::to_string(m_data_2_min));
+
+    if (m_data_2_max != MIDI_DATA_2_MIN)
+        map_str.append("   |   Data 2 max = " + std::to_string(m_data_2_max));
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------

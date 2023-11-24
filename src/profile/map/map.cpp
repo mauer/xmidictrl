@@ -60,6 +60,24 @@ unsigned int map::no() const
 
 
 /**
+ * Set the include name
+ */
+void map::set_include_name(std::string_view in_name)
+{
+    m_include_name = in_name;
+}
+
+
+/**
+ * Return the include
+ */
+std::string_view map::include_name() const
+{
+    return m_include_name;
+}
+
+
+/**
  * Return the chanel number
  */
 unsigned char map::channel() const

@@ -394,6 +394,96 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 }
 
 
+/**
+ * Return mapped dataref
+ */
+std::string map_out_drf::map_text_drf()
+{
+    std::string map_str {};
+
+    for (auto& drf: m_datarefs) {
+        if (!map_str.empty())
+            map_str.append("\n");
+
+        map_str.append(drf);
+    }
+
+    return map_str;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_out_drf::map_text_parameter()
+{
+    std::string map_str {};
+
+    // Values on
+    if (m_values_on.size() == 1) {
+        map_str.append("Value on = " + *m_values_on.begin());
+    } else if (m_values_on.size() > 1) {
+        map_str.append("Values on = ");
+
+        std::string values_str;
+        for (auto& val: m_values_on) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append(val);
+        }
+
+        map_str.append(values_str);
+    }
+
+    if (!map_str.empty() && !m_values_off.empty())
+        map_str.append("   |   ");
+
+    // Values off
+    if (m_values_off.size() == 1) {
+        map_str.append("Value off = " + *m_values_off.begin());
+    } else if (m_values_off.size() > 1) {
+        map_str.append("Values off = ");
+
+        std::string values_str;
+        for (auto& val: m_values_off) {
+            if (!values_str.empty())
+                values_str.append(", ");
+
+            values_str.append(val);
+        }
+
+        map_str.append(values_str);
+    }
+
+    // Send modes
+    if (m_datarefs.size() > 1) {
+        map_str.append("\n");
+
+        if (m_send_on == send_mode::all)
+            map_str.append("Send on = all");
+        else
+            map_str.append("Send on = one");
+
+        map_str.append("   |   ");
+
+        if (m_send_off == send_mode::all)
+            map_str.append("Send off = all");
+        else
+            map_str.append("Send off = one");
+    }
+
+    // Data 2 on/off
+    if (m_data_2_on != MIDI_DATA_2_MAX)
+        map_str.append("   |   Data 2 on = " + std::to_string(m_data_2_on));
+
+    if (m_data_2_off != MIDI_DATA_2_MIN)
+        map_str.append("   |   Data 2 off = " + std::to_string(m_data_2_off));
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -406,7 +496,7 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
 std::string map_out_drf::build_mapping_text(bool in_short)
 {
     std::string map_str {};
-    std::string sep_str {", "};
+    std::string sep_str {"\n"};
 
     if (!in_short) {
         sep_str = "\n";
@@ -415,75 +505,80 @@ std::string map_out_drf::build_mapping_text(bool in_short)
 
     // Dataref
     if (m_datarefs.size() == 1) {
-        map_str.append("Dataref = '" + m_datarefs[0] + "'");
+        if (!in_short)
+            map_str.append("Dataref: ");
+
+        map_str.append(m_datarefs[0]);
     } else {
-        map_str.append("Datarefs = [");
+        if (!in_short)
+            map_str.append("Datarefs: ");
 
         std::string data_str;
         for (auto& str: m_datarefs) {
             if (!data_str.empty())
-                data_str.append(", ");
+                data_str.append(" | ");
 
-            data_str.append("'" + str + "'");
+            data_str.append(str);
         }
 
-        map_str.append(data_str + "]");
+        map_str.append(data_str);
     }
+
 
     // Values on
     if (m_values_on.size() == 1) {
-        map_str.append(sep_str + "Value on = '" + *m_values_on.begin() + "'");
+        map_str.append(sep_str + "Value on: " + *m_values_on.begin());
     } else if (m_values_on.size() > 1) {
-        map_str.append(sep_str + "Values on = [");
+        map_str.append(sep_str + "Values on: ");
 
         std::string values_str;
         for (auto& str: m_values_on) {
             if (!values_str.empty())
                 values_str.append(", ");
 
-            values_str.append("'" + str + "'");
+            values_str.append(str);
         }
 
-        map_str.append(values_str + "]");
+        map_str.append(values_str);
     }
 
     // Values off
     if (m_values_off.size() == 1) {
-        map_str.append(sep_str + "Value off = '" + *m_values_off.begin() + "'");
+        map_str.append(sep_str + "Value off: " + *m_values_off.begin());
     } else if (m_values_off.size() > 1) {
-        map_str.append(sep_str + "Values off = [");
+        map_str.append(sep_str + "Values off: ");
 
         std::string values_str;
         for (auto& str: m_values_off) {
             if (!values_str.empty())
                 values_str.append(", ");
 
-            values_str.append("'" + str + "'");
+            values_str.append(str);
         }
 
-        map_str.append(values_str + "]");
+        map_str.append(values_str);
     }
 
     // Data 2 on
     if (m_data_2_on != MIDI_DATA_2_MAX)
-        map_str.append(sep_str + "Data 2 on = " + std::to_string(m_data_2_on));
+        map_str.append(sep_str + "Data 2 on: " + std::to_string(m_data_2_on));
 
     // Data 2 off
     if (m_data_2_off != MIDI_DATA_2_MIN)
-        map_str.append(sep_str + "Data 2 off = " + std::to_string(m_data_2_off));
+        map_str.append(sep_str + "Data 2 off: " + std::to_string(m_data_2_off));
 
     // Send on
     if (m_datarefs.size() > 1) {
         if (m_send_on == send_mode::all)
-            map_str.append(sep_str + "Send on = 'all'");
+            map_str.append(sep_str + "Send on: 'all'");
         else
-            map_str.append(sep_str + "Send on = 'one'");
+            map_str.append(sep_str + "Send on: 'one'");
 
         // Send off
         if (m_send_off == send_mode::all)
-            map_str.append(sep_str + "Send off = 'all'");
+            map_str.append(sep_str + "Send off: 'all'");
         else
-            map_str.append(sep_str + "Send off = 'one'");
+            map_str.append(sep_str + "Send off: 'one'");
     }
 
     return map_str;

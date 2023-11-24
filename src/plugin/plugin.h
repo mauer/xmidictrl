@@ -58,8 +58,8 @@ public:
     void add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity);
     void add_inbound_task(const std::shared_ptr<inbound_task>& in_task);
 
-    void show_log_window();
-    void show_messages_window();
+    void show_log_viewer();
+    void show_midi_watcher();
     void show_devices_window();
     void show_profile_window();
     void show_settings_window();
@@ -105,8 +105,8 @@ private:
     XPLMDataRef m_drf_sublayer {nullptr};
 
     // references for custom commands
-    XPLMCommandRef m_cmd_show_log {nullptr};
-    XPLMCommandRef m_cmd_show_messages {nullptr};
+    XPLMCommandRef m_cmd_log_viewer {nullptr};
+    XPLMCommandRef m_cmd_midi_watcher {nullptr};
     XPLMCommandRef m_cmd_show_profile {nullptr};
     XPLMCommandRef m_cmd_reload_profile {nullptr};
     XPLMCommandRef m_cmd_toggle_sublayer {nullptr};

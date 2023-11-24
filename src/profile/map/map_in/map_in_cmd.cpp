@@ -157,6 +157,37 @@ bool map_in_cmd::execute(midi_message& in_msg, std::string_view in_sl_value)
 }
 
 
+/**
+ * Return mapped command
+ */
+std::string map_in_cmd::map_text_cmd_drf()
+{
+    return m_command;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_in_cmd::map_text_parameter()
+{
+    std::string map_str {};
+
+    // Data 2 on/off
+    if (m_data_2_on != MIDI_DATA_2_MAX)
+        map_str.append("Data 2 on = " + std::to_string(m_data_2_on));
+
+    if (m_data_2_off != MIDI_DATA_2_MIN) {
+        if (!map_str.empty())
+            map_str.append("   |   ");
+
+        map_str.append("Data 2 off = " + std::to_string(m_data_2_off));
+    }
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -179,13 +210,16 @@ std::string map_in_cmd::build_mapping_text(bool in_short)
             map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
     }
 
-    map_str.append("Command: " + m_command + "");
+    if (!in_short)
+        map_str.append("Command: ");
+
+    map_str.append(m_command);
 
     if (m_data_2_on != MIDI_DATA_2_MAX)
-            map_str.append(sep_str + "Data 2 on = " + std::to_string(m_data_2_on));
+            map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_on));
 
     if (m_data_2_off != MIDI_DATA_2_MIN)
-            map_str.append(sep_str + "Data 2 off = " + std::to_string(m_data_2_off));
+            map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_off));
 
     return map_str;
 }

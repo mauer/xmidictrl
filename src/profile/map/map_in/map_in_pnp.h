@@ -59,6 +59,9 @@ public:
 
     bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
 
+    std::string map_text_cmd_drf() override;
+    std::string map_text_parameter() override;
+
 protected:
     std::string build_mapping_text(bool in_short) override;
 

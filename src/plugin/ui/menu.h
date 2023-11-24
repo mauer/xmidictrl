@@ -37,8 +37,8 @@ public:
 private:
     enum {
         menu_show_devices_window,
-        menu_show_log_window,
-        menu_show_midi_msg_window,
+        menu_show_log_viewer,
+        menu_show_midi_watcher,
         menu_show_profile_window,
         menu_reload_profile,
         menu_show_settings_window,

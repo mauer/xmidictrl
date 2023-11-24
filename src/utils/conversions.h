@@ -39,6 +39,7 @@ public:
 
     static std::string time_to_string(time_point in_time);
     static std::string int_to_string(int in_number, unsigned int in_length);
+    static std::string float_to_string(float in_number, unsigned int in_precision = 2);
 
     static std::string create_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
 };

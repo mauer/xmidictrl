@@ -208,10 +208,7 @@ void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_te
 {
     std::string debug_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
 
-    create_message(log_level::debug, debug_text);
-
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::debug, debug_text);
+    debug(debug_text);
 }
 
 
@@ -245,6 +242,17 @@ void text_logger::warn(std::string_view in_text)
 
     if (m_parent != nullptr)
         m_parent->create_message(log_level::warn, in_text);
+}
+
+
+/**
+ * Create a warn message with line number
+ */
+void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_text)
+{
+    std::string warn_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
+
+    warn(warn_text);
 }
 
 

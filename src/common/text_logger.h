@@ -60,7 +60,9 @@ public:
     void debug_param(std::uint_least32_t in_line, std::string_view in_param, std::string_view in_value);
 
     void info(std::string_view in_text);
+
     void warn(std::string_view in_text);
+    void warn_line(std::uint_least32_t in_line, std::string_view in_text);
 
     void error(std::string_view in_text);
     void error_line(std::uint_least32_t in_line, std::string_view in_text);

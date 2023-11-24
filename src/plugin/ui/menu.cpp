@@ -41,8 +41,8 @@ void menu::create_menu()
 
     XPLMAppendMenuSeparator(m_menu_id);
 
-    XPLMAppendMenuItem(m_menu_id, "Show Logger", (void*) menu_show_log_window, 0);
-    XPLMAppendMenuItem(m_menu_id, "Show MIDI Messages", (void*) menu_show_midi_msg_window, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show Logger Viewer", (void*) menu_show_log_viewer, 0);
+    XPLMAppendMenuItem(m_menu_id, "Show MIDI Watcher", (void*) menu_show_midi_watcher, 0);
 
     XPLMAppendMenuSeparator(m_menu_id);
 
@@ -99,12 +99,12 @@ void menu::event_handler(void*, void* in_item_ref)
             plugin::instance().show_devices_window();
             break;
 
-        case menu_show_log_window:
-            plugin::instance().show_log_window();
+        case menu_show_log_viewer:
+            plugin::instance().show_log_viewer();
             break;
 
-        case menu_show_midi_msg_window:
-            plugin::instance().show_messages_window();
+        case menu_show_midi_watcher:
+            plugin::instance().show_midi_watcher();
             break;
 
         case menu_show_profile_window:

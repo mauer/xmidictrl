@@ -79,8 +79,8 @@ const char* const KEY_PITCH_BEND = "PITCH";
 const char* const KEY_PROGRAM_CHANGE = "PRG";
 
 // Custom commands
-const char* const COMMAND_LOG_WINDOW = "LOG_WINDOW";
-const char* const COMMAND_MESSAGE_WINDOW = "MESSAGES_WINDOW";
+const char* const COMMAND_LOG_VIEWER = "LOG_VIEWER";
+const char* const COMMAND_MIDI_WATCHER = "MIDI_WATCHER";
 const char* const COMMAND_PROFILE_WINDOW = "PROFILE_WINDOW";
 const char* const COMMAND_RELOAD_PROFILE = "RELOAD_PROFILE";
 const char* const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
@@ -235,10 +235,11 @@ enum class window_position {
 // Window types
 enum class window_type {
     about_window,
-    log_window,
-    messages_window,
     devices_window,
+    log_viewer,
     info_window,
+    midi_watcher,
+
     profile_window,
     settings_window,
 };

@@ -59,6 +59,9 @@ public:
     void set_no(unsigned int in_no);
     unsigned int no() const;
 
+    void set_include_name(std::string_view in_name);
+    std::string_view include_name() const;
+
     [[nodiscard]] unsigned char channel() const;
     [[nodiscard]] map_data_1_type data_1_type() const;
     [[nodiscard]] unsigned char data_1() const;
@@ -99,6 +102,7 @@ private:
     environment& m_env;
 
     unsigned int m_no {0};
+    std::string m_include_name {};
 
     unsigned char m_channel {MIDI_NONE};
 

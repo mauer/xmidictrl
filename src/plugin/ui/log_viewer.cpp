@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "log_window.h"
+#include "log_viewer.h"
 
 // Font Awesome
 #include <IconsFontAwesome6.h>
@@ -32,10 +32,10 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-log_window::log_window(text_logger& in_text_log, environment& in_env)
+log_viewer::log_viewer(text_logger& in_text_log, environment& in_env)
     : imgui_window(in_text_log, in_env, 1400, 700)
 {
-    set_title(std::string(XMIDICTRL_NAME) + " - Log Messages");
+    set_title(std::string(XMIDICTRL_NAME) + " - Log Viewer");
 
     m_log_msg_flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_DefaultSort;
     if (env().settings().default_text_sort() == sort_mode::ascending)
@@ -54,7 +54,7 @@ log_window::log_window(text_logger& in_text_log, environment& in_env)
 /**
  * Create widgets
  */
-void log_window::create_widgets()
+void log_viewer::create_widgets()
 {
     ImGui::Text("Debug Mode:");
     ImGui::SameLine(150);
@@ -118,7 +118,7 @@ void log_window::create_widgets()
 /**
  * Add a log message to the table
  */
-void log_window::add_log_row(text_log_msg* in_msg)
+void log_viewer::add_log_row(text_log_msg* in_msg)
 {
     ImGui::TableNextRow();
 

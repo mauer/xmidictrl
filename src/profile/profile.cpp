@@ -557,7 +557,7 @@ void profile::add_mappings_from_include(const std::shared_ptr<device>& in_device
             continue;
 
         // let's read all the mappings
-        create_device_mappings(inc_file, in_device);
+        create_device_mappings(inc_file, in_device, inc_name);
 
         m_profile_log->debug("Device " + std::to_string(in_device->settings().device_no)
                              + " ::  Finished adding mappings from include file '" + inc_name + "'");
@@ -568,18 +568,21 @@ void profile::add_mappings_from_include(const std::shared_ptr<device>& in_device
 /**
  * Create mappings for the device
  */
-void profile::create_device_mappings(toml::value in_params, const std::shared_ptr<device>& in_device)
+void profile::create_device_mappings(toml::value in_params,
+                                     const std::shared_ptr<device>& in_device,
+                                     std::string_view in_inc_name)
 {
     // create init mappings
     if (in_device->type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_INIT))
         create_init_mapping(in_params[CFG_KEY_MAPPING_INIT].as_array(),
-                            std::static_pointer_cast<midi_device>(in_device));
+                            std::static_pointer_cast<midi_device>(in_device),
+                            in_inc_name);
     else
         m_profile_log->info(get_log_prefix_from_device(in_device) + "No init mappings found");
 
     // create inbound mappings
     if (in_params.contains(CFG_KEY_MAPPING_IN))
-        create_inbound_mapping(in_params[CFG_KEY_MAPPING_IN].as_array(), in_device);
+        create_inbound_mapping(in_params[CFG_KEY_MAPPING_IN].as_array(), in_device, in_inc_name);
     else
         m_profile_log->info(get_log_prefix_from_device(in_device) + "No inbound mappings found");
 
@@ -587,7 +590,8 @@ void profile::create_device_mappings(toml::value in_params, const std::shared_pt
     // create outbound mappings
     if (in_device->type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_OUT))
         create_outbound_mapping(in_params[CFG_KEY_MAPPING_OUT].as_array(),
-                                std::static_pointer_cast<midi_device>(in_device));
+                                std::static_pointer_cast<midi_device>(in_device),
+                                in_inc_name);
     else
         m_profile_log->info(get_log_prefix_from_device(in_device) + "No outbound mappings found");
 }
@@ -597,7 +601,8 @@ void profile::create_device_mappings(toml::value in_params, const std::shared_pt
  * Create the init mapping for a device and store it
  */
 void profile::create_init_mapping(toml::array in_settings,
-                                  const std::shared_ptr<midi_device>& in_device)
+                                  const std::shared_ptr<midi_device>& in_device,
+                                  std::string_view in_inc_name)
 {
     auto dev_no = std::to_string(in_device->settings().device_no);
 
@@ -608,15 +613,15 @@ void profile::create_init_mapping(toml::array in_settings,
     for (int map_no = 0; map_no < static_cast<int>(in_settings.size()); map_no++) {
         std::shared_ptr<map_init> mapping;
 
-        m_profile_log->debug(
-            "Device " + dev_no + " :: Mapping " + std::to_string(map_no)
-            + " :: Reading config");
+        m_profile_log->debug("Device " + dev_no + " :: Mapping " + std::to_string(map_no)
+                             + " :: Reading config");
 
         try {
             mapping = std::make_shared<map_init>(m_env);
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no]);
+            mapping->set_include_name(in_inc_name);
 
             if (mapping->check(*m_profile_log)) {
                 in_device->add_init_map(mapping);
@@ -638,7 +643,9 @@ void profile::create_init_mapping(toml::array in_settings,
 /**
  * Create the inbound mapping for a device and store it
  */
-void profile::create_inbound_mapping(toml::array in_settings, const std::shared_ptr<device>& in_device)
+void profile::create_inbound_mapping(toml::array in_settings,
+                                     const std::shared_ptr<device>& in_device,
+                                     std::string_view in_inc_name)
 {
     auto log_prefix = get_log_prefix_from_device(in_device);
 
@@ -701,6 +708,7 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_settings[map_no], m_config);
+            mapping->set_include_name(in_inc_name);
 
             if (mapping->check(*m_profile_log)) {
                 in_device->add_inbound_map(mapping);
@@ -723,7 +731,9 @@ void profile::create_inbound_mapping(toml::array in_settings, const std::shared_
 /**
  * Create the outbound mapping for a device and store it
  */
-void profile::create_outbound_mapping(toml::array in_params, const std::shared_ptr<midi_device>& in_device)
+void profile::create_outbound_mapping(toml::array in_params,
+                                      const std::shared_ptr<midi_device>& in_device,
+                                      std::string_view in_inc_name)
 {
     auto log_prefix = get_log_prefix_from_device(in_device);
 
@@ -765,6 +775,7 @@ void profile::create_outbound_mapping(toml::array in_params, const std::shared_p
 
             // read the settings and check if everything we need was defined
             mapping->read_config(*m_profile_log, in_params[map_no]);
+            mapping->set_include_name(in_inc_name);
 
             if (mapping->check(*m_profile_log)) {
                 in_device->add_outbound_map(mapping);

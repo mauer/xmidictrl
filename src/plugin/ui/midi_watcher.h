@@ -14,9 +14,8 @@
 //   You should have received a copy of the GNU Affero General Public License along with XMidiCtrl.
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
-
-#ifndef XMC_LOG_WINDOW_H
-#define XMC_LOG_WINDOW_H
+#ifndef XMC_MIDI_WATCHER_H
+#define XMC_MIDI_WATCHER_H
 
 // Standard
 #include <memory>
@@ -31,22 +30,26 @@
 
 namespace xmidictrl {
 
-class log_window : public imgui_window {
+class midi_watcher : public imgui_window {
 public:
-    log_window(text_logger& in_text_log, environment& in_env);
-    ~log_window() = default;
+    midi_watcher(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env);
+    ~midi_watcher() = default;
 
 protected:
     void create_widgets() override;
 
 private:
-    void add_log_row(text_log_msg* in_msg);
+    void add_midi_row(midi_message* in_msg);
 
-    sort_mode m_log_sort_mode {sort_mode::ascending};
+    static void draw_icon(const char* in_icon, std::string_view in_text = {});
 
-    ImGuiTableColumnFlags m_log_msg_flags;
+    sort_mode m_midi_sort_mode {sort_mode::ascending};
+
+    ImGuiTableColumnFlags m_midi_msg_flags;
+
+    midi_logger& m_midi_log;
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_LOG_WINDOW_H
+#endif // XMC_MIDI_WATCHER_H

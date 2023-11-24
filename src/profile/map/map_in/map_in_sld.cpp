@@ -18,6 +18,7 @@
 #include "map_in_sld.h"
 
 // XMidiCtrl
+#include "conversions.h"
 #include "toml_utils.h"
 
 namespace xmidictrl {
@@ -199,6 +200,45 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
 }
 
 
+/**
+ * Return mapped command
+ */
+std::string map_in_sld::map_text_cmd_drf()
+{
+    std::string map_str {};
+
+    if (!m_dataref.empty()) {
+        map_str.append(m_dataref);
+    } else {
+        map_str.append(m_command_up + " (up)");
+
+        if (!m_command_middle.empty())
+            map_str.append("\n" + m_command_middle + " (middle)");
+
+        map_str.append("\n" + m_command_down + " (down)");
+    }
+
+    return map_str;
+}
+
+
+/**
+ * Return mapped parameter
+ */
+std::string map_in_sld::map_text_parameter()
+{
+    std::string map_str {};
+
+    if (!m_dataref.empty()) {
+        map_str.append("Value min = " + conversions::float_to_string(m_value_min));
+        map_str.append("   |   ");
+        map_str.append("Value max = " + conversions::float_to_string(m_value_max));
+    }
+
+    return map_str;
+}
+
+
 
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -220,8 +260,8 @@ std::string map_in_sld::build_mapping_text(bool in_short)
 
     if (!m_dataref.empty()) {
         map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
-        map_str.append("Value min = " + std::to_string(m_value_min) + sep_str);
-        map_str.append("Value max = " + std::to_string(m_value_max));
+        map_str.append("Value min = " + conversions::float_to_string(m_value_min) + sep_str);
+        map_str.append("Value max = " + conversions::float_to_string(m_value_max));
     } else {
         if (!m_command_middle.empty())
             map_str.append("Command down = '" + m_command_down + "'" + sep_str

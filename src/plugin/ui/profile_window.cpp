@@ -36,7 +36,7 @@ namespace xmidictrl {
  * Constructor
  */
 profile_window::profile_window(text_logger& in_log, environment& in_env, profile& in_profile)
-    : imgui_window(in_log, in_env, 1200, 750),
+    : imgui_window(in_log, in_env, 1600, 750),
       m_profile(in_profile)
 {
     set_title(std::string(XMIDICTRL_NAME) + " - Aircraft Profile");
@@ -56,8 +56,8 @@ void profile_window::create_widgets()
 {
     if (ImGui::BeginTabBar("PROFILE_TAB")) {
         create_tab_general();
-        create_tab_devices();
         create_tab_errors_warnings();
+        create_tab_devices();
 
         ImGui::EndTabBar();
     }
@@ -87,19 +87,19 @@ void profile_window::create_tab_general()
         ImGui::NewLine();
 
         ImGui::Text("ICAO:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", env().current_aircraft_icao().c_str());
 
         ImGui::Text("Description:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", env().current_aircraft_descr().c_str());
 
         ImGui::Text("Author:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", env().current_aircraft_author().c_str());
 
         ImGui::Text("ACF Filename:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", env().current_aircraft_acf_name().c_str());
 
         ImGui::NewLine();
@@ -110,15 +110,15 @@ void profile_window::create_tab_general()
         ImGui::NewLine();
 
         ImGui::Text("Title:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.title().data());
 
         ImGui::Text("Version:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.version().data());
 
         ImGui::Text("Filename:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
 
         if (m_profile.filename().empty())
             ImGui::TextColored(value_color(), "<not loaded>");
@@ -133,15 +133,15 @@ void profile_window::create_tab_general()
         ImGui::NewLine();
 
         ImGui::Text("Without prefix:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::none).data());
 
         ImGui::Text("ICAO:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_aircraft_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
@@ -152,17 +152,17 @@ void profile_window::create_tab_general()
         ImGui::NewLine();
 
         ImGui::Text("ICAO:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::icao).data());
 
         ImGui::Text("ACF Name:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::acf_name).data());
 
         ImGui::NewLine();
 
         ImGui::Text("Common Profile:");
-        ImGui::SameLine(150);
+        ImGui::SameLine(180);
         ImGui::TextColored(value_color(), "%s", m_profile.get_filename_profiles_path(filename_prefix::none).data());
 
         ImGui::EndTabItem();
@@ -195,8 +195,6 @@ void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
 
     if (ImGui::BeginTabItem(tab_title.data())) {
         create_title("SETTINGS");
-
-        // TODO: Make three columns instead of two
 
         if (in_device->type() == device_type::midi_device) {
             ImGui::Text("Inbound Port:");
@@ -250,19 +248,79 @@ void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
                 ImGui::TextColored(value_color(), "On change");
         }
 
-        // Include files
-        // TODO
-
-        // Add mappings
         ImGui::NewLine();
 
+        // Add mappings
         create_title("MAPPINGS", false);
 
-        if (ImGui::BeginTable("mappings", 1, ImGuiTableFlags_ScrollY)) {
+        // Button for init
+        if (m_current_map_page == map_page::init) {
+            ImGui::PushID(1);
+            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("INIT", ImVec2(400, 0)))
+            m_current_map_page = map_page::init;
+
+        if (m_current_map_page == map_page::init) {
+            ImGui::PopID();
+            ImGui::PopStyleColor();
+        }
+
+        // Button for inbound
+        if (m_current_map_page == map_page::inbound) {
+            ImGui::PushID(1);
+            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("INBOUND", ImVec2(400, 0)))
+            m_current_map_page = map_page::inbound;
+
+        if (m_current_map_page == map_page::inbound) {
+            ImGui::PopID();
+            ImGui::PopStyleColor();
+        }
+
+        // Button for outbound
+        if (m_current_map_page == map_page::outbound) {
+            ImGui::PushID(1);
+            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("OUTBOUND", ImVec2(400, 0)))
+            m_current_map_page = map_page::outbound;
+
+        if (m_current_map_page == map_page::outbound) {
+            ImGui::PopID();
+            ImGui::PopStyleColor();
+        }
+
+        switch (m_current_map_page) {
+            case map_page::init:
+                create_table_mapping_init(in_device);
+                break;
+
+            case map_page::inbound:
+                create_table_mapping_in(in_device);
+                break;
+
+            case map_page::outbound:
+                create_table_mapping_out(in_device);
+                break;
+        }
+
+        /*if (ImGui::BeginTable("mappings", 1, ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("column-mappings");
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
+
+            create_table_mapping_init(in_device);
+            create_table_mapping_in(in_device);
+            create_table_mapping_out(in_device);
 
             // Init mappings
             if (in_device->type() == device_type::midi_device)
@@ -274,9 +332,10 @@ void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
             // Outbound mappings
             if (in_device->type() == device_type::midi_device)
                 create_table_mapping_out(in_device);
+            */
 
-            ImGui::EndTable();
-        }
+        //ImGui::EndTable();
+        //}
 
         ImGui::EndTabItem();
     }
@@ -375,42 +434,39 @@ void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in
 
     auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
 
-    if (midi_dev->mapping_init().size() == 0)
-        return;
+    if (ImGui::BeginTable("mapping_init",
+                          5,
+                          ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+        ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+        ImGui::TableSetupColumn("Include", ImGuiTableColumnFlags_WidthFixed, 120);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 2");
 
-    if (ImGui::CollapsingHeader("Init Mappings")) {
-        ImVec2 height = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 9);
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableHeadersRow();
 
-        if (ImGui::BeginTable("mapping_init",
-                              4,
-                              ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY,
-                              height)) {
-            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Data 2");
+        for (const auto& mapping: midi_dev->mapping_init()) {
+            ImGui::TableNextRow();
 
-            ImGui::TableSetupScrollFreeze(0, 1);
-            ImGui::TableHeadersRow();
+            ImGui::TableNextColumn();
+            // "%03i"
+            ImGui::Text("%i", mapping->no());
 
-            for (const auto& mapping: midi_dev->mapping_init()) {
-                ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->include_name().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%03i", mapping->no());
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping->channel());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%i", mapping->channel());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->data_1_as_string().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping->data_1_as_string().data());
-
-                ImGui::TableNextColumn();
-                ImGui::Text("%i", mapping->data_2());
-            }
-
-            ImGui::EndTable();
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping->data_2());
         }
+
+        ImGui::EndTable();
     }
 }
 
@@ -420,50 +476,55 @@ void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in
  */
 void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_device)
 {
-    if (in_device->mapping_in().size() == 0)
-        return;
+    // TODO: Show Sublayer and Include when active, only
+    if (ImGui::BeginTable("mapping_in",
+                          9,
+                          ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+        ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+        ImGui::TableSetupColumn("Include", ImGuiTableColumnFlags_WidthFixed, 120);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100);
+        ImGui::TableSetupColumn("Command / Dataref", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Parameter", ImGuiTableColumnFlags_WidthStretch);
 
-    if (ImGui::CollapsingHeader("Inbound Mappings")) {
-        if (ImGui::BeginTable("mapping_in",
-                              7,ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
-            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100);
-            ImGui::TableSetupColumn("Mapping");
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableHeadersRow();
 
-            ImGui::TableSetupScrollFreeze(0, 1);
-            ImGui::TableHeadersRow();
+        for (const auto& mapping: in_device->mapping_in()) {
+            ImGui::TableNextRow();
 
-            for (const auto& mapping: in_device->mapping_in()) {
-                ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping.second->no());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%03i", mapping.second->no());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->include_name().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%i", mapping.second->channel());
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping.second->channel());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->data_1_as_string().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->data_1_as_string().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->sl().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->sl().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->labels().id.data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->labels().id.data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->type_as_string().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->type_as_string().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->map_text(true).data());
-            }
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->map_text_cmd_drf().data());
 
-            ImGui::EndTable();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping.second->map_text_parameter().data());
         }
+
+        ImGui::EndTable();
     }
 }
 
@@ -479,50 +540,50 @@ void profile_window::create_table_mapping_out(const std::shared_ptr<device>& in_
 
     auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
 
-    if (midi_dev->mapping_out().size() == 0)
-        return;
+    if (ImGui::BeginTable("mapping_out",
+                          8,
+                          ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+        ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
+        ImGui::TableSetupColumn("Include", ImGuiTableColumnFlags_WidthFixed, 120);
+        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("Dataref", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("Parameter", ImGuiTableColumnFlags_WidthStretch);
 
-    if (ImGui::CollapsingHeader("Outbound Mappings")) {
-        ImVec2 height = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 9);
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableHeadersRow();
 
-        if (ImGui::BeginTable("mapping_out",
-                              6,
-                              ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY,
-                              height)) {
-            ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 80);
-            ImGui::TableSetupColumn("Mapping");
+        for (const auto& mapping: midi_dev->mapping_out()) {
+            ImGui::TableNextRow();
 
-            ImGui::TableSetupScrollFreeze(0, 1);
-            ImGui::TableHeadersRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping->no());
 
-            for (const auto& mapping: midi_dev->mapping_out()) {
-                ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->include_name().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%03i", mapping->no());
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", mapping->channel());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%i", mapping->channel());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->data_1_as_string().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping->data_1_as_string().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->sl().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping->sl().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->type_as_string().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping->type_as_string().data());
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->map_text_drf().data());
 
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping->map_text(true).data());
-            }
-
-            ImGui::EndTable();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", mapping->map_text_parameter().data());
         }
+
+        ImGui::EndTable();
     }
 }
 
