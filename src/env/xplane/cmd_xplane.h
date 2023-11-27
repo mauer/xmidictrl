@@ -35,7 +35,7 @@ namespace xmidictrl {
 class cmd_xplane : public commands {
 public:
     cmd_xplane() = default;
-    ~cmd_xplane() = default;
+    ~cmd_xplane() override = default;
 
     void begin(text_logger &in_log, std::string_view in_cmd) override;
     void end(text_logger &in_log, std::string_view in_cmd) override;

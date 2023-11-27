@@ -67,9 +67,9 @@ public:
                  bool in_translucent = false);
     ~imgui_window() override;
 
-    ImVec4 text_color();
-    ImVec4 value_color();
-    ImVec4 title_color();
+    static ImVec4 text_color();
+    static ImVec4 value_color();
+    static ImVec4 title_color();
 
 protected:
     void on_draw() override;

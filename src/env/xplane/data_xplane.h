@@ -37,12 +37,12 @@ namespace xmidictrl {
 class data_xplane : public data {
 public:
     data_xplane() = default;
-    ~data_xplane() = default;
+    ~data_xplane() override = default;
 
-    bool check(std::string_view in_name);
+    bool check(std::string_view in_name) override;
 
-    bool read(text_logger &in_log, std::string_view in_name, std::string &out_value);
-    bool read(text_logger &in_log, std::string_view in_name, float &out_value);
+    bool read(text_logger &in_log, std::string_view in_name, std::string &out_value) override;
+    bool read(text_logger &in_log, std::string_view in_name, float &out_value) override;
     bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values);
     bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values);
 

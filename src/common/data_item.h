@@ -27,11 +27,11 @@
 namespace xmidictrl {
 
 struct data_item {
-    std::string name;
-    XPLMDataRef dataref;
-    XPLMDataTypeID type;
-    std::size_t size;
-    bool writeable;
+    std::string name {};
+    XPLMDataRef dataref {};
+    XPLMDataTypeID type {};
+    std::size_t size {};
+    bool writeable {false};
 };
 
 } // Namespace xmidictrl

@@ -34,7 +34,7 @@ namespace xmidictrl {
 class log_viewer : public imgui_window {
 public:
     log_viewer(text_logger& in_text_log, environment& in_env);
-    ~log_viewer() = default;
+    ~log_viewer() override = default;
 
 protected:
     void create_widgets() override;

@@ -66,27 +66,27 @@ public:
 
     ImFont *AddFont(const ImFontConfig *font_cfg);
 
-    ImFont *AddFontDefault(const ImFontConfig *font_cfg = NULL);
+    ImFont *AddFontDefault(const ImFontConfig *font_cfg = nullptr);
 
     ImFont *AddFontFromFileTTF(const char *filename,
                                float size_pixels,
-                               const ImFontConfig *font_cfg = NULL,
-                               const unsigned short *glyph_ranges = NULL);
+                               const ImFontConfig *font_cfg = nullptr,
+                               const unsigned short *glyph_ranges = nullptr);
 
     ImFont *AddFontFromMemoryTTF(void *font_data,
                                  int font_size,
                                  float size_pixels,
-                                 const ImFontConfig *font_cfg = NULL,
-                                 const unsigned short *glyph_ranges = NULL); // Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=false to keep ownership of your data and it won't be freed.
+                                 const ImFontConfig *font_cfg = nullptr,
+                                 const unsigned short *glyph_ranges = nullptr); // Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=false to keep ownership of your data and it won't be freed.
     ImFont *AddFontFromMemoryCompressedTTF(const void *compressed_font_data,
                                            int compressed_font_size,
                                            float size_pixels,
-                                           const ImFontConfig *font_cfg = NULL,
-                                           const unsigned short *glyph_ranges = NULL); // 'compressed_font_data' still owned by caller. Compress with binary_to_compressed_c.cpp.
+                                           const ImFontConfig *font_cfg = nullptr,
+                                           const unsigned short *glyph_ranges = nullptr); // 'compressed_font_data' still owned by caller. Compress with binary_to_compressed_c.cpp.
     ImFont *AddFontFromMemoryCompressedBase85TTF(const char *compressed_font_data_base85,
                                                  float size_pixels,
-                                                 const ImFontConfig *font_cfg = NULL,
-                                                 const unsigned short *glyph_ranges = NULL);              // 'compressed_font_data_base85' still owned by caller. Compress with binary_to_compressed_c.cpp with -base85 parameter.
+                                                 const ImFontConfig *font_cfg = nullptr,
+                                                 const unsigned short *glyph_ranges = nullptr);              // 'compressed_font_data_base85' still owned by caller. Compress with binary_to_compressed_c.cpp with -base85 parameter.
 
     /** bindTexture creates and binds the font texture to OpenGL, ready for use.
      *

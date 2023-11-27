@@ -33,7 +33,7 @@ namespace xmidictrl {
 class midi_watcher : public imgui_window {
 public:
     midi_watcher(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env);
-    ~midi_watcher() = default;
+    ~midi_watcher() override = default;
 
 protected:
     void create_widgets() override;

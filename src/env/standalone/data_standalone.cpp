@@ -26,7 +26,7 @@ namespace xmidictrl {
 /**
  * Check if a dataref is valid
  */
-bool data_standalone::check(std::string_view in_name)
+bool data_standalone::check(std::string_view)
 {
     return true;
 }

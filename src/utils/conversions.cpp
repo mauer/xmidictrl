@@ -66,6 +66,8 @@ std::string conversions::map_out_type_to_str(map_out_type in_type)
         case map_out_type::none:
             return {};
     }
+
+    return {};
 }
 
 
@@ -88,6 +90,8 @@ std::string conversions::map_in_type_to_str(map_in_type in_type)
         case map_in_type::none:
             return {};
     }
+
+    return {};
 }
 
 

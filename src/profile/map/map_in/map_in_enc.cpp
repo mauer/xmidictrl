@@ -18,7 +18,6 @@
 #include "map_in_enc.h"
 
 // XMidiCtrl
-#include "device.h"
 #include "toml_utils.h"
 #include "conversions.h"
 

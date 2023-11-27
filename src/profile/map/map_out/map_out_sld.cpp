@@ -17,9 +17,6 @@
 
 #include "map_out_sld.h"
 
-// Standard
-#include <utility>
-
 // XMidiCtrl
 #include "toml_utils.h"
 

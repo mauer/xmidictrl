@@ -17,9 +17,6 @@
 
 #include "map_init_list.h"
 
-// XMidiCtrl
-#include "conversions.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
