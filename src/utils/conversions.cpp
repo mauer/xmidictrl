@@ -52,6 +52,46 @@ encoder_mode conversions::encoder_mode_from_code(std::string_view in_mode)
 
 
 /**
+ * Convert the outbound mapping type to a string
+ */
+std::string conversions::map_out_type_to_str(map_out_type in_type)
+{
+    switch (in_type) {
+        case map_out_type::dataref:
+            return "Dataref";
+        case map_out_type::constant:
+            return "Constant";
+        case map_out_type::slider:
+            return "Slider";
+        case map_out_type::none:
+            return {};
+    }
+}
+
+
+/**
+ * Convert the inbound mapping type to a string
+ */
+std::string conversions::map_in_type_to_str(map_in_type in_type)
+{
+    switch (in_type) {
+        case map_in_type::command:
+            return "Command";
+        case map_in_type::dataref:
+            return "Dataref";
+        case map_in_type::encoder:
+            return "Encoder";
+        case map_in_type::push_pull:
+            return "Push&Pull";
+        case map_in_type::slider:
+            return "Slider";
+        case map_in_type::none:
+            return {};
+    }
+}
+
+
+/**
  * Convert a time point into a string
  */
 std::string conversions::time_to_string(time_point in_time)
@@ -96,7 +136,9 @@ std::string conversions::float_to_string(float in_number, unsigned int in_precis
 /**
  * Create a unique key for mappings
  */
-std::string conversions::create_map_key(const unsigned char in_ch, std::string_view in_type_code, const unsigned char in_data)
+std::string conversions::create_map_key(const unsigned char in_ch,
+                                        std::string_view in_type_code,
+                                        const unsigned char in_data)
 {
     std::stringstream ss;
     ss << static_cast<int>(in_ch) << in_type_code << static_cast<int>(in_data);

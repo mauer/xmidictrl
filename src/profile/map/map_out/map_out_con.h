@@ -43,7 +43,6 @@ public:
     ~map_out_con() override = default;
 
     map_out_type type() override;
-    std::string type_as_string() override;
 
     void set_data_2(int in_data_2);
 

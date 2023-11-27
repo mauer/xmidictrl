@@ -55,7 +55,6 @@ public:
     ~map_out() override = default;
 
     virtual map_out_type type();
-    virtual std::string type_as_string();
 
     virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
 

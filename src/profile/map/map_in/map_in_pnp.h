@@ -49,7 +49,6 @@ public:
     ~map_in_pnp() override = default;
 
     map_in_type type() override;
-    std::string type_as_string() override;
 
     void set_time_received();
     void set_time_released();

@@ -46,13 +46,4 @@ map_out_type map_out::type()
     return map_out_type::none;
 }
 
-
-/**
- * Return the mapping type as string
- */
-std::string map_out::type_as_string()
-{
-    return {};
-}
-
 } // Namespace xmidictrl

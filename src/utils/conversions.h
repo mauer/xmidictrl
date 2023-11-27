@@ -27,6 +27,8 @@
 
 // XMidiCtrl
 #include "environment.h"
+#include "map_in.h"
+#include "map_out.h"
 #include "text_logger.h"
 #include "types.h"
 
@@ -36,6 +38,9 @@ class conversions {
 public:
     static dataref_mode dataref_mode_from_code(std::string_view in_mode);
     static encoder_mode encoder_mode_from_code(std::string_view in_mode);
+
+    static std::string map_out_type_to_str(map_out_type in_type);
+    static std::string map_in_type_to_str(map_in_type in_type);
 
     static std::string time_to_string(time_point in_time);
     static std::string int_to_string(int in_number, unsigned int in_length);

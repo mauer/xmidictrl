@@ -51,15 +51,6 @@ map_out_type map_out_con::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_out_con::type_as_string()
-{
-    return "Constant";
-}
-
-
-/**
  * Set the data 2 value
  */
 void map_out_con::set_data_2(int in_data_2)

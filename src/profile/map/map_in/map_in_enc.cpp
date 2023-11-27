@@ -53,15 +53,6 @@ map_in_type map_in_enc::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_in_enc::type_as_string()
-{
-    return "Encoder";
-}
-
-
-/**
  * Read settings from config
  */
 void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)

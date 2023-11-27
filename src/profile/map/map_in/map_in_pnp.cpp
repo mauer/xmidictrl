@@ -50,15 +50,6 @@ map_in_type map_in_pnp::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_in_pnp::type_as_string()
-{
-    return "Push&Pull";
-}
-
-
-/**
  * Set the time point when the initial message was received
  */
 void map_in_pnp::set_time_received()

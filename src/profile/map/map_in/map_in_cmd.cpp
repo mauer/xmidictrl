@@ -50,15 +50,6 @@ map_in_type map_in_cmd::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_in_cmd::type_as_string()
-{
-    return "Command";
-}
-
-
-/**
  * Return data 2 on
  */
 unsigned int map_in_cmd::data_2_on() const

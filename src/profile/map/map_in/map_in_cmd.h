@@ -44,7 +44,6 @@ public:
     ~map_in_cmd() override = default;
 
     map_in_type type() override;
-    std::string type_as_string() override;
 
     [[nodiscard]] unsigned int data_2_on() const;
     [[nodiscard]] unsigned int data_2_off() const;

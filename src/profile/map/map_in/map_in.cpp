@@ -52,15 +52,6 @@ map_in_type map_in::type()
 }
 
 
-/**
- * Return the mapping type as string
- */
-std::string map_in::type_as_string()
-{
-    return {};
-}
-
-
 /*
  * Return the labels information
  */

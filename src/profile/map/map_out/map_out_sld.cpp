@@ -62,15 +62,6 @@ map_out_type map_out_sld::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_out_sld::type_as_string()
-{
-    return "Slider";
-}
-
-
-/**
  * Set the dataref
  */
 void map_out_sld::set_dataref(std::string_view in_dataref)

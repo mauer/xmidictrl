@@ -68,15 +68,6 @@ map_out_type map_out_drf::type()
 
 
 /**
- * Return the mapping type as string
- */
-std::string map_out_drf::type_as_string()
-{
-    return "Dataref";
-}
-
-
-/**
  * Set single value dataref
  */
 void map_out_drf::set_dataref(std::string_view in_dataref)

@@ -24,6 +24,7 @@
 #include <IconsFontAwesome6.h>
 
 // XMidiCtrl
+#include "conversions.h"
 #include "plugin.h"
 
 namespace xmidictrl {
@@ -515,7 +516,7 @@ void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_d
             ImGui::Text("%s", mapping.second->labels().id.data());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->type_as_string().data());
+            ImGui::Text("%s", conversions::map_in_type_to_str(mapping.second->type()).data());
 
             ImGui::TableNextColumn();
             ImGui::Text("%s", mapping.second->map_text_cmd_drf().data());
@@ -574,7 +575,7 @@ void profile_window::create_table_mapping_out(const std::shared_ptr<device>& in_
             ImGui::Text("%s", mapping->sl().data());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping->type_as_string().data());
+            ImGui::Text("%s", conversions::map_out_type_to_str(mapping->type()).data());
 
             ImGui::TableNextColumn();
             ImGui::Text("%s", mapping->map_text_drf().data());

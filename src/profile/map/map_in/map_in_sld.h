@@ -43,7 +43,6 @@ public:
     ~map_in_sld() override = default;
 
     map_in_type type() override;
-    std::string type_as_string() override;
 
     void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
     bool check(text_logger &in_log) override;

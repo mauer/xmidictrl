@@ -58,7 +58,6 @@ public:
     ~map_in() override = default;
 
     virtual map_in_type type();
-    virtual std::string type_as_string();
 
     label& labels();
 

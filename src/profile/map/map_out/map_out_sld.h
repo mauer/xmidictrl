@@ -43,7 +43,6 @@ public:
     ~map_out_sld() override;
 
     map_out_type type() override;
-    std::string type_as_string() override;
 
     void set_dataref(std::string_view in_dataref);
 
