@@ -2,5 +2,7 @@
  + Allow selection of different ports when loading an aircraft
  + Label push/pull
  + Check all mapping texts, especially pnp
+ + SubLayer for each device
+ + SubLayer for outbound devices
  + Dataref-Array for SubLayer e.g. general array dataref for XMidiCtrl
  + Add filter for log types in windows

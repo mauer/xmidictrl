@@ -1,8 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/Program Files/CMake/share/cmake-3.27/Modules/FindOpenGL.cmake
-C:/Program Files/CMake/share/cmake-3.27/Modules/FindPackageHandleStandardArgs.cmake
-C:/Program Files/CMake/share/cmake-3.27/Modules/FindPackageMessage.cmake
-C:/Users/marco/Projects/xmidictrl/lib/CMakeLists.txt
-C:/Users/marco/Projects/xmidictrl/lib/fonts.cmake
-C:/Users/marco/Projects/xmidictrl/lib/imgui.cmake
-C:/Users/marco/Projects/xmidictrl/lib/xpsdk.cmake
