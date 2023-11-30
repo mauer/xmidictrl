@@ -55,7 +55,7 @@ void text_logger::enable_file_logging(const std::filesystem::path& in_path)
 
         m_file_stream.open(filename, std::ios_base::out | std::ios_base::trunc);
         if (!m_file_stream.is_open())
-            error("Failed to open log file '" + filename + "'");
+            error(fmt::format("Failed to open log file '{}'", filename));
     } else {
         error("Cannot open log file as the give file path is empty");
     }
@@ -209,9 +209,7 @@ void text_logger::debug(std::string_view in_text)
  */
 void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    std::string debug_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
-
-    debug(debug_text);
+    debug(fmt::format(" --> Line {} :: {}", in_line, in_text));
 }
 
 
@@ -220,7 +218,7 @@ void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_te
  */
 void text_logger::debug_param(std::uint_least32_t in_line, std::string_view in_param, std::string_view in_value)
 {
-    debug_line(in_line, "Parameter '" + std::string(in_param) + "' = '" + std::string(in_value) + "'");
+    debug_line(in_line, fmt::format("Parameter '{}' = '{}'", in_param, in_value));
 }
 
 
@@ -253,10 +251,7 @@ void text_logger::warn(std::string_view in_text)
  */
 void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    //std::string warn_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
-    std::string warn_text = fmt::format(" --> Line {} :: {}", in_line, in_text);
-
-    warn(warn_text);
+    warn(fmt::format(" --> Line {} :: {}", in_line, in_text));
 }
 
 
@@ -277,7 +272,7 @@ void text_logger::error(std::string_view in_text)
  */
 void text_logger::error_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    std::string debug_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
+    std::string debug_text = fmt::format(" --> Line {} :: {}", in_line, in_text);
 
     create_message(log_level::error, debug_text);
 

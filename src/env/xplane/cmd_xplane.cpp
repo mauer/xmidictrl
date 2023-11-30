@@ -17,6 +17,9 @@
 
 #include "cmd_xplane.h"
 
+// fmt
+#include "fmt/format.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -81,7 +84,7 @@ XPLMCommandRef cmd_xplane::find_command_ref(text_logger &in_log, std::string_vie
     }
 
     if (cmd_ref == nullptr)
-        in_log.error("Command '" + std::string(in_cmd) + "' not found");
+        in_log.error(fmt::format("Command '{}' not found", in_cmd));
 
     return cmd_ref;
 }

@@ -17,6 +17,9 @@
 
 #include "midi_message.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "conversions.h"
 
@@ -130,7 +133,7 @@ bool midi_message::check()
             return false;
 
         case midi_msg_type::none:
-            m_log->error("Could not determine MIDI type from Status '" + std::to_string(m_status) + "'");
+            m_log->error(fmt::format("Could not determine MIDI type from Status '{}'", m_status));
             return false;
 
         default:
