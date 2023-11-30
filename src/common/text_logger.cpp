@@ -21,6 +21,9 @@
 #include <mutex>
 #include <vector>
 
+// fmt
+#include "fmt/format.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -251,7 +254,7 @@ void text_logger::warn(std::string_view in_text)
 void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_text)
 {
     //std::string warn_text = " --> Line " + std::to_string(in_line) + " :: " + std::string(in_text);
-    std::string warn_text = std::format(" --> Line {} :: {}", in_line, in_text);
+    std::string warn_text = fmt::format(" --> Line {} :: {}", in_line, in_text);
 
     warn(warn_text);
 }

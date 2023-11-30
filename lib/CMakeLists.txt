@@ -19,6 +19,10 @@
 message("-- Configuring build scripts for toml11")
 add_subdirectory(toml11)
 
+# Add fmt for string formatting
+message("-- Configuring build scripts for fmt")
+add_subdirectory(fmt)
+
 # Teach MinGW std::threads
 if (MINGW)
     message("-- Configuring build scripts for mingw-std-threads")
