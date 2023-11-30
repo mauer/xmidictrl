@@ -24,6 +24,7 @@
 #include <vector>
 
 // XMidiCtrl
+#include "device_settings.h"
 #include "map_in.h"
 
 namespace xmidictrl {
@@ -37,7 +38,14 @@ public:
     explicit map_in_list() = default;
     ~map_in_list();
 
-    void add(const std::shared_ptr<map_in>& in_map);
+    void create_mappings(text_logger& in_log,
+                         toml::array in_profile,
+                         environment& in_env,
+                         bool in_is_virtual,
+                         device_settings& in_dev_settings,
+                         std::string_view in_inc_name,
+                         toml::value& in_config);
+
     std::vector<std::shared_ptr<map_in>> find(const std::string &in_key);
 
     size_t size();
@@ -46,6 +54,15 @@ public:
     std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator end();
 
 private:
+    map_in_type read_map_type(text_logger& in_log, toml::value& in_params);
+    map_in_type translate_map_type(std::string_view in_type_str);
+
+    void add(const std::shared_ptr<map_in>& in_map);
+
+    // constants
+    static constexpr std::string_view c_cfg_type {"type"};
+
+    // members
     unsigned int m_last_map_no {0};
 
     std::multimap<std::string, std::shared_ptr<map_in>> m_list_key {};

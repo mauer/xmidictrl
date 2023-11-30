@@ -32,11 +32,12 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings)
+device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings)
     : m_text_log(in_text_log),
       m_midi_log(in_midi_log),
       m_settings(std::move(in_settings))
 {
+    m_map_in = std::make_unique<map_in_list>();
 }
 
 
@@ -60,7 +61,7 @@ device_settings& device::settings()
  */
 map_in_list& device::mapping_in()
 {
-    return m_map_in;
+    return *m_map_in;
 }
 
 
@@ -79,15 +80,6 @@ std::string device::sl_value() const
 void device::set_sl_value(std::string_view in_sl_value)
 {
     m_sl_value = in_sl_value;
-}
-
-
-/**
- * Add a new inbound mapping to the device
- */
-void device::add_inbound_map(std::shared_ptr<map_in>& in_mapping)
-{
-    m_map_in.add(in_mapping);
 }
 
 

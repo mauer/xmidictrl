@@ -59,7 +59,7 @@ namespace xmidictrl {
 
 class midi_device : public device {
 public:
-    midi_device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings);
+    midi_device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings);
     ~midi_device() override;
 
     // no copying or copy assignments are allowed
@@ -71,8 +71,8 @@ public:
     map_init_list& mapping_init();
     map_out_list& mapping_out();
 
-    void add_init_map(std::shared_ptr<map_init>& in_mapping);
-    void add_outbound_map(std::shared_ptr<map_out>& in_mapping);
+    //void add_init_map(std::shared_ptr<map_init>& in_mapping);
+    //void add_outbound_map(std::shared_ptr<map_out>& in_mapping);
 
     bool open_connections();
     void close_connections();
@@ -96,9 +96,8 @@ private:
 
     time_point m_time_sent {time_point::min()};
 
-    // TODO: unique pointer
-    map_init_list m_map_init;
-    map_out_list m_map_out;
+    std::unique_ptr<map_init_list> m_map_init;
+    std::unique_ptr<map_out_list> m_map_out;
 
     std::unique_ptr<RtMidiIn> m_midi_in;
     std::unique_ptr<RtMidiOut> m_midi_out;

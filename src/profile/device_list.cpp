@@ -44,35 +44,31 @@ device_list::~device_list()
 /**
  * Create a new midi device
  */
-std::shared_ptr<midi_device> device_list::create_midi_device(text_logger& in_text_log,
-                                                             midi_logger& in_midi_log,
-                                                             const std::shared_ptr<device_settings>& in_settings)
+device* device_list::create_midi_device(text_logger& in_text_log,
+                                             midi_logger& in_midi_log,
+                                             std::unique_ptr<device_settings> in_settings)
 {
-    auto dev = std::make_shared<midi_device>(in_text_log, in_midi_log, in_settings);
-    m_device_list.push_back(dev);
-
-    return dev;
+    auto dev = std::make_unique<midi_device>(in_text_log, in_midi_log, std::move(in_settings));
+    return m_device_list.emplace_back(std::move(dev)).get();
 }
 
 
 /**
  * Create a new virtual device
  */
-std::shared_ptr<virtual_device> device_list::create_virtual_device(text_logger& in_text_log,
-                                                                   midi_logger& in_midi_log,
-                                                                   const std::shared_ptr<device_settings>& in_settings)
+device* device_list::create_virtual_device(text_logger& in_text_log,
+                                                   midi_logger& in_midi_log,
+                                                   std::unique_ptr<device_settings> in_settings)
 {
-    auto dev = std::make_shared<virtual_device>(in_text_log, in_midi_log, in_settings);
-    m_device_list.push_back(dev);
-
-    return dev;
+    auto dev = std::make_unique<virtual_device>(in_text_log, in_midi_log, std::move(in_settings));
+    return m_device_list.emplace_back(std::move(dev)).get();
 }
 
 
 /**
  * Return the begin iterator
  */
-std::vector<std::shared_ptr<device>>::iterator device_list::begin()
+std::vector<std::unique_ptr<device>>::iterator device_list::begin()
 {
     return m_device_list.begin();
 }
@@ -81,7 +77,7 @@ std::vector<std::shared_ptr<device>>::iterator device_list::begin()
 /**
  * Return the end iterator
  */
-std::vector<std::shared_ptr<device>>::iterator device_list::end()
+std::vector<std::unique_ptr<device>>::iterator device_list::end()
 {
     return m_device_list.end();
 }
@@ -96,9 +92,9 @@ bool device_list::open_connections()
 
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
-            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+            auto& midi_dev = dynamic_cast<midi_device&>(*device);
 
-            if (!midi_dev->open_connections())
+            if (!midi_dev.open_connections())
                 result = false;
         }
     }
@@ -114,9 +110,9 @@ void device_list::close_connections()
 {
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
-            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+            auto& midi_dev = dynamic_cast<midi_device&>(*device);
 
-            midi_dev->close_connections();
+            midi_dev.close_connections();
         }
     }
 }
@@ -125,16 +121,14 @@ void device_list::close_connections()
 /**
  * Find and return the virtual device (if available, otherwise a nullptr)
  */
-std::shared_ptr<virtual_device> device_list::find_virtual_device()
+virtual_device* device_list::find_virtual_device()
 {
-    std::shared_ptr<virtual_device> virtual_dev {nullptr};
-
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::virtual_device)
-            virtual_dev = std::static_pointer_cast<virtual_device>(device);
+            return &dynamic_cast<virtual_device&>(*device);
     }
 
-    return virtual_dev;
+    return nullptr;
 }
 
 
@@ -161,9 +155,9 @@ void device_list::process_init_mappings()
 {
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
-            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+            auto& midi_dev = dynamic_cast<midi_device&>(*device);
 
-            midi_dev->process_init_mappings();
+            midi_dev.process_init_mappings();
         }
     }
 }
@@ -176,9 +170,9 @@ void device_list::process_outbound_mappings(text_logger& in_log)
 {
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
-            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+            auto& midi_dev = dynamic_cast<midi_device&>(*device);
 
-            midi_dev->process_outbound_mappings(in_log);
+            midi_dev.process_outbound_mappings(in_log);
         }
     }
 }
@@ -191,9 +185,9 @@ void device_list::process_outbound_reset()
 {
     for (auto const& device: m_device_list) {
         if (device != nullptr && device->type() == device_type::midi_device) {
-            auto midi_dev = std::static_pointer_cast<midi_device>(device);
+            auto& midi_dev = dynamic_cast<midi_device&>(*device);
 
-            midi_dev->process_outbound_reset();
+            midi_dev.process_outbound_reset();
         }
     }
 }

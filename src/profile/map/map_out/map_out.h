@@ -65,6 +65,12 @@ public:
 
     virtual std::string map_text_drf() = 0;
     virtual std::string map_text_parameter() = 0;
+
+protected:
+    environment& env();
+
+private:
+    environment& m_env;
 };
 
 } // Namespace xmidictrl

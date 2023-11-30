@@ -29,8 +29,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_init::map_init(environment& in_env)
-    : map(in_env)
+map_init::map_init()
+    : map()
 {
 }
 
@@ -72,18 +72,17 @@ void map_init::read_config(text_logger& in_log, toml::value& in_data)
     read_common_config(in_log, in_data);
 
     // check for depreciated velocity parameter
-    if (toml_utils::contains(in_log, in_data, c_cfg_velocity, false)) {
+    if (toml_utils::contains(in_log, in_data, c_cfg_velocity)) {
         // read velocity
         in_log.warn("File: " + in_data.location().file_name());
         in_log.warn_line(in_data.location().line(), in_data.location().line_str());
         in_log.warn_line(in_data.location().line(), "Parameter '" + std::string(c_cfg_velocity) + "' "
                                                     + "is depreciated and was replaced by parameter '"
                                                     + std::string(c_cfg_data_2) + "'");
-        // TODO new function read_char to check for 0..127
-        set_data_2(toml_utils::read_int(in_log, in_data, c_cfg_velocity, true));
+        set_data_2(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_velocity));
     } else {
         // read data 2
-        set_data_2(toml_utils::read_int(in_log, in_data, c_cfg_data_2, true));
+        set_data_2(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2));
     }
 }
 

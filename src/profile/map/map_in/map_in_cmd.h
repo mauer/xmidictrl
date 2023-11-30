@@ -69,8 +69,8 @@ private:
     // members
     std::string m_command {};
 
-    unsigned int m_data_2_on {MIDI_DATA_2_MAX};
-    unsigned int m_data_2_off {MIDI_DATA_2_MIN};
+    unsigned char m_data_2_on {MIDI_DATA_2_MAX};
+    unsigned char m_data_2_off {MIDI_DATA_2_MIN};
 };
 
 } // Namespace xmidictrl

@@ -59,17 +59,17 @@ void map_in_sld::read_config(text_logger& in_log, toml::value& in_data, toml::va
     map_in::read_config(in_log, in_data, in_config);
 
     // check if dataref was defined
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
         in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for slider mapping");
 
         // read dataref
         m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
 
         // read value min
-        m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false, 0.0f);
+        m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, 0.0f);
 
         // read value max
-        m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false, 1.0f);
+        m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, 1.0f);
     } else {
         in_log.debug_line(in_data.location().line(), "Use 'command' mode for slider mapping");
 
@@ -77,7 +77,7 @@ void map_in_sld::read_config(text_logger& in_log, toml::value& in_data, toml::va
         m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
 
         // read command middle
-        m_command_middle = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_MIDDLE, false);
+        m_command_middle = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_MIDDLE);
 
         // read command down
         m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);

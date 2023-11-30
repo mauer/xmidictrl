@@ -29,15 +29,6 @@ namespace xmidictrl {
 //   CONSTANTS
 //---------------------------------------------------------------------------------------------------------------------
 
-// Colour for values in Dear ImGui
-//#define COL_TEXT_VALUE (ImVec4) ImColor(255, 127, 39)
-
-// Colour for captions in Dear ImGui
-//#define COL_TEXT_CAPTION (ImVec4) ImColor(75, 160, 255)
-//#define COL_TEXT_CAPTION (ImVec4) ImColor(0, 255, 255)
-//#define COL_TEXT_CAPTION2 (ImVec4) ImColor(255, 196, 86)
-//#define COL_TEXT_CAPTION3 (ImVec4) ImColor(98, 151, 85)
-
 // Spacer 2
 #define UI_SPACER_2 "  "
 
@@ -90,8 +81,6 @@ const char* const CFG_KEY_COMMAND_DOWN = "command_down";
 const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
 const char* const CFG_KEY_COMMAND_FAST_UP = "command_fast_up";
 const char* const CFG_KEY_COMMAND_MIDDLE = "command_middle";
-const char* const CFG_KEY_COMMAND_PULL = "command_pull";
-const char* const CFG_KEY_COMMAND_PUSH = "command_push";
 const char* const CFG_KEY_COMMAND_UP = "command_up";
 const char* const CFG_KEY_COMMON_PROFILE = "common_profile";
 const char* const CFG_KEY_DATAREF = "dataref";
@@ -239,7 +228,6 @@ enum class window_type {
     log_viewer,
     info_window,
     midi_watcher,
-
     profile_window,
     settings_window,
 };

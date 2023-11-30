@@ -30,8 +30,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in::map_in(environment &in_env)
-    : map(in_env)
+map_in::map_in(environment& in_env)
+    : map(),
+      m_env(in_env)
 {
     m_label = std::make_unique<label>();
 }
@@ -64,7 +65,7 @@ label& map_in::labels()
 /**
  * Read the config
  */
-void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     // read the common data
     read_common_config(in_log, in_data);
@@ -81,9 +82,18 @@ void map_in::read_config(text_logger &in_log, toml::value &in_data, toml::value 
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Return the environment
+ */
+environment& map_in::env()
+{
+    return m_env;
+}
+
+
+/**
  * Toggle dataref between values
  */
-void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values)
+void map_in::toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values)
 {
     if (in_values.size() == 2) {
         auto value = env().drf().toggle(in_log, in_dataref, in_values[0], in_values[1]);
@@ -121,7 +131,7 @@ void map_in::toggle_dataref(text_logger &in_log, std::string_view in_dataref, st
 /**
  * Display the label on the screen
  */
-void map_in::display_label(text_logger &in_log, float in_value)
+void map_in::display_label(text_logger& in_log, float in_value)
 {
     std::stringstream ss;
     ss << in_value;
@@ -133,7 +143,7 @@ void map_in::display_label(text_logger &in_log, float in_value)
 /**
  * Display the label on the screen
  */
-void map_in::display_label(text_logger &in_log, std::string_view in_value)
+void map_in::display_label(text_logger& in_log, std::string_view in_value)
 {
     if (m_label == nullptr) {
         in_log.debug(" --> No label defined");
@@ -144,7 +154,7 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
         std::string value_text = m_label->values.at(in_value.data());
         in_log.debug(" --> Found text '" + value_text + "' for value '" + std::string(in_value) + "'");
         plugin::instance().show_info_message(m_label->id, m_label->text + value_text);
-    } catch (std::out_of_range &) {
+    } catch (std::out_of_range&) {
         plugin::instance().show_info_message(m_label->id, m_label->text + in_value.data());
     }
 }
@@ -159,7 +169,7 @@ void map_in::display_label(text_logger &in_log, std::string_view in_value)
 /**
  * Read label definition
  */
-void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in::read_label(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     // is a label defined?
     if (!in_data.contains(c_cfg_label.data()))
@@ -196,7 +206,7 @@ void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &
         if (toml_utils::contains(in_log, label_section, CFG_KEY_VALUES)) {
             auto values = label_section[CFG_KEY_VALUES].as_array();
 
-            for (auto value : values) {
+            for (auto value: values) {
                 std::string value_id = toml_utils::read_string(in_log, value, CFG_KEY_VALUE);
                 std::string value_text = toml_utils::read_string(in_log, value, CFG_KEY_TEXT);
                 m_label->values.emplace(value_id, value_text);
@@ -207,7 +217,7 @@ void map_in::read_label(text_logger &in_log, toml::value &in_data, toml::value &
 
             m_label.reset();
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
 

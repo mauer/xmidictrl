@@ -122,20 +122,20 @@ void map_out_sld::read_config(text_logger& in_log, toml::value& in_data)
     set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
 
     // read value min
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN, false))
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN))
         set_value_min(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false));
 
     // read value max
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX, false))
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX))
         set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false));
 
     // read data 2 min
-    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_min, false))
-        set_data_2_min(toml_utils::read_int(in_log, in_data, c_cfg_data_2_min, false));
+    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_min))
+        set_data_2_min(toml_utils::read_int(in_log, in_data, c_cfg_data_2_min));
 
     // read data 2 max
-    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_max, false))
-        set_data_2_max(toml_utils::read_int(in_log, in_data, c_cfg_data_2_max, false));
+    if (toml_utils::contains(in_log, in_data, c_cfg_data_2_max))
+        set_data_2_max(toml_utils::read_int(in_log, in_data, c_cfg_data_2_max));
 }
 
 

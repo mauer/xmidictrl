@@ -26,8 +26,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out::map_out(environment &in_env)
-    : map(in_env)
+map_out::map_out(environment& in_env)
+    : map(),
+      m_env(in_env)
 {
 }
 
@@ -44,6 +45,21 @@ map_out::map_out(environment &in_env)
 map_out_type map_out::type()
 {
     return map_out_type::none;
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the environment
+ */
+environment& map_out::env()
+{
+    return m_env;
 }
 
 } // Namespace xmidictrl

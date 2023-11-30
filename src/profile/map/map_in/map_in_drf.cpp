@@ -59,13 +59,13 @@ void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::va
     map_in::read_config(in_log, in_data, in_config);
 
     // read mode
-    m_mode = conversions::dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
+    m_mode = conversions::dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
 
     // read dataref
     m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
 
     // check if a values array has been defined
-    m_values = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES, false);
+    m_values = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES);
 
     if (m_values.empty()) {
         // read value on
@@ -75,8 +75,8 @@ void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::va
             m_values.push_back(value);
 
         // read value off
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_OFF, false))
-            value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF, false);
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_OFF))
+            value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
 
         if (!value.empty())
             m_values.push_back(value);

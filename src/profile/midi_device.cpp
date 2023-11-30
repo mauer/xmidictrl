@@ -42,10 +42,14 @@ namespace xmidictrl {
  */
 midi_device::midi_device(text_logger& in_text_log,
                          midi_logger& in_midi_log,
-                         std::shared_ptr<device_settings> in_settings)
+                         std::unique_ptr<device_settings> in_settings)
     : device(in_text_log, in_midi_log, std::move(in_settings))
 {
     try {
+        // create mapping classes
+        m_map_init = std::make_unique<map_init_list>();
+        m_map_out = std::make_unique<map_out_list>();
+
         // create midi classes
         m_midi_in = std::make_unique<RtMidiIn>();
         m_midi_out = std::make_unique<RtMidiOut>();
@@ -90,7 +94,7 @@ device_type midi_device::type()
  */
 map_init_list& midi_device::mapping_init()
 {
-    return m_map_init;
+    return *m_map_init;
 }
 
 
@@ -99,26 +103,17 @@ map_init_list& midi_device::mapping_init()
  */
 map_out_list& midi_device::mapping_out()
 {
-    return m_map_out;
-}
-
-
-/**
- * Add a new init mapping to the device
- */
-void midi_device::add_init_map(std::shared_ptr<map_init>& in_mapping)
-{
-    m_map_init.add(in_mapping);
+    return *m_map_out;
 }
 
 
 /**
  * Add a new outbound mapping to the device
  */
-void midi_device::add_outbound_map(std::shared_ptr<map_out>& in_mapping)
-{
-    m_map_out.add(in_mapping);
-}
+//void midi_device::add_outbound_map(std::shared_ptr<map_out>& in_mapping)
+//{
+//    m_map_out->add(in_mapping);
+//}
 
 
 /**
@@ -148,7 +143,7 @@ bool midi_device::open_connections()
     }
 
     // open midi out
-    if (m_map_out.size() > 0) {
+    if (m_map_out->size() > 0) {
         try {
             m_midi_out->openPort(settings().port_out);
 
@@ -226,7 +221,7 @@ void midi_device::midi_callback([[maybe_unused]] double in_deltatime,
  */
 void midi_device::process_init_mappings()
 {
-    for (auto& mapping: m_map_init) {
+    for (const auto& mapping: *m_map_init) {
         std::shared_ptr<outbound_task> task = mapping->execute();
 
         if (task == nullptr)
@@ -339,7 +334,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
         }
     }
 
-    for (auto& mapping: m_map_out) {
+    for (const auto& mapping: *m_map_out) {
         if (m_outbound_locked.contains(mapping->get_key()))
             continue;
 
@@ -362,7 +357,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
  */
 void midi_device::process_outbound_reset()
 {
-    for (auto& mapping: m_map_out) {
+    for (const auto& mapping: *m_map_out) {
         std::shared_ptr<outbound_task> task = mapping->reset();
 
         if (task == nullptr)

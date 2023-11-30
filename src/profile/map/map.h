@@ -53,7 +53,7 @@ enum class map_data_1_type {
 
 class map : public std::enable_shared_from_this<map> {
 public:
-    explicit map(environment& in_env);
+    explicit map() = default;
     virtual ~map() = default;
 
     void set_no(unsigned int in_no);
@@ -79,8 +79,6 @@ public:
     virtual bool check(text_logger& in_log);
 
 protected:
-    environment& env() const;
-
     void read_common_config(text_logger& in_log, toml::value& in_data, bool in_read_sl = true);
 
     bool check_sublayer(std::string_view in_sl_value);
@@ -98,8 +96,6 @@ private:
     static constexpr std::string_view c_cfg_cc {"cc"};
     static constexpr std::string_view c_cfg_note {"note"};
     static constexpr std::string_view c_cfg_sl {"sl"};
-
-    environment& m_env;
 
     unsigned int m_no {0};
     std::string m_include_name {};

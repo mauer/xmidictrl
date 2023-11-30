@@ -23,6 +23,7 @@
 #include <map>
 
 // XMidiCtrl
+#include "device_settings.h"
 #include "map_init.h"
 
 namespace xmidictrl {
@@ -45,7 +46,10 @@ public:
     explicit map_init_list() = default;
     ~map_init_list();
 
-    void add(const std::shared_ptr<map_init>& in_map);
+    void create_mappings(text_logger& in_log,
+                         toml::array in_profile,
+                         device_settings& in_dev_settings,
+                         std::string_view in_inc_name);
 
     map_init_itr begin();
     map_init_itr end();
@@ -53,6 +57,12 @@ public:
     size_t size();
 
 private:
+    void add(const std::shared_ptr<map_init>& in_map);
+
+    // constants
+    static constexpr std::string_view c_cfg_type {"type"};
+
+    // members
     unsigned int m_last_map_no {0};
 
     std::vector<std::shared_ptr<map_init>> m_list;

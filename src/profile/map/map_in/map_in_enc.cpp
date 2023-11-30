@@ -60,15 +60,15 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
     map_in::read_config(in_log, in_data, in_config);
 
     // read the mode
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE, false))
-        m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE, false));
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE))
+        m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
 
     // read the delay (if defined)
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY, false))
-        m_delay = toml_utils::read_int(in_log, in_data, CFG_KEY_DELAY, false);
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY))
+        m_delay = toml_utils::read_int(in_log, in_data, CFG_KEY_DELAY);
 
     // check if dataref was defined
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
         in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for encoder mapping");
 
         // read dataref
@@ -81,25 +81,25 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
         m_modifier_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_DOWN);
 
         // read modifier fast up
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP, false))
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP))
             m_modifier_fast_up = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP);
         else
             m_modifier_fast_up = m_modifier_up;
 
         // read modifier fast down
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN, false))
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN))
             m_modifier_fast_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN);
         else
             m_modifier_fast_down = m_modifier_down;
 
         // read value min
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN, false)) {
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN)) {
             m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false);
             m_value_min_defined = true;
         }
 
         // read value max
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX, false)) {
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX)) {
             m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false);
             m_value_max_defined = true;
         }
@@ -113,13 +113,13 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
         m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);
 
         // read fast command up
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_UP, false))
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_UP))
             m_command_fast_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_UP);
         else
             m_command_fast_up = m_command_up;
 
         // read fast command down
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN, false))
+        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN))
             m_command_fast_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN);
         else
             m_command_fast_down = m_command_down;

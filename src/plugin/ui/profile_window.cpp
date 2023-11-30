@@ -182,7 +182,7 @@ void profile_window::create_tab_devices()
 
     for (auto const& device: m_profile.devices()) {
         if (device != nullptr)
-            create_tab_device(device);
+            create_tab_device(*device);
     }
 }
 
@@ -190,41 +190,41 @@ void profile_window::create_tab_devices()
 /**
  * Create tab for a device
  */
-void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
+void profile_window::create_tab_device(device& in_device)
 {
-    std::string tab_title = in_device->settings().name;
+    std::string tab_title = in_device.settings().name;
 
     if (ImGui::BeginTabItem(tab_title.data())) {
         create_title("SETTINGS");
 
-        if (in_device->type() == device_type::midi_device) {
+        if (in_device.type() == device_type::midi_device) {
             ImGui::Text("Inbound Port:");
             ImGui::SameLine(180);
-            ImGui::TextColored(value_color(), "%i", in_device->settings().port_in);
+            ImGui::TextColored(value_color(), "%i", in_device.settings().port_in);
 
             ImGui::SameLine(400);
             ImGui::Text("Outbound Delay:");
             ImGui::SameLine(600);
-            ImGui::TextColored(value_color(), "%0.f", in_device->settings().outbound_delay);
+            ImGui::TextColored(value_color(), "%0.f", in_device.settings().outbound_delay);
 
             ImGui::SameLine(800);
             ImGui::Text("Default Encoder Mode:");
             ImGui::SameLine(1000);
 
-            if (in_device->settings().default_enc_mode == encoder_mode::relative)
+            if (in_device.settings().default_enc_mode == encoder_mode::relative)
                 ImGui::TextColored(value_color(), "Relative");
             else
                 ImGui::TextColored(value_color(), "Range");
 
             ImGui::Text("Outbound Port:");
             ImGui::SameLine(180);
-            ImGui::TextColored(value_color(), "%i", in_device->settings().port_out);
+            ImGui::TextColored(value_color(), "%i", in_device.settings().port_out);
 
             ImGui::SameLine(400);
             ImGui::Text("Outbound Note Mode:");
             ImGui::SameLine(600);
 
-            if (in_device->settings().note_mode == outbound_note_mode::on)
+            if (in_device.settings().note_mode == outbound_note_mode::on)
                 ImGui::TextColored(value_color(), "Note On only");
             else
                 ImGui::TextColored(value_color(), "Note On/Off");
@@ -233,17 +233,17 @@ void profile_window::create_tab_device(const std::shared_ptr<device>& in_device)
         ImGui::Text("Sublayer Dataref:");
         ImGui::SameLine(180);
 
-        if (!in_device->settings().sl_dataref.empty())
-            ImGui::TextColored(value_color(), "%s", in_device->settings().sl_dataref.c_str());
+        if (!in_device.settings().sl_dataref.empty())
+            ImGui::TextColored(value_color(), "%s", in_device.settings().sl_dataref.c_str());
         else
             ImGui::TextColored(value_color(), "<none>");
 
-        if (in_device->type() == device_type::midi_device) {
+        if (in_device.type() == device_type::midi_device) {
             ImGui::SameLine(400);
             ImGui::Text("Outbound Send Mode:");
             ImGui::SameLine(600);
 
-            if (in_device->settings().send_mode == outbound_send_mode::permanent)
+            if (in_device.settings().send_mode == outbound_send_mode::permanent)
                 ImGui::TextColored(value_color(), "Permanent");
             else
                 ImGui::TextColored(value_color(), "On change");
@@ -427,13 +427,13 @@ void profile_window::create_title(std::string_view in_title, bool in_newline)
 /**
  * Create a table for all init mappings
  */
-void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in_device)
+void profile_window::create_table_mapping_init(device& in_device)
 {
     // Init mappings available for MIDI devices only
-    if (in_device->type() != device_type::midi_device)
+    if (in_device.type() != device_type::midi_device)
         return;
 
-    auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
+    auto& midi_dev = dynamic_cast<midi_device&>(in_device);
 
     if (ImGui::BeginTable("mapping_init",
                           5,
@@ -447,7 +447,7 @@ void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableHeadersRow();
 
-        for (const auto& mapping: midi_dev->mapping_init()) {
+        for (const auto& mapping: midi_dev.mapping_init()) {
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();
@@ -475,17 +475,30 @@ void profile_window::create_table_mapping_init(const std::shared_ptr<device>& in
 /**
  * Create a table for all inbound mappings
  */
-void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_device)
+void profile_window::create_table_mapping_in(device& in_device)
 {
-    // TODO: Show Sublayer and Include when active, only
+    int col_no = 7;
+
+    if (!in_device.settings().sl_dataref.empty())
+        col_no++;
+
+    if (!in_device.settings().include.empty())
+        col_no++;
+
     if (ImGui::BeginTable("mapping_in",
-                          9,
+                          col_no,
                           ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
         ImGui::TableSetupColumn("No", ImGuiTableColumnFlags_WidthFixed, 40);
-        ImGui::TableSetupColumn("Include", ImGuiTableColumnFlags_WidthFixed, 120);
+
+        if (!in_device.settings().include.empty())
+            ImGui::TableSetupColumn("Include", ImGuiTableColumnFlags_WidthFixed, 120);
+
         ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 80);
         ImGui::TableSetupColumn("Data 1", ImGuiTableColumnFlags_WidthFixed, 80);
-        ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+
+        if (!in_device.settings().sl_dataref.empty())
+            ImGui::TableSetupColumn("Sublayer", ImGuiTableColumnFlags_WidthFixed, 80);
+
         ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 80);
         ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 100);
         ImGui::TableSetupColumn("Command / Dataref", ImGuiTableColumnFlags_WidthStretch);
@@ -494,14 +507,16 @@ void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_d
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableHeadersRow();
 
-        for (const auto& mapping: in_device->mapping_in()) {
+        for (const auto& mapping: in_device.mapping_in()) {
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();
             ImGui::Text("%i", mapping.second->no());
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->include_name().data());
+            if (!in_device.settings().include.empty()) {
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->include_name().data());
+            }
 
             ImGui::TableNextColumn();
             ImGui::Text("%i", mapping.second->channel());
@@ -509,8 +524,10 @@ void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_d
             ImGui::TableNextColumn();
             ImGui::Text("%s", mapping.second->data_1_as_string().data());
 
-            ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->sl().data());
+            if (!in_device.settings().sl_dataref.empty()) {
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", mapping.second->sl().data());
+            }
 
             ImGui::TableNextColumn();
             ImGui::Text("%s", mapping.second->labels().id.data());
@@ -533,13 +550,13 @@ void profile_window::create_table_mapping_in(const std::shared_ptr<device>& in_d
 /**
  * Create a table for all outbound mappings
  */
-void profile_window::create_table_mapping_out(const std::shared_ptr<device>& in_device)
+void profile_window::create_table_mapping_out(device& in_device)
 {
     // Outbound mappings available for MIDI devices only
-    if (in_device->type() != device_type::midi_device)
+    if (in_device.type() != device_type::midi_device)
         return;
 
-    auto midi_dev = std::static_pointer_cast<midi_device>(in_device);
+    auto& midi_dev = dynamic_cast<midi_device&>(in_device);
 
     if (ImGui::BeginTable("mapping_out",
                           8,
@@ -556,7 +573,7 @@ void profile_window::create_table_mapping_out(const std::shared_ptr<device>& in_
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableHeadersRow();
 
-        for (const auto& mapping: midi_dev->mapping_out()) {
+        for (const auto& mapping: midi_dev.mapping_out()) {
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();

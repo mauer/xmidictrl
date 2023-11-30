@@ -38,15 +38,48 @@ map_init_list::~map_init_list()
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
 
-/**
- * Add a new mapping
- */
-void map_init_list::add(const std::shared_ptr<map_init>& in_map)
-{
-    m_last_map_no++;
-    in_map->set_no(m_last_map_no);
 
-    m_list.push_back(in_map);
+/**
+ * Create all init mappings for a device and store it
+ */
+void map_init_list::create_mappings(text_logger& in_log,
+                                    toml::array in_profile,
+                                    device_settings& in_dev_settings,
+                                    std::string_view in_inc_name)
+{
+    auto dev_no = std::to_string(in_dev_settings.device_no);
+
+    in_log.info("Device " + dev_no + " :: "
+                     + std::to_string(in_profile.size()) + " init mapping(s) found");
+
+    // parse each mapping entry
+    for (int map_no = 0; map_no < static_cast<int>(in_profile.size()); map_no++) {
+        std::shared_ptr<map_init> mapping;
+
+        in_log.debug("Device " + dev_no + " :: Mapping " + std::to_string(map_no)
+                          + " :: Reading config");
+
+        try {
+            mapping = std::make_shared<map_init>();
+
+            // read the settings and check if everything we need was defined
+            mapping->read_config(in_log, in_profile[map_no]);
+            mapping->set_include_name(in_inc_name);
+
+            if (mapping->check(in_log)) {
+                add(mapping);
+                in_log.debug(" --> Mapping added");
+            } else {
+                in_log.error(
+                    "Device " + dev_no + " :: Mapping " + std::to_string(map_no)
+                    + " :: Parameters incomplete or incorrect");
+            }
+        } catch (toml::type_error& error) {
+            in_log.error("Device " + dev_no + " :: Mapping " + std::to_string(map_no)
+                              + " :: Error reading mapping");
+            in_log.error(error.what());
+        }
+    }
 }
 
 
@@ -74,6 +107,24 @@ map_init_itr map_init_list::end()
 size_t map_init_list::size()
 {
     return m_list.size();
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PRIVATE
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add a new mapping
+ */
+void map_init_list::add(const std::shared_ptr<map_init>& in_map)
+{
+    m_last_map_no++;
+    in_map->set_no(m_last_map_no);
+
+    m_list.push_back(in_map);
 }
 
 } // Namespace xmidictrl

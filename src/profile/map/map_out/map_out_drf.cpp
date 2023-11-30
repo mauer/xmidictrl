@@ -130,10 +130,10 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 
     // read values on
     if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
-        m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON, false);
+        m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON);
     } else {
         m_values_on.clear();
-        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON, false);
+        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
 
         if (!value.empty())
             m_values_on.insert(value);
@@ -141,31 +141,31 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 
     // read values off
     if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
-        m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF, false);
+        m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF);
     } else {
         m_values_off.clear();
-        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF, false);
+        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
 
         if (!value.empty())
             m_values_off.insert(value);
     }
 
     // read data 2 on
-    set_data_2_on(toml_utils::read_int(in_log, in_data, c_cfg_data_2_on, false));
+    set_data_2_on(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX));
 
     // read data 2 off
-    set_data_2_off(toml_utils::read_int(in_log, in_data, c_cfg_data_2_off, false));
+    set_data_2_off(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN));
 
     // read send on
     // TODO - Default value in device (or XMidiCtrl)
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_ON, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_ON)) {
         if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_ON) == "all")
             m_send_on = send_mode::all;
     }
 
     // read send off
     // TODO - Default value in device (or XMidiCtrl)
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_OFF, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_SEND_OFF)) {
         if (toml_utils::read_string(in_log, in_data, CFG_KEY_SEND_OFF) == "one")
             m_send_off = send_mode::one;
     }

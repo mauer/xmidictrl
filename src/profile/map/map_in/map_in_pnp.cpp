@@ -29,7 +29,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_pnp::map_in_pnp(environment &in_env)
+map_in_pnp::map_in_pnp(environment& in_env)
     : map_in(in_env)
 {}
 
@@ -75,27 +75,27 @@ void map_in_pnp::set_time_released()
 /**
  * Read settings from config
  */
-void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_pnp::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'pnp'");
     map_in::read_config(in_log, in_data, in_config);
 
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH)) {
         // read dataref push
-        m_dataref_push = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PUSH, false);
-        m_values_push = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PUSH, false);
+        m_dataref_push = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PUSH);
+        m_values_push = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PUSH);
     } else {
         // read command push
-        m_command_push = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PUSH, false);
+        m_command_push = toml_utils::read_string(in_log, in_data, c_cfg_command_push);
     }
 
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PULL, false)) {
+    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PULL)) {
         // read dataref pull
-        m_dataref_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PULL, false);
-        m_values_pull = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PULL, false);
+        m_dataref_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PULL);
+        m_values_pull = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PULL);
     } else {
         // read command pull
-        m_command_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_PULL, false);
+        m_command_pull = toml_utils::read_string(in_log, in_data, c_cfg_command_pull);
     }
 }
 
@@ -103,7 +103,7 @@ void map_in_pnp::read_config(text_logger &in_log, toml::value &in_data, toml::va
 /**
  * Check the mapping
  */
-bool map_in_pnp::check(text_logger &in_log)
+bool map_in_pnp::check(text_logger& in_log)
 {
     bool result = true;
 
@@ -126,7 +126,7 @@ bool map_in_pnp::check(text_logger &in_log)
     } else {
         if (m_command_pull.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_COMMAND_PULL) + "' is empty");
+            in_log.error(" --> Parameter '" + std::string(c_cfg_command_pull) + "' is empty");
             result = false;
         }
     }
@@ -147,7 +147,7 @@ bool map_in_pnp::check(text_logger &in_log)
     } else {
         if (m_command_push.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_COMMAND_PUSH) + "' is empty");
+            in_log.error(" --> Parameter '" + std::string(c_cfg_command_push) + "' is empty");
             result = false;
         }
     }
@@ -159,7 +159,7 @@ bool map_in_pnp::check(text_logger &in_log)
 /**
  * Execute the action in X-Plane
  */
-bool map_in_pnp::execute(midi_message &in_msg, std::string_view in_sl_value)
+bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
 {
     if (!check_sublayer(in_sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)

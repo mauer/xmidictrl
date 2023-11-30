@@ -54,33 +54,36 @@ enum class map_in_type {
 
 class map_in : public map {
 public:
-    explicit map_in(environment &in_env);
+    explicit map_in(environment& in_env);
     ~map_in() override = default;
 
     virtual map_in_type type();
 
     label& labels();
 
-    virtual void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config);
+    virtual void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config);
 
-    virtual bool execute(midi_message &in_msg, std::string_view in_sl_value) = 0;
+    virtual bool execute(midi_message& in_msg, std::string_view in_sl_value) = 0;
 
     virtual std::string map_text_cmd_drf() = 0;
     virtual std::string map_text_parameter() = 0;
 
 protected:
-    void toggle_dataref(text_logger &in_log, std::string_view in_dataref, std::vector<std::string> &in_values);
+    environment& env();
 
-    void display_label(text_logger &in_log, float in_value);
-    void display_label(text_logger &in_log, std::string_view in_value);
+    void toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values);
+
+    void display_label(text_logger& in_log, float in_value);
+    void display_label(text_logger& in_log, std::string_view in_value);
 
 private:
-    void read_label(text_logger &in_log, toml::value &in_data, toml::value &in_config);
+    void read_label(text_logger& in_log, toml::value& in_data, toml::value& in_config);
 
     // constants
     static constexpr std::string_view c_cfg_label {"label"};
 
     // members
+    environment& m_env;
     std::unique_ptr<label> m_label;
 };
 

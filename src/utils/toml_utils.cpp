@@ -26,7 +26,7 @@ namespace xmidictrl {
 /**
  * Load a toml config from a given file
  */
-bool toml_utils::load_file(text_logger &in_log, std::string_view in_filename, toml::value &out_config)
+bool toml_utils::load_file(text_logger& in_log, std::string_view in_filename, toml::value& out_config)
 {
     // check file name
     if (in_filename.empty()) {
@@ -44,12 +44,12 @@ bool toml_utils::load_file(text_logger &in_log, std::string_view in_filename, to
         // load config file
         out_config = toml::parse(in_filename.data());
         in_log.debug("File '" + std::string(in_filename) + "' loaded successfully");
-    } catch (const toml::syntax_error &error) {
+    } catch (const toml::syntax_error& error) {
         in_log.error("Error parsing file '" + std::string(in_filename) + "'");
         in_log.error(error.what());
         return false;
 
-    } catch (const std::runtime_error &error) {
+    } catch (const std::runtime_error& error) {
         in_log.error("Error opening file '" + std::string(in_filename) + "'");
         in_log.error(error.what());
         return false;
@@ -64,12 +64,10 @@ bool toml_utils::load_file(text_logger &in_log, std::string_view in_filename, to
  */
 bool toml_utils::contains(text_logger& in_log,
                           toml::value& in_data,
-                          std::string_view in_name,
-                          bool in_mandatory)
+                          std::string_view in_name)
 {
-    // TODO: Remove parameter in_mandatory
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_contains --> name is empty");
+        in_log.error("Internal error (toml_utils::contains --> name is empty)");
         return false;
     }
 
@@ -77,10 +75,11 @@ bool toml_utils::contains(text_logger& in_log,
         if (in_data.contains(in_name.data())) {
             return true;
         } else {
-            if (in_mandatory) {
-                in_log.error_line(in_data.location().line(), in_data.location().line_str());
-                in_log.error(" --> Parameter '" + std::string(in_name) + "' not found");
-            }
+            // TODO: Cleanup
+            //if (in_mandatory) {
+            //    in_log.error_line(in_data.location().line(), in_data.location().line_str());
+            //    in_log.error(" --> Parameter '" + std::string(in_name) + "' not found");
+            //}
 
             return false;
         }
@@ -100,7 +99,7 @@ bool toml_utils::contains(text_logger& in_log,
 bool toml_utils::is_array(text_logger& in_log, toml::value& in_data, std::string_view in_name)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_is_array --> name is empty");
+        in_log.error("Internal error (toml_utils::is_array --> name is empty)");
         return false;
     }
 
@@ -127,21 +126,18 @@ bool toml_utils::is_array(text_logger& in_log, toml::value& in_data, std::string
 /**
  * Read the value of a string parameter
  */
-std::string toml_utils::read_string(text_logger& in_log,
-                                    toml::value& in_data,
-                                    std::string_view in_name,
-                                    bool in_mandatory)
+std::string toml_utils::read_string(text_logger& in_log, toml::value& in_data, std::string_view in_name)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_utils::read_string --> name is empty)");
         return {};
     }
 
-    std::string value;
+    std::string value {};
 
     try {
         // read dataref
-        if (contains(in_log, in_data, in_name, in_mandatory)) {
+        if (contains(in_log, in_data, in_name)) {
             value = in_data[in_name.data()].as_string();
             in_log.debug_param(in_data.location().line(), std::string(in_name), value);
         }
@@ -160,11 +156,10 @@ std::string toml_utils::read_string(text_logger& in_log,
  */
 std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
                                                      toml::value& in_data,
-                                                     std::string_view in_name,
-                                                     bool in_mandatory)
+                                                     std::string_view in_name)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_utils::read_str_set_array --> name is empty)");
         return {};
     }
 
@@ -172,7 +167,7 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
 
     try {
         // read dataref array
-        if (contains(in_log, in_data, in_name, in_mandatory) && (in_data[in_name.data()].is_array())) {
+        if (contains(in_log, in_data, in_name) && (in_data[in_name.data()].is_array())) {
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
@@ -197,11 +192,10 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
  */
 std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
                                                            toml::value& in_data,
-                                                           std::string_view in_name,
-                                                           bool in_mandatory)
+                                                           std::string_view in_name)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_read_string --> name is empty");
+        in_log.error("Internal error (toml_utils::read_str_vector_array --> name is empty)");
         return {};
     }
 
@@ -209,7 +203,7 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
 
     try {
         // read dataref array
-        if (contains(in_log, in_data, in_name, in_mandatory) && (in_data[in_name.data()].is_array())) {
+        if (contains(in_log, in_data, in_name) && (in_data[in_name.data()].is_array())) {
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
@@ -230,23 +224,63 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
 
 
 /**
- * Read the value of an integer
+ * Read the value of an unsigned char
  */
-int toml_utils::read_int(text_logger& in_log,
-                         toml::value& in_data,
-                         std::string_view in_name,
-                         bool in_mandatory)
+unsigned char toml_utils::read_unsigned_char(text_logger& in_log,
+                                             toml::value& in_data,
+                                             std::string_view in_name,
+                                             unsigned char in_fallback)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_read_int --> name is empty");
-        return -1;
+        in_log.error("Internal error (toml_utils::read_unsigned_char --> name is empty)");
+        return in_fallback;
     }
 
-    int value = -1;
+    unsigned char value = in_fallback;
 
     try {
         // read dataref
-        if (contains(in_log, in_data, in_name, in_mandatory)) {
+        if (contains(in_log, in_data, in_name)) {
+            if (in_data[in_name.data()].is_integer()) {
+                int int_value = static_cast<int>(in_data[in_name.data()].as_integer());
+                in_log.debug_param(in_data.location().line(), std::string(in_name), std::to_string(value));
+
+                if (int_value >= 0 && int_value <= 127) {
+                    value = static_cast<unsigned char>(int_value);
+                } else {
+                    in_log.error_line(in_data.location().line(), in_data.location().line_str());
+                    in_log.error(" --> Parameter '" + std::string(in_name) + "' is not between 0 and 127");
+                }
+            } else {
+                in_log.error_line(in_data.location().line(), in_data.location().line_str());
+                in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
+            }
+        }
+    } catch (toml::type_error& error) {
+        in_log.error_line(in_data.location().line(), in_data.location().line_str());
+        in_log.error(" --> Error reading mapping");
+        in_log.error(error.what());
+    }
+
+    return value;
+}
+
+
+/**
+ * Read the value of an integer
+ */
+int toml_utils::read_int(text_logger& in_log, toml::value& in_data, std::string_view in_name, int in_fallback)
+{
+    if (in_name.empty()) {
+        in_log.error("Internal error (toml_utils::read_int --> name is empty)");
+        return in_fallback;
+    }
+
+    int value = in_fallback;
+
+    try {
+        // read dataref
+        if (contains(in_log, in_data, in_name)) {
             if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<int>(in_data[in_name.data()].as_integer());
 
@@ -272,11 +306,10 @@ int toml_utils::read_int(text_logger& in_log,
 float toml_utils::read_float(text_logger& in_log,
                              toml::value& in_data,
                              std::string_view in_name,
-                             bool in_mandatory,
                              float in_fallback)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_read_float --> name is empty");
+        in_log.error("Internal error (toml_utils::read_float --> name is empty)");
         return in_fallback;
     }
 
@@ -284,7 +317,7 @@ float toml_utils::read_float(text_logger& in_log,
 
     try {
         // read dataref
-        if (contains(in_log, in_data, in_name, in_mandatory)) {
+        if (contains(in_log, in_data, in_name)) {
             if (in_data[in_name.data()].is_floating()) {
                 value = static_cast<float>(in_data[in_name.data()].as_floating());
 

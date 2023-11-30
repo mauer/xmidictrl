@@ -87,32 +87,16 @@ private:
     void create_virtual_device();
 
     void create_device(const toml::value& in_params, bool in_is_virtual, size_t in_dev_no = 0);
-    std::shared_ptr<device_settings> create_device_settings(toml::value in_params,
+    std::unique_ptr<device_settings> create_device_settings(toml::value in_params,
                                                             bool in_is_virtual,
                                                             size_t in_dev_no = 0);
 
-    void add_mappings_from_include(const std::shared_ptr<device>& in_device);
+    void add_mappings_from_include(device& in_device);
     void create_device_mappings(toml::value in_params,
-                                const std::shared_ptr<device>& in_device,
+                                device& in_device,
                                 std::string_view in_inc_name = {});
 
-    void create_init_mapping(toml::array in_params,
-                             const std::shared_ptr<midi_device>& in_device,
-                             std::string_view in_inc_name = {});
-    void create_inbound_mapping(toml::array in_params,
-                                const std::shared_ptr<device>& in_device,
-                                std::string_view in_inc_name = {});
-    void create_outbound_mapping(toml::array in_params,
-                                 const std::shared_ptr<midi_device>& in_device,
-                                 std::string_view in_inc_name = {});
-
-    static map_in_type translate_map_in_type(std::string_view in_type_str);
-    static map_out_type translate_map_out_type(std::string_view in_type_str);
-
-    map_in_type read_map_in_type(toml::value& in_params);
-    map_out_type read_map_out_type(toml::value& in_params);
-
-    static std::string get_log_prefix_from_device(const std::shared_ptr<device>& in_device);
+    static std::string get_log_prefix_from_device(device& in_device);
     static std::string get_log_prefix(bool in_is_virtual, size_t in_dev_no = 0);
 
     // constants

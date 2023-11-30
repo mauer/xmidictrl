@@ -59,7 +59,7 @@ enum class device_type {
 
 class device {
 public:
-    device(text_logger& in_text_log, midi_logger& in_midi_log, std::shared_ptr<device_settings> in_settings);
+    device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings);
     virtual ~device() = default;
 
     // no copying or copy assignments are allowed
@@ -74,8 +74,6 @@ public:
     [[nodiscard]] std::string sl_value() const;
     void set_sl_value(std::string_view in_sl_value);
 
-    void add_inbound_map(std::shared_ptr<map_in>& in_mapping);
-
 protected:
     text_logger& text_log();
     midi_logger& midi_log();
@@ -84,12 +82,10 @@ private:
     text_logger& m_text_log;
     midi_logger& m_midi_log;
 
-    std::shared_ptr<device_settings> m_settings;
-
     std::string m_sl_value;
 
-    // TODO: unique pointer
-    map_in_list m_map_in;
+    std::unique_ptr<device_settings> m_settings;
+    std::unique_ptr<map_in_list> m_map_in;
 };
 
 } // Namespace xmidictrl

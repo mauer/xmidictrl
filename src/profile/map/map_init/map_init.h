@@ -35,14 +35,14 @@ namespace xmidictrl {
 
 class map_init : public map {
 public:
-    explicit map_init(environment &in_env);
+    explicit map_init();
     ~map_init() override = default;
 
     void set_data_2(unsigned char in_data_2);
     unsigned char data_2() const;
 
-    void read_config(text_logger &in_log, toml::value &in_data);
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data);
+    bool check(text_logger& in_log) override;
 
     std::shared_ptr<outbound_task> execute();
 

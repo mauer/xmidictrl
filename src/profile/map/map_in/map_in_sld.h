@@ -39,15 +39,15 @@ namespace xmidictrl {
 
 class map_in_sld : public map_in {
 public:
-    explicit map_in_sld(environment &in_env);
+    explicit map_in_sld(environment& in_env);
     ~map_in_sld() override = default;
 
     map_in_type type() override;
 
-    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
+    bool check(text_logger& in_log) override;
 
-    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
     std::string map_text_cmd_drf() override;
     std::string map_text_parameter() override;

@@ -53,14 +53,14 @@ protected:
 private:
     void create_tab_general();
     void create_tab_devices();
-    void create_tab_device(const std::shared_ptr<device>& in_device);
+    void create_tab_device(device& in_device);
     void create_tab_errors_warnings();
 
     void create_title(std::string_view in_title, bool in_no_newline = true);
 
-    void create_table_mapping_init(const std::shared_ptr<device>& in_device);
-    void create_table_mapping_in(const std::shared_ptr<device>& in_device);
-    void create_table_mapping_out(const std::shared_ptr<device>& in_device);
+    void create_table_mapping_init(device& in_device);
+    void create_table_mapping_in(device& in_device);
+    void create_table_mapping_out(device& in_device);
 
     map_page m_current_map_page {map_page::inbound};
 

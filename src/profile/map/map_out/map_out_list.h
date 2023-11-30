@@ -45,7 +45,11 @@ public:
     explicit map_out_list() = default;
     ~map_out_list();
 
-    void add(const std::shared_ptr<map_out>& in_map);
+    void create_mappings(text_logger& in_log,
+                         toml::array in_profile,
+                         environment& in_env,
+                         device_settings& in_dev_settings,
+                         std::string_view in_inc_name);
 
     map_out_itr begin();
     map_out_itr end();
@@ -53,6 +57,15 @@ public:
     size_t size();
 
 private:
+    map_out_type read_map_type(text_logger& in_log, toml::value& in_profile);
+    static map_out_type translate_map_type(std::string_view in_type_str);
+
+    void add(const std::shared_ptr<map_out>& in_map);
+
+    // constants
+    static constexpr std::string_view c_cfg_type {"type"};
+
+    // members
     unsigned int m_last_map_no {0};
 
     std::vector<std::shared_ptr<map_out>> m_list;
