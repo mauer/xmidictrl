@@ -102,7 +102,6 @@ private:
     // constants
     static constexpr std::string_view c_cfg_include {"include"};
     static constexpr std::string_view c_cfg_title {"title"};
-    static constexpr std::string_view c_cfg_type {"type"};
     static constexpr std::string_view c_cfg_version {"version"};
 
     // members

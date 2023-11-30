@@ -1,0 +1,345 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
+      - "CMakeLists.txt:22 (project)"
+    message: |
+      The system is: Windows - 10.0.22621 - AMD64
+...
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:22 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.6.3+07e294721 for .NET Framework
+      Der Buildvorgang wurde am 27.07.2023 20:30:34 gestartet.
+      
+      Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdC\\CompilerIdC.vcxproj" auf Knoten "1" (Standardziele).
+      PrepareForBuild:
+        Das Verzeichnis "Debug\\" wird erstellt.
+        Das Verzeichnis "Debug\\CompilerIdC.tlog\\" wird erstellt.
+      InitializeBuildStatus:
+        "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdC\\CompilerIdC.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Die Datei "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" wird gelöscht.
+        Aktualisieren des Timestamps von "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
+      Die Erstellung von Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdC\\CompilerIdC.vcxproj" ist abgeschlossen (Standardziele).
+      
+      Der Buildvorgang wurde erfolgreich ausgeführt.
+          0 Warnung(en)
+          0 Fehler
+      
+      Verstrichene Zeit 00:00:01.64
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/3.27.1/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:22 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.6.3+07e294721 for .NET Framework
+      Der Buildvorgang wurde am 27.07.2023 20:30:36 gestartet.
+      
+      Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" auf Knoten "1" (Standardziele).
+      PrepareForBuild:
+        Das Verzeichnis "Debug\\" wird erstellt.
+        Das Verzeichnis "Debug\\CompilerIdCXX.tlog\\" wird erstellt.
+      InitializeBuildStatus:
+        "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Die Datei "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" wird gelöscht.
+        Aktualisieren des Timestamps von "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      Die Erstellung von Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\3.27.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" ist abgeschlossen (Standardziele).
+      
+      Der Buildvorgang wurde erfolgreich ausgeführt.
+          0 Warnung(en)
+          0 Fehler
+      
+      Verstrichene Zeit 00:00:01.11
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/3.27.1/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:22 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-f2h52h"
+      binary: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-f2h52h"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-f2h52h'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_e5318.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.6.3+07e294721 for .NET Framework
+        Der Buildvorgang wurde am 27.07.2023 20:30:37 gestartet.
+        
+        Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-f2h52h\\cmTC_e5318.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_e5318.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-f2h52h\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_e5318.dir\\Debug\\cmTC_e5318.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_e5318.dir\\Debug\\cmTC_e5318.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e5318.dir\\Debug\\\\" /Fd"cmTC_e5318.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCCompilerABI.c"
+          Microsoft (R) C/C++-Optimierungscompiler Version 19.36.32537 für x64
+          Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+          CMakeCCompilerABI.c
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e5318.dir\\Debug\\\\" /Fd"cmTC_e5318.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCCompilerABI.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-f2h52h\\Debug\\cmTC_e5318.exe" /INCREMENTAL /ILK:"cmTC_e5318.dir\\Debug\\cmTC_e5318.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-f2h52h/Debug/cmTC_e5318.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-f2h52h/Debug/cmTC_e5318.lib" /MACHINE:X64  /machine:x64 cmTC_e5318.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_e5318.vcxproj -> C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-f2h52h\\Debug\\cmTC_e5318.exe
+        FinalizeBuildStatus:
+          Die Datei "cmTC_e5318.dir\\Debug\\cmTC_e5318.tlog\\unsuccessfulbuild" wird gelöscht.
+          Aktualisieren des Timestamps von "cmTC_e5318.dir\\Debug\\cmTC_e5318.tlog\\cmTC_e5318.lastbuildstate".
+        Die Erstellung von Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-f2h52h\\cmTC_e5318.vcxproj" ist abgeschlossen (Standardziele).
+        
+        Der Buildvorgang wurde erfolgreich ausgeführt.
+            0 Warnung(en)
+            0 Fehler
+        
+        Verstrichene Zeit 00:00:01.09
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:22 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-2yicly"
+      binary: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-2yicly"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-2yicly'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_9cbdd.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.6.3+07e294721 for .NET Framework
+        Der Buildvorgang wurde am 27.07.2023 20:30:39 gestartet.
+        
+        Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-2yicly\\cmTC_9cbdd.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_9cbdd.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-2yicly\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_9cbdd.dir\\Debug\\cmTC_9cbdd.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_9cbdd.dir\\Debug\\cmTC_9cbdd.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_9cbdd.dir\\Debug\\\\" /Fd"cmTC_9cbdd.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCXXCompilerABI.cpp"
+          Microsoft (R) C/C++-Optimierungscompiler Version 19.36.32537 für x64
+          Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+          CMakeCXXCompilerABI.cpp
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_9cbdd.dir\\Debug\\\\" /Fd"cmTC_9cbdd.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCXXCompilerABI.cpp"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-2yicly\\Debug\\cmTC_9cbdd.exe" /INCREMENTAL /ILK:"cmTC_9cbdd.dir\\Debug\\cmTC_9cbdd.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-2yicly/Debug/cmTC_9cbdd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-2yicly/Debug/cmTC_9cbdd.lib" /MACHINE:X64  /machine:x64 cmTC_9cbdd.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_9cbdd.vcxproj -> C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-2yicly\\Debug\\cmTC_9cbdd.exe
+        FinalizeBuildStatus:
+          Die Datei "cmTC_9cbdd.dir\\Debug\\cmTC_9cbdd.tlog\\unsuccessfulbuild" wird gelöscht.
+          Aktualisieren des Timestamps von "cmTC_9cbdd.dir\\Debug\\cmTC_9cbdd.tlog\\cmTC_9cbdd.lastbuildstate".
+        Die Erstellung von Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-2yicly\\cmTC_9cbdd.vcxproj" ist abgeschlossen (Standardziele).
+        
+        Der Buildvorgang wurde erfolgreich ausgeführt.
+            0 Warnung(en)
+            0 Fehler
+        
+        Verstrichene Zeit 00:00:01.12
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckSourceCompiles.cmake:77 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:206 (check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:263 (_check_cxx_compiler_attribute)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:420 (_test_compiler_has_deprecated)"
+      - "src/CMakeLists.txt:57 (GENERATE_EXPORT_HEADER)"
+    checks:
+      - "Performing Test COMPILER_HAS_DEPRECATED_ATTR"
+    directories:
+      source: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-tqzlue"
+      binary: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-tqzlue"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+    buildResult:
+      variable: "COMPILER_HAS_DEPRECATED_ATTR"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-tqzlue'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_ed50a.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.6.3+07e294721 for .NET Framework
+        Der Buildvorgang wurde am 27.07.2023 20:30:40 gestartet.
+        
+        Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_ed50a.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_ed50a.dir\\Debug\\cmTC_ed50a.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_ed50a.dir\\Debug\\cmTC_ed50a.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_DEPRECATED_ATTR /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ed50a.dir\\Debug\\\\" /Fd"cmTC_ed50a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx"
+          Microsoft (R) C/C++-Optimierungscompiler Version 19.36.32537 für x64
+          Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+          src.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_DEPRECATED_ATTR /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ed50a.dir\\Debug\\\\" /Fd"cmTC_ed50a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx"
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,16): error C2065: "__deprecated__": nichtdeklarierter Bezeichner [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,31): error C4430: Fehlender Typspezifizierer - int wird angenommen. Hinweis: "default-int" wird von C++ nicht unterstützt. [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,33): error C2062: "int"-Typ unerwartet [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,48): error C2143: Syntaxfehler: Es fehlt ";" vor "{" [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,48): error C2447: "{": Funktionsheader fehlt - Parameterliste im alten Stil? [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(2,25): error C3861: "somefunc": Bezeichner wurde nicht gefunden. [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        Die Erstellung des Projekts "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj" ist abgeschlossen (Standardziele) -- FEHLER.
+        
+        Fehler beim Buildvorgang.
+        
+        "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj" (Standardziel) (1) ->
+        (ClCompile Ziel) -> 
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,16): error C2065: "__deprecated__": nichtdeklarierter Bezeichner [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,31): error C4430: Fehlender Typspezifizierer - int wird angenommen. Hinweis: "default-int" wird von C++ nicht unterstützt. [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,33): error C2062: "int"-Typ unerwartet [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,48): error C2143: Syntaxfehler: Es fehlt ";" vor "{" [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(1,48): error C2447: "{": Funktionsheader fehlt - Parameterliste im alten Stil? [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+          C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\src.cxx(2,25): error C3861: "somefunc": Bezeichner wurde nicht gefunden. [C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tqzlue\\cmTC_ed50a.vcxproj]
+        
+            0 Warnung(en)
+            6 Fehler
+        
+        Verstrichene Zeit 00:00:00.91
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckSourceCompiles.cmake:77 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:206 (check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:269 (_check_cxx_compiler_attribute)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/GenerateExportHeader.cmake:420 (_test_compiler_has_deprecated)"
+      - "src/CMakeLists.txt:57 (GENERATE_EXPORT_HEADER)"
+    checks:
+      - "Performing Test COMPILER_HAS_DEPRECATED"
+    directories:
+      source: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-3zdg87"
+      binary: "C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-3zdg87"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+    buildResult:
+      variable: "COMPILER_HAS_DEPRECATED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-3zdg87'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_31899.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.6.3+07e294721 for .NET Framework
+        Der Buildvorgang wurde am 27.07.2023 20:30:42 gestartet.
+        
+        Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\cmTC_31899.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_31899.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_31899.dir\\Debug\\cmTC_31899.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_31899.dir\\Debug\\cmTC_31899.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_DEPRECATED /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_31899.dir\\Debug\\\\" /Fd"cmTC_31899.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\src.cxx"
+          Microsoft (R) C/C++-Optimierungscompiler Version 19.36.32537 für x64
+          Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+          src.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D COMPILER_HAS_DEPRECATED /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_31899.dir\\Debug\\\\" /Fd"cmTC_31899.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\src.cxx"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\Debug\\cmTC_31899.exe" /INCREMENTAL /ILK:"cmTC_31899.dir\\Debug\\cmTC_31899.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-3zdg87/Debug/cmTC_31899.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/marco/Projects/xmidictrl/build/CMakeFiles/CMakeScratch/TryCompile-3zdg87/Debug/cmTC_31899.lib" /MACHINE:X64  /machine:x64 cmTC_31899.dir\\Debug\\src.obj
+          cmTC_31899.vcxproj -> C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\Debug\\cmTC_31899.exe
+        FinalizeBuildStatus:
+          Die Datei "cmTC_31899.dir\\Debug\\cmTC_31899.tlog\\unsuccessfulbuild" wird gelöscht.
+          Aktualisieren des Timestamps von "cmTC_31899.dir\\Debug\\cmTC_31899.tlog\\cmTC_31899.lastbuildstate".
+        Die Erstellung von Projekt "C:\\Users\\marco\\Projects\\xmidictrl\\build\\CMakeFiles\\CMakeScratch\\TryCompile-3zdg87\\cmTC_31899.vcxproj" ist abgeschlossen (Standardziele).
+        
+        Der Buildvorgang wurde erfolgreich ausgeführt.
+            0 Warnung(en)
+            0 Fehler
+        
+        Verstrichene Zeit 00:00:01.10
+        
+      exitCode: 0
+...

@@ -1,0 +1,18 @@
+Performing C++ SOURCE FILE Test COMPILER_HAS_DEPRECATED_ATTR failed with the following output:
+Change Dir: C:/Users/marco/Projects/xmidictrl/build_release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Users/marco/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/223.7571.171/bin/ninja/win/ninja.exe cmTC_59a4d && [1/2] Building CXX object CMakeFiles\cmTC_59a4d.dir\src.cxx.obj
+FAILED: CMakeFiles/cmTC_59a4d.dir/src.cxx.obj 
+C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1436~1.325\bin\Hostx64\x64\cl.exe  /nologo /TP -DCOMPILER_HAS_DEPRECATED_ATTR  /DWIN32 /D_WINDOWS /GR /EHsc  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\cmTC_59a4d.dir\src.cxx.obj /FdCMakeFiles\cmTC_59a4d.dir\ /FS -c C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(1): error C2065: "__deprecated__": nichtdeklarierter Bezeichner
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(1): error C4430: Fehlender Typspezifizierer - int wird angenommen. Hinweis: "default-int" wird von C++ nicht unterstützt.
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(1): error C2062: "int"-Typ unerwartet
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(1): error C2143: Syntaxfehler: Es fehlt ";" vor "{"
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(1): error C2447: "{": Funktionsheader fehlt - Parameterliste im alten Stil?
+C:\Users\marco\Projects\xmidictrl\build_release\CMakeFiles\CMakeTmp\src.cxx(2): error C3861: "somefunc": Bezeichner wurde nicht gefunden.
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+__attribute__((__deprecated__)) int somefunc() { return 0; }
+    int main() { return somefunc();}

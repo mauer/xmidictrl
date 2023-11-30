@@ -1,0 +1,442 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EC292C60-8994-3271-BE0C-19676DD1B709}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>XMidiCtrl</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\marco\Projects\xmidictrl\build\src\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">XMidiCtrl.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">XMidiCtrl</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.xpl</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\marco\Projects\xmidictrl\build\src\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">XMidiCtrl.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">XMidiCtrl</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.xpl</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\marco\Projects\xmidictrl\build\src\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">XMidiCtrl.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">XMidiCtrl</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.xpl</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\marco\Projects\xmidictrl\build\src\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">XMidiCtrl.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">XMidiCtrl</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.xpl</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>C:/Users/marco/Projects/xmidictrl/build/version.h</ForcedIncludeFiles>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR="Debug";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR=\"Debug\";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/marco/Projects/xmidictrl/build/src/Debug/XMidiCtrl.xpl C:/Users/marco/Projects/xmidictrl/package/XMidiCtrl/win_x64/XMidiCtrl.xpl
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\lib\rtmidi\Debug\rtmidi.lib;winmm.lib;..\lib\Debug\imgui.lib;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\Libraries\Win\XPLM_64.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/marco/Projects/xmidictrl/build/src/Debug/XMidiCtrl.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/marco/Projects/xmidictrl/build/src/Debug/XMidiCtrl.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>C:/Users/marco/Projects/xmidictrl/build/version.h</ForcedIncludeFiles>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR="Release";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR=\"Release\";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/marco/Projects/xmidictrl/build/src/Release/XMidiCtrl.xpl C:/Users/marco/Projects/xmidictrl/package/XMidiCtrl/win_x64/XMidiCtrl.xpl
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\lib\rtmidi\Release\rtmidi.lib;winmm.lib;..\lib\Release\imgui.lib;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\Libraries\Win\XPLM_64.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/marco/Projects/xmidictrl/build/src/Release/XMidiCtrl.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/marco/Projects/xmidictrl/build/src/Release/XMidiCtrl.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>C:/Users/marco/Projects/xmidictrl/build/version.h</ForcedIncludeFiles>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR="MinSizeRel";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR=\"MinSizeRel\";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/marco/Projects/xmidictrl/build/src/MinSizeRel/XMidiCtrl.xpl C:/Users/marco/Projects/xmidictrl/package/XMidiCtrl/win_x64/XMidiCtrl.xpl
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\lib\rtmidi\MinSizeRel\rtmidi.lib;winmm.lib;..\lib\MinSizeRel\imgui.lib;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\Libraries\Win\XPLM_64.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/marco/Projects/xmidictrl/build/src/MinSizeRel/XMidiCtrl.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/marco/Projects/xmidictrl/build/src/MinSizeRel/XMidiCtrl.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>C:/Users/marco/Projects/xmidictrl/build/version.h</ForcedIncludeFiles>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR="RelWithDebInfo";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;XPLM303=1;XPLM302=1;XPLM301=1;XPLM300=1;XPLM210=1;XPLM200=1;IBM=1;CMAKE_INTDIR=\"RelWithDebInfo\";XMidiCtrl_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\marco\Projects\xmidictrl\build;C:\Users\marco\Projects\xmidictrl\lib\fonts;C:\Users\marco\Projects\xmidictrl\lib\imgui;C:\Users\marco\Projects\xmidictrl\src\common;C:\Users\marco\Projects\xmidictrl\src\utils;C:\Users\marco\Projects\xmidictrl\src\ui;C:\Users\marco\Projects\xmidictrl\src\env;C:\Users\marco\Projects\xmidictrl\src\env\standalone;C:\Users\marco\Projects\xmidictrl\src\env\xplane;C:\Users\marco\Projects\xmidictrl\src\profile;C:\Users\marco\Projects\xmidictrl\src\profile\map;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out;C:\Users\marco\Projects\xmidictrl\src\plugin;C:\Users\marco\Projects\xmidictrl\src\plugin\ui;C:\Users\marco\Projects\xmidictrl\lib\toml11;C:\Users\marco\Projects\xmidictrl\lib\rtmidi;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Widgets;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\Wrappers;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\CHeaders\XPLM;C:\Users\marco\Projects\xmidictrl\lib\imgui\misc\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/marco/Projects/xmidictrl/build/src/RelWithDebInfo/XMidiCtrl.xpl C:/Users/marco/Projects/xmidictrl/package/XMidiCtrl/win_x64/XMidiCtrl.xpl
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\lib\rtmidi\RelWithDebInfo\rtmidi.lib;winmm.lib;..\lib\RelWithDebInfo\imgui.lib;C:\Users\marco\Projects\xmidictrl\lib\xpsdk\Libraries\Win\XPLM_64.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/marco/Projects/xmidictrl/build/src/RelWithDebInfo/XMidiCtrl.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/marco/Projects/xmidictrl/build/src/RelWithDebInfo/XMidiCtrl.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\marco\Projects\xmidictrl\src\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/marco/Projects/xmidictrl/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/marco/Projects/xmidictrl -BC:/Users/marco/Projects/xmidictrl/build --check-stamp-file C:/Users/marco/Projects/xmidictrl/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\GenerateExportHeader.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\exportheader.cmake.in;C:\Users\marco\Projects\xmidictrl\src\common\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\standalone\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\xplane\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\utils\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\marco\Projects\xmidictrl\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/marco/Projects/xmidictrl/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/marco/Projects/xmidictrl -BC:/Users/marco/Projects/xmidictrl/build --check-stamp-file C:/Users/marco/Projects/xmidictrl/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\GenerateExportHeader.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\exportheader.cmake.in;C:\Users\marco\Projects\xmidictrl\src\common\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\standalone\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\xplane\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\utils\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\marco\Projects\xmidictrl\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/marco/Projects/xmidictrl/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/marco/Projects/xmidictrl -BC:/Users/marco/Projects/xmidictrl/build --check-stamp-file C:/Users/marco/Projects/xmidictrl/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\GenerateExportHeader.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\exportheader.cmake.in;C:\Users\marco\Projects\xmidictrl\src\common\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\standalone\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\xplane\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\utils\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\marco\Projects\xmidictrl\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/marco/Projects/xmidictrl/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/marco/Projects/xmidictrl -BC:/Users/marco/Projects/xmidictrl/build --check-stamp-file C:/Users/marco/Projects/xmidictrl/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\GenerateExportHeader.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\exportheader.cmake.in;C:\Users\marco\Projects\xmidictrl\src\common\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\standalone\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\env\xplane\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\plugin\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\ui\CMakeLists.txt;C:\Users\marco\Projects\xmidictrl\src\utils\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\marco\Projects\xmidictrl\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\common\config.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\common\text_logger.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\common\midi_logger.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\common\midi_message.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\utils\conversions.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\utils\toml_utils.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\utils\utils.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\ui\ImGuiFontAtlas.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\ui\imgui_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\ui\xplane_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\environment.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\standalone\cmd_standalone.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\standalone\data_standalone.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\standalone\env_standalone.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\xplane\cmd_xplane.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\xplane\data_xplane.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\env\xplane\env_xplane.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\device.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\device_list.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\profile.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_cmd.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_drf.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_enc.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_list.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_pnp.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_in\map_in_sld.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\map_init.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_init\map_init_list.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\map_out.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\map_out_con.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\map_out_drf.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\profile\map\map_out\map_out_list.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\plugin.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\plugin_main.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\inbound_worker.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\settings.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\about_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\devices_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\info_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\menu.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\messages_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\profile_window.cpp" />
+    <ClCompile Include="C:\Users\marco\Projects\xmidictrl\src\plugin\ui\settings_window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\marco\Projects\xmidictrl\build\ZERO_CHECK.vcxproj">
+      <Project>{F37BA783-D616-38B9-8D84-365DA760D3DD}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\marco\Projects\xmidictrl\build\lib\imgui.vcxproj">
+      <Project>{47AD5A01-B990-319B-9C4E-366D8C23C22C}</Project>
+      <Name>imgui</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\marco\Projects\xmidictrl\build\lib\rtmidi\rtmidi.vcxproj">
+      <Project>{ABCED210-FECA-37E0-9AD1-56C378642F67}</Project>
+      <Name>rtmidi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

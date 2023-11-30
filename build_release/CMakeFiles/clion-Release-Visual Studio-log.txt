@@ -1,0 +1,50 @@
+C:\Users\marco\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\223.7571.171\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=C:/Users/marco/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/223.7571.171/bin/ninja/win/ninja.exe -G Ninja -S C:\Users\marco\Projects\xmidictrl -B C:\Users\marco\Projects\xmidictrl\build_release
+-- The C compiler identification is MSVC 19.36.32537.0
+-- The CXX compiler identification is MSVC 19.36.32537.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.36.32532/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.36.32532/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-----------------------------------------------
+-- Configure XMidiCtrl 1.13
+-----------------------------------------------
+-- Creating version file
+-- Using toolchain file: 
+-- Configuring build scripts for toml11
+-- Configuring build scripts for fonts
+-- Configuring build scripts for RtMidi
+-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+-- Could NOT find ALSA (missing: ALSA_LIBRARY ALSA_INCLUDE_DIR) 
+-- Compiling with support for: winmm
+-- Configuring build scripts for X-Plane SDK
+---- Set Operating System to IBM
+-- Configuring build scripts for Dear ImGui
+-- Found OpenGL: opengl32   
+---- Set config file to C:/Users/marco/Projects/xmidictrl/lib/imgui_config.h
+-- Configuring build scripts for XMidiCtrl
+---- Directory: src/common
+---- Directory: src/utils
+---- Directory: src/ui
+---- Directory: src/env
+---- Directory: src/env/xplane
+---- Directory: src/profile
+---- Directory: src/profile/map
+---- Directory: src/profile/map/map_in
+---- Directory: src/profile/map/map_init
+---- Directory: src/profile/map/map_out
+---- Directory: src/plugin
+---- Directory: src/ui
+Build for Windows Platform
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Failed
+-- Performing Test COMPILER_HAS_DEPRECATED
+-- Performing Test COMPILER_HAS_DEPRECATED - Success
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/marco/Projects/xmidictrl/build_release
