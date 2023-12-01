@@ -30,7 +30,6 @@ namespace xmidictrl {
 class env_standalone : public environment {
 public:
     explicit env_standalone(text_logger &in_log);
-    ~env_standalone() override;
 
     std::filesystem::path xplane_path() override;
 

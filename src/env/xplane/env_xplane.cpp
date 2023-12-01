@@ -48,16 +48,6 @@ env_xplane::env_xplane(text_logger& in_log)
 }
 
 
-/**
- * Destructor
- */
-env_xplane::~env_xplane()
-{
-    m_cmd.reset();
-    m_drf.reset();
-}
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------

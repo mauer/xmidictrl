@@ -51,7 +51,6 @@ const char* const flat_note_names[] = {"C", "Db", "D", "Eb", "E", "F", "Gb", "G"
 class midi_message {
 public:
     midi_message(text_logger& in_log, midi_direction in_direction);
-    ~midi_message();
 
     text_logger& log();
 

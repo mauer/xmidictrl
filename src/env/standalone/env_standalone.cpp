@@ -44,16 +44,6 @@ env_standalone::env_standalone(text_logger &in_log)
 }
 
 
-/**
- * Destructor
- */
-env_standalone::~env_standalone()
-{
-    m_cmd.reset();
-    m_drf.reset();
-}
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------

@@ -171,7 +171,7 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log.debug_param(in_data.location().line(), std::string(in_name), value);
+                in_log.debug_param(in_data.location().line(), in_name, value);
 
                 if (!value.empty())
                     list.insert(value.data());
@@ -207,7 +207,7 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
             for (int i = 0; i < in_data[in_name.data()].size(); i++) {
                 std::string value = in_data[in_name.data()][i].as_string();
 
-                in_log.debug_param(in_data.location().line(), std::string(in_name), value);
+                in_log.debug_param(in_data.location().line(), in_name, value);
 
                 if (!value.empty())
                     list.push_back(value);
@@ -284,7 +284,7 @@ int toml_utils::read_int(text_logger& in_log, toml::value& in_data, std::string_
             if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<int>(in_data[in_name.data()].as_integer());
 
-                in_log.debug_param(in_data.location().line(), std::string(in_name), std::to_string(value));
+                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
             } else {
                 in_log.error_line(in_data.location().line(), in_data.location().line_str());
                 in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");

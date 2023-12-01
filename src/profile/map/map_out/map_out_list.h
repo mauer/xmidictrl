@@ -31,7 +31,7 @@ namespace xmidictrl {
 //   TYPES
 //---------------------------------------------------------------------------------------------------------------------
 
-typedef std::vector<std::shared_ptr<map_out>>::iterator map_out_itr;
+using map_out_itr = std::vector<std::shared_ptr<map_out>>::iterator;
 
 
 

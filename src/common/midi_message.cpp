@@ -40,15 +40,6 @@ midi_message::midi_message(text_logger& in_log, midi_direction in_direction)
 }
 
 
-/**
- * Destructor
- */
-midi_message::~midi_message()
-{
-    m_log.reset();
-}
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------

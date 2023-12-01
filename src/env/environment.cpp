@@ -32,15 +32,6 @@ environment::environment(text_logger &in_log)
 }
 
 
-/**
- * Destructor
- */
-environment::~environment()
-{
-    m_settings.reset();
-}
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------

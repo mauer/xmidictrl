@@ -31,7 +31,6 @@ namespace xmidictrl {
 class env_xplane : public environment {
 public:
     explicit env_xplane(text_logger& in_log);
-    ~env_xplane() override;
 
     std::filesystem::path xplane_path() override;
 

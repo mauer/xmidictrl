@@ -32,7 +32,7 @@ namespace xmidictrl {
 //   TYPES
 //---------------------------------------------------------------------------------------------------------------------
 
-typedef std::vector<std::shared_ptr<map_init>>::iterator map_init_itr;
+using map_init_itr = std::vector<std::shared_ptr<map_init>>::iterator;
 
 
 
