@@ -34,7 +34,7 @@ jobs:
 
   # MacOS with CMake/clang (and sign/notarize)
   build-mac:
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - name: Code checkout
         uses: actions/checkout@v3
@@ -99,7 +99,7 @@ jobs:
 
   # Make an installation package
   make-package:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       platform: lin
     steps:

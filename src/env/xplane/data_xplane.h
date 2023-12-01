@@ -43,16 +43,16 @@ public:
 
     bool read(text_logger &in_log, std::string_view in_name, std::string &out_value) override;
     bool read(text_logger &in_log, std::string_view in_name, float &out_value) override;
-    bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values);
-    bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values);
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values) override;
+    bool read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values) override;
 
-    bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value);
-    bool write(text_logger &in_log, std::string_view in_name, float in_value);
+    bool write(text_logger &in_log, std::string_view in_name, std::string_view in_value) override;
+    bool write(text_logger &in_log, std::string_view in_name, float in_value) override;
 
     std::string toggle(text_logger &in_log,
                        std::string_view in_name,
                        std::string_view in_value_on,
-                       std::string_view in_value_off);
+                       std::string_view in_value_off) override;
 
 private:
     data_item *retrieve_data(std::string_view in_name);
