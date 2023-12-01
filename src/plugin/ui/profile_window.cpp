@@ -300,15 +300,17 @@ void profile_window::create_tab_device(device& in_device)
         }
 
         switch (m_current_map_page) {
-            case map_page::init:
+            using enum map_page;
+
+            case init:
                 create_table_mapping_init(in_device);
                 break;
 
-            case map_page::inbound:
+            case inbound:
                 create_table_mapping_in(in_device);
                 break;
 
-            case map_page::outbound:
+            case outbound:
                 create_table_mapping_out(in_device);
                 break;
         }
@@ -506,40 +508,39 @@ void profile_window::create_table_mapping_in(device& in_device)
 
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableHeadersRow();
-
-        for (const auto& mapping: in_device.mapping_in()) {
+        for (const auto& [key, mapping]: in_device.mapping_in()) {
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();
-            ImGui::Text("%i", mapping.second->no());
+            ImGui::Text("%i", mapping->no());
 
             if (!in_device.settings().include.empty()) {
                 ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->include_name().data());
+                ImGui::Text("%s", mapping->include_name().data());
             }
 
             ImGui::TableNextColumn();
-            ImGui::Text("%i", mapping.second->channel());
+            ImGui::Text("%i", mapping->channel());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->data_1_as_string().data());
+            ImGui::Text("%s", mapping->data_1_as_string().data());
 
             if (!in_device.settings().sl_dataref.empty()) {
                 ImGui::TableNextColumn();
-                ImGui::Text("%s", mapping.second->sl().data());
+                ImGui::Text("%s", mapping->sl().data());
             }
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->labels().id.data());
+            ImGui::Text("%s", mapping->labels().id.data());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", conversions::map_in_type_to_str(mapping.second->type()).data());
+            ImGui::Text("%s", conversions::map_in_type_to_str(mapping->type()).data());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->map_text_cmd_drf().data());
+            ImGui::Text("%s", mapping->map_text_cmd_drf().data());
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping.second->map_text_parameter().data());
+            ImGui::Text("%s", mapping->map_text_parameter().data());
         }
 
         ImGui::EndTable();

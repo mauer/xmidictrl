@@ -42,7 +42,7 @@ public:
                          toml::array in_profile,
                          environment& in_env,
                          bool in_is_virtual,
-                         device_settings& in_dev_settings,
+                         const device_settings& in_dev_settings,
                          std::string_view in_inc_name,
                          toml::value& in_config);
 

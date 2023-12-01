@@ -243,7 +243,7 @@ unsigned char toml_utils::read_unsigned_char(text_logger& in_log,
         if (contains(in_log, in_data, in_name)) {
             if (in_data[in_name.data()].is_integer()) {
                 int int_value = static_cast<int>(in_data[in_name.data()].as_integer());
-                in_log.debug_param(in_data.location().line(), std::string(in_name), std::to_string(value));
+                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
 
                 if (int_value >= 0 && int_value <= 127) {
                     value = static_cast<unsigned char>(int_value);

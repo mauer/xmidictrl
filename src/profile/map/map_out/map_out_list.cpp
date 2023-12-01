@@ -49,7 +49,7 @@ map_out_list::~map_out_list()
 void map_out_list::create_mappings(text_logger& in_log,
                                    toml::array in_profile,
                                    environment& in_env,
-                                   device_settings& in_dev_settings,
+                                   const device_settings& in_dev_settings,
                                    std::string_view in_inc_name)
 {
     auto log_prefix = "Device " + std::to_string(in_dev_settings.device_no) + " :: ";
