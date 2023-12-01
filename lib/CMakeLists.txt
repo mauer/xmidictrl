@@ -21,7 +21,7 @@ add_subdirectory(toml11)
 
 # Add fmt for string formatting
 message("-- Configuring build scripts for fmt")
-add_subdirectory(fmt)
+add_subdirectory(fmt EXCLUDE_FROM_ALL)
 
 # Teach MinGW std::threads
 if (MINGW)
