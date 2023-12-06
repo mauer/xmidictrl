@@ -36,11 +36,11 @@ namespace xmidictrl {
 #define UI_SPACER_3 "   "
 
 // MIDI unsigned int none
-const unsigned char MIDI_NONE(255);
+const char MIDI_NONE(-1);
 
-const unsigned char MIDI_DATA_2_MIN(0);
+const char MIDI_DATA_2_MIN(0);
 
-const unsigned char MIDI_DATA_2_MAX(127);
+const char MIDI_DATA_2_MAX(127);
 
 // Interval of flight loop
 const float FLIGHTLOOP_INTERVAL(-1.0f);

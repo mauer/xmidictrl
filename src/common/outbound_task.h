@@ -32,9 +32,9 @@ struct outbound_task {
 
     midi_msg_type type {midi_msg_type::none};
 
-    unsigned char channel {MIDI_NONE};
-    unsigned char data_1 {MIDI_NONE};
-    unsigned char data_2 {MIDI_NONE};
+    char channel {MIDI_NONE};
+    char data_1 {MIDI_NONE};
+    char data_2 {MIDI_NONE};
 
     std::shared_ptr<map> mapping;
 };

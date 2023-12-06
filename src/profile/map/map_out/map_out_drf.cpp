@@ -151,10 +151,10 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
     }
 
     // read data 2 on
-    set_data_2_on(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX));
+    set_data_2_on(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX));
 
     // read data 2 off
-    set_data_2_off(toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN));
+    set_data_2_off(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN));
 
     // read send on
     // TODO - Default value in device (or XMidiCtrl)

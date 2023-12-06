@@ -99,9 +99,9 @@ private:
 
     midi_direction m_direction {midi_direction::in};
 
-    unsigned char m_status {MIDI_NONE};
-    unsigned char m_data_1 {MIDI_NONE};
-    unsigned char m_data_2 {MIDI_NONE};
+    char m_status {MIDI_NONE};
+    char m_data_1 {MIDI_NONE};
+    char m_data_2 {MIDI_NONE};
 
     std::vector<std::shared_ptr<map>> m_mappings;
 };

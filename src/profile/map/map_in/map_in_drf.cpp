@@ -179,7 +179,7 @@ std::string map_in_drf::map_text_parameter()
 
         std::string val_str {};
 
-        for (auto& value: m_values) {
+        for (const auto& value: m_values) {
             if (!val_str.empty())
                 val_str.append(", ");
 

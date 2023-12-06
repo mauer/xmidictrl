@@ -227,19 +227,19 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
 
 
 /**
- * Read the value of an unsigned char
+ * Read a MIDI value (0..127)
  */
-unsigned char toml_utils::read_unsigned_char(text_logger& in_log,
-                                             toml::value& in_data,
-                                             std::string_view in_name,
-                                             unsigned char in_fallback)
+char toml_utils::read_midi_value(text_logger& in_log,
+                                 toml::value& in_data,
+                                 std::string_view in_name,
+                                 char in_fallback)
 {
     if (in_name.empty()) {
-        in_log.error("Internal error (toml_utils::read_unsigned_char --> name is empty)");
+        in_log.error("Internal error (toml_utils::read_midi_value --> name is empty)");
         return in_fallback;
     }
 
-    unsigned char value = in_fallback;
+    char value = in_fallback;
 
     try {
         // read dataref
@@ -248,15 +248,15 @@ unsigned char toml_utils::read_unsigned_char(text_logger& in_log,
                 int int_value = static_cast<int>(in_data[in_name.data()].as_integer());
                 in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
 
-                if (int_value >= 0 && int_value <= 127) {
-                    value = static_cast<unsigned char>(int_value);
+                if (int_value >= MIDI_DATA_2_MIN && int_value <= MIDI_DATA_2_MAX) {
+                    value = static_cast<char>(int_value);
                 } else {
                     in_log.error_line(in_data.location().line(), in_data.location().line_str());
-                    in_log.error(" --> Parameter '" + std::string(in_name) + "' is not between 0 and 127");
+                    in_log.error(fmt::format(" --> Parameter '{}' is not between {} and {}", in_name, MIDI_DATA_2_MIN, MIDI_DATA_2_MAX));
                 }
             } else {
                 in_log.error_line(in_data.location().line(), in_data.location().line_str());
-                in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");
+                in_log.error(fmt::format(" --> Parameter '{}' is not numeric", in_name));
             }
         }
     } catch (toml::type_error& error) {
@@ -343,4 +343,4 @@ float toml_utils::read_float(text_logger& in_log,
     return value;
 }
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl

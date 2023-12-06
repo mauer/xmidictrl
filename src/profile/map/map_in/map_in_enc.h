@@ -80,8 +80,12 @@ private:
     };
 
     // functions
-    void execute_up(midi_message& in_msg, bool in_fast);
-    void execute_down(midi_message& in_msg, bool in_fast);
+    void execute_relative(midi_message& in_msg);
+    void execute_range(midi_message& in_msg);
+    void execute_fixed(midi_message& in_msg);
+
+    void modify_up(midi_message& in_msg, bool in_fast);
+    void modify_down(midi_message& in_msg, bool in_fast);
 
     float check_value_min_max(float in_value, float in_modifier) const;
 

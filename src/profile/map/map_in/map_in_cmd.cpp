@@ -79,8 +79,8 @@ void map_in_cmd::read_config(text_logger& in_log, toml::value& in_data, toml::va
     m_command = toml_utils::read_string(in_log, in_data, c_cfg_command);
 
     // read data_2 parameters
-    m_data_2_on = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX);
-    m_data_2_off = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN);
+    m_data_2_on = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX);
+    m_data_2_off = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN);
 }
 
 

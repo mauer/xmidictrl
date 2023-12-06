@@ -17,6 +17,9 @@
 
 #include "map.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "conversions.h"
 #include "utils.h"
@@ -95,7 +98,7 @@ unsigned char map::data_1() const
  */
 std::string map::data_1_as_string()
 {
-    std::string str = data_1_type_as_string() + " " + std::to_string(m_data_1);
+    std::string str = fmt::format("{} {}", data_1_type_as_string(), m_data_1);
     return str;
 }
 
@@ -171,7 +174,7 @@ bool map::check(text_logger&)
 void map::read_common_config(text_logger& in_log, toml::value& in_data, bool in_read_sl)
 {
     // set source line
-    m_source_line = "Line " + std::to_string(in_data.location().line()) + " :: " + utils::trim(in_data.location().line_str());
+    m_source_line = fmt::format("Line {} :: {}", in_data.location().line(), utils::trim(in_data.location().line_str()));
 
     // required config
     read_channel(in_log, in_data);
@@ -206,20 +209,17 @@ bool map::check_sublayer(std::string_view in_sl_value)
  */
 void map::read_channel(text_logger& in_log, toml::value& in_data)
 {
-    m_channel = 11; // default channel 11
+    m_channel = 11;// default channel 11
 
     try {
         // read channel
         if (in_data.contains(c_cfg_ch.data())) {
-            m_channel = static_cast<unsigned char>( in_data[c_cfg_ch.data()].as_integer());
+            m_channel = static_cast<unsigned char>(in_data[c_cfg_ch.data()].as_integer());
 
             in_log.debug_param(in_data.location().line(), c_cfg_ch, std::to_string(m_channel));
         } else {
-            in_log.info(" --> Line " + std::to_string(in_data.location().line()) + " :: "
-                        + "Parameter '" + c_cfg_ch.data() + "' is missing, will use default channel '11'");
-            in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(c_cfg_ch) + "' = '" + std::to_string(m_channel)
-                              + "' (Default Value)");
+            in_log.info(fmt::format(" --> Line {} :: Parameter '{}' is missing, will use default channel '11'", in_data.location().line(), c_cfg_ch));
+            in_log.debug_line(in_data.location().line(), fmt::format("Parameter '{}' = '{}' (Default Value)", c_cfg_ch, m_channel));
         }
     } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), "Error reading mapping");
@@ -239,31 +239,25 @@ void map::read_data_1(text_logger& in_log, toml::value& in_data)
     try {
         // read control change
         if (in_data.contains(c_cfg_cc.data())) {
-            m_data_1 = static_cast<unsigned char>( in_data[c_cfg_cc.data()].as_integer());
+            m_data_1 = static_cast<unsigned char>(in_data[c_cfg_cc.data()].as_integer());
             m_data_1_type = map_data_1_type::control_change;
 
-            in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(c_cfg_cc) + "' = '" + std::to_string(m_data_1) + "'");
+            in_log.debug_line(in_data.location().line(), fmt::format("Parameter '{}' = '{}'", c_cfg_cc, m_data_1));
         } else if (in_data.contains(c_cfg_note.data())) {
-            m_data_1 = static_cast<unsigned char>( in_data[c_cfg_note.data()].as_integer());
+            m_data_1 = static_cast<unsigned char>(in_data[c_cfg_note.data()].as_integer());
             m_data_1_type = map_data_1_type::note;
 
-            in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(c_cfg_note) + "' = '" + std::to_string(m_data_1) + "'");
+            in_log.debug_line(in_data.location().line(), fmt::format("Parameter '{}' = '{}'", c_cfg_note, m_data_1));
         } else if (in_data.contains(CFG_KEY_PITCH_BEND)) {
-            m_data_1 = 0;   // fixed value for pitch bend messages
+            m_data_1 = 0;// fixed value for pitch bend messages
             m_data_1_type = map_data_1_type::pitch_bend;
 
-            in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(CFG_KEY_PITCH_BEND) + "' = '"
-                              + std::to_string(m_data_1) + "' (fixed value for pitch bend)");
+            in_log.debug_line(in_data.location().line(), fmt::format("Parameter '{}' = '{}' (fixed value for pitch bend)", CFG_KEY_PITCH_BEND, m_data_1));
         } else if (in_data.contains(CFG_KEY_PROGRAM_CHANGE)) {
-            m_data_1 = static_cast<unsigned char>( in_data[CFG_KEY_PROGRAM_CHANGE].as_integer());
+            m_data_1 = static_cast<unsigned char>(in_data[CFG_KEY_PROGRAM_CHANGE].as_integer());
             m_data_1_type = map_data_1_type::program_change;
 
-            in_log.debug_line(in_data.location().line(),
-                              "Parameter '" + std::string(CFG_KEY_PROGRAM_CHANGE) + "' = '" + std::to_string(m_data_1)
-                              + "'");
+            in_log.debug_line(in_data.location().line(), fmt::format("Parameter '{}' = '{}'", CFG_KEY_PROGRAM_CHANGE, m_data_1));
         } else {
             in_log.error_line(in_data.location().line(), "Parameter for MIDI type is missing");
         }
@@ -278,7 +272,7 @@ void map::read_data_1(text_logger& in_log, toml::value& in_data)
 /**
  * Read parameter sl
  */
-void map::read_sublayer(text_logger &in_log, toml::value &in_data)
+void map::read_sublayer(text_logger& in_log, toml::value& in_data)
 {
     m_sl.clear();
 
@@ -289,7 +283,7 @@ void map::read_sublayer(text_logger &in_log, toml::value &in_data)
 
             in_log.debug_param(in_data.location().line(), c_cfg_sl, m_sl);
         }
-    } catch (toml::type_error &error) {
+    } catch (toml::type_error& error) {
         in_log.error_line(in_data.location().line(), "Error reading mapping");
         in_log.error(error.what());
     }
@@ -299,28 +293,30 @@ void map::read_sublayer(text_logger &in_log, toml::value &in_data)
 /**
  * Return the data 1 type as string
  */
-std::string map::data_1_type_as_string()
+std::string map::data_1_type_as_string() const
 {
     std::string str;
 
     switch (m_data_1_type) {
-        case map_data_1_type::none:
+        using enum map_data_1_type;
+
+        case none:
             str = "";
             break;
 
-        case map_data_1_type::control_change:
+        case control_change:
             str = KEY_CONTROL_CHANGE;
             break;
 
-        case map_data_1_type::note:
+        case note:
             str = KEY_NOTE;
             break;
 
-        case map_data_1_type::pitch_bend:
+        case pitch_bend:
             str = KEY_PITCH_BEND;
             break;
 
-        case map_data_1_type::program_change:
+        case program_change:
             str = KEY_PROGRAM_CHANGE;
             break;
     }
@@ -328,4 +324,4 @@ std::string map::data_1_type_as_string()
     return str;
 }
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl

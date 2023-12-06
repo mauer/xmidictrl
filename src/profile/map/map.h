@@ -90,7 +90,7 @@ private:
     void read_data_1(text_logger& in_log, toml::value& in_data);
     void read_sublayer(text_logger& in_log, toml::value& in_data);
 
-    std::string data_1_type_as_string();
+    std::string data_1_type_as_string() const;
 
     static constexpr std::string_view c_cfg_ch {"ch"};
     static constexpr std::string_view c_cfg_cc {"cc"};
@@ -100,10 +100,10 @@ private:
     unsigned int m_no {0};
     std::string m_include_name {};
 
-    unsigned char m_channel {MIDI_NONE};
+    char m_channel {MIDI_NONE};
 
     map_data_1_type m_data_1_type {map_data_1_type::none};
-    unsigned char m_data_1 {MIDI_NONE};
+    char m_data_1 {MIDI_NONE};
 
     std::string m_sl {};
 

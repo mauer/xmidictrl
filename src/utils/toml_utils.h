@@ -50,10 +50,10 @@ public:
                                                           toml::value& in_data,
                                                           std::string_view in_name);
 
-    static unsigned char read_unsigned_char(text_logger& in_log,
-                                            toml::value& in_data,
-                                            std::string_view in_name,
-                                            unsigned char in_fallback = 0);
+    static char read_midi_value(text_logger& in_log,
+                                toml::value& in_data,
+                                std::string_view in_name,
+                                char in_fallback = MIDI_NONE);
 
     static int read_int(text_logger& in_log, toml::value& in_data, std::string_view in_name, int in_fallback = 0);
 

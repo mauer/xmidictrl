@@ -315,31 +315,6 @@ void profile_window::create_tab_device(device& in_device)
                 break;
         }
 
-        /*if (ImGui::BeginTable("mappings", 1, ImGuiTableFlags_ScrollY)) {
-            ImGui::TableSetupColumn("column-mappings");
-
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-
-            create_table_mapping_init(in_device);
-            create_table_mapping_in(in_device);
-            create_table_mapping_out(in_device);
-
-            // Init mappings
-            if (in_device->type() == device_type::midi_device)
-                create_table_mapping_init(in_device);
-
-            // Inbound mappings
-            create_table_mapping_in(in_device);
-
-            // Outbound mappings
-            if (in_device->type() == device_type::midi_device)
-                create_table_mapping_out(in_device);
-            */
-
-        //ImGui::EndTable();
-        //}
-
         ImGui::EndTabItem();
     }
 }
@@ -378,7 +353,6 @@ void profile_window::create_tab_errors_warnings()
 
         ImGui::BeginChild("TEXT_TABLE");
 
-// if (ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
         if (ImGui::BeginTable("tableTextMessages", 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY)) {
             ImGui::TableSetupColumn("Message Date/Time", ImGuiTableColumnFlags_WidthFixed, 200);
             ImGui::TableSetupColumn("Message Type", ImGuiTableColumnFlags_WidthFixed, 120);
