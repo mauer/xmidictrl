@@ -293,6 +293,8 @@ bool map_in_enc::execute(midi_message& in_msg, std::string_view in_sl_value)
 
             break;
     }
+
+    return true;
 }
 
 
