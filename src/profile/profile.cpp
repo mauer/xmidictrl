@@ -397,7 +397,7 @@ void profile::create_device(const toml::value& in_params, bool in_is_virtual, si
         // let's add the mappings
         if (new_device != nullptr) {
             // add mappings from include files
-            add_mappings_from_include(*new_device);
+            add_mappings_from_include(in_is_virtual,*new_device);
 
             m_profile_log->debug(get_log_prefix(in_is_virtual, in_dev_no) + "Add mappings from aircraft profile");
 
@@ -439,13 +439,15 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
         }
 
         // include files
-        if (toml_utils::is_array(*m_profile_log, in_params, c_cfg_include)) {
-            settings->include = toml_utils::read_str_set_array(*m_profile_log, in_params, c_cfg_include);
-        } else {
-            settings->include.clear();
-            std::string include_name = toml_utils::read_string(*m_profile_log, in_params, c_cfg_include);
+        if (toml_utils::contains(*m_profile_log, in_params, c_cfg_include)) {
+            if (toml_utils::is_array(*m_profile_log, in_params, c_cfg_include)) {
+                settings->include = toml_utils::read_str_set_array(*m_profile_log, in_params, c_cfg_include);
+            } else {
+                settings->include.clear();
+                std::string include_name = toml_utils::read_string(*m_profile_log, in_params, c_cfg_include);
 
-            settings->include.insert(include_name);
+                settings->include.insert(include_name);
+            }
         }
 
         // the following parameters are necessary for MIDI devices only
@@ -523,16 +525,19 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 /**
  * Add mappings from the specified include files
  */
-void profile::add_mappings_from_include(device& in_device)
+void profile::add_mappings_from_include(bool in_is_virtual, device& in_device)
 {
     if (in_device.settings().include.empty()) {
-        m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no) + " :: No includes found");
+        if (in_is_virtual)
+            m_profile_log->debug("Virtual device :: No includes found");
+        else
+            m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no) + " :: No includes found");
         return;
     }
 
     for (auto& inc_name: in_device.settings().include) {
         m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no)
-                             + " ::  Add mappings from include file '" + inc_name + "'");
+                             + " :: Add mappings from include file '" + inc_name + "'");
 
         if (inc_name.empty())
             continue;
@@ -549,7 +554,7 @@ void profile::add_mappings_from_include(device& in_device)
         create_device_mappings(inc_file, in_device, inc_name);
 
         m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no)
-                             + " ::  Finished adding mappings from include file '" + inc_name + "'");
+                             + " :: Finished adding mappings from include file '" + inc_name + "'");
     }
 }
 
@@ -564,7 +569,7 @@ void profile::create_device_mappings(toml::value in_params,
     // create init mappings
     if (in_device.type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_INIT)) {
         auto& midi_dev = dynamic_cast<midi_device&>(in_device);
-        midi_dev.mapping_init().create_mappings(m_plugin_log,
+        midi_dev.mapping_init().create_mappings(*m_profile_log,
                                                 in_params[CFG_KEY_MAPPING_INIT].as_array(),
                                                 midi_dev.settings(),
                                                 in_inc_name);
@@ -574,7 +579,7 @@ void profile::create_device_mappings(toml::value in_params,
 
     // create inbound mappings
     if (in_params.contains(CFG_KEY_MAPPING_IN))
-        in_device.mapping_in().create_mappings(m_plugin_log,
+        in_device.mapping_in().create_mappings(*m_profile_log,
                                                in_params[CFG_KEY_MAPPING_IN].as_array(),
                                                m_env,
                                                in_device.type() == device_type::virtual_device,
@@ -588,7 +593,7 @@ void profile::create_device_mappings(toml::value in_params,
     // create outbound mappings
     if (in_device.type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_OUT)) {
         auto& midi_dev = dynamic_cast<midi_device&>(in_device);
-        midi_dev.mapping_out().create_mappings(m_plugin_log,
+        midi_dev.mapping_out().create_mappings(*m_profile_log,
                                                in_params[CFG_KEY_MAPPING_OUT].as_array(),
                                                m_env,
                                                midi_dev.settings(),

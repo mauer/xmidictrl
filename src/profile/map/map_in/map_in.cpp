@@ -145,7 +145,7 @@ void map_in::display_label(text_logger& in_log, float in_value)
  */
 void map_in::display_label(text_logger& in_log, std::string_view in_value)
 {
-    if (m_label == nullptr) {
+    if (m_label == nullptr || m_label->id.empty()) {
         in_log.debug(" --> No label defined");
         return;
     }

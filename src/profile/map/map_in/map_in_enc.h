@@ -27,10 +27,21 @@
 
 // XMidiCtrl
 #include "map_in.h"
-#include "text_logger.h"
 #include "midi_message.h"
+#include "text_logger.h"
 
 namespace xmidictrl {
+
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
+
+// Encoder mode
+enum class encoder_mode {
+    relative,
+    range,
+    fixed
+};
 
 //---------------------------------------------------------------------------------------------------------------------
 //   CLASS
@@ -38,15 +49,15 @@ namespace xmidictrl {
 
 class map_in_enc : public map_in {
 public:
-    explicit map_in_enc(environment &in_env, encoder_mode in_default_enc_mode);
+    explicit map_in_enc(environment& in_env, encoder_mode in_default_enc_mode);
     ~map_in_enc() override = default;
 
     map_in_type type() override;
 
-    void read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config) override;
-    bool check(text_logger &in_log) override;
+    void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
+    bool check(text_logger& in_log) override;
 
-    bool execute(midi_message &in_msg, std::string_view in_sl_value) override;
+    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
     std::string map_text_cmd_drf() override;
     std::string map_text_parameter() override;
@@ -55,17 +66,41 @@ protected:
     std::string build_mapping_text(bool in_short) override;
 
 private:
-    bool execute_dataref(midi_message &in_msg);
-    bool execute_command(midi_message &in_msg);
+    // constants
+    static constexpr std::string_view c_cfg_data_2_up {"data_2_up"};
+    static constexpr std::string_view c_cfg_data_2_down {"data_2_down"};
+
+    static constexpr std::string_view c_cfg_data_2_min {"data_2_min"};
+    static constexpr std::string_view c_cfg_data_2_max {"data_2_max"};
+
+    // enumerations
+    enum class encoder_map_type {
+        dataref,
+        command
+    };
+
+    // functions
+    void execute_up(midi_message& in_msg, bool in_fast);
+    void execute_down(midi_message& in_msg, bool in_fast);
 
     float check_value_min_max(float in_value, float in_modifier) const;
 
-    encoder_mode m_mode {encoder_mode::relative};
+    // members
+    encoder_mode m_enc_mode {encoder_mode::relative};
+
+    encoder_map_type m_enc_map_type {encoder_map_type::dataref};
 
     int m_delay_counter {0};
     int m_delay {-1};
 
-    unsigned int m_velocity_prev {MIDI_NONE};
+    bool m_data_2_prev_set {false};
+    unsigned char m_data_2_prev {};
+
+    unsigned char m_data_2_up {};
+    unsigned char m_data_2_down {};
+
+    unsigned char m_data_2_min {MIDI_DATA_2_MIN};
+    unsigned char m_data_2_max {MIDI_DATA_2_MAX};
 
     std::string m_dataref {};
 
@@ -88,6 +123,6 @@ private:
     std::string m_command_fast_down {};
 };
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl
 
-#endif // XMC_MAP_IN_ENC_H
+#endif// XMC_MAP_IN_ENC_H

@@ -17,9 +17,12 @@
 
 #include "map_in_enc.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
-#include "toml_utils.h"
 #include "conversions.h"
+#include "toml_utils.h"
 
 namespace xmidictrl {
 
@@ -30,10 +33,11 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_enc::map_in_enc(environment &in_env, encoder_mode in_default_enc_mode)
+map_in_enc::map_in_enc(environment& in_env, encoder_mode in_default_enc_mode)
     : map_in(in_env),
-      m_mode(in_default_enc_mode)
-{}
+      m_enc_mode(in_default_enc_mode)
+{
+}
 
 
 
@@ -54,14 +58,14 @@ map_in_type map_in_enc::type()
 /**
  * Read settings from config
  */
-void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::value &in_config)
+void map_in_enc::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
     in_log.debug_line(in_data.location().line(), "Read settings for type 'enc'");
     map_in::read_config(in_log, in_data, in_config);
 
     // read the mode
     if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE))
-        m_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
+        m_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
 
     // read the delay (if defined)
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY))
@@ -70,6 +74,7 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
     // check if dataref was defined
     if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
         in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for encoder mapping");
+        m_enc_map_type = encoder_map_type::dataref;
 
         // read dataref
         m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
@@ -105,6 +110,7 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
         }
     } else {
         in_log.debug_line(in_data.location().line(), "Use 'command' mode for encoder mapping");
+        m_enc_map_type = encoder_map_type::command;
 
         // read command up
         m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
@@ -124,49 +130,97 @@ void map_in_enc::read_config(text_logger &in_log, toml::value &in_data, toml::va
         else
             m_command_fast_down = m_command_down;
     }
-}
 
+    // read data 2 depending on the encoder mode
+    switch (m_enc_mode) {
+        using enum encoder_mode;
+
+        case relative:
+            // TODO: Add data_2 up/down and up fast/down fast
+            break;
+
+        case range:
+            m_data_2_min = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_min, MIDI_DATA_2_MIN);
+            m_data_2_max = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_max, MIDI_DATA_2_MAX);
+            break;
+
+        case fixed:
+            m_data_2_up = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_up);
+            m_data_2_down = toml_utils::read_unsigned_char(in_log, in_data, c_cfg_data_2_down);
+            break;
+    }
+}
 
 /**
  * Check the mapping
  */
-bool map_in_enc::check(text_logger &in_log)
+bool map_in_enc::check(text_logger& in_log)
 {
     bool result = true;
 
     if (!map::check(in_log))
         result = false;
 
-    if (!m_dataref.empty()) {
-        // dataref mode
-        if (!env().drf().check(m_dataref)) {
-            in_log.error(source_line());
-            in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
-            result = false;
-        }
+    switch (m_enc_map_type) {
+        using enum encoder_map_type;
 
-        if (m_modifier_up == 0.0f && m_modifier_down == 0.0f && m_modifier_fast_up == 0.0f
-            && m_modifier_fast_down == 0.0f) {
-            in_log.error(source_line());
-            in_log.error(" --> Modifiers (up/down) are not defined");
-            result = false;
-        }
+        case dataref:
+            // dataref mode
+            if (!env().drf().check(m_dataref)) {
+                in_log.error(source_line());
+                in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref));
+                result = false;
+            }
 
-        if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max) {
-            in_log.error(source_line());
-            in_log.error(
-                " --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is expected to be less than parameter '"
-                + std::string(CFG_KEY_VALUE_MAX) + "'");
-            result = false;
-        }
-    } else {
-        // command mode
-        if (m_command_up.empty() && m_command_down.empty() && m_command_fast_up.empty()
-            && m_command_fast_down.empty()) {
-            in_log.error(source_line());
-            in_log.error(" --> Commands (up/down) are not defined");
-            result = false;
-        }
+            if (m_modifier_up == 0.0f && m_modifier_down == 0.0f && m_modifier_fast_up == 0.0f
+                && m_modifier_fast_down == 0.0f) {
+                in_log.error(source_line());
+                in_log.error(" --> Modifiers (up/down) are not defined");
+                result = false;
+            }
+
+            if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max) {
+                in_log.error(source_line());
+                in_log.error(
+                    " --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is expected to be less than parameter '"
+                    + std::string(CFG_KEY_VALUE_MAX) + "'");
+                result = false;
+            }
+            break;
+
+        case command:
+            // command mode
+            if (m_command_up.empty() && m_command_down.empty() && m_command_fast_up.empty()
+                && m_command_fast_down.empty()) {
+                in_log.error(source_line());
+                in_log.error(" --> Commands (up/down) are not defined");
+                result = false;
+            }
+            break;
+    }
+
+    // check data 2 depending on the encoder mode
+    switch (m_enc_mode) {
+        using enum encoder_mode;
+
+        case relative:
+            break;
+
+        case range:
+            if (m_data_2_min >= m_data_2_max) {
+                in_log.error(source_line());
+                in_log.error(fmt::format(" --> Parameter '{}' needs to be lower than parameter '{}'", m_data_2_min, m_data_2_max));
+                result = false;
+            }
+            break;
+
+        case fixed:
+            if (m_data_2_up == m_data_2_down) {
+                in_log.error(source_line());
+                in_log.error(fmt::format(" --> Parameter '{}' needs to be different than parameter '{}'", m_data_2_up, m_data_2_down));
+                result = false;
+            }
+            break;
     }
 
     return result;
@@ -176,7 +230,7 @@ bool map_in_enc::check(text_logger &in_log)
 /**
  * Execute the action in X-Plane
  */
-bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
+bool map_in_enc::execute(midi_message& in_msg, std::string_view in_sl_value)
 {
     if (!check_sublayer(in_sl_value))
         return true;
@@ -190,10 +244,55 @@ bool map_in_enc::execute(midi_message &in_msg, std::string_view in_sl_value)
         }
     }
 
-    if (!m_dataref.empty())
-        return execute_dataref(in_msg);
-    else
-        return execute_command(in_msg);
+    switch (m_enc_mode) {
+        using enum encoder_mode;
+
+        case relative:
+            // relative mode
+            if (in_msg.data_2() < 64) {
+                if (in_msg.data_2() < 61)
+                    execute_down(in_msg, true);
+                else
+                    execute_down(in_msg, false);
+            } else if (in_msg.data_2() > 64) {
+                // Up
+                if (in_msg.data_2() > 68)
+                    execute_up(in_msg, true);
+                else
+                    execute_up(in_msg, false);
+            }
+            break;
+
+        case range:
+            // range mode
+            if (!m_data_2_prev_set) {
+                // ignore the first message, because we don't know which direction the knob was turned
+                m_data_2_prev_set = true;
+                return true;
+            }
+
+            if (in_msg.data_2() == m_data_2_min) {
+                execute_down(in_msg, false);
+            } else if (in_msg.data_2() == m_data_2_max) {
+                execute_up(in_msg, false);
+            } else {
+                if ((int) (in_msg.data_2() - m_data_2_prev) > 0)
+                    execute_up(in_msg, false);
+                else
+                    execute_down(in_msg, false);
+            }
+
+            m_data_2_prev = in_msg.data_2();
+            break;
+
+        case fixed:
+            if (in_msg.data_2() == m_data_2_down)
+                execute_down(in_msg, false);
+            else if (in_msg.data_2() == m_data_2_up)
+                execute_up(in_msg, false);
+
+            break;
+    }
 }
 
 
@@ -246,7 +345,7 @@ std::string map_in_enc::map_text_parameter()
         }
     }
 
-    if (m_mode == encoder_mode::relative)
+    if (m_enc_mode == encoder_mode::relative)
         map_str.append("Mode = relative");
     else
         map_str.append("Mode = range");
@@ -300,7 +399,7 @@ std::string map_in_enc::build_mapping_text(bool in_short)
             map_str.append(sep_str + "Command down (fast) = '" + m_command_fast_down + "'");
     }
 
-    if (m_mode == encoder_mode::relative)
+    if (m_enc_mode == encoder_mode::relative)
         map_str.append(sep_str + "Mode = 'relative'");
     else
         map_str.append(sep_str + "Mode = 'range'");
@@ -317,19 +416,21 @@ std::string map_in_enc::build_mapping_text(bool in_short)
 
 /**
  * Execute in dataref mode
- */
-bool map_in_enc::execute_dataref(midi_message &in_msg)
+ *//*
+
+bool map_in_enc::execute_dataref(midi_message& in_msg)
 {
     float value = 0.0f;
     float modifier = 0.0f;
 
     // read current value
     if (!env().drf().read(in_msg.log(), m_dataref, value)) {
-        m_velocity_prev = in_msg.data_2();
+        m_data_2_prev_set = true;
+        m_data_2_prev = in_msg.data_2();
         return true;
     }
 
-    if (m_mode == encoder_mode::relative) {
+    if (m_enc_mode == encoder_mode::relative) {
         // relative mode
         if (in_msg.data_2() < 64) {
             // Down
@@ -356,13 +457,15 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         }
     } else {
         // range mode
-        if (m_velocity_prev == MIDI_NONE) {
+        if (!m_data_2_prev_set) {
             // ignore first message, have to figure out first which way the knob was turned
-            m_velocity_prev = in_msg.data_2();
+            m_data_2_prev_set = true;
+            m_data_2_prev = in_msg.data_2();
             return true;
         }
 
         switch (in_msg.data_2()) {
+            // TODO: Make that configurable
             case MIDI_DATA_2_MIN:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
@@ -370,6 +473,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
                 break;
 
+                // TODO: Make that configurable
             case MIDI_DATA_2_MAX:
                 in_msg.log().debug(
                     " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
@@ -378,7 +482,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
                 break;
 
             default:
-                if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
+                if ((int) (in_msg.data_2() - m_data_2_prev) > 0) {
                     in_msg.log().debug(
                         " --> Modify dataref '" + m_dataref + "' by value '" + std::to_string(m_modifier_up) + "'");
                     modifier = m_modifier_up;
@@ -392,7 +496,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
         }
     }
 
-    m_velocity_prev = in_msg.data_2();
+    m_data_2_prev = in_msg.data_2();
 
     // change and check the value
     value = value + modifier;
@@ -401,7 +505,7 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
     if (env().drf().write(in_msg.log(), m_dataref, value)) {
         try {
             display_label(in_msg.log(), value);
-        } catch (std::bad_alloc &ex) {
+        } catch (std::bad_alloc& ex) {
             in_msg.log().error("Error converting float '" + std::to_string(value) + "' value to string");
             in_msg.log().error(ex.what());
         }
@@ -411,14 +515,15 @@ bool map_in_enc::execute_dataref(midi_message &in_msg)
 
     return true;
 }
+*/
 
 
 /**
  * Execute in command mode
  */
-bool map_in_enc::execute_command(midi_message &in_msg)
+/*bool map_in_enc::execute_command(midi_message& in_msg)
 {
-    if (m_mode == encoder_mode::relative) {
+    if (m_enc_mode == encoder_mode::relative) {
         // relative mode
         if (in_msg.data_2() < 64) {
             // Down
@@ -453,7 +558,7 @@ bool map_in_enc::execute_command(midi_message &in_msg)
                 break;
 
             default:
-                if ((int) (in_msg.data_2() - m_velocity_prev) > 0) {
+                if ((int) (in_msg.data_2() - m_data_2_prev) > 0) {
                     in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
                     env().cmd().execute(in_msg.log(), m_command_up);
                 } else {
@@ -463,10 +568,86 @@ bool map_in_enc::execute_command(midi_message &in_msg)
                 break;
         }
 
-        m_velocity_prev = in_msg.data_2();
+        m_data_2_prev = in_msg.data_2();
     }
 
     return true;
+}*/
+
+
+/**
+ * Execute the up command/modifier
+ */
+void map_in_enc::execute_up(midi_message& in_msg, bool in_fast)
+{
+    switch (m_enc_map_type) {
+        using enum encoder_map_type;
+
+        case dataref: {
+            float value = 0.0f;
+
+            // read current value
+            if (!env().drf().read(in_msg.log(), m_dataref, value))
+                return;
+
+            float modifier = m_modifier_up;
+
+            if (in_fast)
+                modifier = m_modifier_fast_up;
+
+            in_msg.log().debug(fmt::format(" --> Modify dataref '{}' by value '{}'", m_dataref, modifier));
+
+            // change and check the value
+            value = value + modifier;
+            value = check_value_min_max(value, modifier);
+
+            if (env().drf().write(in_msg.log(), m_dataref, value)) {
+                try {
+                    display_label(in_msg.log(), value);
+                } catch (std::bad_alloc& ex) {
+                    in_msg.log().error(fmt::format("Error converting float '{}' value to string", value));
+                    in_msg.log().error(ex.what());
+                }
+            } else {
+                in_msg.log().error(fmt::format("Error changing dataref '{}' to value '{}'", m_dataref, value));
+            }
+        } break;
+
+        case command:
+            std::string cmd = m_command_down;
+
+            if (in_fast)
+                cmd = m_command_fast_down;
+
+            in_msg.log().debug(" --> Execute command '" + cmd + "'");
+            env().cmd().execute(in_msg.log(), cmd);
+
+            break;
+    }
+}
+
+
+/**
+ * Execute the down command/modifier
+ */
+void map_in_enc::execute_down(midi_message& in_msg, bool in_fast)
+{
+    switch (m_enc_map_type) {
+        using enum encoder_map_type;
+
+        case dataref:
+
+        case command:
+            std::string cmd = m_command_down;
+
+            if (in_fast)
+                cmd = m_command_fast_down;
+
+            in_msg.log().debug(" --> Execute command '" + cmd + "'");
+            env().cmd().execute(in_msg.log(), cmd);
+
+            break;
+    }
 }
 
 
@@ -488,4 +669,4 @@ float map_in_enc::check_value_min_max(float in_value, float in_modifier) const
     return in_value;
 }
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl

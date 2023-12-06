@@ -91,7 +91,7 @@ private:
                                                             bool in_is_virtual,
                                                             size_t in_dev_no = 0);
 
-    void add_mappings_from_include(device& in_device);
+    void add_mappings_from_include(bool in_is_virtual, device& in_device);
     void create_device_mappings(toml::value in_params,
                                 device& in_device,
                                 std::string_view in_inc_name = {});

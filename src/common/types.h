@@ -192,12 +192,6 @@ enum class dataref_mode {
     momentary
 };
 
-// Encoder mode
-enum class encoder_mode {
-    relative,
-    range
-};
-
 // Send mode
 enum class send_mode {
     all,

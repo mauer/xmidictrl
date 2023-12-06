@@ -24,6 +24,9 @@
 // fmt
 #include "fmt/format.h"
 
+// XMidiCtrl
+#include "utils.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -209,7 +212,7 @@ void text_logger::debug(std::string_view in_text)
  */
 void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    debug(fmt::format(" --> Line {} :: {}", in_line, in_text));
+    debug(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
 }
 
 
@@ -251,7 +254,7 @@ void text_logger::warn(std::string_view in_text)
  */
 void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    warn(fmt::format(" --> Line {} :: {}", in_line, in_text));
+    warn(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
 }
 
 
@@ -272,7 +275,7 @@ void text_logger::error(std::string_view in_text)
  */
 void text_logger::error_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    std::string debug_text = fmt::format(" --> Line {} :: {}", in_line, in_text);
+    std::string debug_text = fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text));
 
     create_message(log_level::error, debug_text);
 

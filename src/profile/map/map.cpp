@@ -19,6 +19,7 @@
 
 // XMidiCtrl
 #include "conversions.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -170,7 +171,7 @@ bool map::check(text_logger&)
 void map::read_common_config(text_logger& in_log, toml::value& in_data, bool in_read_sl)
 {
     // set source line
-    m_source_line = std::to_string(in_data.location().line()) + " :: " + in_data.location().line_str();
+    m_source_line = "Line " + std::to_string(in_data.location().line()) + " :: " + utils::trim(in_data.location().line_str());
 
     // required config
     read_channel(in_log, in_data);

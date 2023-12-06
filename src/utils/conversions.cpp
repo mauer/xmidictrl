@@ -46,6 +46,8 @@ encoder_mode conversions::encoder_mode_from_code(std::string_view in_mode)
 {
     if (in_mode == "range")
         return encoder_mode::range;
+    else if (in_mode == "fixed")
+        return encoder_mode::fixed;
     else
         return encoder_mode::relative;
 }

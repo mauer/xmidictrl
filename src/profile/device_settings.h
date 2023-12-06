@@ -24,6 +24,7 @@
 #include <string_view>
 
 // XMidiCtrl
+#include "map_in_enc.h"
 #include "types.h"
 
 namespace xmidictrl {

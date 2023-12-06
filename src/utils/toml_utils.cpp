@@ -17,6 +17,9 @@
 
 #include "toml_utils.h"
 
+// fmt
+#include "fmt/format.h"
+
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -163,7 +166,7 @@ std::set<std::string> toml_utils::read_str_set_array(text_logger& in_log,
         return {};
     }
 
-    std::set<std::string> list;
+    std::set<std::string> list {};
 
     try {
         // read dataref array
@@ -321,11 +324,11 @@ float toml_utils::read_float(text_logger& in_log,
             if (in_data[in_name.data()].is_floating()) {
                 value = static_cast<float>(in_data[in_name.data()].as_floating());
 
-                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
+                in_log.debug_param(in_data.location().line(), in_name, fmt::format("{:.2f}", value));
             } else if (in_data[in_name.data()].is_integer()) {
                 value = static_cast<float>(in_data[in_name.data()].as_integer());
 
-                in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
+                in_log.debug_param(in_data.location().line(), in_name, fmt::format("{:.2f}", value));
             } else {
                 in_log.error_line(in_data.location().line(), in_data.location().line_str());
                 in_log.error(" --> Parameter '" + std::string(in_name) + "' is not numeric");

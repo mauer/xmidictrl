@@ -106,4 +106,4 @@ midi_logger& device::midi_log()
     return m_midi_log;
 }
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl

@@ -19,6 +19,7 @@
 #define XMC_UTILS_H
 
 // Standard
+#include <regex>
 #include <string>
 
 // XMidiCtrl
@@ -30,6 +31,21 @@ namespace xmidictrl {
 class utils {
 public:
     static bool create_preference_folders(text_logger& in_log, environment& in_env);
+
+    // TODO: Move to cpp file
+    static std::string ltrim(std::string_view in_str) {
+        return std::regex_replace(in_str.data(), std::regex("^\\s+"), std::string());
+    }
+
+
+    static std::string rtrim(std::string_view in_str) {
+        return std::regex_replace(in_str.data(), std::regex("\\s+$"), std::string());
+    }
+
+
+    static std::string trim(std::string_view in_str) {
+        return ltrim(rtrim(in_str.data()));
+    }
 
 private:
     static bool create_directory(text_logger& in_log, const std::filesystem::path& in_path);

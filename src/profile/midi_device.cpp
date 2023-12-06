@@ -20,11 +20,11 @@
 #include <utility>
 
 // XMidiCtrl
+#include "conversions.h"
 #include "device_list.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
 #include "plugin.h"
-#include "conversions.h"
 
 // Make sure min is not defined as a macro otherwise time_point::min() will not compile
 #if defined(_MSC_VER) && defined(min)
@@ -64,7 +64,6 @@ midi_device::midi_device(text_logger& in_text_log,
     }
 }
 
-
 /**
  * Destructor
  */
@@ -72,9 +71,6 @@ midi_device::~midi_device()
 {
     close_connections();
 }
-
-
-
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
@@ -88,7 +84,6 @@ device_type midi_device::type()
     return device_type::midi_device;
 }
 
-
 /**
  * Return the init mapping list
  */
@@ -97,7 +92,6 @@ map_init_list& midi_device::mapping_init()
     return *m_map_init;
 }
 
-
 /**
  * Return the outbound mapping list
  */
@@ -105,16 +99,6 @@ map_out_list& midi_device::mapping_out()
 {
     return *m_map_out;
 }
-
-
-/**
- * Add a new outbound mapping to the device
- */
-//void midi_device::add_outbound_map(std::shared_ptr<map_out>& in_mapping)
-//{
-//    m_map_out->add(in_mapping);
-//}
-
 
 /**
  * Open connections for midi in and out
@@ -168,7 +152,6 @@ bool midi_device::open_connections()
     return true;
 }
 
-
 /**
  * Close midi connections
  */
@@ -201,7 +184,6 @@ void midi_device::close_connections()
     }
 }
 
-
 /**
  * Callback method for midi inbound events
  */
@@ -214,7 +196,6 @@ void midi_device::midi_callback([[maybe_unused]] double in_deltatime,
         dev->process_inbound_message(in_message);
     }
 }
-
 
 /**
  * Process all init midi mappings
@@ -231,7 +212,6 @@ void midi_device::process_init_mappings()
             add_outbound_task(task);
     }
 }
-
 
 /**
  * Process an inbound midi message
@@ -318,7 +298,6 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
     }
 }
 
-
 /**
  * Process all outbound midi mappings
  */
@@ -351,7 +330,6 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
         m_time_sent = std::chrono::system_clock::now();
 }
 
-
 /**
  * Process a reset off all outbound mappings
  */
@@ -368,9 +346,6 @@ void midi_device::process_outbound_reset()
     }
 }
 
-
-
-
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
@@ -383,7 +358,6 @@ void midi_device::create_outbound_thread()
     if (m_outbound_thread == nullptr)
         m_outbound_thread = std::make_unique<std::thread>(&midi_device::process_outbound_tasks, this);
 }
-
 
 /**
  * Process all outbound tasks in the queue
@@ -438,7 +412,6 @@ void midi_device::process_outbound_tasks()
     text_log().debug("Exit outbound thread");
 }
 
-
 /**
  * Add an outbound task to the queue
  */
@@ -481,7 +454,6 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
 
         default:
             break;
-
     }
 
     msg->set_data_1(in_task->data_1);
@@ -511,4 +483,4 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
     m_new_outbound_task.notify_one();
 }
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl
