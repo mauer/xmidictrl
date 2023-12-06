@@ -47,8 +47,8 @@ public:
     void set_dataref(std::string_view in_dataref);
     void set_dataref(std::vector<std::string> in_dataref);
 
-    void set_data_2_on(int in_data_2_on);
-    void set_data_2_off(int in_data_2_off);
+    void set_data_2_on(unsigned char in_data_2_on);
+    void set_data_2_off(unsigned char in_data_2_off);
 
     void read_config(text_logger& in_log, toml::value& in_data) override;
     bool check(text_logger& in_log) override;
@@ -79,8 +79,8 @@ private:
     send_mode m_send_on {send_mode::one};
     send_mode m_send_off {send_mode::all};
 
-    unsigned int m_data_2_on {MIDI_DATA_2_MAX};
-    unsigned int m_data_2_off {MIDI_DATA_2_MIN};
+    unsigned char m_data_2_on {MIDI_DATA_2_MAX};
+    unsigned char m_data_2_off {MIDI_DATA_2_MIN};
 };
 
 } // Namespace xmidictrl

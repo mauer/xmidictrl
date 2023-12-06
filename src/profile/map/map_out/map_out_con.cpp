@@ -53,9 +53,9 @@ map_out_type map_out_con::type()
 /**
  * Set the data 2 value
  */
-void map_out_con::set_data_2(int in_data_2)
+void map_out_con::set_data_2(unsigned char in_data_2)
 {
-    if (in_data_2 >= MIDI_DATA_2_MIN && in_data_2 <= MIDI_DATA_2_MAX)
+    if (in_data_2 <= MIDI_DATA_2_MAX)
         m_data_2 = in_data_2;
     else
         m_data_2 = MIDI_DATA_2_MAX;

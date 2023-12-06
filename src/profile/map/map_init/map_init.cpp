@@ -46,7 +46,7 @@ map_init::map_init()
  */
 void map_init::set_data_2(unsigned char in_data_2)
 {
-    if (in_data_2 >= MIDI_DATA_2_MIN && in_data_2 <= MIDI_DATA_2_MAX)
+    if (in_data_2 <= MIDI_DATA_2_MAX)
         m_data_2 = in_data_2;
     else
         m_data_2 = MIDI_DATA_2_MAX;
@@ -97,7 +97,7 @@ bool map_init::check(text_logger& in_log)
     if (!map::check(in_log))
         result = false;
 
-    if (m_data_2 < MIDI_DATA_2_MIN || m_data_2 > MIDI_DATA_2_MAX) {
+    if (m_data_2 > MIDI_DATA_2_MAX) {
         in_log.error(source_line());
         in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2) + "', "
                      + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "

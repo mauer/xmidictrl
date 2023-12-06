@@ -44,7 +44,7 @@ public:
 
     map_out_type type() override;
 
-    void set_data_2(int in_data_2);
+    void set_data_2(unsigned char in_data_2);
 
     void read_config(text_logger& in_log, toml::value& in_data) override;
     bool check(text_logger& in_log) override;
@@ -65,7 +65,7 @@ private:
     static constexpr std::string_view c_cfg_velocity {"velocity"};
 
     // members
-    unsigned int m_data_2 {MIDI_DATA_2_MAX};
+    unsigned char m_data_2 {MIDI_DATA_2_MAX};
 };
 
 } // Namespace xmidictrl

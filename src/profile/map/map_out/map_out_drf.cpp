@@ -89,9 +89,9 @@ void map_out_drf::set_dataref(std::vector<std::string> in_dataref)
 /**
  * Set data 2 on
  */
-void map_out_drf::set_data_2_on(int in_data_2_on)
+void map_out_drf::set_data_2_on(unsigned char in_data_2_on)
 {
-    if (in_data_2_on >= MIDI_DATA_2_MIN && in_data_2_on <= MIDI_DATA_2_MAX)
+    if (in_data_2_on <= MIDI_DATA_2_MAX)
         m_data_2_on = in_data_2_on;
     else
         m_data_2_on = MIDI_DATA_2_MAX;
@@ -101,9 +101,9 @@ void map_out_drf::set_data_2_on(int in_data_2_on)
 /**
  * Set data 2 off
  */
-void map_out_drf::set_data_2_off(int in_data_2_off)
+void map_out_drf::set_data_2_off(unsigned char in_data_2_off)
 {
-    if (in_data_2_off >= MIDI_DATA_2_MIN && in_data_2_off <= MIDI_DATA_2_MAX)
+    if (in_data_2_off <= MIDI_DATA_2_MAX)
         m_data_2_off = in_data_2_off;
     else
         m_data_2_off = MIDI_DATA_2_MIN;
