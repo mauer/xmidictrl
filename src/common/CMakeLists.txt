@@ -15,17 +15,28 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/common")
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
+
+# Set project details
+set(XMIDICTRL_LIB_COMMON xmidictrl-common)
+project(${XMIDICTRL_LIB_COMMON})
+
+message("-- Configuring build scripts for library ${XMIDICTRL_LIB_COMMON}")
 
 # Add sources
 set(COMMON_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_message.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/toml_utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
         )
 
-# Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${COMMON_SRC})
+# Build static library
+add_library(${XMIDICTRL_LIB_COMMON} STATIC ${COMMON_SRC})
+add_library(xmidictrl::common ALIAS ${XMIDICTRL_LIB_COMMON})
 
-# Add directory to includes
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(${XMIDICTRL_LIB_COMMON} PUBLIC toml11 fmt::fmt-header-only)
+target_include_directories(${XMIDICTRL_LIB_COMMON} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

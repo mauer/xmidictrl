@@ -22,10 +22,11 @@
 #include <utility>
 
 // XMidiCtrl
+#include "conversions.h"
 #include "device_settings.h"
+#include "map_in_enc.h"
 #include "midi_device.h"
 #include "midi_logger.h"
-#include "conversions.h"
 #include "toml_utils.h"
 #include "types.h"
 
@@ -39,15 +40,13 @@ namespace xmidictrl {
  * Constructor
  */
 profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env)
-    : m_env(in_env),
-      m_plugin_log(in_text_log),
-      m_midi_log(in_midi_log)
+    : m_env(in_env), m_plugin_log(in_text_log), m_midi_log(in_midi_log)
 {
     // create my own logger for errors and warnings
     m_profile_log = std::make_unique<text_logger>(&in_text_log);
     m_profile_log->set_log_info(false);
 
-    m_device_list = std::make_unique<device_list>();
+    m_device_list = std::make_unique<device_list>(m_env);
 }
 
 
@@ -218,8 +217,7 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
 {
     switch (in_prefix) {
         case filename_prefix::icao:
-            return m_env.profiles_path().string() + m_env.current_aircraft_icao() + "_"
-                   + std::string(FILENAME_PROFILE);
+            return m_env.profiles_path().string() + m_env.current_aircraft_icao() + "_" + std::string(FILENAME_PROFILE);
 
         case filename_prefix::acf_name:
             return m_env.profiles_path().string() + m_env.current_aircraft_acf_name() + "_"
@@ -397,7 +395,7 @@ void profile::create_device(const toml::value& in_params, bool in_is_virtual, si
         // let's add the mappings
         if (new_device != nullptr) {
             // add mappings from include files
-            add_mappings_from_include(in_is_virtual,*new_device);
+            add_mappings_from_include(in_is_virtual, *new_device);
 
             m_profile_log->debug(get_log_prefix(in_is_virtual, in_dev_no) + "Add mappings from aircraft profile");
 
@@ -416,9 +414,8 @@ void profile::create_device(const toml::value& in_params, bool in_is_virtual, si
 /**
  * Read the device parameters
  */
-std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_params,
-                                                                 bool in_is_virtual,
-                                                                 size_t in_dev_no)
+std::unique_ptr<device_settings>
+profile::create_device_settings(toml::value in_params, bool in_is_virtual, size_t in_dev_no)
 {
     if (in_is_virtual)
         m_profile_log->debug("Read settings for virtual device");
@@ -434,8 +431,8 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 
         if (settings->name.empty()) {
             settings->name = "<undefined>";
-            m_profile_log->warn(get_log_prefix(in_is_virtual, in_dev_no)
-                                + "Parameter '" + std::string(CFG_KEY_NAME) + "' is missing");
+            m_profile_log->warn(get_log_prefix(in_is_virtual, in_dev_no) + "Parameter '" + std::string(CFG_KEY_NAME)
+                                + "' is missing");
         }
 
         // include files
@@ -474,9 +471,8 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
             }
 
             // mode note
-            settings->note_mode = device_settings::note_mode_from_code(toml_utils::read_string(*m_profile_log,
-                                                                                               in_params,
-                                                                                               CFG_KEY_MODE_NOTE));
+            settings->note_mode = device_settings::note_mode_from_code(
+                toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_NOTE));
 
             // outbound delay
             if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_OUTBOUND_DELAY))
@@ -488,9 +484,8 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
                 settings->outbound_delay = m_env.settings().default_outbound_delay();
 
             // mode outbound
-            settings->send_mode = device_settings::send_mode_from_code(toml_utils::read_string(*m_profile_log,
-                                                                                               in_params,
-                                                                                               CFG_KEY_MODE_OUT));
+            settings->send_mode = device_settings::send_mode_from_code(
+                toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_OUT));
 
             // load general settings for the profile
             settings->sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
@@ -499,16 +494,15 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
                 m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");
 
                 if (!m_env.drf().check(settings->sl_dataref)) {
-                    m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no)
-                                         + "Dataref '" + settings->sl_dataref + "' not found");
+                    m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Dataref '" + settings->sl_dataref
+                                         + "' not found");
                     return {};
                 }
             }
 
             // default encoder mode
-            settings->default_enc_mode = conversions::encoder_mode_from_code(toml_utils::read_string(*m_profile_log,
-                                                                                                     in_params,
-                                                                                                     CFG_KEY_ENCODER_MODE));
+            settings->default_enc_mode = map_in_enc::encoder_mode_from_code(
+                toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_ENCODER_MODE));
         }
     } catch (const std::out_of_range& error) {
         m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Error reading profile");
@@ -562,9 +556,7 @@ void profile::add_mappings_from_include(bool in_is_virtual, device& in_device)
 /**
  * Create mappings for the device
  */
-void profile::create_device_mappings(toml::value in_params,
-                                     device& in_device,
-                                     std::string_view in_inc_name)
+void profile::create_device_mappings(toml::value in_params, device& in_device, std::string_view in_inc_name)
 {
     // create init mappings
     if (in_device.type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_INIT)) {

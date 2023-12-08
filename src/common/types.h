@@ -113,8 +113,6 @@ const char* const CFG_KEY_PITCH_BEND = "pitch";
 const char* const CFG_KEY_PROGRAM_CHANGE = "prg";
 const char* const CFG_KEY_PORT_IN = "port_in";
 const char* const CFG_KEY_PORT_OUT = "port_out";
-const char* const CFG_KEY_SEND_ON = "send_on";
-const char* const CFG_KEY_SEND_OFF = "send_off";
 const char* const CFG_KEY_SHOW_ERRORS = "show_message_dialog";
 const char* const CFG_KEY_SL_DATAREF = "sl_dataref";
 const char* const CFG_KEY_TEXT = "text";
@@ -172,19 +170,6 @@ enum class note_name_type {
     sharp = 0,
     flat = 1
 };
-
-// MIDI message type
-enum class midi_msg_type {
-    aftertouch,
-    channel_pressure,
-    control_change,
-    note_off,
-    note_on,
-    pitch_bend,
-    program_change,
-    none
-};
-
 
 // Dataref mode
 enum class dataref_mode {

@@ -26,6 +26,8 @@ message("-----------------------------------------------")
 message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
 message("-----------------------------------------------")
 
+include(CTest)
+
 # Create version file with project name and version numbers
 message("-- Creating version file")
 configure_file(
@@ -78,3 +80,5 @@ endif()
 # Add subdirectories
 add_subdirectory(lib)
 add_subdirectory(src)
+
+add_subdirectory(tests)

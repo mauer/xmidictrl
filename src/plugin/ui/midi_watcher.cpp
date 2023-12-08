@@ -167,9 +167,9 @@ void midi_watcher::add_midi_row(midi_message* in_msg)
     ImGui::TableNextColumn();
     size_t map_count = in_msg->mapping_count();
     if (map_count == 1)
-        draw_icon(ICON_FA_CHECK, in_msg->mappings_as_string().c_str());
+        draw_icon(ICON_FA_CHECK, in_msg->mapping_text().c_str());
     else if (map_count > 1)
-        draw_icon(ICON_FA_CHECK_DOUBLE, in_msg->mappings_as_string().c_str());
+        draw_icon(ICON_FA_CHECK_DOUBLE, in_msg->mapping_text().c_str());
 
     ImGui::TableNextColumn();
     if (in_msg->log().has_errors())

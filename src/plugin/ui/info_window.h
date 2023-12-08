@@ -24,7 +24,7 @@
 // XMidiCtrl
 #include "environment.h"
 #include "imgui_window.h"
-#include "info_msg.h"
+#include "info_message.h"
 #include "settings.h"
 #include "text_logger.h"
 
@@ -32,9 +32,7 @@ namespace xmidictrl {
 
 class info_window : public imgui_window {
 public:
-    info_window(text_logger& in_log,
-                environment& in_env,
-                std::map<std::string, std::shared_ptr<info_msg>>& in_msg);
+    info_window(text_logger& in_log, environment& in_env);
     ~info_window() override = default;
 
     void show() override;
@@ -42,9 +40,8 @@ public:
 protected:
     void create_widgets() override;
 
-    const int ROW_HEIGHT = 25;
-
-    std::map<std::string, std::shared_ptr<info_msg>>& m_messages;
+    // constants
+    const int c_row_height = 25;
 };
 
 } // Namespace xmidictrl

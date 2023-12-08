@@ -220,7 +220,7 @@ void settings_window::create_tab_general()
         ImGui::SameLine(600);
         if (ImGui::Button(UI_SPACER_2 ICON_FA_INFO UI_SPACER_2 "Test info window" UI_SPACER_2)) {
             save_settings();
-            plugin::instance().show_info_message("TEST_MESSAGE", "This is a test message");
+            env().show_info_message("TEST_MESSAGE", "This is a test message");
         }
 
         ImGui::EndTabItem();

@@ -24,6 +24,8 @@
 // XMidiCtrl
 #include "commands.h"
 #include "data.h"
+#include "inbound_worker.h"
+#include "info_message.h"
 #include "settings.h"
 #include "text_logger.h"
 
@@ -32,8 +34,15 @@ namespace xmidictrl {
 class environment {
 public:
     explicit environment(text_logger& in_log);
+    ~environment();
 
     xmidictrl::settings& settings();
+    inbound_worker& worker();
+
+    std::map<std::string, std::shared_ptr<info_message>>& info_messages();
+    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
+
+    bool create_preference_folders(text_logger& in_log);
 
     virtual std::filesystem::path xplane_path() = 0;
     virtual std::filesystem::path plugin_path() = 0;
@@ -54,10 +63,13 @@ public:
 protected:
     [[nodiscard]] text_logger& log() const;
 
-    std::unique_ptr<xmidictrl::settings> m_settings;
-
 private:
     text_logger& m_log;
+
+    std::unique_ptr<xmidictrl::settings> m_settings;
+    std::unique_ptr<inbound_worker> m_worker;
+
+    std::map<std::string, std::shared_ptr<info_message>> m_info_msg;
 };
 
 } // Namespace xmidictrl

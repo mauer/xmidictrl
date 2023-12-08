@@ -505,7 +505,7 @@ void profile_window::create_table_mapping_in(device& in_device)
             }
 
             ImGui::TableNextColumn();
-            ImGui::Text("%s", mapping->labels().id.data());
+            ImGui::Text("%s", mapping->map_text_label().data());
 
             ImGui::TableNextColumn();
             ImGui::Text("%s", conversions::map_in_type_to_str(mapping->type()).data());

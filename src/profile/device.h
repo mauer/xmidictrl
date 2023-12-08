@@ -24,15 +24,16 @@
 #include <condition_variable>
 #include <map>
 #include <memory>
-#include <text_logger.h>
+#include <queue>
 #include <set>
 #include <string>
 #include <string_view>
+#include <text_logger.h>
 #include <thread>
-#include <queue>
 
 // XMidiCtrl
 #include "device_settings.h"
+#include "environment.h"
 #include "map_in.h"
 #include "map_in_list.h"
 #include "midi_logger.h"
@@ -45,10 +46,7 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 // Device type
-enum class device_type {
-    virtual_device,
-    midi_device
-};
+enum class device_type { virtual_device, midi_device };
 
 
 
@@ -59,7 +57,10 @@ enum class device_type {
 
 class device {
 public:
-    device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings);
+    device(text_logger& in_text_log,
+           midi_logger& in_midi_log,
+           environment& in_env,
+           std::unique_ptr<device_settings> in_settings);
     virtual ~device() = default;
 
     // no copying or copy assignments are allowed
@@ -67,6 +68,8 @@ public:
     device& operator=(device const&) = delete;
 
     virtual device_type type() = 0;
+
+    environment& env();
 
     device_settings& settings();
     map_in_list& mapping_in();
@@ -81,6 +84,8 @@ protected:
 private:
     text_logger& m_text_log;
     midi_logger& m_midi_log;
+
+    environment& m_env;
 
     std::string m_sl_value;
 

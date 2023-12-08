@@ -33,7 +33,6 @@ settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
     : m_text_log(in_text_log),
       m_settings_path(in_path)
 {
-    // build name for general settings file
     if (toml_utils::load_file(m_text_log, get_settings_filename(), m_settings_file)) {
         m_debug_mode = toml::find_or<bool>(m_settings_file, CFG_KEY_DEBUG_MODE, false);
         m_log_midi = toml::find_or<bool>(m_settings_file, CFG_KEY_LOG_MIDI, true);

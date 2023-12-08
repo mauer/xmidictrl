@@ -20,14 +20,13 @@
 
 // Standard
 #include <memory>
-#include <vector>
 #include <queue>
+#include <vector>
 
 // XMidiCtrl
 #include "device.h"
 #include "device_settings.h"
 #include "environment.h"
-#include "inbound_task.h"
 #include "midi_device.h"
 #include "midi_logger.h"
 #include "text_logger.h"
@@ -41,7 +40,7 @@ namespace xmidictrl {
 
 class device_list {
 public:
-    explicit device_list() = default;
+    explicit device_list(environment& in_env);
     ~device_list();
 
     device* create_midi_device(text_logger& in_text_log,
@@ -70,6 +69,8 @@ public:
     size_t size();
 
 private:
+    environment& m_env;
+
     std::vector<std::unique_ptr<device>> m_device_list {};
 };
 

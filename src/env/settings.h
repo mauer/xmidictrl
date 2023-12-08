@@ -23,10 +23,11 @@
 #include <memory>
 
 // toml11
+#include <imgui.h>
 #include <toml.hpp>
 
 // ImGui
-#include <imgui.h>
+//#include <imgui.h>
 
 // XMidiCtrl
 #include "text_logger.h"

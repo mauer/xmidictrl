@@ -32,10 +32,11 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings)
-    : m_text_log(in_text_log),
-      m_midi_log(in_midi_log),
-      m_settings(std::move(in_settings))
+device::device(text_logger& in_text_log,
+               midi_logger& in_midi_log,
+               environment& in_env,
+               std::unique_ptr<device_settings> in_settings)
+    : m_text_log(in_text_log), m_midi_log(in_midi_log), m_env(in_env), m_settings(std::move(in_settings))
 {
     m_map_in = std::make_unique<map_in_list>();
 }
@@ -46,6 +47,15 @@ device::device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_p
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the environment
+ */
+environment& device::env()
+{
+    return m_env;
+}
+
 
 /**
  * Return the device settings
@@ -106,4 +116,4 @@ midi_logger& device::midi_log()
     return m_midi_log;
 }
 
-}// Namespace xmidictrl
+} // Namespace xmidictrl

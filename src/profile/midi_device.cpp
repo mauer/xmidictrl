@@ -21,10 +21,10 @@
 
 // XMidiCtrl
 #include "conversions.h"
-#include "device_list.h"
+#include "inbound_task.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
-#include "plugin.h"
+//#include "plugin.h"
 
 // Make sure min is not defined as a macro otherwise time_point::min() will not compile
 #if defined(_MSC_VER) && defined(min)
@@ -42,8 +42,9 @@ namespace xmidictrl {
  */
 midi_device::midi_device(text_logger& in_text_log,
                          midi_logger& in_midi_log,
+                         environment& in_env,
                          std::unique_ptr<device_settings> in_settings)
-    : device(in_text_log, in_midi_log, std::move(in_settings))
+    : device(in_text_log, in_midi_log, in_env, std::move(in_settings))
 {
     try {
         // create mapping classes
@@ -238,12 +239,12 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
             return;
 
         // check for mappings
-        auto mappings = mapping_in().find(midi_msg->key());
+        auto mappings = mapping_in().find(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
 
         for (auto& mapping: mappings) {
             bool add_task = false;
 
-            midi_msg->add_mapping(mapping);
+            midi_msg->add_mapping_text(mapping->map_text());
 
             // for push and pull we have to wait until the command has ended
             if (mapping->type() == map_in_type::push_pull) {
@@ -274,9 +275,9 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 
                 // lock the current channel and midi type for outgoing messages
                 if (midi_msg->data_2() == cmd->data_2_on())
-                    m_outbound_locked.insert(midi_msg->key());
+                    m_outbound_locked.insert(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
                 else if (midi_msg->data_2() == cmd->data_2_off())
-                    m_outbound_locked.erase(midi_msg->key());
+                    m_outbound_locked.erase(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
 
                 add_task = true;
             } else {
@@ -292,7 +293,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
                 // set the current dataref value
                 task->sl_value = sl_value();
 
-                plugin::instance().add_inbound_task(task);
+                env().worker().add_task(task);
             }
         }
     }
@@ -437,7 +438,7 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
             break;
 
         case midi_msg_type::note_off:
-            // some MIDI device expect note_on for note_off with a velocity of 0. Lets check the settings
+            // some MIDI device expect note_on for note_off with a velocity of 0. Let's check the settings
             if (settings().note_mode == outbound_note_mode::on)
                 msg->set_status((int) (0x90 | (in_task->channel - 1)));
             else
@@ -464,7 +465,7 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
     else
         msg->set_data_2(in_task->data_2);
 
-    msg->add_mapping(in_task->mapping);
+    msg->add_mapping_text(in_task->mapping->map_text());
 
     // add message for internal list, but only if the dataref value has been changed, otherwise the logging will
     // increase very quickly

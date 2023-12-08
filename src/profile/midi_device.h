@@ -24,12 +24,12 @@
 #include <condition_variable>
 #include <map>
 #include <memory>
-#include <text_logger.h>
+#include <queue>
 #include <set>
 #include <string>
 #include <string_view>
+#include <text_logger.h>
 #include <thread>
-#include <queue>
 
 // RtMidi
 #include "RtMidi.h"
@@ -48,7 +48,7 @@
 #include "types.h"
 
 #ifdef min
-    #undef min // prevent clash with time_point::min() later
+    #undef min// prevent clash with time_point::min() later
 #endif
 
 namespace xmidictrl {
@@ -59,7 +59,7 @@ namespace xmidictrl {
 
 class midi_device : public device {
 public:
-    midi_device(text_logger& in_text_log, midi_logger& in_midi_log, std::unique_ptr<device_settings> in_settings);
+    midi_device(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env, std::unique_ptr<device_settings> in_settings);
     ~midi_device() override;
 
     // no copying or copy assignments are allowed
@@ -70,9 +70,6 @@ public:
 
     map_init_list& mapping_init();
     map_out_list& mapping_out();
-
-    //void add_init_map(std::shared_ptr<map_init>& in_mapping);
-    //void add_outbound_map(std::shared_ptr<map_out>& in_mapping);
 
     bool open_connections();
     void close_connections();
@@ -111,6 +108,6 @@ private:
     std::set<std::string> m_outbound_locked;
 };
 
-} // Namespace xmidictrl
+}// Namespace xmidictrl
 
-#endif // XMC_MIDI_DEVICE_H
+#endif// XMC_MIDI_DEVICE_H

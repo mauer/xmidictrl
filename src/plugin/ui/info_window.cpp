@@ -30,11 +30,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-info_window::info_window(text_logger& in_log,
-                         environment& in_env,
-                         std::map<std::string, std::shared_ptr<info_msg>>& in_msg)
-    : imgui_window(in_log, in_env, 850, 80, window_position::bottom_left, 50, 50, true),
-      m_messages(in_msg)
+info_window::info_window(text_logger& in_log, environment& in_env)
+    : imgui_window(in_log, in_env, 850, 80, window_position::bottom_left, 50, 50, true)
 {
 }
 
@@ -54,7 +51,7 @@ void info_window::show()
 
     set_window_position(env().settings().info_position(),
                         850,
-                        (int) (m_messages.size() * ROW_HEIGHT) + 55,
+                        (int) (env().info_messages().size() * c_row_height) + 55,
                         env().settings().info_offset_x(),
                         env().settings().info_offset_y());
 }
@@ -73,7 +70,7 @@ void info_window::create_widgets()
 {
     ImGui::NewLine();
 
-    for (const std::pair<const std::basic_string<char>, std::shared_ptr<info_msg>>& msg: m_messages)
+    for (const std::pair<const std::basic_string<char>, std::shared_ptr<info_message>>& msg: env().info_messages())
         ImGui::TextUnformatted(msg.second->text.c_str());
 }
 

@@ -15,10 +15,22 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
+
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
+
+# Set project details
+set(XMIDICTRL_LIB_PROFILE xmidictrl-profile)
+project(${XMIDICTRL_LIB_PROFILE})
+
+message("-- Configuring build scripts for library ${XMIDICTRL_LIB_PROFILE}")
+
 message("---- Directory: src/profile")
 
 # Add sources
 set(PROFILE_SRC
+
+        ${CMAKE_CURRENT_LIST_DIR}/conversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/device_list.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_device.cpp
@@ -26,11 +38,10 @@ set(PROFILE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/virtual_device.cpp
         )
 
-# Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${PROFILE_SRC})
+# Build static library
+add_library(${XMIDICTRL_LIB_PROFILE} STATIC ${PROFILE_SRC})
+add_library(xmidictrl::profile ALIAS ${XMIDICTRL_LIB_PROFILE})
 
-# Add directory to includes
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(${XMIDICTRL_LIB_PROFILE} PUBLIC toml11 fmt::fmt-header-only rtmidi xmidictrl::common xmidictrl::env xmidictrl::map)
 
-# Add sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/map/CMakeLists.txt)
+target_include_directories(${XMIDICTRL_LIB_PROFILE} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

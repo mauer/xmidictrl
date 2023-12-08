@@ -27,12 +27,12 @@
 // XMidiCtrl
 #include "env_xplane.h"
 #include "inbound_worker.h"
-#include "info_msg.h"
+#include "info_message.h"
 #include "menu.h"
-#include "text_logger.h"
 #include "midi_logger.h"
 #include "profile.h"
 #include "settings.h"
+#include "text_logger.h"
 #include "types.h"
 #include "xplane_window.h"
 
@@ -53,9 +53,7 @@ public:
     void load_profile();
     void close_profile();
 
-    void show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds = -1);
-
-    void add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity);
+    void add_virtual_midi_message(unsigned char in_cc, unsigned char in_value);
     void add_inbound_task(const std::shared_ptr<inbound_task>& in_task);
 
     void show_log_viewer();
@@ -93,13 +91,10 @@ private:
     std::unique_ptr<text_logger> m_plugin_log;
     std::unique_ptr<midi_logger> m_midi_log;
 
-    std::map<std::string, std::shared_ptr<info_msg>> m_info_msg;
-
     std::unique_ptr<env_xplane> m_env;
     std::unique_ptr<profile> m_profile;
 
     std::unique_ptr<menu> m_menu;
-    std::unique_ptr<inbound_worker> m_worker;
 
     // references for custom datarefs
     XPLMDataRef m_drf_sublayer {nullptr};

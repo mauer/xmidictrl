@@ -21,7 +21,7 @@
 #include "fmt/format.h"
 
 // XMidiCtrl
-#include "conversions.h"
+#include "utils.h"
 
 namespace xmidictrl {
 
@@ -35,7 +35,10 @@ namespace xmidictrl {
 midi_message::midi_message(text_logger& in_log, midi_direction in_direction)
     : m_direction(in_direction)
 {
+    // create my own logger and set the given logger as parent
     m_log = std::make_unique<text_logger>(&in_log);
+
+    // set debug level if enabled
     m_log->set_debug_mode(in_log.debug_mode());
 }
 
@@ -83,11 +86,16 @@ bool midi_message::parse_message(std::vector<unsigned char>* in_msg)
         return false;
     }
 
-    m_status = in_msg->at(0);
-    m_data_1 = in_msg->at(1);
+    m_status = static_cast<char>(in_msg->at(0));
+
+    // for pitch bend data 1 is always 0
+    if (type() == midi_msg_type::pitch_bend)
+        m_data_1 = 0;
+    else
+        m_data_1 = static_cast<char>(in_msg->at(1));
 
     if (in_msg->size() > 2)
-        m_data_2 = in_msg->at(2);
+        m_data_2 = static_cast<char>(in_msg->at(2));
 
     return true;
 }
@@ -96,13 +104,13 @@ bool midi_message::parse_message(std::vector<unsigned char>* in_msg)
 /**
  * Create a midi message
  */
-void midi_message::create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity)
+void midi_message::create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_value)
 {
     clear();
 
-    m_status = (int) (0xb0 | (in_channel - 1));
-    m_data_1 = in_data;
-    m_data_2 = in_velocity;
+    m_status = (char) (0xb0 | (in_channel - 1));
+    m_data_1 = static_cast<char>(in_data);
+    m_data_2 = static_cast<char>(in_value);
 
     this->set_time(std::chrono::system_clock::now());
 }
@@ -138,40 +146,28 @@ bool midi_message::check()
 /**
  * Return the number of mappings
  */
-size_t midi_message::mapping_count() const
+unsigned int midi_message::mapping_count() const
 {
-    return m_mappings.size();
+    return m_mapping_count;
 }
 
 
 /**
- * Return a string containing all mapping source lines
+ * Return a string containing all mapping lines
  */
-std::string midi_message::mappings_as_string()
+std::string midi_message::mapping_text()
 {
-    if (m_mappings.size() == 1)
-        return m_mappings.at(0)->map_text().data();
-
-    std::string map_str;
-    for (auto& mapping: m_mappings) {
-        if (map_str.empty()) {
-            map_str = mapping->map_text();
-        } else {
-            map_str.append("\n");
-            map_str.append(mapping->map_text());
-        }
-    }
-
-    return map_str;
+    return m_mapping_text;
 }
 
 
 /**
- * Add mapping to MIDI message
+ * Add a mapping text to the midi message
  */
-void midi_message::add_mapping(const std::shared_ptr<map>& in_map)
+void midi_message::add_mapping_text(std::string_view in_map_text)
 {
-    m_mappings.push_back(in_map);
+    m_mapping_text.append(in_map_text);
+    m_mapping_count++;
 }
 
 
@@ -180,7 +176,7 @@ void midi_message::add_mapping(const std::shared_ptr<map>& in_map)
  */
 void midi_message::set_time(time_point in_time)
 {
-    m_time = conversions::time_to_string(in_time);
+    m_time = utils::time_to_string(in_time);
 }
 
 
@@ -225,7 +221,7 @@ midi_direction midi_message::direction() const
  */
 void midi_message::set_status(unsigned char in_status)
 {
-    m_status = in_status;
+    m_status = static_cast<char>(in_status);
 }
 
 
@@ -243,14 +239,14 @@ unsigned char midi_message::status() const
  */
 void midi_message::set_data_1(unsigned char in_data_1)
 {
-    m_data_1 = in_data_1;
+    m_data_1 = static_cast<char>(in_data_1);
 }
 
 
 /*
  * Return the message data 1
  */
-unsigned char midi_message::data_1() const
+char midi_message::data_1() const
 {
     return m_data_1;
 }
@@ -285,24 +281,24 @@ std::string midi_message::data_1_as_text(note_name_type in_type) const
  */
 void midi_message::set_data_2(unsigned char in_data_2)
 {
-    m_data_2 = in_data_2;
+    m_data_2 = static_cast<char>(in_data_2);
 }
 
 
 /*
  * Return the message data 2
  */
-unsigned char midi_message::data_2() const
+char midi_message::data_2() const
 {
     return m_data_2;
 }
 
 
 // Return the channel
-unsigned char midi_message::channel() const
+char midi_message::channel() const
 {
     if ((m_status & 0xf0) != 0xf0)
-        return (m_status & 0xf) + 1;
+        return static_cast<char>((m_status & 0xf) + 1);
     else
         return MIDI_NONE;
 }
@@ -402,17 +398,4 @@ std::string midi_message::type_as_code() const
     return "";
 }
 
-
-/**
- * Return a key containing the channel, type and data
- */
-std::string midi_message::key() const
-{
-    // for pitch bend messages the data will be ignored, it's always 0
-    if (type() == midi_msg_type::pitch_bend)
-        return conversions::create_map_key(channel(), type_as_code(), 0);
-    else
-        return conversions::create_map_key(channel(), type_as_code(), m_data_1);
-}
-
-} // Namespace xmidictrl
+}// Namespace xmidictrl

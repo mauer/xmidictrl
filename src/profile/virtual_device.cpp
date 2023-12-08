@@ -17,12 +17,15 @@
 
 #include "virtual_device.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
+#include "conversions.h"
 #include "device_list.h"
+#include "inbound_task.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
-#include "plugin.h"
-#include "conversions.h"
 
 namespace xmidictrl {
 
@@ -35,10 +38,11 @@ namespace xmidictrl {
  */
 virtual_device::virtual_device(text_logger& in_text_log,
                                midi_logger& in_midi_log,
+                               environment& in_env,
                                std::unique_ptr<device_settings> in_settings)
-    : device(in_text_log, in_midi_log, std::move(in_settings))
+    : device(in_text_log, in_midi_log, in_env, std::move(in_settings))
 {
-    in_text_log.info("Created new virtual MIDI device :: Name = '" + std::string(settings().name) + "'");
+    in_text_log.info(fmt::format("Created new virtual MIDI device :: Name = '{}'", settings().name));
 }
 
 
@@ -68,21 +72,21 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
 
     // log MIDI in message
     midi_log().add(midi_msg);
-    text_log().debug("Inbound message from virtual device '" + settings().name + "' :: "
-                     + "Status = '" + std::to_string(midi_msg->status()) + "', "
-                     + "Data 1 = '" + std::to_string(midi_msg->data_1()) + "', "
-                     + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");
+    text_log().debug("Inbound message from virtual device '" + settings().name + "' :: " + "Status = '"
+                     + std::to_string(midi_msg->status()) + "', " + "Data 1 = '" + std::to_string(midi_msg->data_1())
+                     + "', " + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");
 
     if (!midi_msg->check())
         return;
 
     // check for mappings
-    auto mappings = mapping_in().find(midi_msg->key());
+    auto mappings =
+        mapping_in().find(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
 
     for (auto& mapping: mappings) {
         bool add_task = false;
 
-        midi_msg->add_mapping(mapping);
+        midi_msg->add_mapping_text(mapping->map_text());
 
         // for push and pull we have to wait until the command has ended
         if (mapping->type() == map_in_type::push_pull) {
@@ -121,7 +125,7 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
             task->msg = midi_msg;
             task->map = mapping;
 
-            plugin::instance().add_inbound_task(task);
+            env().worker().add_task(task);
         }
     }
 }

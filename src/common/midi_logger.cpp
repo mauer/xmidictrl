@@ -30,8 +30,9 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-midi_logger::midi_logger(settings& in_settings)
-    : m_settings(in_settings)
+midi_logger::midi_logger(bool in_enabled, int in_max_messages)
+    : m_enabled(in_enabled),
+      m_max_messages(in_max_messages)
 {
 }
 
@@ -67,6 +68,46 @@ size_t midi_logger::count()
 
 
 /**
+ * Enable midi logging
+ */
+void midi_logger::enable()
+{
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
+    m_enabled = true;
+}
+
+
+/**
+ * Disable midi logging
+ */
+void midi_logger::disable()
+{
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
+    m_enabled = false;
+}
+
+
+/**
+ * Set the maximum number of midi messages in the logger
+ *
+ * @param in_max_messages max. number of messages
+ */
+void midi_logger::set_max_messages(int in_max_messages)
+{
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
+    m_max_messages = in_max_messages;
+
+    adjust_log_size();
+}
+
+
+/**
  * Return a specific midi message
  */
 midi_message* midi_logger::message(int in_index)
@@ -83,16 +124,28 @@ midi_message* midi_logger::message(int in_index)
  */
 void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
 {
-    if (!m_settings.log_midi())
-        return;
-
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    while (m_messages.size() >= m_settings.max_midi_messages())
-        m_messages.pop_front();
+    if (!m_enabled)
+        return;
+
+    adjust_log_size();
 
     m_messages.push_back(in_msg);
+}
+
+
+/**
+ * Adjust the log size depending on the current settings
+ */
+void midi_logger::adjust_log_size()
+{
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
+    while (m_messages.size() >= m_max_messages)
+        m_messages.pop_front();
 }
 
 } // Namespace xmidictrl

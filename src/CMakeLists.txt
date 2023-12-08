@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2022 Marco Auer
+#   Copyright (c) 2021-2023 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -29,11 +29,13 @@ include_directories(${IMGUI_INCLUDEDIR})
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-include(${CMAKE_CURRENT_LIST_DIR}/common/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
+add_subdirectory(common)
+add_subdirectory(env)
+add_subdirectory(map)
+add_subdirectory(profile)
+
+#include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/env/CMakeLists.txt)
-include(${CMAKE_CURRENT_LIST_DIR}/profile/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 
 # Apple deprecated OpenGL...yea, we know, keep quiet
@@ -45,6 +47,9 @@ if (APPLE)
             COMPILE_OPTIONS "-Wno-deprecated-declarations")
 endif()
 
+# add static libraries for xmidictrl
+target_link_libraries(${PROJECT_NAME} PUBLIC xmidictrl::common xmidictrl::env xmidictrl::profile)
+
 # link required dependencies
 if (WIN32)
     message("Build for Windows Platform")
@@ -52,7 +57,7 @@ if (WIN32)
         target_link_libraries(${PROJECT_NAME} mingw_stdthreads)
     endif()
     if (MSVC)
-        target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi winmm xpsdk imgui)
+        target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only rtmidi winmm xpsdk imgui)
         include (GenerateExportHeader)
         GENERATE_EXPORT_HEADER(${PROJECT_NAME})
         add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD

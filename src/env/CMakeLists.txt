@@ -15,20 +15,41 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/env")
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
 
-# Set sources
+# Set project details
+set(XMIDICTRL_LIB_ENV xmidictrl-env)
+project(${XMIDICTRL_LIB_ENV})
+
+message("-- Configuring build scripts for library ${XMIDICTRL_LIB_ENV}")
+
+# Add sources
 set(ENV_SRC
         ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.cpp
         ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
         )
 
-# Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${ENV_SRC})
+set(ENV_SRC_XP
+        ${CMAKE_CURRENT_LIST_DIR}/xplane/cmd_xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane/data_xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane/env_xplane.cpp
+        )
 
-# Add directory to includes
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+set(ENV_SRC_TESTS
+        ${CMAKE_CURRENT_LIST_DIR}/tests/cmd_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tests/data_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tests/env_tests.cpp
+        )
 
-# Add sub directories
-##include(${CMAKE_CURRENT_LIST_DIR}/standalone/CMakeLists.txt) -- disabled as not used
-include(${CMAKE_CURRENT_LIST_DIR}/xplane/CMakeLists.txt)
+# Build static library for X-Plane environment
+add_library(${XMIDICTRL_LIB_ENV} STATIC)
+add_library(xmidictrl::env ALIAS ${XMIDICTRL_LIB_ENV})
+
+target_sources(${XMIDICTRL_LIB_ENV} PUBLIC ${ENV_SRC} ${ENV_SRC_XP} ${ENV_SRC_TESTS})
+
+target_link_libraries(${XMIDICTRL_LIB_ENV} PUBLIC toml11 fmt::fmt-header-only xpsdk xmidictrl::common)
+target_include_directories(${XMIDICTRL_LIB_ENV} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${XMIDICTRL_LIB_ENV} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/xplane)
+target_include_directories(${XMIDICTRL_LIB_ENV} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/tests)

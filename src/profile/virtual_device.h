@@ -48,6 +48,7 @@ class virtual_device : public device {
 public:
     virtual_device(text_logger& in_text_log,
                    midi_logger& in_midi_log,
+                   environment& in_env,
                    std::unique_ptr<device_settings> in_settings);
     ~virtual_device() override = default;
 

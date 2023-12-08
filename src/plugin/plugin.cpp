@@ -47,7 +47,7 @@ plugin::plugin()
     m_env = std::make_unique<env_xplane>(*m_plugin_log);
 
     // initialize our logging system
-    if (utils::create_preference_folders(*m_plugin_log, *m_env)) {
+    if (m_env->create_preference_folders(*m_plugin_log)) {
         m_plugin_log->enable_file_logging(m_env->preferences_path());
         m_plugin_log->set_debug_mode(m_env->settings().debug_mode());
         m_plugin_log->set_max_size(m_env->settings().max_text_messages());
@@ -63,13 +63,10 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the midi log
-    m_midi_log = std::make_unique<midi_logger>(m_env->settings());
+    m_midi_log = std::make_unique<midi_logger>(m_env->settings().log_midi(), m_env->settings().max_midi_messages());
 
     // create the aircraft profile
     m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_env);
-
-    // create the inbound worker
-    m_worker = std::make_unique<inbound_worker>();
 }
 
 
@@ -80,7 +77,6 @@ plugin::~plugin()
 {
     m_profile.reset();
     m_menu.reset();
-    m_worker.reset();
 
     m_flight_loop_id = nullptr;
     m_windows.clear();
@@ -138,7 +134,7 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
     m_profile->devices().update_sl_values(*m_plugin_log, *m_env);
 
     // process inbound tasks
-    m_worker->process();
+    m_env->worker().process();
 
     // process outbound tasks
     m_profile->process(*m_plugin_log);
@@ -156,15 +152,15 @@ void plugin::process_info_messages()
     std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
-    if (m_info_msg.empty())
+    if (m_env->info_messages().empty())
         return;
 
     // remove expired messages
-    for (auto it = m_info_msg.cbegin(); it != m_info_msg.cend();) {
+    for (auto it = m_env->info_messages().cbegin(); it != m_env->info_messages().cend();) {
         auto msg = it->second;
 
         if (msg->exp_time < std::chrono::system_clock::now())
-            it = m_info_msg.erase(it);
+            it = m_env->info_messages().erase(it);
         else
             ++it;
     }
@@ -173,7 +169,7 @@ void plugin::process_info_messages()
     auto win = create_window(window_type::info_window);
 
     if (win != nullptr) {
-        if (m_info_msg.empty())
+        if (m_env->info_messages().empty())
             win->hide();
         else
             win->show();
@@ -209,7 +205,7 @@ void plugin::enable()
     }
 
     // check if our directory already exists in the preference folder
-    utils::create_preference_folders(*m_plugin_log, *m_env);
+    m_env->create_preference_folders(*m_plugin_log);
 }
 
 
@@ -262,34 +258,9 @@ void plugin::close_profile()
 
 
 /**
- * Display an info message on the screen
- */
-void plugin::show_info_message(std::string_view in_id, std::string_view in_msg, int in_seconds)
-{
-    if (m_env->settings().info_disabled())
-        return;
-
-    std::shared_ptr<info_msg> msg;
-
-    if (in_seconds == -1)
-        msg = std::make_shared<info_msg>(m_env->settings().info_seconds());
-    else
-        msg = std::make_shared<info_msg>(in_seconds);
-
-    msg->id = in_id;
-    msg->text = in_msg;
-
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-
-    m_info_msg.insert_or_assign(msg->id, msg);
-}
-
-
-/**
  *
  */
-void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_velocity)
+void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_value)
 {
     if (m_profile->loaded()) {
         auto virtual_dev = m_profile->devices().find_virtual_device();
@@ -297,18 +268,8 @@ void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_velo
         if (virtual_dev != nullptr)
             virtual_dev->process_inbound_message(static_cast<unsigned char>(m_env->settings().virtual_channel()),
                                                  in_cc,
-                                                 in_velocity);
+                                                 in_value);
     }
-}
-
-
-/**
- * Add an inbound task to the worker
- */
-void plugin::add_inbound_task(const std::shared_ptr<inbound_task>& in_task)
-{
-    if (m_worker != nullptr)
-        m_worker->add_task(in_task);
 }
 
 
@@ -627,7 +588,7 @@ std::shared_ptr<xplane_window> plugin::create_window(window_type in_type)
             break;
 
         case window_type::info_window:
-            window = std::make_shared<info_window>(*m_plugin_log, *m_env, m_info_msg);
+            window = std::make_shared<info_window>(*m_plugin_log, *m_env);
             break;
 
         case window_type::profile_window:
