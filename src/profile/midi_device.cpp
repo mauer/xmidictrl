@@ -22,6 +22,7 @@
 // XMidiCtrl
 #include "conversions.h"
 #include "inbound_task.h"
+#include "map.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
 //#include "plugin.h"
@@ -288,6 +289,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
             if (add_task) {
                 std::shared_ptr<inbound_task> task = std::make_shared<inbound_task>();
                 task->msg = midi_msg;
+
                 task->map = mapping;
 
                 // set the current dataref value

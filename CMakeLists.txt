@@ -35,7 +35,7 @@ configure_file(
         "${PROJECT_BINARY_DIR}/version.h"
 )
 
-message("-- Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
+#message("-- Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
 if (MSVC)
     add_definitions("/FI${PROJECT_BINARY_DIR}/version.h")

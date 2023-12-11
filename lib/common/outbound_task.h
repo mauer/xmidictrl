@@ -36,7 +36,7 @@ struct outbound_task {
     char data_1 {MIDI_NONE};
     char data_2 {MIDI_NONE};
 
-    map* mapping;
+    std::shared_ptr<map> mapping;
 };
 
 } // Namespace xmidictrl

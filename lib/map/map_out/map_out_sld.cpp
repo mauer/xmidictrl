@@ -261,8 +261,8 @@ std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log,
     task->data_1 = data_1();
     task->data_2 = static_cast<unsigned char>(data_2);
 
-    // add mapping to task
-    task->mapping = this;
+    // TODO add mapping to task
+    //task->mapping = this;
 
     return task;
 }
@@ -302,6 +302,8 @@ std::shared_ptr<outbound_task> map_out_sld::reset()
     task->channel = channel();
     task->data_1 = data_1();
     task->data_2 = MIDI_DATA_2_MIN;
+
+    // TODO: Add mapping
 
     return task;
 }

@@ -151,8 +151,8 @@ std::shared_ptr<outbound_task> map_out_con::execute(text_logger&, outbound_send_
     task->data_1 = data_1();
     task->data_2 = static_cast<char>(m_data_2);
 
-    // add mapping to task
-    task->mapping = this;
+    // TODO: add mapping to task
+    //task->mapping = this;
 
     return task;
 }

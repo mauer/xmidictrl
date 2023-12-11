@@ -334,8 +334,8 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
             task->data_2 = m_data_2_off;
 
 
-        // add mapping to task
-        task->mapping = this;
+        // TODO: add mapping to task
+        //task->mapping = this;
 
         return task;
     }

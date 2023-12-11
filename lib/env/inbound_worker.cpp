@@ -52,7 +52,8 @@ void inbound_worker::process()
     while (!m_tasks.empty()) {
         std::shared_ptr<inbound_task> task = m_tasks.front();
 
-        if (task == nullptr || task->map == nullptr)
+        //if (task == nullptr || task->map == nullptr)
+        if (task == nullptr)
             continue;
 
         // perform the action related to the mapping
