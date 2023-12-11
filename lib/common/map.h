@@ -51,7 +51,8 @@ enum class map_data_1_type {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class map : public std::enable_shared_from_this<map> {
+//class map : public std::enable_shared_from_this<map> {
+class map {
 public:
     explicit map() = default;
     virtual ~map() = default;

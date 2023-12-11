@@ -262,7 +262,7 @@ std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log,
     task->data_2 = static_cast<unsigned char>(data_2);
 
     // add mapping to task
-    task->mapping = shared_from_this();
+    task->mapping = this;
 
     return task;
 }

@@ -149,7 +149,7 @@ std::shared_ptr<outbound_task> map_init::execute()
     task->data_2 = static_cast<char>(m_data_2);
 
     // add mapping to task
-    task->mapping = shared_from_this();
+    task->mapping = this;
 
     return task;
 }
