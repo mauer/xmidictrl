@@ -33,7 +33,7 @@ runs:
       run: |
         cd cmake-build-lin
         pwd
-        cmake -G Ninja ..
+        cmake -DLLVM_ENABLE_PROJECTS="clang" -G Ninja ..
     - name: Build
       shell: bash
       run: |
