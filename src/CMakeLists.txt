@@ -45,7 +45,7 @@ if (APPLE)
 endif()
 
 # add static libraries for xmidictrl
-target_link_libraries(${PROJECT_NAME} PUBLIC xmidictrl-common xmidictrl-env xmidictrl-map xmidictrl-profile)
+target_link_libraries(${PROJECT_NAME} xmidictrl-common xmidictrl-env xmidictrl-map xmidictrl-profile)
 
 # link required dependencies
 if (WIN32)
@@ -54,7 +54,7 @@ if (WIN32)
         target_link_libraries(${PROJECT_NAME} mingw_stdthreads)
     endif()
     if (MSVC)
-        target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only rtmidi winmm xpsdk imgui)
+        target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi winmm xpsdk imgui)
         include (GenerateExportHeader)
         GENERATE_EXPORT_HEADER(${PROJECT_NAME})
         add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
@@ -83,7 +83,7 @@ elseif (APPLE)
 elseif (UNIX)
     message("Build for Linux Platform")
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_64")
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -static-libstdc++ -fPIC toml11 fmt::fmt-header-only rtmidi xpsdk imgui)
+    target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -fPIC toml11 fmt::fmt-header-only rtmidi xpsdk imgui)
     set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/lin_x64")
 endif ()
 
