@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2022 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,15 +15,7 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-# Set compiler options
-set(CMAKE_CXX_STANDARD 20)
+# Headers for fonts
+message("-- Configuring build scripts for fonts")
 
-# Add toml11 for reading and writing the config files
-message("-- Configuring build scripts for library common")
-add_subdirectory(common)
-
-message("-- Configuring build scripts for library environment")
-add_subdirectory(env)
-
-message("-- Configuring build scripts for library mapping")
-add_subdirectory(map)
+set(FONTS_INCLUDEDIR ${CMAKE_CURRENT_LIST_DIR}/fonts PARENT_SCOPE)

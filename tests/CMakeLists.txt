@@ -31,7 +31,7 @@ set(TEST_SRC
         )
 
 add_executable(${TARGET_TESTS} ${TEST_SRC})
-target_link_libraries(${TARGET_TESTS} PRIVATE toml11 doctest xmidictrl::common xmidictrl::env xmidictrl::map)
+target_link_libraries(${TARGET_TESTS} PRIVATE toml11 fmt::fmt-header-only doctest xpsdk xmidictrl-common xmidictrl-env xmidictrl-map)
 #target_link_libraries(${TARGET_TESTS} PRIVATE toml11 fmt::fmt-header-only imgui xpsdk doctest)
 
 #target_include_directories(${TARGET_TESTS} PRIVATE ${PROJECT_SOURCE_DIR}/src/common)

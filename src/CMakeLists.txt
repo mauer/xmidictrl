@@ -29,12 +29,9 @@ include_directories(${IMGUI_INCLUDEDIR})
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-add_subdirectory(common)
-add_subdirectory(env)
-add_subdirectory(map)
+#add_subdirectory(map)
 add_subdirectory(profile)
 
-#include(${CMAKE_CURRENT_LIST_DIR}/utils/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/plugin/CMakeLists.txt)
 
@@ -48,7 +45,7 @@ if (APPLE)
 endif()
 
 # add static libraries for xmidictrl
-target_link_libraries(${PROJECT_NAME} PUBLIC xmidictrl::common xmidictrl::env xmidictrl::profile)
+target_link_libraries(${PROJECT_NAME} PUBLIC xmidictrl-common xmidictrl-env xmidictrl-map xmidictrl-profile)
 
 # link required dependencies
 if (WIN32)

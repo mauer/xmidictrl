@@ -40,8 +40,7 @@ set(PROFILE_SRC
 
 # Build static library
 add_library(${XMIDICTRL_LIB_PROFILE} STATIC ${PROFILE_SRC})
-add_library(xmidictrl::profile ALIAS ${XMIDICTRL_LIB_PROFILE})
 
-target_link_libraries(${XMIDICTRL_LIB_PROFILE} PUBLIC toml11 fmt::fmt-header-only rtmidi xmidictrl::common xmidictrl::env xmidictrl::map)
+target_link_libraries(${XMIDICTRL_LIB_PROFILE} PUBLIC toml11 fmt::fmt-header-only rtmidi xmidictrl-common xmidictrl-env xmidictrl-map)
 
 target_include_directories(${XMIDICTRL_LIB_PROFILE} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

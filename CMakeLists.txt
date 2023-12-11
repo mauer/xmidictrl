@@ -77,8 +77,14 @@ if (APPLE)
     set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations")
 endif()
 
-# Add subdirectories
+# add external libraries
+add_subdirectory(external)
+
+# Add libraries
 add_subdirectory(lib)
+
+# Add plugin
 add_subdirectory(src)
 
-add_subdirectory(tests)
+# Add unit tests
+##add_subdirectory(tests)

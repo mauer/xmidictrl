@@ -15,15 +15,27 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-# Set compiler options
-set(CMAKE_CXX_STANDARD 20)
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
 
-# Add toml11 for reading and writing the config files
-message("-- Configuring build scripts for library common")
-add_subdirectory(common)
+# Set project details
+project(xmidictrl-common)
 
-message("-- Configuring build scripts for library environment")
-add_subdirectory(env)
+message("-- Configuring build scripts for library ${XMIDICTRL_LIB_COMMON}")
 
-message("-- Configuring build scripts for library mapping")
-add_subdirectory(map)
+# Add sources
+set(COMMON_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/midi_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/midi_message.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/toml_utils.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
+        )
+
+# Build static library
+add_library(${PROJECT_NAME} STATIC ${COMMON_SRC})
+add_library(xmidictrl::common ALIAS ${PROJECT_NAME})
+
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
