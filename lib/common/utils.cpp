@@ -19,6 +19,7 @@
 
 // Standard
 #include <filesystem>
+#include <sstream>
 #include <time.h>
 
 namespace xmidictrl {
