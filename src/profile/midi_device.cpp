@@ -290,7 +290,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
                 std::shared_ptr<inbound_task> task = std::make_shared<inbound_task>();
                 task->msg = midi_msg;
 
-                task->map = mapping;
+                task->mapping = mapping;
 
                 // set the current dataref value
                 task->sl_value = sl_value();

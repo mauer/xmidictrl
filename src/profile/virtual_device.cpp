@@ -123,7 +123,8 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
         if (add_task) {
             std::shared_ptr<inbound_task> task = std::make_shared<inbound_task>();
             task->msg = midi_msg;
-            task->map = mapping;
+
+            task->mapping = mapping;
 
             env().worker().add_task(task);
         }

@@ -57,7 +57,7 @@ void inbound_worker::process()
             continue;
 
         // perform the action related to the mapping
-        if (!task->map->execute(*task->msg, task->sl_value)) {
+        if (!task->mapping->execute(*task->msg, task->sl_value)) {
             // store in temp list
             temp_list.push(task);
         }

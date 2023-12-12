@@ -32,7 +32,7 @@ namespace xmidictrl {
 struct inbound_task {
     std::shared_ptr<midi_message> msg;
     std::string sl_value;
-    std::shared_ptr<map> map;
+    std::shared_ptr<map> mapping;
 };
 
 } // Namespace xmidictrl
