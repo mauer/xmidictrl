@@ -15,6 +15,11 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
+# Don't build unit tests on macOS
+if (APPLE)
+    return()
+endif ()
+
 project(xmidictrl-tests)
 message("-- Configuring build scripts for ${PROJECT_NAME} Unit Tests")
 
@@ -36,10 +41,6 @@ if (WIN32)
     message("Build unit tests for Windows Platform")
 elseif (UNIX)
     message("Build unit tests for Linux Platform")
-elseif (APPLE)
-    message("Build unit tests for macOS Platform")
-    target_link_libraries(${PROJECT_NAME} xpsdk)
-    target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-no_weak_imports")
 endif ()
 
 target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-map-tests)
