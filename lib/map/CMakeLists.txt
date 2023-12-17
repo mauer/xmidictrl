@@ -49,11 +49,17 @@ set(MAP_SRC
 
 # Build static library
 add_library(${XMIDICTRL_LIB_MAP} STATIC ${MAP_SRC})
-add_library(xmidictrl::map ALIAS ${XMIDICTRL_LIB_MAP})
+add_library(${XMIDICTRL_LIB_MAP}-tests STATIC ${MAP_SRC})
 
 target_link_libraries(${XMIDICTRL_LIB_MAP} PUBLIC toml11 fmt::fmt-header-only xmidictrl-common xmidictrl-env)
+target_link_libraries(${XMIDICTRL_LIB_MAP}-tests PUBLIC toml11 fmt::fmt-header-only xmidictrl-common xmidictrl-env-tests)
 
 target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_init)
 target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_in)
 target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_out)
+
+target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_init)
+target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_in)
+target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_out)

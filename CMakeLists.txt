@@ -86,5 +86,8 @@ add_subdirectory(lib)
 # Add plugin
 add_subdirectory(src)
 
+# Enable the included unit tests
+enable_testing()
+
 # Add unit tests
-##add_subdirectory(tests)
+add_subdirectory(tests)

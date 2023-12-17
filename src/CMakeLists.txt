@@ -29,7 +29,6 @@ include_directories(${IMGUI_INCLUDEDIR})
 add_library(${PROJECT_NAME} SHARED)
 
 # Include sub directories
-#add_subdirectory(map)
 add_subdirectory(profile)
 
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
@@ -55,9 +54,9 @@ if (WIN32)
     endif()
     if (MSVC)
         target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi winmm xpsdk imgui)
-        include (GenerateExportHeader)
-        GENERATE_EXPORT_HEADER(${PROJECT_NAME})
-        add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
+        include(GenerateExportHeader)
+        generate_export_header(${PROJECT_NAME})
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:${PROJECT_NAME}> "${PROJECT_SOURCE_DIR}/package/${PROJECT_NAME}/win_x64/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
         )

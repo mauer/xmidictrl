@@ -28,9 +28,12 @@ namespace xmidictrl {
 
 struct data_item {
     std::string name {};
+
     XPLMDataRef dataref {};
     XPLMDataTypeID type {};
+
     std::size_t size {};
+
     bool writeable {false};
 };
 

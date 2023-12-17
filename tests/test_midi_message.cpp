@@ -28,62 +28,56 @@ using namespace xmidictrl;
 
 TEST_CASE("Test Inbound MIDI Message") {
     // create logger
-    auto log = new text_logger();
+    auto log = text_logger();
 
     // create the midi message
-    auto msg = new midi_message(*log, midi_direction::in);
-
-    REQUIRE(log != nullptr);
-    REQUIRE(msg != nullptr);
+    auto msg = midi_message(log, midi_direction::in);
 
     SUBCASE("Create message with invalid parameter") {
         std::vector<unsigned char> midi_msg {186};
 
-        CHECK(!msg->parse_message(&midi_msg));
+        CHECK(!msg.parse_message(&midi_msg));
     }
 
     SUBCASE("Create a Control Change message") {
         std::vector<unsigned char> midi_msg {186, 25, 127};
 
-        CHECK(msg->parse_message(&midi_msg));
-        CHECK(msg->check());
+        CHECK(msg.parse_message(&midi_msg));
+        CHECK(msg.check());
 
-        CHECK(msg->channel() == 11);
-        CHECK(msg->type() == midi_msg_type::control_change);
-        CHECK(msg->data_2() == 127);
+        CHECK(msg.channel() == 11);
+        CHECK(msg.type() == midi_msg_type::control_change);
+        CHECK(msg.data_2() == 127);
     }
 
     SUBCASE("Create a Note On message") {
         std::vector<unsigned char> midi_msg {158, 50, 80};
 
-        CHECK(msg->parse_message(&midi_msg));
-        CHECK(msg->check());
+        CHECK(msg.parse_message(&midi_msg));
+        CHECK(msg.check());
 
-        CHECK(msg->channel() == 15);
-        CHECK(msg->type() == midi_msg_type::note_on);
-        CHECK(msg->data_2() == 80);
+        CHECK(msg.channel() == 15);
+        CHECK(msg.type() == midi_msg_type::note_on);
+        CHECK(msg.data_2() == 80);
     }
 
     SUBCASE("Create a Note Off message") {
         std::vector<unsigned char> midi_msg {143, 50, 0};
 
-        CHECK(msg->parse_message(&midi_msg));
-        CHECK(msg->check());
+        CHECK(msg.parse_message(&midi_msg));
+        CHECK(msg.check());
 
-        CHECK(msg->channel() == 16);
-        CHECK(msg->type() == midi_msg_type::note_off);
-        CHECK(msg->data_2() == 0);
+        CHECK(msg.channel() == 16);
+        CHECK(msg.type() == midi_msg_type::note_off);
+        CHECK(msg.data_2() == 0);
     }
 }
 
 
 TEST_CASE("Test Outbound MIDI Message") {
     // create logger
-    auto log = new text_logger();
+    auto log = text_logger();
 
     // create the midi message
-    auto msg = new midi_message(*log, midi_direction::out);
-
-    REQUIRE(log != nullptr);
-    REQUIRE(msg != nullptr);
+    auto msg = midi_message(log, midi_direction::out);
 }

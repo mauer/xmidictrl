@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.16)
 # Set project details
 project(xmidictrl-common)
 
-message("-- Configuring build scripts for library ${XMIDICTRL_LIB_COMMON}")
+message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
 # Add sources
 set(COMMON_SRC
