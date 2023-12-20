@@ -21,7 +21,7 @@
 #include <filesystem>
 
 // XMidiCtrl
-#include "cmd_tests.h"
+#include "command_tests.h"
 #include "data_tests.h"
 #include "text_logger.h"
 
@@ -37,7 +37,7 @@ namespace xmidictrl {
 env_tests::env_tests(text_logger& in_log) : environment(in_log)
 {
     // access to virtual commands
-    m_cmd = std::make_unique<cmd_tests>();
+    m_cmd = std::make_unique<command_tests>();
 
     // access to virtual data
     m_drf = std::make_unique<data_tests>();
@@ -157,5 +157,13 @@ data& env_tests::drf()
     return *m_drf;
 }
 
+
+/**
+ * Return the test commands
+ */
+command_tests& env_tests::cmd_tests()
+{
+    return *m_cmd;
+}
 
 } // Namespace xmidictrl

@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "cmd_tests.h"
+#include "command_tests.h"
 
 namespace xmidictrl {
 
@@ -26,24 +26,44 @@ namespace xmidictrl {
 /**
  * Begin a X-Plane command
  */
-void cmd_tests::begin(text_logger &in_log, std::string_view in_cmd)
+void command_tests::begin(text_logger &in_log, std::string_view in_cmd)
 {
+    m_current_command = in_cmd;
 }
 
 
 /**
  * End a X-Plane command
  */
-void cmd_tests::end(text_logger &in_log, std::string_view in_cmd)
+void command_tests::end(text_logger &in_log, std::string_view in_cmd)
 {
+    m_current_command.clear();
+    m_last_command = in_cmd;
 }
 
 
 /**
  * Execute a X-Plane command
  */
-void cmd_tests::execute(text_logger &in_log, std::string_view in_cmd)
+void command_tests::execute(text_logger &in_log, std::string_view in_cmd)
 {
+}
+
+/**
+ * Return the current command
+ */
+std::string command_tests::current_command()
+{
+    return m_current_command;
+}
+
+
+/**
+ * Return the last executed command
+ */
+std::string command_tests::last_command()
+{
+    return m_last_command;
 }
 
 } // Namespace xmidictrl

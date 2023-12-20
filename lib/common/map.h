@@ -61,7 +61,7 @@ public:
     unsigned int no() const;
 
     void set_include_name(std::string_view in_name);
-    std::string_view include_name() const;
+    [[nodiscard]] std::string_view include_name() const;
 
     [[nodiscard]] unsigned char channel() const;
     [[nodiscard]] map_data_1_type data_1_type() const;
@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] std::string_view sl() const;
 
-    std::string_view source_line() const;
+    [[nodiscard]] std::string_view source_line() const;
 
     std::string_view map_text(bool in_short = false);
 

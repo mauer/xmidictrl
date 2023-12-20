@@ -234,14 +234,19 @@ std::string profile::get_filename_profiles_path(filename_prefix in_prefix)
  */
 void profile::process(text_logger& in_log)
 {
+    in_log.debug("Process outbound messages");
+
     if (!m_init_send) {
+        in_log.debug("Process outbound init messages");
         // process init mappings
         m_device_list->process_init_mappings();
         m_init_send = true;
     }
 
     // process midi outbound mappings
+    in_log.debug("Process outbound messages 2");
     m_device_list->process_outbound_mappings(in_log);
+    in_log.debug("Process outbound messages 3");
 }
 
 

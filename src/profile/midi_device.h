@@ -82,7 +82,7 @@ public:
 
     void process_inbound_message(std::vector<unsigned char>* in_message);
 
-    void process_outbound_mappings(text_logger& in_log);
+    void process_outbound_mappings();
     void process_outbound_reset();
 
 private:

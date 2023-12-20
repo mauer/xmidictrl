@@ -56,9 +56,9 @@ midi_device::midi_device(text_logger& in_text_log,
         m_midi_in = std::make_unique<RtMidiIn>();
         m_midi_out = std::make_unique<RtMidiOut>();
 
-        text_log().info("Created new MIDI device :: Name = '" + settings().name + "', "
-                        + "Port In = '" + std::to_string(settings().port_in) + "', "
-                        + "Port Out = '" + std::to_string(settings().port_out) + "'");
+        text_log().info("Created new MIDI device :: Name = '" + settings().name + "', " + "Port In = '"
+                        + std::to_string(settings().port_in) + "', " + "Port Out = '"
+                        + std::to_string(settings().port_out) + "'");
     } catch (RtMidiError& error) {
         // we should never reach this, but let's be on the safeW side
         text_log().error("Error creating MIDI connections for device '" + settings().name + "'");
@@ -114,12 +114,12 @@ bool midi_device::open_connections()
             m_midi_in->ignoreTypes(false, false, false);
             m_midi_in->setCallback(&midi_device::midi_callback, this);
 
-            text_log().info("Inbound port '" + std::to_string(settings().port_in)
-                            + "' opened for device '" + settings().name + "'");
+            text_log().info("Inbound port '" + std::to_string(settings().port_in) + "' opened for device '"
+                            + settings().name + "'");
 
         } catch (const RtMidiError& error) {
-            text_log().error("Could not open inbound port '" + std::to_string(settings().port_in)
-                             + "' for device '" + settings().name + "'");
+            text_log().error("Could not open inbound port '" + std::to_string(settings().port_in) + "' for device '"
+                             + settings().name + "'");
             text_log().error(error.what());
 
             return false;
@@ -137,8 +137,8 @@ bool midi_device::open_connections()
                             + settings().name + "'");
 
         } catch (const RtMidiError& error) {
-            text_log().error("Could not open outbound port '" + std::to_string(settings().port_out)
-                             + "' for device '" + settings().name + "'");
+            text_log().error("Could not open outbound port '" + std::to_string(settings().port_out) + "' for device '"
+                             + settings().name + "'");
             text_log().error(error.what());
 
             return false;
@@ -146,8 +146,7 @@ bool midi_device::open_connections()
 
         create_outbound_thread();
     } else {
-        text_log().debug("No outbound mappings found, skip opening outbound port for device '"
-                         + settings().name + "'");
+        text_log().debug("No outbound mappings found, skip opening outbound port for device '" + settings().name + "'");
     }
 
     // connections successfully established
@@ -180,8 +179,8 @@ void midi_device::close_connections()
         if (m_midi_out->isPortOpen()) {
             m_midi_out->closePort();
 
-            text_log().info("Closed outbound port '" + std::to_string(settings().port_out)
-                            + "' for device '" + settings().name + "'");
+            text_log().info("Closed outbound port '" + std::to_string(settings().port_out) + "' for device '"
+                            + settings().name + "'");
         }
     }
 }
@@ -230,17 +229,17 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 
         // log MIDI in message
         midi_log().add(midi_msg);
-        text_log().debug("Inbound message from device '" + settings().name + "' on port '"
-                         + std::to_string(settings().port_in) + "' :: "
-                         + "Status = '" + std::to_string(midi_msg->status()) + "', "
-                         + "Data 1 = '" + std::to_string(midi_msg->data_1()) + "', "
-                         + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");
+        text_log().debug(
+            "Inbound message from device '" + settings().name + "' on port '" + std::to_string(settings().port_in)
+            + "' :: " + "Status = '" + std::to_string(midi_msg->status()) + "', " + "Data 1 = '"
+            + std::to_string(midi_msg->data_1()) + "', " + "Data 2 = '" + std::to_string(midi_msg->data_2()) + "'");
 
         if (!midi_msg->check())
             return;
 
         // check for mappings
-        auto mappings = mapping_in().find(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
+        auto mappings =
+            mapping_in().find(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
 
         for (auto& mapping: mappings) {
             bool add_task = false;
@@ -276,9 +275,11 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 
                 // lock the current channel and midi type for outgoing messages
                 if (midi_msg->data_2() == cmd->data_2_on())
-                    m_outbound_locked.insert(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
+                    m_outbound_locked.insert(
+                        map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
                 else if (midi_msg->data_2() == cmd->data_2_off())
-                    m_outbound_locked.erase(map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
+                    m_outbound_locked.erase(
+                        map::build_map_key(midi_msg->channel(), midi_msg->type_as_code(), midi_msg->data_1()));
 
                 add_task = true;
             } else {
@@ -301,10 +302,11 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
     }
 }
 
+
 /**
  * Process all outbound midi mappings
  */
-void midi_device::process_outbound_mappings(text_logger& in_log)
+void midi_device::process_outbound_mappings()
 {
     if (settings().send_mode == outbound_send_mode::permanent) {
         if (m_time_sent != time_point::min()) {
@@ -320,10 +322,13 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
         if (m_outbound_locked.contains(mapping->get_key()))
             continue;
 
-        std::shared_ptr<outbound_task> task = mapping->execute(in_log, settings().send_mode, sl_value());
+        std::shared_ptr<outbound_task> task = mapping->execute(text_log(), settings().send_mode, sl_value());
 
         if (task == nullptr)
             continue;
+
+        // add mapping to task
+        task->mapping = mapping;
 
         if (m_midi_out != nullptr && m_midi_out->isPortOpen())
             add_outbound_task(task);
@@ -332,6 +337,7 @@ void midi_device::process_outbound_mappings(text_logger& in_log)
     if (settings().send_mode == outbound_send_mode::permanent)
         m_time_sent = std::chrono::system_clock::now();
 }
+
 
 /**
  * Process a reset off all outbound mappings
@@ -361,6 +367,7 @@ void midi_device::create_outbound_thread()
     if (m_outbound_thread == nullptr)
         m_outbound_thread = std::make_unique<std::thread>(&midi_device::process_outbound_tasks, this);
 }
+
 
 /**
  * Process all outbound tasks in the queue
@@ -415,6 +422,7 @@ void midi_device::process_outbound_tasks()
     text_log().debug("Exit outbound thread");
 }
 
+
 /**
  * Add an outbound task to the queue
  */
@@ -467,17 +475,17 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
     else
         msg->set_data_2(in_task->data_2);
 
-    msg->add_mapping_text(in_task->mapping->map_text());
+    if (in_task->mapping != nullptr)
+        msg->add_mapping_text(in_task->mapping->map_text());
 
     // add message for internal list, but only if the dataref value has been changed, otherwise the logging will
     // increase very quickly
     if (in_task->data_changed) {
         midi_log().add(msg);
-        text_log().debug("Outbound message for device '" + settings().name
-                         + "' on port '" + std::to_string(settings().port_out) + "' :: "
-                         + "Status = '" + std::to_string(msg->status()) + "', "
-                         + "Data 1 = '" + std::to_string(msg->data_1()) + "', "
-                         + "Data 2 = '" + std::to_string(msg->data_2()) + "'");
+        text_log().debug("Outbound message for device '" + settings().name + "' on port '"
+                         + std::to_string(settings().port_out) + "' :: " + "Status = '" + std::to_string(msg->status())
+                         + "', " + "Data 1 = '" + std::to_string(msg->data_1()) + "', " + "Data 2 = '"
+                         + std::to_string(msg->data_2()) + "'");
     }
 
     std::lock_guard<std::mutex> lock(m_outbound_mutex);
@@ -486,4 +494,4 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
     m_new_outbound_task.notify_one();
 }
 
-}// Namespace xmidictrl
+} // Namespace xmidictrl

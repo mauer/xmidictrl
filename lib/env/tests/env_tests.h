@@ -22,7 +22,7 @@
 #include <string>
 
 // XMidiCtrl
-#include "cmd_tests.h"
+#include "command_tests.h"
 #include "data_tests.h"
 #include "environment.h"
 
@@ -30,7 +30,7 @@ namespace xmidictrl {
 
 class env_tests : public environment {
 public:
-    explicit env_tests(text_logger &in_log);
+    explicit env_tests(text_logger& in_log);
 
     std::filesystem::path xplane_path() override;
 
@@ -46,11 +46,13 @@ public:
     std::string current_aircraft_acf_name() override;
     std::string current_aircraft_descr() override;
 
-    data &drf() override;
-    commands &cmd() override;
+    data& drf() override;
+    commands& cmd() override;
+
+    command_tests& cmd_tests();
 
 private:
-    std::unique_ptr<cmd_tests> m_cmd;
+    std::unique_ptr<command_tests> m_cmd;
     std::unique_ptr<data_tests> m_drf;
 };
 

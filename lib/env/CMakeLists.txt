@@ -37,7 +37,7 @@ set(ENV_SRC_XPLANE
 )
 
 set(ENV_SRC_TESTS
-        ${CMAKE_CURRENT_LIST_DIR}/tests/cmd_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/tests/command_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tests/data_tests.cpp
         ${CMAKE_CURRENT_LIST_DIR}/tests/env_tests.cpp
 )

@@ -29,15 +29,22 @@
 
 namespace xmidictrl {
 
-class cmd_tests : public commands {
+class command_tests : public commands {
 public:
-    cmd_tests() = default;
-    ~cmd_tests() override = default;
+    command_tests() = default;
+    ~command_tests() override = default;
 
     void begin(text_logger &in_log, std::string_view in_cmd) override;
     void end(text_logger &in_log, std::string_view in_cmd) override;
     
     void execute(text_logger &in_log, std::string_view in_cmd) override;
+
+    std::string current_command();
+    std::string last_command();
+
+private:
+    std::string m_current_command {};
+    std::string m_last_command {};
 };
 
 } // Namespace xmidictrl
