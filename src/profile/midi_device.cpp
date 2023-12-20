@@ -209,6 +209,9 @@ void midi_device::process_init_mappings()
         if (task == nullptr)
             continue;
 
+        // add mapping
+        task->mapping = mapping;
+
         if (m_midi_out != nullptr && m_midi_out->isPortOpen())
             add_outbound_task(task);
     }

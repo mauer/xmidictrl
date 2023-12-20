@@ -257,12 +257,9 @@ std::shared_ptr<outbound_task> map_out_sld::execute(text_logger& in_log,
             break;
     }
 
-    task->channel = channel();
-    task->data_1 = data_1();
-    task->data_2 = static_cast<unsigned char>(data_2);
-
-    // TODO add mapping to task
-    //task->mapping = this;
+    task->channel = static_cast<char>(channel());
+    task->data_1 = static_cast<char>(data_1());
+    task->data_2 = static_cast<char>(data_2);
 
     return task;
 }

@@ -324,14 +324,14 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
                 break;
         }
 
-        task->channel = channel();
-        task->data_1 = data_1();
+        task->channel = static_cast<char>(channel());
+        task->data_1 = static_cast<char>(data_1());
 
         if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
             || (m_send_on == send_mode::one && send_on_cnt > 0))
-            task->data_2 = m_data_2_on;
+            task->data_2 = static_cast<char>(m_data_2_on);
         else
-            task->data_2 = m_data_2_off;
+            task->data_2 = static_cast<char>(m_data_2_off);
 
         return task;
     }

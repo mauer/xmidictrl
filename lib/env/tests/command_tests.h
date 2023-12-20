@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_CMD_TESTS_H
-#define XMC_CMD_TESTS_H
+#ifndef XMC_COMMAND_TESTS_H
+#define XMC_COMMAND_TESTS_H
 
 // Standard
 #include <map>
@@ -49,4 +49,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // XMC_CMD_TESTS_H
+#endif // XMC_COMMAND_TESTS_H

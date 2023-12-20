@@ -49,8 +49,11 @@ public:
                        std::string_view in_value_on,
                        std::string_view in_value_off) override;
 
+private:
+    std::map<std::string, std::string> m_data_string {};
+    std::map<std::string, float> m_data_float {};
 };
 
 } // Namespace xmidictrl
 
-#endif // DATA_STANDALONE_H
+#endif // XMC_DATA_TESTS_H

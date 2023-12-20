@@ -26,9 +26,15 @@ namespace xmidictrl {
 /**
  * Check if a dataref is valid
  */
-bool data_tests::check(std::string_view)
+bool data_tests::check(std::string_view in_name)
 {
-    return true;
+    if (m_data_string.contains(in_name.data()))
+        return true;
+
+    if (m_data_float.contains(in_name.data()))
+        return true;
+
+    return false;
 }
 
 
@@ -39,7 +45,12 @@ bool data_tests::read(text_logger& in_log, std::string_view in_name, std::string
 {
     out_value = std::string();
 
-    return true;
+    if (m_data_string.contains(in_name.data())) {
+        out_value = m_data_string.at(in_name.data());
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -50,7 +61,12 @@ bool data_tests::read(text_logger& in_log, std::string_view in_name, float& out_
 {
     out_value = 0.0f;
 
-    return true;
+    if (m_data_float.contains(in_name.data())) {
+        out_value = m_data_float.at(in_name.data());
+        return true;
+    }
+
+    return false;
 }
 
 
