@@ -85,7 +85,6 @@ void profile_window::create_tab_general()
             plugin::instance().load_profile();
 
         ImGui::Separator();
-        ImGui::NewLine();
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(180);
@@ -108,7 +107,6 @@ void profile_window::create_tab_general()
 
         ImGui::TextColored(title_color(), "%s", "CURRENT PROFILE");
         ImGui::Separator();
-        ImGui::NewLine();
 
         ImGui::Text("Title:");
         ImGui::SameLine(180);
@@ -131,7 +129,6 @@ void profile_window::create_tab_general()
 
         ImGui::TextColored(title_color(), "%s", "POSSIBLE PROFILE NAMES - AIRCRAFT FOLDER");
         ImGui::Separator();
-        ImGui::NewLine();
 
         ImGui::Text("Without prefix:");
         ImGui::SameLine(180);
@@ -150,7 +147,6 @@ void profile_window::create_tab_general()
 
         ImGui::TextColored(title_color(), "%s", "POSSIBLE PROFILE NAMES - PROFILES FOLDER");
         ImGui::Separator();
-        ImGui::NewLine();
 
         ImGui::Text("ICAO:");
         ImGui::SameLine(180);
@@ -195,7 +191,7 @@ void profile_window::create_tab_device(device& in_device)
     std::string tab_title = in_device.settings().name;
 
     if (ImGui::BeginTabItem(tab_title.data())) {
-        create_title("SETTINGS");
+        create_title("SETTINGS", false);
 
         if (in_device.type() == device_type::midi_device) {
             ImGui::Text("Inbound Port:");

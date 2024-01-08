@@ -94,7 +94,7 @@ void map_out_list::create_mappings(text_logger& in_log,
             mapping->read_config(in_log, in_profile[map_no]);
             mapping->set_include_name(in_inc_name);
 
-            if (mapping->check(in_log)) {
+            if (mapping->check(in_log, in_dev_settings)) {
                 add(mapping);
                 in_log.debug_line(in_profile[map_no].location().line(), "Mapping added");
             } else {

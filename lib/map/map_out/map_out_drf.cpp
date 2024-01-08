@@ -173,11 +173,11 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 /**
  * Check the mapping
  */
-bool map_out_drf::check(text_logger& in_log)
+bool map_out_drf::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
     bool result = true;
 
-    if (!map::check(in_log))
+    if (!map::check(in_log, in_dev_settings))
         result = false;
 
     if (m_datarefs.empty()) {
@@ -332,6 +332,12 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
             task->data_2 = static_cast<char>(m_data_2_on);
         else
             task->data_2 = static_cast<char>(m_data_2_off);
+
+        // check if data_2 is different to the previous one, some datarefs change slightly - especially annunciators
+        if (m_previous_data_2 != MIDI_NONE && m_previous_data_2 != task->data_2)
+            task->data_changed = false;
+
+        m_previous_data_2 = task->data_2;
 
         return task;
     }

@@ -51,7 +51,7 @@ public:
     void set_data_2_off(unsigned char in_data_2_off);
 
     void read_config(text_logger& in_log, toml::value& in_data) override;
-    bool check(text_logger& in_log) override;
+    bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
     std::shared_ptr<outbound_task> execute(text_logger& in_log,
                                            outbound_send_mode in_send_mode,
@@ -84,6 +84,8 @@ private:
 
     unsigned char m_data_2_on {MIDI_DATA_2_MAX};
     unsigned char m_data_2_off {MIDI_DATA_2_MIN};
+
+    char m_previous_data_2 {MIDI_NONE};
 };
 
 } // Namespace xmidictrl

@@ -34,6 +34,8 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
     auto* log = new text_logger();
     auto* env = new env_tests(*log);
 
+    auto* dev_settings = new device_settings();
+
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
         ch = 16
@@ -47,7 +49,7 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
     auto msg = new midi_message(*log, midi_direction::in);
     msg->set_data_2(MIDI_DATA_2_MAX);
 
-    CHECK(map->check(*log));
+    CHECK(map->check(*log, *dev_settings));
     CHECK(map->execute(*msg, ""));
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
@@ -63,6 +65,8 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
     auto* log = new text_logger();
     auto* env = new env_tests(*log);
 
+    auto* dev_settings = new device_settings();
+
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
         ch = 16
@@ -77,11 +81,11 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
     auto msg = new midi_message(*log, midi_direction::in);
     msg->set_data_2(MIDI_DATA_2_MAX);
 
-    CHECK(map->check(*log));
+    CHECK(map->check(*log, *dev_settings));
     CHECK(map->execute(*msg, "2"));
     CHECK(env->cmd_tests().current_command() == "");
 
-    CHECK(map->check(*log));
+    CHECK(map->check(*log, *dev_settings));
     CHECK(map->execute(*msg, "1"));
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
@@ -101,6 +105,8 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
     auto* log = new text_logger();
     auto* env = new env_tests(*log);
 
+    auto* dev_settings = new device_settings();
+
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
         ch = 16
@@ -116,7 +122,7 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
     auto msg = new midi_message(*log, midi_direction::in);
     msg->set_data_2(60);
 
-    CHECK(map->check(*log));
+    CHECK(map->check(*log, *dev_settings));
     CHECK(map->execute(*msg, ""));
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
@@ -129,6 +135,3 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
     CHECK(env->cmd_tests().current_command() == "");
     CHECK(env->cmd_tests().last_command() == "sim/autopilot/enable");
 }
-
-
-// TODO: Add unit tests with sublayer

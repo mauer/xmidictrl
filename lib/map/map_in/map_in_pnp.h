@@ -54,7 +54,7 @@ public:
     void set_time_released();
 
     void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
-    bool check(text_logger& in_log) override;
+    bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
     bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 

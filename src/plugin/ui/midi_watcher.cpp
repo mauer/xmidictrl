@@ -167,17 +167,17 @@ void midi_watcher::add_midi_row(midi_message* in_msg)
     ImGui::TableNextColumn();
     size_t map_count = in_msg->mapping_count();
     if (map_count == 1)
-        draw_icon(ICON_FA_CHECK, in_msg->mapping_text().c_str());
+        draw_icon(ICON_FA_CHECK, in_msg->mapping_text());
     else if (map_count > 1)
-        draw_icon(ICON_FA_CHECK_DOUBLE, in_msg->mapping_text().c_str());
+        draw_icon(ICON_FA_CHECK_DOUBLE, in_msg->mapping_text());
 
     ImGui::TableNextColumn();
     if (in_msg->log().has_errors())
-        draw_icon(ICON_FA_SQUARE_XMARK, in_msg->log().messages_as_text().c_str());
+        draw_icon(ICON_FA_SQUARE_XMARK, in_msg->log().messages_as_text());
     else if (in_msg->log().has_warnings())
-        draw_icon(ICON_FA_TRIANGLE_EXCLAMATION, in_msg->log().messages_as_text().c_str());
+        draw_icon(ICON_FA_TRIANGLE_EXCLAMATION, in_msg->log().messages_as_text());
     else if (in_msg->log().count() > 0)
-        draw_icon(ICON_FA_CIRCLE_CHECK, in_msg->log().messages_as_text().c_str());
+        draw_icon(ICON_FA_CIRCLE_CHECK, in_msg->log().messages_as_text());
     else if (in_msg->log().count() == 0 && map_count > 0)
         draw_icon(ICON_FA_CIRCLE_CHECK);
 

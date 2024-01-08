@@ -14,7 +14,7 @@ AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
-AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakTemplateDeclarations: MultiLine
 BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBraces: Custom
@@ -46,6 +46,7 @@ MaxEmptyLinesToKeep: 4
 NamespaceIndentation: None
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: true
+PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
 ReflowComments: false
 SeparateDefinitionBlocks : Leave

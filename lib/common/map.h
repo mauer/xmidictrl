@@ -25,6 +25,7 @@
 #include "toml.hpp"
 
 // XMidiCtrl
+#include "device_settings.h"
 #include "midi_message.h"
 #include "text_logger.h"
 #include "types.h"
@@ -58,7 +59,7 @@ public:
     virtual ~map() = default;
 
     void set_no(unsigned int in_no);
-    unsigned int no() const;
+    [[nodiscard]] unsigned int no() const;
 
     void set_include_name(std::string_view in_name);
     [[nodiscard]] std::string_view include_name() const;
@@ -77,7 +78,7 @@ public:
 
     std::string get_key();
 
-    virtual bool check(text_logger& in_log);
+    virtual bool check(text_logger& in_log, const device_settings& in_dev_settings);
 
     static std::string build_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
 

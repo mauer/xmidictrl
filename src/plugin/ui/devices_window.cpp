@@ -55,7 +55,6 @@ void devices_window::create_widgets()
 {
     ImGui::TextColored(title_color(), "%s", UI_SPACER_2 ICON_FA_ARROW_RIGHT_TO_BRACKET UI_SPACER_3 "INBOUND PORTS");
     ImGui::Separator();
-    ImGui::NewLine();
 
     try {
         if (m_midi_in == nullptr)
@@ -91,7 +90,6 @@ void devices_window::create_widgets()
                        "%s",
                        UI_SPACER_2 ICON_FA_ARROW_RIGHT_FROM_BRACKET UI_SPACER_3 "OUTBOUND PORTS");
     ImGui::Separator();
-    ImGui::NewLine();
 
     try {
         if (m_midi_out == nullptr)

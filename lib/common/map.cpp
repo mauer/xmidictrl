@@ -97,7 +97,7 @@ unsigned char map::data_1() const
  */
 std::string map::data_1_as_string()
 {
-    std::string str = fmt::format("{} {}", data_1_type_as_string(), m_data_1);
+    std::string str = fmt::format("{} {}", data_1_type_as_string(), std::to_string(m_data_1));
     return str;
 }
 
@@ -152,8 +152,15 @@ std::string map::get_key()
 /**
  * Check the mapping
  */
-bool map::check(text_logger&)
+bool map::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
+    // check if a sublayer was defined
+    if (!m_sl.empty() && in_dev_settings.sl_dataref.empty()) {
+        in_log.error(source_line());
+        in_log.error(" --> Sublayer is defined for mapping, but no sublayer dataref was defined in the device");
+        return false;
+    }
+
     if (m_channel != MIDI_NONE && m_data_1 != MIDI_NONE && m_data_1_type != map_data_1_type::none)
         return true;
     else

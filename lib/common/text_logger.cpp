@@ -39,6 +39,8 @@ namespace xmidictrl {
 text_logger::text_logger(text_logger* in_parent)
     : m_parent(in_parent)
 {
+    if (in_parent != nullptr)
+        set_debug_mode(in_parent->debug_mode());
 }
 
 

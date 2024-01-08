@@ -90,9 +90,9 @@ void map_in_cmd::read_config(text_logger& in_log, toml::value& in_data, toml::va
 /**
  * Check the mapping
  */
-bool map_in_cmd::check(text_logger& in_log)
+bool map_in_cmd::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
-    if (!map::check(in_log))
+    if (!map::check(in_log, in_dev_settings))
         return false;
 
     if (m_command.empty()) {
@@ -127,14 +127,14 @@ bool map_in_cmd::execute(midi_message& in_msg, std::string_view in_sl_value)
     if (!check_sublayer(in_sl_value))
         return true;
 
-    in_msg.log().debug(" --> Execute command '" + m_command + "'");
-
     if (in_msg.data_2() == m_data_2_on) {
+        in_msg.log().debug(" --> Begin execution of command '" + m_command + "'");
         env().cmd().begin(in_msg.log(), m_command);
     } else if (in_msg.data_2() == m_data_2_off) {
+        in_msg.log().debug(" --> End execution of command '" + m_command + "'");
         env().cmd().end(in_msg.log(), m_command);
     } else {
-        in_msg.log().error("Invalid MIDI velocity '" + std::to_string(in_msg.data_2()) + "'");
+        in_msg.log().error("Invalid MIDI Data 2 value '" + std::to_string(in_msg.data_2()) + "'");
         in_msg.log().error(
             " --> Supported values for the current mapping are '" + std::to_string(m_data_2_on) + "' and '"
             + std::to_string(m_data_2_off) + "'");

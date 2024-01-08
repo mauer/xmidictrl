@@ -42,7 +42,7 @@ public:
     unsigned char data_2() const;
 
     void read_config(text_logger& in_log, toml::value& in_data);
-    bool check(text_logger& in_log) override;
+    bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
     std::shared_ptr<outbound_task> execute();
 

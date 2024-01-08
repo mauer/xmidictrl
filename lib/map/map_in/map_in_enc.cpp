@@ -152,11 +152,11 @@ void map_in_enc::read_config(text_logger& in_log, toml::value& in_data, toml::va
 /**
  * Check the mapping
  */
-bool map_in_enc::check(text_logger& in_log)
+bool map_in_enc::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
     bool result = true;
 
-    if (!map::check(in_log))
+    if (!map::check(in_log, in_dev_settings))
         result = false;
 
     switch (m_enc_map_type) {

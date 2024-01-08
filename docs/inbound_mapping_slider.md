@@ -2,13 +2,33 @@
 
 ## Description
 
-The mapping for a slider can use X-Plane commands or a dataref. If you define commands and a dataref, the
-dataref will be used.
+The mapping for a slider can work with X-Plane commands or a dataref.
 
 ## Commands Mapping
 
-The mapping with commands allow you to define command which will be executed when the slider is right at the top, the
-bottom and/or in the middle. That's perfect to map three-way switches or even the landing gear. 
+The command mapping allows you to define three commands in total. One command when the slider is all the way up,
+another one when the slider is all the way down and optionally a command when the slider is right in the middle.
+
+For advanced mappings you can define the data 2 minimum and maximum value as well as a margin which should be used. The
+margin sets the range when the commands get executed.
+
+#### Example
+
+| Parameter     | Value |
+|---------------|-------|
+| Data 2 Min    | 0     |
+| Data 2 Max    | 127   |
+| Data 2 Margin | 10    |
+
+The commands will be executed when Data 2 has these values:
+
+| Command        | Data 2 Range | Formula                                                |
+|----------------|--------------|--------------------------------------------------------|
+| Command Up     | 117 .. 127   | `Data 2 Max` - `Data 2 Margin`                         | 
+| Command Middle | 53 .. 73     | (`Data 2 Max` - `Data 2 Min`) / `2` -+ `Data 2 Margin` | 
+| Command Down   | 00 .. 10     | `Data 2 Min` + `Data 2 Margin`                         |
+
+Each command will be executed on time until the slider leaves the range area and returns.
 
 ### Required Parameters
 
@@ -22,6 +42,9 @@ bottom and/or in the middle. That's perfect to map three-way switches or even th
 | Parameter      | Description                                                     |
 |----------------|-----------------------------------------------------------------|
 | command_middle | Command which will be executed when the slider is in the middle |
+| data_2_min     | Minimum value of Data 2                                         |
+| data_2_max     | Maximum value of Data 2                                         |
+| data_2_margin  | Margin to be used (value has to be between 0 and 25)            |
 
 ### Examples
 

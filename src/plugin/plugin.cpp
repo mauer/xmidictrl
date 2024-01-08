@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -265,10 +265,15 @@ void plugin::add_virtual_midi_message(unsigned char in_cc, unsigned char in_valu
     if (m_profile->loaded()) {
         auto virtual_dev = m_profile->devices().find_virtual_device();
 
-        if (virtual_dev != nullptr)
+        if (virtual_dev != nullptr) {
+            m_plugin_log->debug("Virtual device found");
+
             virtual_dev->process_inbound_message(static_cast<unsigned char>(m_env->settings().virtual_channel()),
                                                  in_cc,
                                                  in_value);
+        } else {
+            m_plugin_log->debug("No Virtual device found");
+        }
     }
 }
 

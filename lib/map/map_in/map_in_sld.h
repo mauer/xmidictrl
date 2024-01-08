@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------------------------------------------------
+ //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
 //   Copyright (c) 2021-2023 Marco Auer
@@ -45,7 +45,7 @@ public:
     map_in_type type() override;
 
     void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
-    bool check(text_logger& in_log) override;
+    bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
     bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
@@ -56,9 +56,30 @@ protected:
     std::string build_mapping_text(bool in_short) override;
 
 private:
+    // constants
+    static constexpr std::string_view c_cfg_command_up {"command_up"};
+    static constexpr std::string_view c_cfg_command_middle {"command_middle"};
+    static constexpr std::string_view c_cfg_command_down {"command_down"};
+
+    static constexpr std::string_view c_cfg_dataref {"dataref"};
+
+    static constexpr std::string_view c_cfg_data_2_min {"data_2_min"};
+    static constexpr std::string_view c_cfg_data_2_max {"data_2_max"};
+
+    static constexpr std::string_view c_cfg_data_2_margin {"data_2_margin"};
+
+    static constexpr std::string_view c_cfg_value_min {"value_min"};
+    static constexpr std::string_view c_cfg_value_max {"value_max"};
+
+    // members
     std::string m_dataref {};
     float m_value_min {0.0f};
     float m_value_max {1.0f};
+
+    unsigned char m_data_2_min {MIDI_DATA_2_MIN};
+    unsigned char m_data_2_max {MIDI_DATA_2_MAX};
+
+    unsigned char m_data_2_margin {10};
 
     std::string m_command_prev {};
 

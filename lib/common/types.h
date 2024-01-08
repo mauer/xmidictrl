@@ -80,7 +80,6 @@ const char* const COMMAND_TOGGLE_SUBLAYER = "TOGGLE_SUBLAYER";
 const char* const CFG_KEY_COMMAND_DOWN = "command_down";
 const char* const CFG_KEY_COMMAND_FAST_DOWN = "command_fast_down";
 const char* const CFG_KEY_COMMAND_FAST_UP = "command_fast_up";
-const char* const CFG_KEY_COMMAND_MIDDLE = "command_middle";
 const char* const CFG_KEY_COMMAND_UP = "command_up";
 const char* const CFG_KEY_COMMON_PROFILE = "common_profile";
 const char* const CFG_KEY_DATAREF = "dataref";

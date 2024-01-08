@@ -45,7 +45,7 @@ public:
     map_in_type type() override;
 
     void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
-    bool check(text_logger& in_log) override;
+    bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
     bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
@@ -79,7 +79,7 @@ private:
     void modify_up(midi_message& in_msg, bool in_fast);
     void modify_down(midi_message& in_msg, bool in_fast);
 
-    float check_value_min_max(float in_value, float in_modifier) const;
+    [[nodiscard]] float check_value_min_max(float in_value, float in_modifier) const;
 
     // members
     encoder_mode m_enc_mode {encoder_mode::relative};

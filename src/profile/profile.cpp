@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -21,8 +21,10 @@
 #include <filesystem>
 #include <utility>
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
-#include "conversions.h"
 #include "device_settings.h"
 #include "map_in_enc.h"
 #include "midi_device.h"
@@ -42,7 +44,7 @@ namespace xmidictrl {
 profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env)
     : m_env(in_env), m_plugin_log(in_text_log), m_midi_log(in_midi_log)
 {
-    // create my own logger for errors and warnings
+    // create my own logger for errors and warnings only
     m_profile_log = std::make_unique<text_logger>(&in_text_log);
     m_profile_log->set_log_info(false);
 
@@ -414,13 +416,18 @@ void profile::create_device(const toml::value& in_params, bool in_is_virtual, si
 /**
  * Read the device parameters
  */
-std::unique_ptr<device_settings>
-profile::create_device_settings(toml::value in_params, bool in_is_virtual, size_t in_dev_no)
+std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_params,
+                                                                 bool in_is_virtual,
+                                                                 size_t in_dev_no)
 {
+    std::string dev_name {};
+
     if (in_is_virtual)
-        m_profile_log->debug("Read settings for virtual device");
+        dev_name.append("virtual device");
     else
-        m_profile_log->debug("Read settings for MIDI device " + std::to_string(in_dev_no));
+        dev_name.append(fmt::format("MIDI device {}", in_dev_no));
+
+    m_profile_log->debug(fmt::format("Read settings for {}", dev_name));
 
     // read all the required parameters
     auto settings = std::make_unique<device_settings>();
@@ -488,7 +495,8 @@ profile::create_device_settings(toml::value in_params, bool in_is_virtual, size_
                 toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_OUT));
 
             // load general settings for the profile
-            settings->sl_dataref = toml::find_or<std::string>(m_config, CFG_KEY_SL_DATAREF, "");
+            if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_SL_DATAREF))
+                settings->sl_dataref = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_SL_DATAREF);
 
             if (!settings->sl_dataref.empty()) {
                 m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");

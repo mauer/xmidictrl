@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -17,6 +17,9 @@
 
 #include "map_in_sld.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "toml_utils.h"
 #include "utils.h"
@@ -30,8 +33,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_sld::map_in_sld(environment& in_env)
-    : map_in_label(in_env)
+map_in_sld::map_in_sld(environment& in_env) : map_in_label(in_env)
 {}
 
 
@@ -59,40 +61,37 @@ void map_in_sld::read_config(text_logger& in_log, toml::value& in_data, toml::va
     map_in_label::read_config(in_log, in_data, in_config);
 
     // check if dataref was defined
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
+    if (toml_utils::contains(in_log, in_data, c_cfg_dataref)) {
         in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for slider mapping");
 
-        // read dataref
-        m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
+        m_dataref = toml_utils::read_string(in_log, in_data, c_cfg_dataref);
 
-        // read value min
-        m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, 0.0f);
-
-        // read value max
-        m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, 1.0f);
+        m_value_min = toml_utils::read_float(in_log, in_data, c_cfg_value_min, 0.0f);
+        m_value_max = toml_utils::read_float(in_log, in_data, c_cfg_value_max, 1.0f);
     } else {
         in_log.debug_line(in_data.location().line(), "Use 'command' mode for slider mapping");
 
-        // read command up
-        m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
-
-        // read command middle
-        m_command_middle = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_MIDDLE);
-
-        // read command down
-        m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);
+        m_command_up = toml_utils::read_string(in_log, in_data, c_cfg_command_up);
+        m_command_middle = toml_utils::read_string(in_log, in_data, c_cfg_command_middle);
+        m_command_down = toml_utils::read_string(in_log, in_data, c_cfg_command_down);
     }
+
+    // read data 2 configuration
+    m_data_2_min = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_min, MIDI_DATA_2_MIN);
+    m_data_2_max = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_max, MIDI_DATA_2_MAX);
+
+    m_data_2_margin = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_margin, 10);
 }
 
 
 /**
  * Check the mapping
  */
-bool map_in_sld::check(text_logger& in_log)
+bool map_in_sld::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
     bool result = true;
 
-    if (!map::check(in_log))
+    if (!map::check(in_log, in_dev_settings))
         result = false;
 
     if (!m_dataref.empty()) {
@@ -114,11 +113,22 @@ bool map_in_sld::check(text_logger& in_log)
         // command mode
         if (m_command_up.empty() && m_command_down.empty()) {
             in_log.error(source_line());
-            in_log.error(
-                " --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '" + std::string(CFG_KEY_COMMAND_DOWN)
-                + "' are not defined");
+            in_log.error(" --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '"
+                         + std::string(CFG_KEY_COMMAND_DOWN) + "' are not defined");
             result = false;
         }
+    }
+
+    if (m_data_2_min >= m_data_2_max) {
+        in_log.error(source_line());
+        in_log.error(fmt::format(" --> Parameter '{}' ({:d}) has to be smaller than parameter '{}' ({:d})", c_cfg_data_2_min, m_data_2_min, c_cfg_data_2_max, m_data_2_max));
+        result = false;
+    }
+
+    if (m_data_2_margin < 0 || m_data_2_margin > 25) {
+        in_log.error(source_line());
+        in_log.error(fmt::format(" --> Parameter '{}' has to be between 0 and 25", c_cfg_data_2_margin));
+        result = false;
     }
 
     return result;
@@ -137,9 +147,9 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
         // dataref mode
         float value;
 
-        if (in_msg.data_2() == MIDI_DATA_2_MIN)
+        if (in_msg.data_2() == m_data_2_min)
             value = m_value_min;
-        else if (in_msg.data_2() == MIDI_DATA_2_MAX)
+        else if (in_msg.data_2() == m_data_2_max)
             value = m_value_max;
         else
             value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
@@ -156,7 +166,7 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
         }
     } else {
         // command mode
-        if (in_msg.data_2() <= 10) {
+        if (in_msg.data_2() <= m_data_2_min + m_data_2_margin) {
             in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
 
             if (m_command_down != m_command_prev)
@@ -164,7 +174,7 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
 
             m_command_prev = m_command_down;
 
-        } else if (in_msg.data_2() >= 117) {
+        } else if (in_msg.data_2() >= m_data_2_max - m_data_2_margin) {
             in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
 
             if (m_command_up != m_command_prev)
@@ -172,7 +182,8 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
 
             m_command_prev = m_command_up;
 
-        } else if (in_msg.data_2() >= 50 && in_msg.data_2() <= 70) {
+        } else if (in_msg.data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
+                   in_msg.data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
                 in_msg.log().debug(" --> Execute command '" + m_command_middle + "'");
 
@@ -255,9 +266,8 @@ std::string map_in_sld::build_mapping_text(bool in_short)
         map_str.append("Value max = " + utils::float_to_string(m_value_max));
     } else {
         if (!m_command_middle.empty())
-            map_str.append("Command down = '" + m_command_down + "'" + sep_str
-                           + "Command middle = '" + m_command_middle + "'" + sep_str
-                           + "Command up = '" + m_command_up + "'");
+            map_str.append("Command down = '" + m_command_down + "'" + sep_str + "Command middle = '" + m_command_middle
+                           + "'" + sep_str + "Command up = '" + m_command_up + "'");
         else
             map_str.append("Command down = '" + m_command_down + "'" + sep_str + "Command up = '" + m_command_up + "'");
     }

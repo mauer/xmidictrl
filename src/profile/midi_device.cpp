@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -25,7 +25,6 @@
 #include "map.h"
 #include "map_in_cmd.h"
 #include "map_in_pnp.h"
-//#include "plugin.h"
 
 // Make sure min is not defined as a macro otherwise time_point::min() will not compile
 #if defined(_MSC_VER) && defined(min)
@@ -66,6 +65,7 @@ midi_device::midi_device(text_logger& in_text_log,
     }
 }
 
+
 /**
  * Destructor
  */
@@ -73,6 +73,9 @@ midi_device::~midi_device()
 {
     close_connections();
 }
+
+
+
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
@@ -86,6 +89,7 @@ device_type midi_device::type()
     return device_type::midi_device;
 }
 
+
 /**
  * Return the init mapping list
  */
@@ -94,6 +98,7 @@ map_init_list& midi_device::mapping_init()
     return *m_map_init;
 }
 
+
 /**
  * Return the outbound mapping list
  */
@@ -101,6 +106,7 @@ map_out_list& midi_device::mapping_out()
 {
     return *m_map_out;
 }
+
 
 /**
  * Open connections for midi in and out
@@ -153,6 +159,7 @@ bool midi_device::open_connections()
     return true;
 }
 
+
 /**
  * Close midi connections
  */
@@ -185,6 +192,7 @@ void midi_device::close_connections()
     }
 }
 
+
 /**
  * Callback method for midi inbound events
  */
@@ -197,6 +205,7 @@ void midi_device::midi_callback([[maybe_unused]] double in_deltatime,
         dev->process_inbound_message(in_message);
     }
 }
+
 
 /**
  * Process all init midi mappings
@@ -216,6 +225,7 @@ void midi_device::process_init_mappings()
             add_outbound_task(task);
     }
 }
+
 
 /**
  * Process an inbound midi message
@@ -358,6 +368,9 @@ void midi_device::process_outbound_reset()
     }
 }
 
+
+
+
 //---------------------------------------------------------------------------------------------------------------------
 //   PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
@@ -472,7 +485,7 @@ void midi_device::add_outbound_task(const std::shared_ptr<outbound_task>& in_tas
 
     msg->set_data_1(in_task->data_1);
 
-    // some MIDI device expect note_on for note_off with a velocity of 0. Lets check the settings
+    // some MIDI device expect note_on for note_off with a velocity of 0. Let's check the settings
     if (in_task->type == midi_msg_type::note_off && settings().note_mode == outbound_note_mode::on)
         msg->set_data_2(MIDI_DATA_2_MIN);
     else
