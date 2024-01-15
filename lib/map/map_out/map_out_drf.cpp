@@ -251,7 +251,7 @@ std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
             value_previous = m_xp_values[dataref];
             m_xp_values[dataref] = value_current;
         } else {
-            m_xp_values.emplace(dataref, value_current);
+            m_xp_values.try_emplace(dataref, value_current);
         }
 
         if (value_current != value_previous)

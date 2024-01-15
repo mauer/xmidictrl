@@ -47,8 +47,6 @@ public:
     }
 
     static std::string time_to_string(time_point in_time);
-
-    static std::string float_to_string(float in_number, unsigned int in_precision = 2);
 };
 
 } // Namespace xmidictrl

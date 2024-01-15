@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -33,18 +33,18 @@ namespace xmidictrl {
 
 class log_viewer : public imgui_window {
 public:
-    log_viewer(text_logger& in_text_log, environment& in_env);
-    ~log_viewer() override = default;
+	log_viewer(text_logger& in_text_log, environment& in_env);
+	~log_viewer() override = default;
 
 protected:
-    void create_widgets() override;
+	void create_widgets() override;
 
 private:
-    void add_log_row(text_log_msg* in_msg);
+	void add_log_row(text_log_msg* in_msg);
 
-    sort_mode m_log_sort_mode {sort_mode::ascending};
+	sort_mode m_log_sort_mode {sort_mode::ascending};
 
-    ImGuiTableColumnFlags m_log_msg_flags;
+	ImGuiTableColumnFlags m_log_msg_flags;
 };
 
 } // Namespace xmidictrl

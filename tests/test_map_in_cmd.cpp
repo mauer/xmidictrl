@@ -31,8 +31,8 @@ using namespace xmidictrl;
 
 TEST_CASE("Test Inbound Mapping for commands with default data 2")
 {
-    auto* log = new text_logger();
-    auto* env = new env_tests(*log);
+	auto log = std::make_unique<text_logger>();
+	auto env = std::make_unique<env_tests>(*log);
 
     auto* dev_settings = new device_settings();
 
@@ -62,8 +62,8 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
 
 TEST_CASE("Test Inbound Mapping for commands with sublayer")
 {
-    auto* log = new text_logger();
-    auto* env = new env_tests(*log);
+	auto log = std::make_unique<text_logger>();
+	auto env = std::make_unique<env_tests>(*log);
 
     auto* dev_settings = new device_settings();
 
@@ -102,10 +102,10 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
 
 TEST_CASE("Test Inbound Mapping for commands with custom data 2")
 {
-    auto* log = new text_logger();
-    auto* env = new env_tests(*log);
+    auto log = std::make_unique<text_logger>();
+    auto env = std::make_unique<env_tests>(*log);
 
-    auto* dev_settings = new device_settings();
+    auto dev_settings = std::make_unique<device_settings>();
 
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(

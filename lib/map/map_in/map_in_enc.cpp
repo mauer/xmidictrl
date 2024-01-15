@@ -277,13 +277,13 @@ std::string map_in_enc::map_text_cmd_drf()
         map_str.append(m_dataref);
     } else {
         map_str.append(m_command_up + "   (up)");
-        map_str.append("\n" + m_command_down + "   (down)");
+        map_str.append(c_newline.data() + m_command_down + "   (down)");
 
         if (!m_command_fast_up.empty() && m_command_up != m_command_fast_up)
-            map_str.append("\n" + m_command_fast_up + "   (fast up)");
+            map_str.append(c_newline.data() + m_command_fast_up + "   (fast up)");
 
         if (!m_command_fast_down.empty() && m_command_down != m_command_fast_down)
-            map_str.append("\n" + m_command_fast_down + "   (fast down)");
+            map_str.append(c_newline.data() + m_command_fast_down + "   (fast down)");
     }
 
     return map_str;
@@ -298,20 +298,20 @@ std::string map_in_enc::map_text_parameter()
     std::string map_str {};
 
     if (!m_dataref.empty()) {
-        map_str.append("Modifier up = " + utils::float_to_string(m_modifier_up));
-        map_str.append("   |   ");
+        map_str.append(fmt::format("Modifier up = {}", m_modifier_up));
+        map_str.append(c_newline);
 
-        if (m_modifier_fast_up != 0) {
-            map_str.append("Modifier up (fast) = " + utils::float_to_string(m_modifier_fast_up));
-            map_str.append("   |   ");
+        if (m_modifier_fast_up != 0 && m_modifier_fast_up != m_modifier_up) {
+            map_str.append(fmt::format("Modifier up (fast) = {}", m_modifier_fast_up));
+            map_str.append(c_newline);
         }
 
-        map_str.append("Modifier down = " + utils::float_to_string(m_modifier_down));
-        map_str.append("   |   ");
+        map_str.append(fmt::format("Modifier down = {}", m_modifier_down));
+        map_str.append(c_newline);
 
-        if (m_modifier_fast_down != 0) {
-            map_str.append("Modifier down (fast) = " + utils::float_to_string(m_modifier_fast_down));
-            map_str.append("   |   ");
+        if (m_modifier_fast_down != 0 && m_modifier_fast_down != m_modifier_down) {
+            map_str.append(fmt::format("Modifier down (fast) = ", m_modifier_fast_down));
+            map_str.append(c_newline);
         }
     }
 
@@ -348,15 +348,15 @@ std::string map_in_enc::build_mapping_text(bool in_short)
 
     if (!m_dataref.empty()) {
         map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
-        map_str.append("Modifier up = " + utils::float_to_string(m_modifier_up));
+        map_str.append(fmt::format("Modifier up = {}", m_modifier_up));
 
         if (m_modifier_fast_up != 0)
-            map_str.append(sep_str + "Modifier up (fast) = " + utils::float_to_string(m_modifier_fast_up));
+            map_str.append(sep_str + fmt::format("Modifier up (fast) = {}", m_modifier_fast_up));
 
-        map_str.append(sep_str + "Modifier down = " + utils::float_to_string(m_modifier_down));
+        map_str.append(sep_str + fmt::format("Modifier down = {}", m_modifier_down));
 
         if (m_modifier_fast_down != 0)
-            map_str.append(sep_str + "Modifier down (fast) = " + utils::float_to_string(m_modifier_fast_down));
+            map_str.append(sep_str + fmt::format("Modifier down (fast) = {}", m_modifier_fast_down));
     } else {
         map_str.append("Command up = '" + m_command_up + "'" + sep_str);
 

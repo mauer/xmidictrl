@@ -115,7 +115,7 @@ bool map_init::check(text_logger& in_log, const device_settings& in_dev_settings
  */
 std::shared_ptr<outbound_task> map_init::execute()
 {
-    std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
+    auto task = std::make_shared<outbound_task>();
 
     task->data_changed = true;
 

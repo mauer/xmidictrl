@@ -31,8 +31,8 @@ using namespace xmidictrl;
 
 TEST_CASE("Test Inbound Mapping for sliders with commands")
 {
-    auto* log = new text_logger();
-    auto* env = new env_tests(*log);
+    auto log = std::make_unique<text_logger>();
+    auto env = std::make_unique<env_tests>(*log);
 
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(

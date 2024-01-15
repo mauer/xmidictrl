@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -32,8 +32,7 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_cmd::map_in_cmd(environment& in_env)
-    : map_in_label(in_env)
+map_in_cmd::map_in_cmd(environment& in_env) : map_in_label(in_env)
 {}
 
 
@@ -48,7 +47,7 @@ map_in_cmd::map_in_cmd(environment& in_env)
  */
 map_in_type map_in_cmd::type()
 {
-    return map_in_type::command;
+	return map_in_type::command;
 }
 
 
@@ -57,7 +56,7 @@ map_in_type map_in_cmd::type()
  */
 unsigned char map_in_cmd::data_2_on() const
 {
-    return m_data_2_on;
+	return m_data_2_on;
 }
 
 
@@ -66,7 +65,7 @@ unsigned char map_in_cmd::data_2_on() const
  */
 unsigned char map_in_cmd::data_2_off() const
 {
-    return m_data_2_off;
+	return m_data_2_off;
 }
 
 
@@ -75,15 +74,15 @@ unsigned char map_in_cmd::data_2_off() const
  */
 void map_in_cmd::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
-    in_log.debug_line(in_data.location().line(), "Read settings for type 'cmd'");
-    map_in_label::read_config(in_log, in_data, in_config);
+	in_log.debug_line(in_data.location().line(), "Read settings for type 'cmd'");
+	map_in_label::read_config(in_log, in_data, in_config);
 
-    // read the command
-    m_command = toml_utils::read_string(in_log, in_data, c_cfg_command);
+	// read the command
+	m_command = toml_utils::read_string(in_log, in_data, c_cfg_command);
 
-    // read data_2 parameters
-    m_data_2_on = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX);
-    m_data_2_off = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN);
+	// read data_2 parameters
+	m_data_2_on = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX);
+	m_data_2_off = toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN);
 }
 
 
@@ -92,30 +91,36 @@ void map_in_cmd::read_config(text_logger& in_log, toml::value& in_data, toml::va
  */
 bool map_in_cmd::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
-    if (!map::check(in_log, in_dev_settings))
-        return false;
+	if (!map::check(in_log, in_dev_settings))
+		return false;
 
-    if (m_command.empty()) {
-        in_log.error(source_line());
-        in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_command));
-        return false;
-    }
+	if (m_command.empty()) {
+		in_log.error(source_line());
+		in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_command));
+		return false;
+	}
 
-    if (m_data_2_on > MIDI_DATA_2_MAX) {
-        in_log.error(source_line());
-        in_log.error(fmt::format(" --> Invalid value for parameter '{}', it has to be between {} and {}", c_cfg_data_2_on, MIDI_DATA_2_MIN, MIDI_DATA_2_MAX));
+	if (m_data_2_on > MIDI_DATA_2_MAX) {
+		in_log.error(source_line());
+		in_log.error(fmt::format(" --> Invalid value for parameter '{}', it has to be between {} and {}",
+								 c_cfg_data_2_on,
+								 MIDI_DATA_2_MIN,
+								 MIDI_DATA_2_MAX));
 
-        return false;
-    }
+		return false;
+	}
 
-    if (m_data_2_off > MIDI_DATA_2_MAX) {
-        in_log.error(source_line());
-        in_log.error(fmt::format(" --> Invalid value for parameter '{}', it has to be between {} and {}", c_cfg_data_2_off, MIDI_DATA_2_MIN, MIDI_DATA_2_MAX));
+	if (m_data_2_off > MIDI_DATA_2_MAX) {
+		in_log.error(source_line());
+		in_log.error(fmt::format(" --> Invalid value for parameter '{}', it has to be between {} and {}",
+								 c_cfg_data_2_off,
+								 MIDI_DATA_2_MIN,
+								 MIDI_DATA_2_MAX));
 
-        return false;
-    }
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 
@@ -124,23 +129,22 @@ bool map_in_cmd::check(text_logger& in_log, const device_settings& in_dev_settin
  */
 bool map_in_cmd::execute(midi_message& in_msg, std::string_view in_sl_value)
 {
-    if (!check_sublayer(in_sl_value))
-        return true;
+	if (!check_sublayer(in_sl_value))
+		return true;
 
-    if (in_msg.data_2() == m_data_2_on) {
-        in_msg.log().debug(" --> Begin execution of command '" + m_command + "'");
-        env().cmd().begin(in_msg.log(), m_command);
-    } else if (in_msg.data_2() == m_data_2_off) {
-        in_msg.log().debug(" --> End execution of command '" + m_command + "'");
-        env().cmd().end(in_msg.log(), m_command);
-    } else {
-        in_msg.log().error("Invalid MIDI Data 2 value '" + std::to_string(in_msg.data_2()) + "'");
-        in_msg.log().error(
-            " --> Supported values for the current mapping are '" + std::to_string(m_data_2_on) + "' and '"
-            + std::to_string(m_data_2_off) + "'");
-    }
+	if (in_msg.data_2() == m_data_2_on) {
+		in_msg.log().debug(" --> Begin execution of command '" + m_command + "'");
+		env().cmd().begin(in_msg.log(), m_command);
+	} else if (in_msg.data_2() == m_data_2_off) {
+		in_msg.log().debug(" --> End execution of command '" + m_command + "'");
+		env().cmd().end(in_msg.log(), m_command);
+	} else {
+		in_msg.log().error("Invalid MIDI Data 2 value '" + std::to_string(in_msg.data_2()) + "'");
+		in_msg.log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
+						   + "' and '" + std::to_string(m_data_2_off) + "'");
+	}
 
-    return true;
+	return true;
 }
 
 
@@ -149,7 +153,7 @@ bool map_in_cmd::execute(midi_message& in_msg, std::string_view in_sl_value)
  */
 std::string map_in_cmd::map_text_cmd_drf()
 {
-    return m_command;
+	return m_command;
 }
 
 
@@ -158,20 +162,20 @@ std::string map_in_cmd::map_text_cmd_drf()
  */
 std::string map_in_cmd::map_text_parameter()
 {
-    std::string map_str {};
+	std::string map_str {};
 
-    // Data 2 on/off
-    if (m_data_2_on != MIDI_DATA_2_MAX)
-        map_str.append("Data 2 on = " + std::to_string(m_data_2_on));
+	// Data 2 on/off
+	if (m_data_2_on != MIDI_DATA_2_MAX)
+		map_str.append("Data 2 on = " + std::to_string(m_data_2_on));
 
-    if (m_data_2_off != MIDI_DATA_2_MIN) {
-        if (!map_str.empty())
-            map_str.append("   |   ");
+	if (m_data_2_off != MIDI_DATA_2_MIN) {
+		if (!map_str.empty())
+			map_str.append(c_newline);
 
-        map_str.append("Data 2 off = " + std::to_string(m_data_2_off));
-    }
+		map_str.append("Data 2 off = " + std::to_string(m_data_2_off));
+	}
 
-    return map_str;
+	return map_str;
 }
 
 
@@ -186,29 +190,29 @@ std::string map_in_cmd::map_text_parameter()
  */
 std::string map_in_cmd::build_mapping_text(bool in_short)
 {
-    std::string map_str {};
-    std::string sep_str {", "};
+	std::string map_str {};
+	std::string sep_str {", "};
 
-    if (!in_short) {
-        sep_str = "\n";
-        map_str = " ====== Command ======" + sep_str;
+	if (!in_short) {
+		sep_str = "\n";
+		map_str = " ====== Command ======" + sep_str;
 
-        if (!sl().empty())
-            map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
-    }
+		if (!sl().empty())
+			map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
+	}
 
-    if (!in_short)
-        map_str.append("Command: ");
+	if (!in_short)
+		map_str.append("Command: ");
 
-    map_str.append(m_command);
+	map_str.append(m_command);
 
-    if (m_data_2_on != MIDI_DATA_2_MAX)
-        map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_on));
+	if (m_data_2_on != MIDI_DATA_2_MAX)
+		map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_on));
 
-    if (m_data_2_off != MIDI_DATA_2_MIN)
-        map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_off));
+	if (m_data_2_off != MIDI_DATA_2_MIN)
+		map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_off));
 
-    return map_str;
+	return map_str;
 }
 
-}// Namespace xmidictrl
+} // Namespace xmidictrl

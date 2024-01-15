@@ -85,6 +85,9 @@ public:
     virtual bool execute(midi_message& in_msg, std::string_view in_sl_value) = 0;
 
 protected:
+	// constants
+	static constexpr std::string_view c_newline {"\n"};
+
     void read_common_config(text_logger& in_log, toml::value& in_data, bool in_read_sl = true);
 
     bool check_sublayer(std::string_view in_sl_value);
@@ -96,7 +99,7 @@ private:
     void read_data_1(text_logger& in_log, toml::value& in_data);
     void read_sublayer(text_logger& in_log, toml::value& in_data);
 
-    std::string data_1_type_as_string() const;
+    [[nodiscard]] std::string data_1_type_as_string() const;
 
     static constexpr std::string_view c_cfg_ch {"ch"};
     static constexpr std::string_view c_cfg_cc {"cc"};

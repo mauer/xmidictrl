@@ -232,9 +232,9 @@ std::string map_in_sld::map_text_parameter()
     std::string map_str {};
 
     if (!m_dataref.empty()) {
-        map_str.append("Value min = " + utils::float_to_string(m_value_min));
+        map_str.append(fmt::format("Value min = {}", m_value_min));
         map_str.append("   |   ");
-        map_str.append("Value max = " + utils::float_to_string(m_value_max));
+        map_str.append(fmt::format("Value max = {}", m_value_max));
     }
 
     return map_str;
@@ -262,8 +262,8 @@ std::string map_in_sld::build_mapping_text(bool in_short)
 
     if (!m_dataref.empty()) {
         map_str.append("Dataref = '" + m_dataref + "'" + sep_str);
-        map_str.append("Value min = " + utils::float_to_string(m_value_min) + sep_str);
-        map_str.append("Value max = " + utils::float_to_string(m_value_max));
+        map_str.append(fmt::format("Value min = {}", + m_value_min) + sep_str);
+        map_str.append(fmt::format("Value max = {}", m_value_max));
     } else {
         if (!m_command_middle.empty())
             map_str.append("Command down = '" + m_command_down + "'" + sep_str + "Command middle = '" + m_command_middle

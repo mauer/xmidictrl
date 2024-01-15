@@ -46,6 +46,7 @@ profile::profile(text_logger& in_text_log, midi_logger& in_midi_log, environment
 {
     // create my own logger for errors and warnings only
     m_profile_log = std::make_unique<text_logger>(&in_text_log);
+    m_profile_log->set_debug_mode(false);
     m_profile_log->set_log_info(false);
 
     m_device_list = std::make_unique<device_list>(m_env);
