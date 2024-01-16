@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -35,11 +35,12 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 // Outbound mapping types
-enum class map_out_type {
-    none,
-    constant,
-    dataref,
-    slider
+enum class map_out_type
+{
+	none,
+	constant,
+	dataref,
+	slider
 };
 
 
@@ -51,28 +52,28 @@ enum class map_out_type {
 
 class map_out : public map {
 public:
-    explicit map_out(environment& in_env);
-    ~map_out() override = default;
+	explicit map_out(environment& in_env);
+	~map_out() override = default;
 
-    virtual map_out_type type();
+	virtual map_out_type type();
 
-    virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
+	virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
 
-    virtual std::shared_ptr<outbound_task> execute(text_logger& in_log,
-                                                   outbound_send_mode in_send_mode,
-                                                   std::string_view in_sl_value) = 0;
-    virtual std::shared_ptr<outbound_task> reset() = 0;
+	virtual std::shared_ptr<outbound_task> execute(text_logger& in_log,
+												   outbound_send_mode in_send_mode,
+												   std::string_view in_sl_value) = 0;
+	virtual std::shared_ptr<outbound_task> reset() = 0;
 
-    virtual std::string map_text_drf() = 0;
-    virtual std::string map_text_parameter() = 0;
+	virtual std::string map_text_drf() = 0;
+	virtual std::string map_text_parameter() = 0;
 
 protected:
-    environment& env();
+	environment& env();
 
 private:
-    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
+	bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
 
-    environment& m_env;
+	environment& m_env;
 };
 
 } // Namespace xmidictrl

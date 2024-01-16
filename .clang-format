@@ -22,7 +22,7 @@ BraceWrapping:
   AfterCaseLabel: false
   AfterClass: false
   AfterControlStatement: Never
-  AfterEnum: false
+  AfterEnum: true
   AfterFunction: true
   AfterNamespace: false
   AfterUnion: false
@@ -34,6 +34,7 @@ BraceWrapping:
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializersBeforeComma: true
 BreakInheritanceList: BeforeColon
 ColumnLimit: 120
 CompactNamespaces: false

@@ -72,4 +72,4 @@ Many thanks to [JetBrains](https://www.jetbrains.com/) for sponsoring a free lic
 
 XMidiCtrl is written by Marco Auer and released under the GNU Affero General Public License .
 
-&copy; 2021 - 2023 Marco Auer
+&copy; 2021 - 2024 Marco Auer
