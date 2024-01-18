@@ -15,32 +15,28 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_INBOUND_WORKER_H
-#define XMC_INBOUND_WORKER_H
+#ifndef XMC_MAP_PARAM_H
+#define XMC_MAP_PARAM_H
 
 // Standard
-#include <memory>
-#include <queue>
+#include <string>
 
 // XMidiCtrl
-#include "inbound_task.h"
+#include "midi_message.h"
 #include "text_logger.h"
+#include "types.h"
 
 namespace xmidictrl {
 
-class inbound_worker {
-public:
-    inbound_worker() = default;
-    ~inbound_worker() = default;
+struct map_param {
+	std::shared_ptr<midi_message> msg;
+	text_logger& log;
 
-    void add_task(const std::shared_ptr<inbound_task>& in_task);
+	std::string sl_value;
 
-    void process();
-
-private:
-    std::queue<std::shared_ptr<inbound_task>> m_tasks {};
+	outbound_send_mode send_mode;
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_INBOUND_WORKER_H
+#endif // XMC_MAP_PARAM_H

@@ -159,12 +159,16 @@ bool map_in_pnp::check(text_logger& in_log, const device_settings& in_dev_settin
 /**
  * Execute the action in X-Plane
  */
-bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
+std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 {
-    if (!check_sublayer(in_sl_value) || m_time_received.load() == time_point::min()) {
+	auto result = std::make_unique<map_result>();
+
+    if (!check_sublayer(in_param->sl_value) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)
         reset();
-        return true;
+
+		result->completed = true;
+        return result;
     }
 
     // check if the command has been already executed
@@ -175,15 +179,15 @@ bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
             switch (m_command_type) {
                 case command_type::push:
                     if (!m_command_push.empty()) {
-                        in_msg.log().debug(" --> End push command '" + m_command_push + "'");
-                        env().cmd().end(in_msg.log(), m_command_push);
+                        in_param->msg->log().debug(" --> End push command '" + m_command_push + "'");
+                        env().cmd().end(in_param->msg->log(), m_command_push);
                     }
                     break;
 
                 case command_type::pull:
                     if (!m_command_pull.empty()) {
-                        in_msg.log().debug(" --> End pull command '" + m_command_pull + "'");
-                        env().cmd().end(in_msg.log(), m_command_pull);
+                        in_param->msg->log().debug(" --> End pull command '" + m_command_pull + "'");
+                        env().cmd().end(in_param->msg->log(), m_command_pull);
                     }
                     break;
 
@@ -192,10 +196,13 @@ bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
             }
 
             reset();
-            return true;
+
+			result->completed = true;
+            return result;
         } else {
             // let's wait a bit longer...
-            return false;
+			result->completed = false;
+            return result;
         }
     }
 
@@ -203,8 +210,10 @@ bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
         // failsafe, don't want to keep this task in the list forever
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - m_time_received.load();
 
-        if (elapsed_seconds.count() < 0.5f)
-            return false;
+        if (elapsed_seconds.count() < 0.5f) {
+			result->completed = false;
+			return result;
+		}
     }
 
     std::chrono::duration<double> elapsed_seconds = m_time_released.load() - m_time_received.load();
@@ -212,30 +221,33 @@ bool map_in_pnp::execute(midi_message& in_msg, std::string_view in_sl_value)
 
     if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
         if (!m_dataref_pull.empty()) {
-            toggle_dataref(in_msg.log(), m_dataref_pull, m_values_pull);
+            toggle_dataref(in_param->msg->log(), m_dataref_pull, m_values_pull);
         } else if (!m_command_pull.empty()) {
-            in_msg.log().debug(" --> Begin pull command '" + m_command_pull + "'");
+            in_param->msg->log().debug(" --> Begin pull command '" + m_command_pull + "'");
             m_command_type = command_type::pull;
-            env().cmd().begin(in_msg.log(), m_command_pull);
+            env().cmd().begin(in_param->msg->log(), m_command_pull);
 
             // keep the task in the queue to end the command
-            return false;
+			result->completed = false;
+            return result;
         }
     } else {
         if (!m_dataref_push.empty()) {
-            toggle_dataref(in_msg.log(), m_dataref_push, m_values_push);
+            toggle_dataref(in_param->msg->log(), m_dataref_push, m_values_push);
         } else if (!m_command_push.empty()) {
-            in_msg.log().debug(" --> Begin push command '" + m_command_push + "'");
+            in_param->msg->log().debug(" --> Begin push command '" + m_command_push + "'");
             m_command_type = command_type::push;
-            env().cmd().begin(in_msg.log(), m_command_push);
+            env().cmd().begin(in_param->msg->log(), m_command_push);
 
             // keep the task in the queue to end the command
-            return false;
+			result->completed = false;
+            return result;
         }
     }
 
     // don't keep the task in the queue
-    return true;
+	result->completed = true;
+    return result;
 }
 
 

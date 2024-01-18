@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef MAP_INIT_H
-#define MAP_INIT_H
+#ifndef XMC_MAP_INIT_H
+#define XMC_MAP_INIT_H
 
 // Standard
 #include <memory>
@@ -39,19 +39,17 @@ public:
     ~map_init() override = default;
 
     void set_data_2(unsigned char in_data_2);
-    unsigned char data_2() const;
+    [[nodiscard]] unsigned char data_2() const;
 
     void read_config(text_logger& in_log, toml::value& in_data);
     bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
-    std::shared_ptr<outbound_task> execute();
+	std::unique_ptr<map_result> execute(map_param* in_param) override;
 
 protected:
     std::string build_mapping_text(bool in_short) override;
 
 private:
-    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
-
     // constants
     static constexpr std::string_view c_cfg_data_2 {"data_2"};
     static constexpr std::string_view c_cfg_velocity {"velocity"};
@@ -62,4 +60,4 @@ private:
 
 } // Namespace xmidictrl
 
-#endif // MAP_INIT_H
+#endif // XMC_MAP_INIT_H

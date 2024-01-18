@@ -53,10 +53,7 @@ public:
     void read_config(text_logger& in_log, toml::value& in_data) override;
     bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
-    std::shared_ptr<outbound_task> execute(text_logger& in_log,
-                                           outbound_send_mode in_send_mode,
-                                           std::string_view in_sl_value) override;
-    std::shared_ptr<outbound_task> reset() override;
+    std::unique_ptr<map_result> execute(map_param* in_param) override;
 
     std::string map_text_drf() override;
     std::string map_text_parameter() override;

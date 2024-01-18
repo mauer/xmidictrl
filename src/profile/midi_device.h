@@ -89,7 +89,7 @@ private:
     void create_outbound_thread();
     void process_outbound_tasks();
 
-    void add_outbound_task(const std::shared_ptr<outbound_task>& in_task);
+    void add_outbound_task(const std::unique_ptr<outbound_task>& in_task);
 
     time_point m_time_sent {time_point::min()};
 

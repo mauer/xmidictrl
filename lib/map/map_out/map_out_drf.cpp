@@ -32,7 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_out_drf::map_out_drf(environment& in_env) : map_out(in_env)
+map_out_drf::map_out_drf(environment& in_env)
+	: map_out(in_env)
 {}
 
 
@@ -41,12 +42,12 @@ map_out_drf::map_out_drf(environment& in_env) : map_out(in_env)
  */
 map_out_drf::~map_out_drf()
 {
-    m_datarefs.clear();
+	m_datarefs.clear();
 
-    m_xp_values.clear();
+	m_xp_values.clear();
 
-    m_values_on.clear();
-    m_values_off.clear();
+	m_values_on.clear();
+	m_values_off.clear();
 }
 
 
@@ -61,7 +62,7 @@ map_out_drf::~map_out_drf()
  */
 map_out_type map_out_drf::type()
 {
-    return map_out_type::dataref;
+	return map_out_type::dataref;
 }
 
 
@@ -70,8 +71,8 @@ map_out_type map_out_drf::type()
  */
 void map_out_drf::set_dataref(std::string_view in_dataref)
 {
-    m_datarefs.clear();
-    m_datarefs.emplace_back(in_dataref.data());
+	m_datarefs.clear();
+	m_datarefs.emplace_back(in_dataref.data());
 }
 
 
@@ -80,7 +81,7 @@ void map_out_drf::set_dataref(std::string_view in_dataref)
  */
 void map_out_drf::set_dataref(std::vector<std::string> in_dataref)
 {
-    m_datarefs = std::move(in_dataref);
+	m_datarefs = std::move(in_dataref);
 }
 
 
@@ -89,10 +90,10 @@ void map_out_drf::set_dataref(std::vector<std::string> in_dataref)
  */
 void map_out_drf::set_data_2_on(unsigned char in_data_2_on)
 {
-    if (in_data_2_on <= MIDI_DATA_2_MAX)
-        m_data_2_on = in_data_2_on;
-    else
-        m_data_2_on = MIDI_DATA_2_MAX;
+	if (in_data_2_on <= MIDI_DATA_2_MAX)
+		m_data_2_on = in_data_2_on;
+	else
+		m_data_2_on = MIDI_DATA_2_MAX;
 }
 
 
@@ -101,10 +102,10 @@ void map_out_drf::set_data_2_on(unsigned char in_data_2_on)
  */
 void map_out_drf::set_data_2_off(unsigned char in_data_2_off)
 {
-    if (in_data_2_off <= MIDI_DATA_2_MAX)
-        m_data_2_off = in_data_2_off;
-    else
-        m_data_2_off = MIDI_DATA_2_MIN;
+	if (in_data_2_off <= MIDI_DATA_2_MAX)
+		m_data_2_off = in_data_2_off;
+	else
+		m_data_2_off = MIDI_DATA_2_MIN;
 }
 
 
@@ -113,60 +114,60 @@ void map_out_drf::set_data_2_off(unsigned char in_data_2_off)
  */
 void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 {
-    in_log.debug_line(in_data.location().line(), "Read settings for type 'drf'");
+	in_log.debug_line(in_data.location().line(), "Read settings for type 'drf'");
 
-    read_common_config(in_log, in_data);
+	read_common_config(in_log, in_data);
 
-    // read dataref
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
-        // check if single value or array
-        if (in_data[CFG_KEY_DATAREF].is_array())
-            set_dataref(toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_DATAREF));
-        else
-            set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
-    }
+	// read dataref
+	if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
+		// check if single value or array
+		if (in_data[CFG_KEY_DATAREF].is_array())
+			set_dataref(toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_DATAREF));
+		else
+			set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
+	}
 
-    // read values on
-    if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
-        m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON);
-    } else {
-        m_values_on.clear();
-        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
+	// read values on
+	if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
+		m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON);
+	} else {
+		m_values_on.clear();
+		std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
 
-        if (!value.empty())
-            m_values_on.insert(value);
-    }
+		if (!value.empty())
+			m_values_on.insert(value);
+	}
 
-    // read values off
-    if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
-        m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF);
-    } else {
-        m_values_off.clear();
-        std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
+	// read values off
+	if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
+		m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF);
+	} else {
+		m_values_off.clear();
+		std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
 
-        if (!value.empty())
-            m_values_off.insert(value);
-    }
+		if (!value.empty())
+			m_values_off.insert(value);
+	}
 
-    // read data 2 on
-    set_data_2_on(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX));
+	// read data 2 on
+	set_data_2_on(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_on, MIDI_DATA_2_MAX));
 
-    // read data 2 off
-    set_data_2_off(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN));
+	// read data 2 off
+	set_data_2_off(toml_utils::read_midi_value(in_log, in_data, c_cfg_data_2_off, MIDI_DATA_2_MIN));
 
-    // read send on
-    // TODO - Default value in device (or XMidiCtrl)
-    if (toml_utils::contains(in_log, in_data, c_cfg_send_on)) {
-        if (toml_utils::read_string(in_log, in_data, c_cfg_send_on) == "all")
-            m_send_on = send_mode::all;
-    }
+	// read send on
+	// TODO - Default value in device (or XMidiCtrl)
+	if (toml_utils::contains(in_log, in_data, c_cfg_send_on)) {
+		if (toml_utils::read_string(in_log, in_data, c_cfg_send_on) == "all")
+			m_send_on = send_mode::all;
+	}
 
-    // read send off
-    // TODO - Default value in device (or XMidiCtrl)
-    if (toml_utils::contains(in_log, in_data, c_cfg_send_off)) {
-        if (toml_utils::read_string(in_log, in_data, c_cfg_send_off) == "one")
-            m_send_off = send_mode::one;
-    }
+	// read send off
+	// TODO - Default value in device (or XMidiCtrl)
+	if (toml_utils::contains(in_log, in_data, c_cfg_send_off)) {
+		if (toml_utils::read_string(in_log, in_data, c_cfg_send_off) == "one")
+			m_send_off = send_mode::one;
+	}
 }
 
 
@@ -175,213 +176,176 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
  */
 bool map_out_drf::check(text_logger& in_log, const device_settings& in_dev_settings)
 {
-    bool result = true;
+	bool result = true;
 
-    if (!map::check(in_log, in_dev_settings))
-        result = false;
+	if (!map::check(in_log, in_dev_settings))
+		result = false;
 
-    if (m_datarefs.empty()) {
-        in_log.error(source_line());
-        in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is not defined");
-        result = false;
-    }
+	if (m_datarefs.empty()) {
+		in_log.error(source_line());
+		in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is not defined");
+		result = false;
+	}
 
-    if (m_values_on.empty() && m_values_off.empty()) {
-        in_log.error(source_line());
-        in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF)
-                     + "' are not defined");
-        result = false;
-    }
+	if (m_values_on.empty() && m_values_off.empty()) {
+		in_log.error(source_line());
+		in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF)
+					 + "' are not defined");
+		result = false;
+	}
 
-    for (const auto& dataref: m_datarefs) {
-        if (!env().drf().check(dataref)) {
-            in_log.error(source_line());
-            in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
-            result = false;
-        }
-    }
+	for (const auto& dataref: m_datarefs) {
+		if (!env().drf().check(dataref)) {
+			in_log.error(source_line());
+			in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
+			result = false;
+		}
+	}
 
-    if (m_data_2_on < MIDI_DATA_2_MIN || m_data_2_on > MIDI_DATA_2_MAX) {
-        in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_on) + "', "
-                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
-                     + std::to_string(MIDI_DATA_2_MAX));
-        result = false;
-    }
+	if (m_data_2_on < MIDI_DATA_2_MIN || m_data_2_on > MIDI_DATA_2_MAX) {
+		in_log.error(source_line());
+		in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_on) + "', "
+					 + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+					 + std::to_string(MIDI_DATA_2_MAX));
+		result = false;
+	}
 
-    if (m_data_2_off < MIDI_DATA_2_MIN || m_data_2_off > MIDI_DATA_2_MAX) {
-        in_log.error(source_line());
-        in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_off) + "', "
-                     + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
-                     + std::to_string(MIDI_DATA_2_MAX));
-        result = false;
-    }
+	if (m_data_2_off < MIDI_DATA_2_MIN || m_data_2_off > MIDI_DATA_2_MAX) {
+		in_log.error(source_line());
+		in_log.error(" --> Invalid value for parameter '" + std::string(c_cfg_data_2_off) + "', "
+					 + "it has to be between " + std::to_string(MIDI_DATA_2_MIN) + " and "
+					 + std::to_string(MIDI_DATA_2_MAX));
+		result = false;
+	}
 
-    return result;
+	return result;
 }
 
 
 /**
  * Create a MIDI outbound task if required
  */
-std::shared_ptr<outbound_task> map_out_drf::execute(text_logger& in_log,
-                                                    outbound_send_mode in_send_mode,
-                                                    std::string_view in_sl_value)
+std::unique_ptr<map_result> map_out_drf::execute(map_param* in_param)
 {
-    if (!check_sublayer(in_sl_value))
-        return {};
+	auto result = std::make_unique<map_result>();
 
-    bool changed = false;
+	if (in_param == nullptr)
+		return result;
 
-    bool send_msg = false;
-    int send_on_cnt = 0;
-    int send_off_cnt = 0;
+	if (!check_sublayer(in_param->sl_value))
+		return result;
 
-    // if one value has been changed, all other values have to be checked as well
-    for (auto& dataref: m_datarefs) {
-        // get the current value from X-Plane
-        std::string value_current;
+	bool changed = false;
 
-        if (!env().drf().read(in_log, dataref, value_current))
-            continue;
+	bool send_msg = false;
+	int send_on_cnt = 0;
+	int send_off_cnt = 0;
 
-        // get current value
-        std::string value_previous;
-        if (m_xp_values.contains(dataref)) {
-            value_previous = m_xp_values[dataref];
-            m_xp_values[dataref] = value_current;
-        } else {
-            m_xp_values.try_emplace(dataref, value_current);
-        }
+	// if one value has been changed, all other values have to be checked as well
+	for (auto& dataref: m_datarefs) {
+		// get the current value from X-Plane
+		std::string value_current;
 
-        if (value_current != value_previous)
-            changed = true;
+		if (!env().drf().read(in_param->log, dataref, value_current))
+			continue;
 
-        if (in_send_mode == outbound_send_mode::on_change) {
-            if (changed)
-                send_msg = true;
-        } else if (in_send_mode == outbound_send_mode::permanent) {
-            send_msg = true;
-        }
-    }
+		// get current value
+		std::string value_previous;
+		if (m_xp_values.contains(dataref)) {
+			value_previous = m_xp_values[dataref];
+			m_xp_values[dataref] = value_current;
+		} else {
+			m_xp_values.try_emplace(dataref, value_current);
+		}
 
-    if (!send_msg)
-        return {};
+		if (value_current != value_previous)
+			changed = true;
 
-    // alright, some have been changed, let's check what we have to send out
-    for (auto& dataref: m_datarefs) {
-        std::string value_current = m_xp_values[dataref];
+		if (in_param->send_mode == outbound_send_mode::on_change) {
+			if (changed)
+				send_msg = true;
+		} else if (in_param->send_mode == outbound_send_mode::permanent) {
+			send_msg = true;
+		}
+	}
 
-        // value_on has been defined
-        if (!m_values_on.empty()) {
-            if (m_values_on.find(value_current) != m_values_on.end()) {
-                send_on_cnt++;
-                continue;
-            } else if (m_values_off.find(value_current) != m_values_off.end() || m_values_off.empty()) {
-                send_off_cnt++;
-            }
-        } else {
-            if (m_values_off.find(value_current) != m_values_off.end()) {
-                send_off_cnt++;
-            } else if (m_values_on.find(value_current) != m_values_on.end() || m_values_on.empty()) {
-                send_on_cnt++;
-                continue;
-            }
-        }
-    }
+	if (!send_msg)
+		return result;
 
-    if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
-        || (m_send_on == send_mode::one && send_on_cnt > 0)
-        || (m_send_off == send_mode::all && send_off_cnt == m_datarefs.size())
-        || (m_send_off == send_mode::one && send_off_cnt > 0)) {
-        std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
+	// alright, some have been changed, let's check what we have to send out
+	for (auto& dataref: m_datarefs) {
+		std::string value_current = m_xp_values[dataref];
 
-        task->data_changed = changed;
+		// value_on has been defined
+		if (!m_values_on.empty()) {
+			if (m_values_on.find(value_current) != m_values_on.end()) {
+				send_on_cnt++;
+				continue;
+			} else if (m_values_off.find(value_current) != m_values_off.end() || m_values_off.empty()) {
+				send_off_cnt++;
+			}
+		} else {
+			if (m_values_off.find(value_current) != m_values_off.end()) {
+				send_off_cnt++;
+			} else if (m_values_on.find(value_current) != m_values_on.end() || m_values_on.empty()) {
+				send_on_cnt++;
+				continue;
+			}
+		}
+	}
 
-        switch (data_1_type()) {
-            case map_data_1_type::control_change:
-                task->type = midi_msg_type::control_change;
-                break;
+	if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
+		|| (m_send_on == send_mode::one && send_on_cnt > 0)
+		|| (m_send_off == send_mode::all && send_off_cnt == m_datarefs.size())
+		|| (m_send_off == send_mode::one && send_off_cnt > 0)) {
 
-            case map_data_1_type::note:
-                if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
-                    || (m_send_on == send_mode::one && send_on_cnt > 0))
-                    task->type = midi_msg_type::note_on;
-                else
-                    task->type = midi_msg_type::note_off;
-                break;
+		result->data_changed = changed;
 
-            case map_data_1_type::pitch_bend:
-                task->type = midi_msg_type::pitch_bend;
-                break;
+		switch (data_1_type()) {
+			case map_data_1_type::control_change:
+				result->type = midi_msg_type::control_change;
+				break;
 
-            case map_data_1_type::program_change:
-                task->type = midi_msg_type::program_change;
-                break;
+			case map_data_1_type::note:
+				if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
+					|| (m_send_on == send_mode::one && send_on_cnt > 0))
+					result->type = midi_msg_type::note_on;
+				else
+					result->type = midi_msg_type::note_off;
+				break;
 
-            case map_data_1_type::none:
-                task->type = midi_msg_type::none;
-                break;
-        }
+			case map_data_1_type::pitch_bend:
+				result->type = midi_msg_type::pitch_bend;
+				break;
 
-        task->channel = static_cast<char>(channel());
-        task->data_1 = static_cast<char>(data_1());
+			case map_data_1_type::program_change:
+				result->type = midi_msg_type::program_change;
+				break;
 
-        if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
-            || (m_send_on == send_mode::one && send_on_cnt > 0))
-            task->data_2 = static_cast<char>(m_data_2_on);
-        else
-            task->data_2 = static_cast<char>(m_data_2_off);
+			case map_data_1_type::none:
+				result->type = midi_msg_type::none;
+				break;
+		}
 
-        // check if data_2 is different to the previous one, some datarefs change slightly - especially annunciators
-        if (m_previous_data_2 != MIDI_NONE && m_previous_data_2 != task->data_2)
-            task->data_changed = false;
+		result->channel = static_cast<char>(channel());
+		result->data_1 = static_cast<char>(data_1());
 
-        m_previous_data_2 = task->data_2;
+		if ((m_send_on == send_mode::all && send_on_cnt == m_datarefs.size())
+			|| (m_send_on == send_mode::one && send_on_cnt > 0))
+			result->data_2 = static_cast<char>(m_data_2_on);
+		else
+			result->data_2 = static_cast<char>(m_data_2_off);
 
-        return task;
-    }
+		// check if data_2 is different to the previous one, some datarefs change slightly - especially annunciators
+		if (m_previous_data_2 != MIDI_NONE && m_previous_data_2 != result->data_2)
+			result->data_changed = false;
 
-    return {};
-}
+		m_previous_data_2 = result->data_2;
 
+		return result;
+	}
 
-/**
- * Reset the lights on the MIDI device
- */
-std::shared_ptr<outbound_task> map_out_drf::reset()
-{
-    std::shared_ptr<outbound_task> task = std::make_shared<outbound_task>();
-
-    task->data_changed = true;
-
-    switch (data_1_type()) {
-        case map_data_1_type::control_change:
-            task->type = midi_msg_type::control_change;
-            break;
-
-        case map_data_1_type::note:
-            task->type = midi_msg_type::note_off;
-            break;
-
-        case map_data_1_type::pitch_bend:
-            task->type = midi_msg_type::pitch_bend;
-            break;
-
-        case map_data_1_type::program_change:
-            task->type = midi_msg_type::program_change;
-            break;
-
-        case map_data_1_type::none:
-            task->type = midi_msg_type::none;
-            break;
-    }
-
-    task->channel = channel();
-    task->data_1 = data_1();
-    task->data_2 = MIDI_DATA_2_MIN;
-
-    return task;
+	return result;
 }
 
 
@@ -390,16 +354,16 @@ std::shared_ptr<outbound_task> map_out_drf::reset()
  */
 std::string map_out_drf::map_text_drf()
 {
-    std::string map_str {};
+	std::string map_str {};
 
-    for (auto& drf: m_datarefs) {
-        if (!map_str.empty())
-            map_str.append("\n");
+	for (auto& drf: m_datarefs) {
+		if (!map_str.empty())
+			map_str.append("\n");
 
-        map_str.append(drf);
-    }
+		map_str.append(drf);
+	}
 
-    return map_str;
+	return map_str;
 }
 
 
@@ -408,70 +372,70 @@ std::string map_out_drf::map_text_drf()
  */
 std::string map_out_drf::map_text_parameter()
 {
-    std::string map_str {};
+	std::string map_str {};
 
-    // Values on
-    if (m_values_on.size() == 1) {
-        map_str.append("Value on = " + *m_values_on.begin());
-    } else if (m_values_on.size() > 1) {
-        map_str.append("Values on = ");
+	// Values on
+	if (m_values_on.size() == 1) {
+		map_str.append("Value on = " + *m_values_on.begin());
+	} else if (m_values_on.size() > 1) {
+		map_str.append("Values on = ");
 
-        std::string values_str;
-        for (auto& val: m_values_on) {
-            if (!values_str.empty())
-                values_str.append(", ");
+		std::string values_str;
+		for (auto& val: m_values_on) {
+			if (!values_str.empty())
+				values_str.append(", ");
 
-            values_str.append(val);
-        }
+			values_str.append(val);
+		}
 
-        map_str.append(values_str);
-    }
+		map_str.append(values_str);
+	}
 
-    if (!map_str.empty() && !m_values_off.empty())
-        map_str.append("   |   ");
+	if (!map_str.empty() && !m_values_off.empty())
+		map_str.append("   |   ");
 
-    // Values off
-    if (m_values_off.size() == 1) {
-        map_str.append("Value off = " + *m_values_off.begin());
-    } else if (m_values_off.size() > 1) {
-        map_str.append("Values off = ");
+	// Values off
+	if (m_values_off.size() == 1) {
+		map_str.append("Value off = " + *m_values_off.begin());
+	} else if (m_values_off.size() > 1) {
+		map_str.append("Values off = ");
 
-        std::string values_str;
-        for (auto& val: m_values_off) {
-            if (!values_str.empty())
-                values_str.append(", ");
+		std::string values_str;
+		for (auto& val: m_values_off) {
+			if (!values_str.empty())
+				values_str.append(", ");
 
-            values_str.append(val);
-        }
+			values_str.append(val);
+		}
 
-        map_str.append(values_str);
-    }
+		map_str.append(values_str);
+	}
 
-    // Send modes
-    if (m_datarefs.size() > 1) {
-        map_str.append("\n");
+	// Send modes
+	if (m_datarefs.size() > 1) {
+		map_str.append("\n");
 
-        if (m_send_on == send_mode::all)
-            map_str.append("Send on = all");
-        else
-            map_str.append("Send on = one");
+		if (m_send_on == send_mode::all)
+			map_str.append("Send on = all");
+		else
+			map_str.append("Send on = one");
 
-        map_str.append("   |   ");
+		map_str.append("   |   ");
 
-        if (m_send_off == send_mode::all)
-            map_str.append("Send off = all");
-        else
-            map_str.append("Send off = one");
-    }
+		if (m_send_off == send_mode::all)
+			map_str.append("Send off = all");
+		else
+			map_str.append("Send off = one");
+	}
 
-    // Data 2 on/off
-    if (m_data_2_on != MIDI_DATA_2_MAX)
-        map_str.append("   |   Data 2 on = " + std::to_string(m_data_2_on));
+	// Data 2 on/off
+	if (m_data_2_on != MIDI_DATA_2_MAX)
+		map_str.append("   |   Data 2 on = " + std::to_string(m_data_2_on));
 
-    if (m_data_2_off != MIDI_DATA_2_MIN)
-        map_str.append("   |   Data 2 off = " + std::to_string(m_data_2_off));
+	if (m_data_2_off != MIDI_DATA_2_MIN)
+		map_str.append("   |   Data 2 off = " + std::to_string(m_data_2_off));
 
-    return map_str;
+	return map_str;
 }
 
 
@@ -486,92 +450,92 @@ std::string map_out_drf::map_text_parameter()
  */
 std::string map_out_drf::build_mapping_text(bool in_short)
 {
-    std::string map_str {};
-    std::string sep_str {"\n"};
+	std::string map_str {};
+	std::string sep_str {"\n"};
 
-    if (!in_short) {
-        sep_str = "\n";
-        map_str = " ====== Dataref ======" + sep_str;
-    }
+	if (!in_short) {
+		sep_str = "\n";
+		map_str = " ====== Dataref ======" + sep_str;
+	}
 
-    // Dataref
-    if (m_datarefs.size() == 1) {
-        if (!in_short)
-            map_str.append("Dataref: ");
+	// Dataref
+	if (m_datarefs.size() == 1) {
+		if (!in_short)
+			map_str.append("Dataref: ");
 
-        map_str.append(m_datarefs[0]);
-    } else {
-        if (!in_short)
-            map_str.append("Datarefs: ");
+		map_str.append(m_datarefs[0]);
+	} else {
+		if (!in_short)
+			map_str.append("Datarefs: ");
 
-        std::string data_str;
-        for (auto& str: m_datarefs) {
-            if (!data_str.empty())
-                data_str.append(" | ");
+		std::string data_str;
+		for (auto& str: m_datarefs) {
+			if (!data_str.empty())
+				data_str.append(" | ");
 
-            data_str.append(str);
-        }
+			data_str.append(str);
+		}
 
-        map_str.append(data_str);
-    }
+		map_str.append(data_str);
+	}
 
-    // Values on
-    if (m_values_on.size() == 1) {
-        map_str.append(sep_str + "Value on: " + *m_values_on.begin());
-    } else if (m_values_on.size() > 1) {
-        map_str.append(sep_str + "Values on: ");
+	// Values on
+	if (m_values_on.size() == 1) {
+		map_str.append(sep_str + "Value on: " + *m_values_on.begin());
+	} else if (m_values_on.size() > 1) {
+		map_str.append(sep_str + "Values on: ");
 
-        std::string values_str;
-        for (auto& str: m_values_on) {
-            if (!values_str.empty())
-                values_str.append(", ");
+		std::string values_str;
+		for (auto& str: m_values_on) {
+			if (!values_str.empty())
+				values_str.append(", ");
 
-            values_str.append(str);
-        }
+			values_str.append(str);
+		}
 
-        map_str.append(values_str);
-    }
+		map_str.append(values_str);
+	}
 
-    // Values off
-    if (m_values_off.size() == 1) {
-        map_str.append(sep_str + "Value off: " + *m_values_off.begin());
-    } else if (m_values_off.size() > 1) {
-        map_str.append(sep_str + "Values off: ");
+	// Values off
+	if (m_values_off.size() == 1) {
+		map_str.append(sep_str + "Value off: " + *m_values_off.begin());
+	} else if (m_values_off.size() > 1) {
+		map_str.append(sep_str + "Values off: ");
 
-        std::string values_str;
-        for (auto& str: m_values_off) {
-            if (!values_str.empty())
-                values_str.append(", ");
+		std::string values_str;
+		for (auto& str: m_values_off) {
+			if (!values_str.empty())
+				values_str.append(", ");
 
-            values_str.append(str);
-        }
+			values_str.append(str);
+		}
 
-        map_str.append(values_str);
-    }
+		map_str.append(values_str);
+	}
 
-    // Data 2 on
-    if (m_data_2_on != MIDI_DATA_2_MAX)
-        map_str.append(sep_str + "Data 2 on: " + std::to_string(m_data_2_on));
+	// Data 2 on
+	if (m_data_2_on != MIDI_DATA_2_MAX)
+		map_str.append(sep_str + "Data 2 on: " + std::to_string(m_data_2_on));
 
-    // Data 2 off
-    if (m_data_2_off != MIDI_DATA_2_MIN)
-        map_str.append(sep_str + "Data 2 off: " + std::to_string(m_data_2_off));
+	// Data 2 off
+	if (m_data_2_off != MIDI_DATA_2_MIN)
+		map_str.append(sep_str + "Data 2 off: " + std::to_string(m_data_2_off));
 
-    // Send on
-    if (m_datarefs.size() > 1) {
-        if (m_send_on == send_mode::all)
-            map_str.append(sep_str + "Send on: 'all'");
-        else
-            map_str.append(sep_str + "Send on: 'one'");
+	// Send on
+	if (m_datarefs.size() > 1) {
+		if (m_send_on == send_mode::all)
+			map_str.append(sep_str + "Send on: 'all'");
+		else
+			map_str.append(sep_str + "Send on: 'one'");
 
-        // Send off
-        if (m_send_off == send_mode::all)
-            map_str.append(sep_str + "Send off: 'all'");
-        else
-            map_str.append(sep_str + "Send off: 'one'");
-    }
+		// Send off
+		if (m_send_off == send_mode::all)
+			map_str.append(sep_str + "Send off: 'all'");
+		else
+			map_str.append(sep_str + "Send off: 'one'");
+	}
 
-    return map_str;
+	return map_str;
 }
 
 } // Namespace xmidictrl

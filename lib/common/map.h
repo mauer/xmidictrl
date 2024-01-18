@@ -26,6 +26,8 @@
 
 // XMidiCtrl
 #include "device_settings.h"
+#include "map_param.h"
+#include "map_result.h"
 #include "midi_message.h"
 #include "text_logger.h"
 #include "types.h"
@@ -53,7 +55,6 @@ enum class map_data_1_type
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-//class map : public std::enable_shared_from_this<map> {
 class map {
 public:
 	explicit map() = default;
@@ -83,7 +84,7 @@ public:
 
 	static std::string build_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
 
-	virtual bool execute(midi_message& in_msg, std::string_view in_sl_value) = 0;
+	virtual std::unique_ptr<map_result> execute(map_param* in_param) = 0;
 
 protected:
 	// constants

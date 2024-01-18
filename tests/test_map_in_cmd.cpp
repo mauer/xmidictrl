@@ -43,18 +43,26 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
         command = "sim/autopilot/enable"
     )"_toml;
 
-    auto map = new map_in_cmd(*env);
+    auto map = std::make_unique<map_in_cmd>(*env);
     map->read_config(*log, cfg, cfg);
 
-    auto msg = new midi_message(*log, midi_direction::in);
+    auto msg = std::make_shared<midi_message>(*log, midi_direction::in);
     msg->set_data_2(MIDI_DATA_2_MAX);
 
     CHECK(map->check(*log, *dev_settings));
-    CHECK(map->execute(*msg, ""));
-    CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
+
+	auto param = std::make_unique<map_param>(msg, *log);
+
+    auto result = map->execute(param.get());
+	CHECK(result->completed);
+
+	CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
     msg->set_data_2(MIDI_DATA_2_MIN);
-    CHECK(map->execute(*msg, ""));
+
+	result = map->execute(param.get());
+	CHECK(result->completed);
+
     CHECK(env->cmd_tests().current_command() == "");
     CHECK(env->cmd_tests().last_command() == "sim/autopilot/enable");
 }
@@ -75,27 +83,39 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
         command = "sim/autopilot/enable"
     )"_toml;
 
-    auto map = new map_in_cmd(*env);
+    auto map = std::make_unique<map_in_cmd>(*env);
     map->read_config(*log, cfg, cfg);
 
-    auto msg = new midi_message(*log, midi_direction::in);
+    auto msg = std::make_shared<midi_message>(*log, midi_direction::in);
     msg->set_data_2(MIDI_DATA_2_MAX);
 
-    CHECK(map->check(*log, *dev_settings));
-    CHECK(map->execute(*msg, "2"));
+	CHECK(map->check(*log, *dev_settings));
+
+	auto param = std::make_unique<map_param>(msg, *log, "2");
+	auto result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "");
 
-    CHECK(map->check(*log, *dev_settings));
-    CHECK(map->execute(*msg, "1"));
+    param->sl_value = "1";
+	result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
     msg->set_data_2(MIDI_DATA_2_MIN);
 
-    CHECK(map->execute(*msg, "2"));
+	param->sl_value = "2";
+	result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
-    CHECK(map->execute(*msg, "1"));
-    CHECK(env->cmd_tests().current_command() == "");
+	param->sl_value = "1";
+	result = map->execute(param.get());
+
+	CHECK(result->completed);
+	CHECK(env->cmd_tests().current_command() == "");
     CHECK(env->cmd_tests().last_command() == "sim/autopilot/enable");
 }
 
@@ -116,22 +136,32 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
         data_2_off = 10
     )"_toml;
 
-    auto map = new map_in_cmd(*env);
+    auto map = std::make_unique<map_in_cmd>(*env);
     map->read_config(*log, cfg, cfg);
 
-    auto msg = new midi_message(*log, midi_direction::in);
+    auto msg = std::make_shared<midi_message>(*log, midi_direction::in);
     msg->set_data_2(60);
 
     CHECK(map->check(*log, *dev_settings));
-    CHECK(map->execute(*msg, ""));
+
+	auto param = std::make_unique<map_param>(msg, *log);
+	auto result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
     msg->set_data_2(0);
-    CHECK(map->execute(*msg, ""));
+
+	result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
     msg->set_data_2(10);
-    CHECK(map->execute(*msg, ""));
+
+	result = map->execute(param.get());
+
+	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "");
     CHECK(env->cmd_tests().last_command() == "sim/autopilot/enable");
 }

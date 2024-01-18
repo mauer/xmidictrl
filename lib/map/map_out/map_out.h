@@ -59,11 +59,6 @@ public:
 
 	virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
 
-	virtual std::shared_ptr<outbound_task> execute(text_logger& in_log,
-												   outbound_send_mode in_send_mode,
-												   std::string_view in_sl_value) = 0;
-	virtual std::shared_ptr<outbound_task> reset() = 0;
-
 	virtual std::string map_text_drf() = 0;
 	virtual std::string map_text_parameter() = 0;
 
@@ -71,8 +66,6 @@ protected:
 	environment& env();
 
 private:
-	bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
-
 	environment& m_env;
 };
 

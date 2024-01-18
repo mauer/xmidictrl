@@ -116,7 +116,6 @@ bool profile::load()
  */
 void profile::close()
 {
-    m_device_list->process_outbound_reset();
     clear();
 
     if (!m_filename.empty())

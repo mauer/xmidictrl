@@ -185,21 +185,6 @@ void device_list::process_outbound_mappings(text_logger& in_log)
 
 
 /**
- * Process an outbound reset of all MIDI devices
- */
-void device_list::process_outbound_reset()
-{
-    for (auto const& device: m_device_list) {
-        if (device != nullptr && device->type() == device_type::midi_device) {
-            auto& midi_dev = dynamic_cast<midi_device&>(*device);
-
-            midi_dev.process_outbound_reset();
-        }
-    }
-}
-
-
-/**
  * Clear the device list
  */
 void device_list::clear()

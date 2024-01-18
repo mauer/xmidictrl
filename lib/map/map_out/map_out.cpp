@@ -61,16 +61,4 @@ environment& map_out::env()
 	return m_env;
 }
 
-
-/**
- * Execute the outbound mapping
- * @param in_msg reference to a logger
- * @param in_sl_value current value of the sublayer dataref defined in the device
- * @return
- */
-bool map_out::execute(midi_message& in_msg, std::string_view in_sl_value)
-{
-	return true;
-}
-
 } // Namespace xmidictrl

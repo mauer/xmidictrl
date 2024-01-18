@@ -127,24 +127,27 @@ bool map_in_cmd::check(text_logger& in_log, const device_settings& in_dev_settin
 /**
  * Execute the action in X-Plane
  */
-bool map_in_cmd::execute(midi_message& in_msg, std::string_view in_sl_value)
+std::unique_ptr<map_result> map_in_cmd::execute(map_param* in_param)
 {
-	if (!check_sublayer(in_sl_value))
-		return true;
+	auto result = std::make_unique<map_result>();
+	result->completed = true;
 
-	if (in_msg.data_2() == m_data_2_on) {
-		in_msg.log().debug(" --> Begin execution of command '" + m_command + "'");
-		env().cmd().begin(in_msg.log(), m_command);
-	} else if (in_msg.data_2() == m_data_2_off) {
-		in_msg.log().debug(" --> End execution of command '" + m_command + "'");
-		env().cmd().end(in_msg.log(), m_command);
+	if (!check_sublayer(in_param->sl_value))
+		return result;
+
+	if (in_param->msg->data_2() == m_data_2_on) {
+		in_param->msg->log().debug(" --> Begin execution of command '" + m_command + "'");
+		env().cmd().begin(in_param->msg->log(), m_command);
+	} else if (in_param->msg->data_2() == m_data_2_off) {
+		in_param->msg->log().debug(" --> End execution of command '" + m_command + "'");
+		env().cmd().end(in_param->msg->log(), m_command);
 	} else {
-		in_msg.log().error("Invalid MIDI Data 2 value '" + std::to_string(in_msg.data_2()) + "'");
-		in_msg.log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
+		in_param->msg->log().error("Invalid MIDI Data 2 value '" + std::to_string(in_param->msg->data_2()) + "'");
+		in_param->msg->log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
 						   + "' and '" + std::to_string(m_data_2_off) + "'");
 	}
 
-	return true;
+	return result;
 }
 
 

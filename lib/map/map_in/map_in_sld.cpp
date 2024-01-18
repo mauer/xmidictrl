@@ -138,57 +138,60 @@ bool map_in_sld::check(text_logger& in_log, const device_settings& in_dev_settin
 /**
  * Execute the action in X-Plane
  */
-bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
+std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
 {
-    if (!check_sublayer(in_sl_value))
-        return true;
+	auto result = std::make_unique<map_result>();
+	result->completed = true;
+
+    if (!check_sublayer(in_param->sl_value))
+        return result;
 
     if (!m_dataref.empty()) {
         // dataref mode
         float value;
 
-        if (in_msg.data_2() == m_data_2_min)
+        if (in_param->msg->data_2() == m_data_2_min)
             value = m_value_min;
-        else if (in_msg.data_2() == m_data_2_max)
+        else if (in_param->msg->data_2() == m_data_2_max)
             value = m_value_max;
         else
-            value = ((m_value_max - m_value_min) * (static_cast<float>(in_msg.data_2()) / 127.0f)) + m_value_min;
+            value = ((m_value_max - m_value_min) * (static_cast<float>(in_param->msg->data_2()) / 127.0f)) + m_value_min;
 
-        in_msg.log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
+        in_param->msg->log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
 
-        if (env().drf().write(in_msg.log(), m_dataref, value)) {
+        if (env().drf().write(in_param->msg->log(), m_dataref, value)) {
             try {
-                display_label(in_msg.log(), std::to_string(value));
+                display_label(in_param->msg->log(), std::to_string(value));
             } catch (std::bad_alloc& ex) {
-                in_msg.log().error("Error converting float '" + std::to_string(value) + "' value to string");
-                in_msg.log().error(ex.what());
+                in_param->msg->log().error("Error converting float '" + std::to_string(value) + "' value to string");
+                in_param->msg->log().error(ex.what());
             }
         }
     } else {
         // command mode
-        if (in_msg.data_2() <= m_data_2_min + m_data_2_margin) {
-            in_msg.log().debug(" --> Execute command '" + m_command_down + "'");
+        if (in_param->msg->data_2() <= m_data_2_min + m_data_2_margin) {
+            in_param->msg->log().debug(" --> Execute command '" + m_command_down + "'");
 
             if (m_command_down != m_command_prev)
-                env().cmd().execute(in_msg.log(), m_command_down);
+                env().cmd().execute(in_param->msg->log(), m_command_down);
 
             m_command_prev = m_command_down;
 
-        } else if (in_msg.data_2() >= m_data_2_max - m_data_2_margin) {
-            in_msg.log().debug(" --> Execute command '" + m_command_up + "'");
+        } else if (in_param->msg->data_2() >= m_data_2_max - m_data_2_margin) {
+            in_param->msg->log().debug(" --> Execute command '" + m_command_up + "'");
 
             if (m_command_up != m_command_prev)
-                env().cmd().execute(in_msg.log(), m_command_up);
+                env().cmd().execute(in_param->msg->log(), m_command_up);
 
             m_command_prev = m_command_up;
 
-        } else if (in_msg.data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
-                   in_msg.data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
+        } else if (in_param->msg->data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
+                   in_param->msg->data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
-                in_msg.log().debug(" --> Execute command '" + m_command_middle + "'");
+                in_param->msg->log().debug(" --> Execute command '" + m_command_middle + "'");
 
                 if (m_command_middle != m_command_prev)
-                    env().cmd().execute(in_msg.log(), m_command_middle);
+                    env().cmd().execute(in_param->msg->log(), m_command_middle);
 
                 m_command_prev = m_command_middle;
             }
@@ -198,7 +201,7 @@ bool map_in_sld::execute(midi_message& in_msg, std::string_view in_sl_value)
         }
     }
 
-    return true;
+    return result;
 }
 
 

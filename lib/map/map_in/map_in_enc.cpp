@@ -232,15 +232,18 @@ bool map_in_enc::check(text_logger& in_log, const device_settings& in_dev_settin
 /**
  * Execute the action in X-Plane
  */
-bool map_in_enc::execute(midi_message& in_msg, std::string_view in_sl_value)
+std::unique_ptr<map_result> map_in_enc::execute(map_param* in_param)
 {
-    if (!check_sublayer(in_sl_value))
-        return true;
+	auto result = std::make_unique<map_result>();
+	result->completed = true;
+
+    if (!check_sublayer(in_param->sl_value))
+        return result;
 
     if (m_delay > -1) {
         if (m_delay_counter < m_delay) {
             m_delay_counter++;
-            return true;
+            return result;
         } else {
             m_delay_counter = 0;
         }
@@ -250,19 +253,19 @@ bool map_in_enc::execute(midi_message& in_msg, std::string_view in_sl_value)
         using enum encoder_mode;
 
         case relative:
-            execute_relative(in_msg);
+            execute_relative(*in_param->msg);
             break;
 
         case range:
-            execute_range(in_msg);
+            execute_range(*in_param->msg);
             break;
 
         case fixed:
-            execute_fixed(in_msg);
+            execute_fixed(*in_param->msg);
             break;
     }
 
-    return true;
+    return result;
 }
 
 

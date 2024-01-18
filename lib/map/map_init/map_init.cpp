@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -113,42 +113,41 @@ bool map_init::check(text_logger& in_log, const device_settings& in_dev_settings
 /**
  * Create a MIDI outbound task
  */
-std::shared_ptr<outbound_task> map_init::execute()
+std::unique_ptr<map_result> map_init::execute(map_param* in_param)
 {
-    auto task = std::make_shared<outbound_task>();
-
-    task->data_changed = true;
+	auto result = std::make_unique<map_result>();
+	result->data_changed = true;
 
     switch (data_1_type()) {
         case map_data_1_type::control_change:
-            task->type = midi_msg_type::control_change;
+            result->type = midi_msg_type::control_change;
             break;
 
         case map_data_1_type::note:
             if (m_data_2 == MIDI_DATA_2_MAX)
-                task->type = midi_msg_type::note_on;
+				result->type = midi_msg_type::note_on;
             else
-                task->type = midi_msg_type::note_off;
+				result->type = midi_msg_type::note_off;
             break;
 
         case map_data_1_type::pitch_bend:
-            task->type = midi_msg_type::pitch_bend;
+			result->type = midi_msg_type::pitch_bend;
             break;
 
         case map_data_1_type::program_change:
-            task->type = midi_msg_type::program_change;
+			result->type = midi_msg_type::program_change;
             break;
 
         case map_data_1_type::none:
-            task->type = midi_msg_type::none;
+			result->type = midi_msg_type::none;
             break;
     }
 
-    task->channel = static_cast<char>(channel());
-    task->data_1 = static_cast<char>(data_1());
-    task->data_2 = static_cast<char>(m_data_2);
+	result->channel = static_cast<char>(channel());
+	result->data_1 = static_cast<char>(data_1());
+	result->data_2 = static_cast<char>(m_data_2);
 
-    return task;
+    return result;
 }
 
 
@@ -173,12 +172,6 @@ std::string map_init::build_mapping_text(bool in_short)
     map_str.append("Data 2 = " + std::to_string(m_data_2));
 
     return map_str;
-}
-
-
-bool map_init::execute(midi_message& in_msg, std::string_view in_sl_value)
-{
-    return true;
 }
 
 } // Namespace xmidictrl

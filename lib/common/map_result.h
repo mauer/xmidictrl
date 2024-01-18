@@ -15,32 +15,28 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_INBOUND_WORKER_H
-#define XMC_INBOUND_WORKER_H
-
-// Standard
-#include <memory>
-#include <queue>
+#ifndef XMC_MAP_RESULT_H
+#define XMC_MAP_RESULT_H
 
 // XMidiCtrl
-#include "inbound_task.h"
-#include "text_logger.h"
+#include "midi_message.h"
 
 namespace xmidictrl {
 
-class inbound_worker {
-public:
-    inbound_worker() = default;
-    ~inbound_worker() = default;
+struct map_result {
+	// result for inbound messages
+	bool completed;
 
-    void add_task(const std::shared_ptr<inbound_task>& in_task);
+	// result for outbound messages
+	bool data_changed {false};
 
-    void process();
+	midi_msg_type type {midi_msg_type::none};
 
-private:
-    std::queue<std::shared_ptr<inbound_task>> m_tasks {};
+	char channel {MIDI_NONE};
+	char data_1 {MIDI_NONE};
+	char data_2 {MIDI_NONE};
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_INBOUND_WORKER_H
+#endif // XMC_MAP_RESULT_H

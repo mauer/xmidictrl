@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -56,7 +56,7 @@ public:
     void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
     bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
 
-    bool execute(midi_message& in_msg, std::string_view in_sl_value) override;
+	std::unique_ptr<map_result> execute(map_param* in_param) override;
 
     std::string map_text_label() override;
     std::string map_text_cmd_drf() override;

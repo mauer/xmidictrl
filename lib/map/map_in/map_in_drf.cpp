@@ -127,32 +127,35 @@ bool map_in_drf::check(text_logger& in_log, const device_settings& in_dev_settin
 /**
  * Execute the action in X-Plane
  */
-bool map_in_drf::execute(midi_message& in_msg, std::string_view in_sl_value)
+std::unique_ptr<map_result> map_in_drf::execute(map_param* in_param)
 {
-	if (!check_sublayer(in_sl_value))
-		return true;
+	auto result = std::make_unique<map_result>();
+	result->completed = true;
+
+	if (!check_sublayer(in_param->sl_value))
+		return result;
 
 	// if toggle mode then only process key pressed event
-	if (m_mode == dataref_mode::toggle && in_msg.data_2() != MIDI_DATA_2_MAX)
-		return true;
+	if (m_mode == dataref_mode::toggle && in_param->msg->data_2() != MIDI_DATA_2_MAX)
+		return result;
 
 	if (m_values.size() == 2 && m_mode == dataref_mode::momentary) {
 		std::string value;
-		if (in_msg.data_2() == MIDI_DATA_2_MAX)
+		if (in_param->msg->data_2() == MIDI_DATA_2_MAX)
 			value = m_values[0];
 		else
 			value = m_values[1];
 
 		// change dataref and display label
-		in_msg.log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
+		in_param->msg->log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
 
-		env().drf().write(in_msg.log(), m_dataref, value);
-		display_label(in_msg.log(), value);
+		env().drf().write(in_param->msg->log(), m_dataref, value);
+		display_label(in_param->msg->log(), value);
 	} else {
-		toggle_dataref(in_msg.log(), m_dataref, m_values);
+		toggle_dataref(in_param->msg->log(), m_dataref, m_values);
 	}
 
-	return true;
+	return result;
 }
 
 
