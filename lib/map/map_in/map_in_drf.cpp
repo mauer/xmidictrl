@@ -32,7 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_drf::map_in_drf(environment& in_env) : map_in_label(in_env)
+map_in_drf::map_in_drf(environment& in_env)
+	: map_in_label(in_env)
 {}
 
 
@@ -132,27 +133,31 @@ std::unique_ptr<map_result> map_in_drf::execute(map_param* in_param)
 	auto result = std::make_unique<map_result>();
 	result->completed = true;
 
-	if (!check_sublayer(in_param->sl_value))
+	auto param_in = get_param_in(in_param);
+	if (param_in == nullptr)
+		return result;
+
+	if (!check_sublayer(param_in->sl_value()))
 		return result;
 
 	// if toggle mode then only process key pressed event
-	if (m_mode == dataref_mode::toggle && in_param->msg->data_2() != MIDI_DATA_2_MAX)
+	if (m_mode == dataref_mode::toggle && param_in->msg().data_2() != MIDI_DATA_2_MAX)
 		return result;
 
 	if (m_values.size() == 2 && m_mode == dataref_mode::momentary) {
 		std::string value;
-		if (in_param->msg->data_2() == MIDI_DATA_2_MAX)
+		if (param_in->msg().data_2() == MIDI_DATA_2_MAX)
 			value = m_values[0];
 		else
 			value = m_values[1];
 
 		// change dataref and display label
-		in_param->msg->log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
+		param_in->msg().log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
 
-		env().drf().write(in_param->msg->log(), m_dataref, value);
-		display_label(in_param->msg->log(), value);
+		env().drf().write(param_in->msg().log(), m_dataref, value);
+		display_label(param_in->msg().log(), value);
 	} else {
-		toggle_dataref(in_param->msg->log(), m_dataref, m_values);
+		toggle_dataref(param_in->msg().log(), m_dataref, m_values);
 	}
 
 	return result;

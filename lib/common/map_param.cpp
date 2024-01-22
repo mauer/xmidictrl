@@ -15,63 +15,36 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_OUT_H
-#define XMC_MAP_OUT_H
+#include "map_param.h"
 
 // Standard
-#include <memory>
-
-// XMidiCtrl
-#include "device_settings.h"
-#include "environment.h"
-#include "map.h"
-#include "map_param_out.h"
-#include "outbound_task.h"
-#include "types.h"
 
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   TYPES
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
-// Outbound mapping types
-enum class map_out_type
+/**
+ * Constructor
+ */
+map_param::map_param(std::string_view in_sl_value)
+	: m_sl_value(in_sl_value)
+{}
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the current sublayer value
+ * @return Current value of the sublayer dataref
+ */
+std::string_view map_param::sl_value()
 {
-	none,
-	constant,
-	dataref,
-	slider
-};
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   CLASS
-//---------------------------------------------------------------------------------------------------------------------
-
-class map_out : public map {
-public:
-	explicit map_out(environment& in_env);
-	~map_out() override = default;
-
-	virtual map_out_type type();
-
-	virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
-
-	virtual std::string map_text_drf() = 0;
-	virtual std::string map_text_parameter() = 0;
-
-protected:
-	environment& env();
-
-	map_param_out* get_param_out(map_param* in_param);
-
-private:
-	environment& m_env;
-};
+	return m_sl_value;
+}
 
 } // Namespace xmidictrl
-
-#endif // XMC_MAP_OUT_H

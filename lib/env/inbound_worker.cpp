@@ -21,7 +21,7 @@
 #include <mutex>
 
 // XMidiCtrl
-#include "map_param.h"
+#include "map_param_in.h"
 
 namespace xmidictrl {
 
@@ -59,7 +59,7 @@ void inbound_worker::process()
 			continue;
 
 		// perform the action related to the mapping
-		auto param = std::make_unique<map_param>(task->msg, task->msg->log(), task->sl_value);
+		auto param = std::make_unique<map_param_in>(task->sl_value, task->msg);
 
 		if (!task->mapping->execute(param.get())) {
 			// store in temp list

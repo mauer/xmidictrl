@@ -118,7 +118,7 @@ std::unique_ptr<map_result> map_out_con::execute(map_param* in_param)
 	auto result = std::make_unique<map_result>();
 	result->data_changed = false;
 
-	if (!check_sublayer(in_param->sl_value))
+	if (!check_sublayer(in_param->sl_value()))
         return result;
 
     switch (data_1_type()) {

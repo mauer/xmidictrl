@@ -163,7 +163,11 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 {
 	auto result = std::make_unique<map_result>();
 
-    if (!check_sublayer(in_param->sl_value) || m_time_received.load() == time_point::min()) {
+	auto param_in = get_param_in(in_param);
+	if (param_in == nullptr)
+		return result;
+
+    if (!check_sublayer(param_in->sl_value()) || m_time_received.load() == time_point::min()) {
         // wrong sublayer (or received time is missing)
         reset();
 
@@ -179,15 +183,15 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
             switch (m_command_type) {
                 case command_type::push:
                     if (!m_command_push.empty()) {
-                        in_param->msg->log().debug(" --> End push command '" + m_command_push + "'");
-                        env().cmd().end(in_param->msg->log(), m_command_push);
+                        param_in->msg().log().debug(" --> End push command '" + m_command_push + "'");
+                        env().cmd().end(param_in->msg().log(), m_command_push);
                     }
                     break;
 
                 case command_type::pull:
                     if (!m_command_pull.empty()) {
-                        in_param->msg->log().debug(" --> End pull command '" + m_command_pull + "'");
-                        env().cmd().end(in_param->msg->log(), m_command_pull);
+                        param_in->msg().log().debug(" --> End pull command '" + m_command_pull + "'");
+                        env().cmd().end(param_in->msg().log(), m_command_pull);
                     }
                     break;
 
@@ -221,11 +225,11 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 
     if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
         if (!m_dataref_pull.empty()) {
-            toggle_dataref(in_param->msg->log(), m_dataref_pull, m_values_pull);
+            toggle_dataref(param_in->msg().log(), m_dataref_pull, m_values_pull);
         } else if (!m_command_pull.empty()) {
-            in_param->msg->log().debug(" --> Begin pull command '" + m_command_pull + "'");
+            param_in->msg().log().debug(" --> Begin pull command '" + m_command_pull + "'");
             m_command_type = command_type::pull;
-            env().cmd().begin(in_param->msg->log(), m_command_pull);
+            env().cmd().begin(param_in->msg().log(), m_command_pull);
 
             // keep the task in the queue to end the command
 			result->completed = false;
@@ -233,11 +237,11 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
         }
     } else {
         if (!m_dataref_push.empty()) {
-            toggle_dataref(in_param->msg->log(), m_dataref_push, m_values_push);
+            toggle_dataref(param_in->msg().log(), m_dataref_push, m_values_push);
         } else if (!m_command_push.empty()) {
-            in_param->msg->log().debug(" --> Begin push command '" + m_command_push + "'");
+			param_in->msg().log().debug(" --> Begin push command '" + m_command_push + "'");
             m_command_type = command_type::push;
-            env().cmd().begin(in_param->msg->log(), m_command_push);
+            env().cmd().begin(param_in->msg().log(), m_command_push);
 
             // keep the task in the queue to end the command
 			result->completed = false;

@@ -132,18 +132,22 @@ std::unique_ptr<map_result> map_in_cmd::execute(map_param* in_param)
 	auto result = std::make_unique<map_result>();
 	result->completed = true;
 
-	if (!check_sublayer(in_param->sl_value))
+	auto param_in = get_param_in(in_param);
+	if (param_in == nullptr)
 		return result;
 
-	if (in_param->msg->data_2() == m_data_2_on) {
-		in_param->msg->log().debug(" --> Begin execution of command '" + m_command + "'");
-		env().cmd().begin(in_param->msg->log(), m_command);
-	} else if (in_param->msg->data_2() == m_data_2_off) {
-		in_param->msg->log().debug(" --> End execution of command '" + m_command + "'");
-		env().cmd().end(in_param->msg->log(), m_command);
+	if (!check_sublayer(param_in->sl_value()))
+		return result;
+
+	if (param_in->msg().data_2() == m_data_2_on) {
+		param_in->msg().log().debug(" --> Begin execution of command '" + m_command + "'");
+		env().cmd().begin(param_in->msg().log(), m_command);
+	} else if (param_in->msg().data_2() == m_data_2_off) {
+		param_in->msg().log().debug(" --> End execution of command '" + m_command + "'");
+		env().cmd().end(param_in->msg().log(), m_command);
 	} else {
-		in_param->msg->log().error("Invalid MIDI Data 2 value '" + std::to_string(in_param->msg->data_2()) + "'");
-		in_param->msg->log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
+		param_in->msg().log().error("Invalid MIDI Data 2 value '" + std::to_string(param_in->msg().data_2()) + "'");
+		param_in->msg().log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
 						   + "' and '" + std::to_string(m_data_2_off) + "'");
 	}
 

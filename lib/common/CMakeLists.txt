@@ -26,6 +26,9 @@ message("-- Configuring build scripts for library ${PROJECT_NAME}")
 # Add sources
 set(COMMON_SRC
         ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_param.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_param_in.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_param_out.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_message.cpp
         ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp

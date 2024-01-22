@@ -25,6 +25,7 @@
 #include "environment.h"
 #include "label.h"
 #include "map.h"
+#include "map_param_in.h"
 #include "text_logger.h"
 #include "types.h"
 
@@ -66,6 +67,8 @@ public:
 
 protected:
     environment& env();
+
+	map_param_in* get_param_in(map_param* in_param);
 
     virtual std::string toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values);
 

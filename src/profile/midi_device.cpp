@@ -344,7 +344,7 @@ void midi_device::process_outbound_mappings()
 		if (m_outbound_locked.contains(mapping->get_key()))
 			continue;
 
-		auto param = std::make_unique<map_param>(nullptr, text_log(), sl_value(), settings().send_mode);
+		auto param = std::make_unique<map_param_out>(sl_value(), text_log(), settings().send_mode);
 		auto result = mapping->execute(param.get());
 
 		if (result == nullptr)

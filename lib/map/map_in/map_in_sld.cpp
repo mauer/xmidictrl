@@ -143,55 +143,59 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
 	auto result = std::make_unique<map_result>();
 	result->completed = true;
 
-    if (!check_sublayer(in_param->sl_value))
+	auto param_in = get_param_in(in_param);
+	if (param_in == nullptr)
+		return result;
+
+    if (!check_sublayer(param_in->sl_value()))
         return result;
 
     if (!m_dataref.empty()) {
         // dataref mode
         float value;
 
-        if (in_param->msg->data_2() == m_data_2_min)
+        if (param_in->msg().data_2() == m_data_2_min)
             value = m_value_min;
-        else if (in_param->msg->data_2() == m_data_2_max)
+        else if (param_in->msg().data_2() == m_data_2_max)
             value = m_value_max;
         else
-            value = ((m_value_max - m_value_min) * (static_cast<float>(in_param->msg->data_2()) / 127.0f)) + m_value_min;
+            value = ((m_value_max - m_value_min) * (static_cast<float>(param_in->msg().data_2()) / 127.0f)) + m_value_min;
 
-        in_param->msg->log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
+		param_in->msg().log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
 
-        if (env().drf().write(in_param->msg->log(), m_dataref, value)) {
+        if (env().drf().write(param_in->msg().log(), m_dataref, value)) {
             try {
-                display_label(in_param->msg->log(), std::to_string(value));
+                display_label(param_in->msg().log(), std::to_string(value));
             } catch (std::bad_alloc& ex) {
-                in_param->msg->log().error("Error converting float '" + std::to_string(value) + "' value to string");
-                in_param->msg->log().error(ex.what());
+				param_in->msg().log().error("Error converting float '" + std::to_string(value) + "' value to string");
+				param_in->msg().log().error(ex.what());
             }
         }
     } else {
         // command mode
-        if (in_param->msg->data_2() <= m_data_2_min + m_data_2_margin) {
-            in_param->msg->log().debug(" --> Execute command '" + m_command_down + "'");
+        if (param_in->msg().data_2() <= m_data_2_min + m_data_2_margin) {
+			param_in->msg().log().debug(" --> Execute command '" + m_command_down + "'");
 
             if (m_command_down != m_command_prev)
-                env().cmd().execute(in_param->msg->log(), m_command_down);
+                env().cmd().execute(param_in->msg().log(), m_command_down);
 
             m_command_prev = m_command_down;
 
-        } else if (in_param->msg->data_2() >= m_data_2_max - m_data_2_margin) {
-            in_param->msg->log().debug(" --> Execute command '" + m_command_up + "'");
+        } else if (param_in->msg().data_2() >= m_data_2_max - m_data_2_margin) {
+			param_in->msg().log().debug(" --> Execute command '" + m_command_up + "'");
 
             if (m_command_up != m_command_prev)
-                env().cmd().execute(in_param->msg->log(), m_command_up);
+                env().cmd().execute(param_in->msg().log(), m_command_up);
 
             m_command_prev = m_command_up;
 
-        } else if (in_param->msg->data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
-                   in_param->msg->data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
+        } else if (param_in->msg().data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
+				   param_in->msg().data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
-                in_param->msg->log().debug(" --> Execute command '" + m_command_middle + "'");
+				param_in->msg().log().debug(" --> Execute command '" + m_command_middle + "'");
 
                 if (m_command_middle != m_command_prev)
-                    env().cmd().execute(in_param->msg->log(), m_command_middle);
+                    env().cmd().execute(param_in->msg().log(), m_command_middle);
 
                 m_command_prev = m_command_middle;
             }

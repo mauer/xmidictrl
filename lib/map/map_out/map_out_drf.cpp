@@ -229,10 +229,11 @@ std::unique_ptr<map_result> map_out_drf::execute(map_param* in_param)
 {
 	auto result = std::make_unique<map_result>();
 
-	if (in_param == nullptr)
+	auto param_out = get_param_out(in_param);
+	if (param_out == nullptr)
 		return result;
 
-	if (!check_sublayer(in_param->sl_value))
+	if (!check_sublayer(param_out->sl_value()))
 		return result;
 
 	bool changed = false;
@@ -246,7 +247,7 @@ std::unique_ptr<map_result> map_out_drf::execute(map_param* in_param)
 		// get the current value from X-Plane
 		std::string value_current;
 
-		if (!env().drf().read(in_param->log, dataref, value_current))
+		if (!env().drf().read(param_out->log(), dataref, value_current))
 			continue;
 
 		// get current value
@@ -261,10 +262,10 @@ std::unique_ptr<map_result> map_out_drf::execute(map_param* in_param)
 		if (value_current != value_previous)
 			changed = true;
 
-		if (in_param->send_mode == outbound_send_mode::on_change) {
+		if (param_out->send_mode() == outbound_send_mode::on_change) {
 			if (changed)
 				send_msg = true;
-		} else if (in_param->send_mode == outbound_send_mode::permanent) {
+		} else if (param_out->send_mode() == outbound_send_mode::permanent) {
 			send_msg = true;
 		}
 	}

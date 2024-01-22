@@ -237,7 +237,11 @@ std::unique_ptr<map_result> map_in_enc::execute(map_param* in_param)
 	auto result = std::make_unique<map_result>();
 	result->completed = true;
 
-    if (!check_sublayer(in_param->sl_value))
+	auto param_in = get_param_in(in_param);
+	if (param_in == nullptr)
+		return result;
+
+    if (!check_sublayer(param_in->sl_value()))
         return result;
 
     if (m_delay > -1) {
@@ -253,15 +257,15 @@ std::unique_ptr<map_result> map_in_enc::execute(map_param* in_param)
         using enum encoder_mode;
 
         case relative:
-            execute_relative(*in_param->msg);
+            execute_relative(param_in->msg());
             break;
 
         case range:
-            execute_range(*in_param->msg);
+            execute_range(param_in->msg());
             break;
 
         case fixed:
-            execute_fixed(*in_param->msg);
+            execute_fixed(param_in->msg());
             break;
     }
 

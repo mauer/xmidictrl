@@ -195,7 +195,11 @@ std::unique_ptr<map_result> map_out_sld::execute(map_param* in_param)
 {
 	auto result = std::make_unique<map_result>();
 
-	if (!check_sublayer(in_param->sl_value))
+	auto param_out = get_param_out(in_param);
+	if (param_out == nullptr)
+		return result;
+
+	if (!check_sublayer(param_out->sl_value()))
 		return result;
 
 	bool changed = false;
@@ -204,7 +208,7 @@ std::unique_ptr<map_result> map_out_sld::execute(map_param* in_param)
 	// get the current value from X-Plane, but save the current value beforehand
 	float value_previous = m_xp_value;
 
-	if (!env().drf().read(in_param->log, m_dataref, m_xp_value))
+	if (!env().drf().read(param_out->log(), m_dataref, m_xp_value))
 		return result;
 
 	if ((m_xp_value != value_previous) || m_first_execution)
@@ -213,10 +217,10 @@ std::unique_ptr<map_result> map_out_sld::execute(map_param* in_param)
 	if (m_first_execution)
 		m_first_execution = false;
 
-	if (in_param->send_mode == outbound_send_mode::on_change) {
+	if (param_out->send_mode() == outbound_send_mode::on_change) {
 		if (changed)
 			send_msg = true;
-	} else if (in_param->send_mode == outbound_send_mode::permanent) {
+	} else if (param_out->send_mode() == outbound_send_mode::permanent) {
 		send_msg = true;
 	}
 

@@ -15,63 +15,57 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_OUT_H
-#define XMC_MAP_OUT_H
-
-// Standard
-#include <memory>
-
-// XMidiCtrl
-#include "device_settings.h"
-#include "environment.h"
-#include "map.h"
 #include "map_param_out.h"
-#include "outbound_task.h"
-#include "types.h"
 
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   TYPES
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
-// Outbound mapping types
-enum class map_out_type
+/**
+ * Constructor
+ */
+map_param_out::map_param_out(std::string_view in_sl_value, text_logger& in_log, outbound_send_mode in_send_mode)
+	: map_param(in_sl_value)
+	, m_log(in_log)
+	, m_send_mode(in_send_mode)
+{}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the parameter type (inbound/outbound)
+ * @return  Parameter type
+ */
+map_param_type map_param_out::type()
 {
-	none,
-	constant,
-	dataref,
-	slider
-};
+	return map_param_type::out;
+}
 
 
+/**
+ * Return the logger for text messages
+ * @return Logger for text messages
+ */
+text_logger& map_param_out::log()
+{
+	return m_log;
+}
 
 
-//---------------------------------------------------------------------------------------------------------------------
-//   CLASS
-//---------------------------------------------------------------------------------------------------------------------
-
-class map_out : public map {
-public:
-	explicit map_out(environment& in_env);
-	~map_out() override = default;
-
-	virtual map_out_type type();
-
-	virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
-
-	virtual std::string map_text_drf() = 0;
-	virtual std::string map_text_parameter() = 0;
-
-protected:
-	environment& env();
-
-	map_param_out* get_param_out(map_param* in_param);
-
-private:
-	environment& m_env;
-};
+/**
+ * Return the send mode for the outbound message
+ * @return Send mode (permanent/on_change) for the outbound message
+ */
+outbound_send_mode map_param_out::send_mode()
+{
+	return m_send_mode;
+}
 
 } // Namespace xmidictrl
-
-#endif // XMC_MAP_OUT_H

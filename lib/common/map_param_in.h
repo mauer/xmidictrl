@@ -15,55 +15,33 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_PARAM_H
-#define XMC_MAP_PARAM_H
+#ifndef XMC_MAP_PARAM_IN_H
+#define XMC_MAP_PARAM_IN_H
 
 // Standard
 #include <string>
 
 // XMidiCtrl
+#include "map_param.h"
 #include "midi_message.h"
-#include "text_logger.h"
-#include "types.h"
 
 namespace xmidictrl {
 
-//---------------------------------------------------------------------------------------------------------------------
-//   TYPES
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Defines if the params are for inbound or outbound mappings
- */
-enum class map_param_type {
-	in,
-	out
-};
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   CLASS
-//---------------------------------------------------------------------------------------------------------------------
-
-class map_param {
+class map_param_in : public map_param {
 public:
-	explicit map_param(std::string_view in_sl_value);
+	map_param_in(std::string_view in_sl_value, std::shared_ptr<midi_message> in_msg);
 
-	std::string_view sl_value();
+	map_param_type type() override;
 
-	virtual map_param_type type() = 0;
+	midi_message& msg();
 
 private:
-	//std::shared_ptr<midi_message> msg;
+	std::shared_ptr<midi_message> m_msg;
 	//text_logger& log;
-
-	std::string m_sl_value;
 
 	//outbound_send_mode send_mode {outbound_send_mode::permanent};
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_MAP_PARAM_H
+#endif // XMC_MAP_PARAM_IN_H

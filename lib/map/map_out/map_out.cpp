@@ -61,4 +61,20 @@ environment& map_out::env()
 	return m_env;
 }
 
+
+/**
+ * Cast the generic parameter object to an outbound parameter object
+ * @param in_param Generic parameter object
+ * @return Outbound parameter object
+ */
+map_param_out* map_out::get_param_out(map_param* in_param) {
+	if (in_param == nullptr)
+		return nullptr;
+
+	if (in_param->type() != map_param_type::out)
+		return nullptr;
+
+	return dynamic_cast<map_param_out*>(in_param);
+}
+
 } // Namespace xmidictrl

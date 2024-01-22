@@ -80,6 +80,22 @@ environment& map_in::env()
 
 
 /**
+ * Cast the generic parameter object to an inbound parameter object
+ * @param in_param Generic parameter object
+ * @return Inbound parameter object
+ */
+map_param_in* map_in::get_param_in(map_param* in_param) {
+	if (in_param == nullptr)
+		return nullptr;
+
+	if (in_param->type() != map_param_type::in)
+		return nullptr;
+
+	return dynamic_cast<map_param_in*>(in_param);
+}
+
+
+/**
  * Toggle dataref between values
  */
 std::string map_in::toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values)

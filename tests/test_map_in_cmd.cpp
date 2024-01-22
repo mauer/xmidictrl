@@ -51,7 +51,7 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
 
     CHECK(map->check(*log, *dev_settings));
 
-	auto param = std::make_unique<map_param>(msg, *log);
+	auto param = std::make_unique<map_param_in>("", msg);
 
     auto result = map->execute(param.get());
 	CHECK(result->completed);
@@ -92,13 +92,13 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
 
 	CHECK(map->check(*log, *dev_settings));
 
-	auto param = std::make_unique<map_param>(msg, *log, "2");
+	auto param = std::make_unique<map_param_in>("2", msg);
 	auto result = map->execute(param.get());
 
 	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "");
 
-    param->sl_value = "1";
+	param = std::make_unique<map_param_in>("1", msg);
 	result = map->execute(param.get());
 
 	CHECK(result->completed);
@@ -106,13 +106,13 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
 
     msg->set_data_2(MIDI_DATA_2_MIN);
 
-	param->sl_value = "2";
+	param = std::make_unique<map_param_in>("2", msg);
 	result = map->execute(param.get());
 
 	CHECK(result->completed);
     CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
 
-	param->sl_value = "1";
+	param = std::make_unique<map_param_in>("1", msg);
 	result = map->execute(param.get());
 
 	CHECK(result->completed);
@@ -145,7 +145,7 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
 
     CHECK(map->check(*log, *dev_settings));
 
-	auto param = std::make_unique<map_param>(msg, *log);
+	auto param = std::make_unique<map_param_in>("", msg);
 	auto result = map->execute(param.get());
 
 	CHECK(result->completed);

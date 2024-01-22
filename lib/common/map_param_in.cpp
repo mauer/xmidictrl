@@ -15,63 +15,48 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_OUT_H
-#define XMC_MAP_OUT_H
+#include "map_param_in.h"
 
 // Standard
-#include <memory>
-
-// XMidiCtrl
-#include "device_settings.h"
-#include "environment.h"
-#include "map.h"
-#include "map_param_out.h"
-#include "outbound_task.h"
-#include "types.h"
 
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   TYPES
+//   CONSTRUCTOR / DESTRUCTOR
 //---------------------------------------------------------------------------------------------------------------------
 
-// Outbound mapping types
-enum class map_out_type
+/**
+ * Constructor
+ */
+map_param_in::map_param_in(std::string_view in_sl_value, std::shared_ptr<midi_message> in_msg)
+	: map_param(in_sl_value)
+	, m_msg(in_msg)
+{}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//   PUBLIC
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Return the parameter type (inbound/outbound)
+ * @return  Parameter type
+ */
+map_param_type map_param_in::type()
 {
-	none,
-	constant,
-	dataref,
-	slider
-};
+	return map_param_type::in;
+}
 
 
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//   CLASS
-//---------------------------------------------------------------------------------------------------------------------
-
-class map_out : public map {
-public:
-	explicit map_out(environment& in_env);
-	~map_out() override = default;
-
-	virtual map_out_type type();
-
-	virtual void read_config(text_logger& in_log, toml::value& in_data) = 0;
-
-	virtual std::string map_text_drf() = 0;
-	virtual std::string map_text_parameter() = 0;
-
-protected:
-	environment& env();
-
-	map_param_out* get_param_out(map_param* in_param);
-
-private:
-	environment& m_env;
-};
+/**
+ * Return the inbound MIDI message
+ * @return MIDI message received from the device
+ */
+midi_message& map_param_in::msg()
+{
+	return *m_msg;
+}
 
 } // Namespace xmidictrl
-
-#endif // XMC_MAP_OUT_H
