@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -74,6 +74,7 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
 	auto env = std::make_unique<env_tests>(*log);
 
     auto* dev_settings = new device_settings();
+	dev_settings->sl_dataref = "xmidictrl/sublayer";
 
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(

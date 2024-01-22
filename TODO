@@ -9,3 +9,6 @@
  + Check für Sublayer Dataref if parameter SL is defined (done)
  + Controlling button LEDs using a bitwise and on a dataref such as for sim/cockpit/autopilot/autopilot_state which is a bitfield.
  + Remove reset
+ + Add design mode
+ + Check Range mode for encoders
+ + Check default encoder mode

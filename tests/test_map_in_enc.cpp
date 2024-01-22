@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -23,39 +23,51 @@
 
 // XMidiCtrl
 #include "env_tests.h"
-#include "map_in_sld.h"
+#include "map_in_enc.h"
 #include "midi_message.h"
+#include "test_helper.h"
 #include "text_logger.h"
 
 using namespace xmidictrl;
 
-TEST_CASE("Test Inbound Mapping for sliders with commands")
+TEST_CASE("Test Inbound Mapping for encoders in command mode with type range")
 {
-    auto log = std::make_unique<text_logger>();
-    auto env = std::make_unique<env_tests>(*log);
-
+	// create our test environment
+	auto env = test_helper::create_environment();
+/*
+	// create test mapping
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
         ch = 16
         cc = 20
-        command_up = "sim/flaps/up"
-        command_middle = "sim/flaps/neutral"
-        command_down = "sim/flaps/down"
+		encoder_mode = "range"
+        command_up = "sim/autopilot/heading_up"
+        command_down = "sim/autopilot/heading_down"
     )"_toml;
 
-    auto map = new map_in_sld(*env);
-	auto dev_settings = std::make_unique<device_settings>();
-    map->read_config(*log, cfg, cfg);
+    auto map = std::make_unique<map_in_enc>(*env);
+    map->read_config(*env->log, cfg, cfg);
 
-    auto msg = new midi_message(*log, midi_direction::in);
-    msg->set_data_2(MIDI_DATA_2_MAX);
+	// check the mapping
+	auto* dev_settings = new device_settings();
+	CHECK(map->check(*env->log, *dev_settings));
 
-    CHECK(map->check(*log, *dev_settings));
-    //CHECK(map->execute(*msg, ""));
-    CHECK(env->cmd_tests().current_command() == "sim/autopilot/enable");
+	// create midi message
+	auto msg = std::make_shared<midi_message>(*env->log, midi_direction::in);
 
-    msg->set_data_2(MIDI_DATA_2_MIN);
-    //CHECK(map->execute(*msg, ""));
-    CHECK(env->cmd_tests().current_command() == "");
-    CHECK(env->cmd_tests().last_command() == "sim/autopilot/enable");
+	SUBCASE("Test command up")
+	{
+		auto param = std::make_unique<map_param>(msg, *env->log);
+
+		for (int i = 0; i < 200; i++) {
+			unsigned char data_2 = static_cast<unsigned char>(i <= 127 ? i : 127);
+			msg->set_data_2(data_2);
+
+			// execute the mapping
+			//auto result = map->execute(param.get());
+			//CHECK(result->completed);
+
+			//CHECK(env->env->cmd_tests().last_command() == "sim/autopilot/heading_up");
+		}
+	} */
 }

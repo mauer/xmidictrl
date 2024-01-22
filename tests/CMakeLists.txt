@@ -31,7 +31,10 @@ include_directories(${IMGUI_INCLUDEDIR})
 # Add sources
 set(TEST_SRC
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/test_helper.cpp
         ${CMAKE_CURRENT_LIST_DIR}/test_map_in_cmd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/test_map_in_enc.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/test_map_in_sld.cpp
         ${CMAKE_CURRENT_LIST_DIR}/test_midi_message.cpp
         )
 
