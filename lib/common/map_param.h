@@ -34,7 +34,7 @@ struct map_param {
 
 	std::string sl_value;
 
-	outbound_send_mode send_mode;
+	outbound_send_mode send_mode {outbound_send_mode::permanent};
 };
 
 } // Namespace xmidictrl
