@@ -36,7 +36,6 @@ namespace xmidictrl {
 class map_in_list {
 public:
     explicit map_in_list() = default;
-    ~map_in_list();
 
     void create_mappings(text_logger& in_log,
                          toml::array in_profile,
@@ -48,14 +47,14 @@ public:
 
     std::vector<std::shared_ptr<map_in>> find(const std::string &in_key);
 
-    size_t size();
+    size_t size() const;
 
     std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator begin();
     std::multimap<unsigned int, std::shared_ptr<map_in>>::iterator end();
 
 private:
     map_in_type read_map_type(text_logger& in_log, toml::value& in_params);
-    map_in_type translate_map_type(std::string_view in_type_str);
+    map_in_type translate_map_type(std::string_view in_type_str) const;
 
     void add(const std::shared_ptr<map_in>& in_map);
 

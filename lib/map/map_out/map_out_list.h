@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -43,7 +43,6 @@ using map_out_itr = std::vector<std::shared_ptr<map_out>>::iterator;
 class map_out_list {
 public:
     explicit map_out_list() = default;
-    ~map_out_list();
 
     void create_mappings(text_logger& in_log,
                          toml::array in_profile,
@@ -54,10 +53,10 @@ public:
     map_out_itr begin();
     map_out_itr end();
 
-    size_t size();
+    size_t size() const;
 
 private:
-    map_out_type read_map_type(text_logger& in_log, toml::value& in_profile);
+    map_out_type read_map_type(text_logger& in_log, toml::value& in_profile) const;
     static map_out_type translate_map_type(std::string_view in_type_str);
 
     void add(const std::shared_ptr<map_out>& in_map);

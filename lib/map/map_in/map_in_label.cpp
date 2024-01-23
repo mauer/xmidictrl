@@ -167,7 +167,7 @@ void map_in_label::read_label(text_logger& in_log, toml::value& in_data, toml::v
             for (auto value: values) {
                 std::string value_id = toml_utils::read_string(in_log, value, CFG_KEY_VALUE);
                 std::string value_text = toml_utils::read_string(in_log, value, CFG_KEY_TEXT);
-                m_label->values.emplace(value_id, value_text);
+                m_label->values.try_emplace(value_id, value_text);
             }
         } else {
             in_log.error_line(in_data.location().line(), "Error reading mapping");

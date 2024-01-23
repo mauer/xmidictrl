@@ -19,7 +19,6 @@
 
 // Standard
 #include <mutex>
-#include <vector>
 
 namespace xmidictrl {
 
@@ -124,7 +123,7 @@ midi_message* midi_logger::message(int in_index)
 void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	if (!m_enabled)
 		return;

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -40,38 +40,37 @@ namespace xmidictrl {
 
 class device_list {
 public:
-    explicit device_list(environment& in_env);
-    ~device_list();
+	explicit device_list(environment& in_env);
+	~device_list();
 
-    device* create_midi_device(text_logger& in_text_log,
-                               midi_logger& in_midi_log,
-                               std::unique_ptr<device_settings> in_settings);
+	device* create_midi_device(text_logger& in_text_log,
+							   midi_logger& in_midi_log,
+							   std::unique_ptr<device_settings> in_settings);
 
-    device* create_virtual_device(text_logger& in_text_log,
-                                  midi_logger& in_midi_log,
-                                  std::unique_ptr<device_settings> in_settings);
+	device* create_virtual_device(text_logger& in_text_log,
+								  midi_logger& in_midi_log,
+								  std::unique_ptr<device_settings> in_settings);
 
-    std::vector<std::unique_ptr<device>>::iterator begin();
-    std::vector<std::unique_ptr<device>>::iterator end();
+	std::vector<std::unique_ptr<device>>::iterator begin();
+	std::vector<std::unique_ptr<device>>::iterator end();
 
-    bool open_connections();
-    void close_connections();
+	bool open_connections();
+	void close_connections();
 
-    virtual_device* find_virtual_device();
+	virtual_device* find_virtual_device();
 
-    void update_sl_values(text_logger& in_log, environment& in_env);
+	void update_sl_values(text_logger& in_log, environment& in_env);
 
-    void process_init_mappings();
-    void process_outbound_mappings(text_logger& in_log);
-    void process_outbound_reset();
+	void process_init_mappings();
+	void process_outbound_mappings();
 
-    void clear();
-    size_t size();
+	void clear();
+	size_t size();
 
 private:
-    environment& m_env;
+	environment& m_env;
 
-    std::vector<std::unique_ptr<device>> m_device_list {};
+	std::vector<std::unique_ptr<device>> m_device_list {};
 };
 
 } // Namespace xmidictrl

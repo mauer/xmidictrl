@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -23,21 +23,6 @@
 #include "map_out_sld.h"
 
 namespace xmidictrl {
-
-//---------------------------------------------------------------------------------------------------------------------
-//   CONSTRUCTOR / DESTRUCTOR
-//---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Destructor
- */
-map_out_list::~map_out_list()
-{
-    m_list.clear();
-}
-
-
-
 
 //---------------------------------------------------------------------------------------------------------------------
 //   PUBLIC
@@ -131,7 +116,7 @@ map_out_itr map_out_list::end()
 /**
  * Return the number of mapping
  */
-size_t map_out_list::size()
+size_t map_out_list::size() const
 {
     return m_list.size();
 }
@@ -146,7 +131,7 @@ size_t map_out_list::size()
 /**
  * Read the outbound mapping type
  */
-map_out_type map_out_list::read_map_type(text_logger& in_log, toml::value& in_profile)
+map_out_type map_out_list::read_map_type(text_logger& in_log, toml::value& in_profile) const
 {
     map_out_type type = map_out_type::none;
 

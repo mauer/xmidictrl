@@ -235,7 +235,7 @@ std::string map_in_drf::build_mapping_text(bool in_short)
 
 	map_str.append("Values = [");
 
-	for (auto& value: m_values) map_str.append(" '" + value + "', ");
+	for (const auto& value: m_values) map_str.append(" '" + value + "', ");
 
 	map_str.append("]" + sep_str);
 

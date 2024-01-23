@@ -137,7 +137,7 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
     m_env->worker().process();
 
     // process outbound tasks
-    m_profile->process(*m_plugin_log);
+    m_profile->process();
 
     // process info messages
     process_info_messages();
@@ -150,7 +150,7 @@ void plugin::process_flight_loop([[maybe_unused]] float in_elapsed_me,
 void plugin::process_info_messages()
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+    std::scoped_lock lock(mutex);
 
     if (m_env->info_messages().empty())
         return;

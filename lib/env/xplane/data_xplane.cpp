@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -31,7 +31,7 @@ namespace xmidictrl {
  */
 bool data_xplane::check(std::string_view in_name)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -47,7 +47,7 @@ bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::strin
 {
     out_value.assign(std::string());
 
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -112,7 +112,7 @@ bool data_xplane::read(text_logger &in_log, std::string_view in_name, float &out
 {
     out_value = 0.0f;
 
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -166,7 +166,7 @@ bool data_xplane::read(text_logger &in_log, std::string_view in_name, float &out
  */
 bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vector<float> &out_values)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
     out_values = {};
 
     if (item == nullptr)
@@ -188,7 +188,7 @@ bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vecto
  */
 bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vector<int> &out_values)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
     out_values = {};
 
     if (item == nullptr)
@@ -210,7 +210,7 @@ bool data_xplane::read(text_logger &in_log, std::string_view in_name, std::vecto
  */
 bool data_xplane::write(text_logger &in_log, std::string_view in_name, std::string_view in_value)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -265,7 +265,7 @@ bool data_xplane::write(text_logger &in_log, std::string_view in_name, std::stri
  */
 bool data_xplane::write(text_logger &in_log, std::string_view in_name, float in_value)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return false;
@@ -313,7 +313,7 @@ std::string data_xplane::toggle(text_logger &in_log,
                                 std::string_view in_value_on,
                                 std::string_view in_value_off)
 {
-    data_item *item = retrieve_data(in_name);
+    const auto item = retrieve_data(in_name);
 
     if (item == nullptr)
         return {};
@@ -364,8 +364,8 @@ data_item *data_xplane::retrieve_data(std::string_view in_name)
         dataref_name = dataref_name.substr(0, dataref_name.find('['));
     }
 
-    if (m_data_cache.count(dataref_name) == 0) {
-        std::unique_ptr<data_item> item = std::make_unique<data_item>();
+    if (m_data_cache.contains(dataref_name)) {
+        auto item = std::make_unique<data_item>();
 
         item->dataref = XPLMFindDataRef(dataref_name.c_str());
         item->name = dataref_name;
@@ -382,7 +382,7 @@ data_item *data_xplane::retrieve_data(std::string_view in_name)
             item->size = XPLMGetDatab(item->dataref, nullptr, 0, 0);
 
         // add new dataref to cache
-        m_data_cache.emplace(dataref_name, std::move(item));
+        m_data_cache.try_emplace(dataref_name, std::move(item));
     }
 
     return m_data_cache.at(dataref_name).get();
@@ -398,7 +398,7 @@ int data_xplane::get_index(text_logger &in_log, std::string_view in_name)
 
     // is the dataref an array?
     if (in_name.back() == ']') {
-        int pos = static_cast<int>(in_name.find('['));
+        auto pos = static_cast<int>(in_name.find('['));
 
         // read index
         try {
