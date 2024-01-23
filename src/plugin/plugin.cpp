@@ -17,6 +17,9 @@
 
 #include "plugin.h"
 
+// Standard
+#include <mutex>
+
 // XMidiCtrl
 #include "about_window.h"
 #include "conversions.h"
