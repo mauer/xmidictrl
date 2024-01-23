@@ -17,6 +17,9 @@
 
 #include "environment.h"
 
+// Standard
+#include <mutex>
+
 // XMidiCtrl
 #include "utils.h"
 
