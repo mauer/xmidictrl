@@ -37,9 +37,6 @@ public:
 
 private:
 	std::shared_ptr<midi_message> m_msg;
-	//text_logger& log;
-
-	//outbound_send_mode send_mode {outbound_send_mode::permanent};
 };
 
 } // Namespace xmidictrl

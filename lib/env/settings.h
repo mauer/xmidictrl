@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -23,11 +23,7 @@
 #include <memory>
 
 // toml11
-#include <imgui.h>
 #include <toml.hpp>
-
-// ImGui
-//#include <imgui.h>
 
 // XMidiCtrl
 #include "text_logger.h"
@@ -88,12 +84,6 @@ public:
     void set_info_seconds(int in_seconds);
     [[nodiscard]] int info_seconds() const;
 
-    void set_title_color(ImVec4 in_color);
-    [[nodiscard]] ImVec4 title_color() const;
-
-    void set_value_color(ImVec4 in_color);
-    [[nodiscard]] ImVec4 value_color() const;
-
     void save_settings();
 
 private:
@@ -127,9 +117,6 @@ private:
     int m_info_offset_x {50};
     int m_info_offset_y {50};
     int m_info_seconds {3};
-
-    ImVec4 m_value_color {ImColor(255, 127, 39)};
-    ImVec4 m_title_color {ImColor(75, 160, 255)};
 };
 
 } // Namespace xmidictrl

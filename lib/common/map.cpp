@@ -95,7 +95,7 @@ unsigned char map::data_1() const
 /**
  * Return data 1 as string
  */
-std::string map::data_1_as_string()
+std::string map::data_1_as_string() const
 {
 	std::string str = fmt::format("{} {}", data_1_type_as_string(), std::to_string(m_data_1));
 	return str;

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -27,53 +27,49 @@ namespace xmidictrl {
 
 class settings_window : public imgui_window {
 public:
-    settings_window(text_logger& in_log, environment& in_env);
-    ~settings_window() override = default;
+	settings_window(text_logger& in_log, environment& in_env);
+	~settings_window() override = default;
 
 protected:
-    void create_widgets() override;
+	void create_widgets() override;
 
 private:
-    void create_tab_general();
-    void create_tab_midi();
-    void create_tab_logging();
-    void create_tab_colors();
-    void create_tab_paths();
+	void create_tab_general();
+	void create_tab_midi();
+	void create_tab_logging();
+	void create_tab_paths();
 
-    static std::string info_position_as_text(window_position in_position);
-    void save_settings();
+	static std::string info_position_as_text(window_position in_position);
+	void save_settings();
 
-    bool m_debug_mode;
-    bool m_log_midi;
-    bool m_show_errors;
+	bool m_debug_mode;
+	bool m_log_midi;
+	bool m_show_errors;
 
-    int m_virtual_channel;
-    float m_default_outbound_delay;
+	int m_virtual_channel;
+	float m_default_outbound_delay;
 
-    int m_max_text_messages;
-    int m_max_midi_messages;
+	int m_max_text_messages;
+	int m_max_midi_messages;
 
-    int m_note_name;
+	int m_note_name;
 
-    int m_default_text_sort;
-    int m_default_midi_sort;
+	int m_default_text_sort;
+	int m_default_midi_sort;
 
-    bool m_use_common_profile;
+	bool m_use_common_profile;
 
-    bool m_info_disabled;
-    window_position m_info_position;
-    int m_info_offset_x;
-    int m_info_offset_y;
-    int m_info_seconds;
+	bool m_info_disabled;
+	window_position m_info_position;
+	int m_info_offset_x;
+	int m_info_offset_y;
+	int m_info_seconds;
 
-    ImVec4 m_value_color;
-    ImVec4 m_title_color;
-
-    std::string m_path_xplane;
-    std::string m_path_plugin;
-    std::string m_path_preferences;
-    std::string m_path_profiles;
-    std::string m_path_includes;
+	std::string m_path_xplane;
+	std::string m_path_plugin;
+	std::string m_path_preferences;
+	std::string m_path_profiles;
+	std::string m_path_includes;
 };
 
 } // Namespace xmidictrl

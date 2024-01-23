@@ -34,7 +34,6 @@ namespace xmidictrl {
 class environment {
 public:
     explicit environment(text_logger& in_log);
-    virtual ~environment();
 
     xmidictrl::settings& settings();
     inbound_worker& worker();

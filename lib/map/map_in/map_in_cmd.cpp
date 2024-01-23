@@ -32,7 +32,8 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-map_in_cmd::map_in_cmd(environment& in_env) : map_in_label(in_env)
+map_in_cmd::map_in_cmd(environment& in_env)
+	: map_in_label(in_env)
 {}
 
 
@@ -140,15 +141,14 @@ std::unique_ptr<map_result> map_in_cmd::execute(map_param* in_param)
 		return result;
 
 	if (param_in->msg().data_2() == m_data_2_on) {
-		param_in->msg().log().debug(" --> Begin execution of command '" + m_command + "'");
+		param_in->msg().log().debug(fmt::format(" --> Begin execution of command '{}'", m_command));
 		env().cmd().begin(param_in->msg().log(), m_command);
 	} else if (param_in->msg().data_2() == m_data_2_off) {
-		param_in->msg().log().debug(" --> End execution of command '" + m_command + "'");
+		param_in->msg().log().debug(fmt::format(" --> End execution of command '{}'", m_command));
 		env().cmd().end(param_in->msg().log(), m_command);
 	} else {
-		param_in->msg().log().error("Invalid MIDI Data 2 value '" + std::to_string(param_in->msg().data_2()) + "'");
-		param_in->msg().log().error(" --> Supported values for the current mapping are '" + std::to_string(m_data_2_on)
-						   + "' and '" + std::to_string(m_data_2_off) + "'");
+		param_in->msg().log().error(fmt::format("Invalid MIDI Data 2 value '{}'", param_in->msg().data_2()));
+		param_in->msg().log().error(fmt::format(" --> Supported values for the current mapping are '{}' and '{}'", m_data_2_on, m_data_2_off));
 	}
 
 	return result;
@@ -173,13 +173,13 @@ std::string map_in_cmd::map_text_parameter()
 
 	// Data 2 on/off
 	if (m_data_2_on != MIDI_DATA_2_MAX)
-		map_str.append("Data 2 on = " + std::to_string(m_data_2_on));
+		map_str.append(fmt::format("Data 2 on = {}", m_data_2_on));
 
 	if (m_data_2_off != MIDI_DATA_2_MIN) {
 		if (!map_str.empty())
 			map_str.append(c_newline);
 
-		map_str.append("Data 2 off = " + std::to_string(m_data_2_off));
+		map_str.append(fmt::format("Data 2 off = {}", m_data_2_off));
 	}
 
 	return map_str;
@@ -205,7 +205,7 @@ std::string map_in_cmd::build_mapping_text(bool in_short)
 		map_str = " ====== Command ======" + sep_str;
 
 		if (!sl().empty())
-			map_str.append("Sublayer = '" + std::string(sl()) + "'" + sep_str);
+			map_str.append(fmt::format("Sublayer = '{}'{}", sl(), sep_str));
 	}
 
 	if (!in_short)
@@ -214,10 +214,10 @@ std::string map_in_cmd::build_mapping_text(bool in_short)
 	map_str.append(m_command);
 
 	if (m_data_2_on != MIDI_DATA_2_MAX)
-		map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_on));
+		map_str.append(fmt::format("{}Data 2: {}", sep_str, m_data_2_on));
 
 	if (m_data_2_off != MIDI_DATA_2_MIN)
-		map_str.append(sep_str + "Data 2: " + std::to_string(m_data_2_off));
+		map_str.append(fmt::format("{}Data 2: {}", sep_str, m_data_2_off));
 
 	return map_str;
 }

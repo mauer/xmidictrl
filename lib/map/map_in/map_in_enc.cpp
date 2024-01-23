@@ -390,12 +390,14 @@ std::string map_in_enc::build_mapping_text(bool in_short)
  */
 encoder_mode map_in_enc::encoder_mode_from_code(std::string_view in_mode)
 {
+	using enum encoder_mode;
+
     if (in_mode == "range")
-        return encoder_mode::range;
+        return range;
     else if (in_mode == "fixed")
-        return encoder_mode::fixed;
+        return fixed;
     else
-        return encoder_mode::relative;
+        return relative;
 }
 
 

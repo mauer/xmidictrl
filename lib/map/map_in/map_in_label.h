@@ -53,7 +53,7 @@ private:
     static constexpr std::string_view c_cfg_label {"label"};
 
     // members
-    std::unique_ptr<label> m_label;
+    std::unique_ptr<label> m_label {nullptr};
 };
 
 } // Namespace xmiditrl

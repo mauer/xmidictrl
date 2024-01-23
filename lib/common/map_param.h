@@ -21,11 +21,6 @@
 // Standard
 #include <string>
 
-// XMidiCtrl
-#include "midi_message.h"
-#include "text_logger.h"
-#include "types.h"
-
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -35,7 +30,8 @@ namespace xmidictrl {
 /**
  * Defines if the params are for inbound or outbound mappings
  */
-enum class map_param_type {
+enum class map_param_type
+{
 	in,
 	out
 };
@@ -51,17 +47,12 @@ class map_param {
 public:
 	explicit map_param(std::string_view in_sl_value);
 
-	std::string_view sl_value();
+	std::string_view sl_value() const;
 
 	virtual map_param_type type() = 0;
 
 private:
-	//std::shared_ptr<midi_message> msg;
-	//text_logger& log;
-
 	std::string m_sl_value;
-
-	//outbound_send_mode send_mode {outbound_send_mode::permanent};
 };
 
 } // Namespace xmidictrl

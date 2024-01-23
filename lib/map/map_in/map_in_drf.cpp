@@ -257,7 +257,7 @@ std::string map_in_drf::build_mapping_text(bool in_short)
 /**
  * Return the dataref mode for a given string
  */
-dataref_mode map_in_drf::dataref_mode_from_code(std::string_view in_mode)
+dataref_mode map_in_drf::dataref_mode_from_code(std::string_view in_mode) const
 {
 	if (in_mode == "momentary")
 		return dataref_mode::momentary;

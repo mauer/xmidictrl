@@ -70,7 +70,7 @@ public:
 	[[nodiscard]] map_data_1_type data_1_type() const;
 	[[nodiscard]] unsigned char data_1() const;
 
-	std::string data_1_as_string();
+	std::string data_1_as_string() const;
 
 	[[nodiscard]] std::string_view sl() const;
 

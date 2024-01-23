@@ -63,7 +63,7 @@ text_logger& map_param_out::log()
  * Return the send mode for the outbound message
  * @return Send mode (permanent/on_change) for the outbound message
  */
-outbound_send_mode map_param_out::send_mode()
+outbound_send_mode map_param_out::send_mode() const
 {
 	return m_send_mode;
 }

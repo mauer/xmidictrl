@@ -31,12 +31,14 @@ namespace xmidictrl {
 
 class map_param_out : public map_param {
 public:
-	map_param_out(std::string_view in_sl_value, text_logger& in_msg, outbound_send_mode in_send_mode = outbound_send_mode::permanent);
+	map_param_out(std::string_view in_sl_value,
+				  text_logger& in_msg,
+				  outbound_send_mode in_send_mode = outbound_send_mode::permanent);
 
 	map_param_type type() override;
 
 	text_logger& log();
-	outbound_send_mode send_mode();
+	outbound_send_mode send_mode() const;
 
 private:
 	text_logger& m_log;

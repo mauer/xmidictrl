@@ -42,7 +42,7 @@ map_param::map_param(std::string_view in_sl_value)
  * Return the current sublayer value
  * @return Current value of the sublayer dataref
  */
-std::string_view map_param::sl_value()
+std::string_view map_param::sl_value() const
 {
 	return m_sl_value;
 }

@@ -30,8 +30,7 @@ namespace xmidictrl {
  * Constructor
  */
 map_in_label::map_in_label(environment& in_env)
-    : map_in(in_env),
-      m_label(nullptr)
+    : map_in(in_env)
 {
 }
 

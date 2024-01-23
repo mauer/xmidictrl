@@ -57,7 +57,7 @@ protected:
 
 private:
 	// functions
-	dataref_mode dataref_mode_from_code(std::string_view in_mode);
+	dataref_mode dataref_mode_from_code(std::string_view in_mode) const;
 
 	// members
 	dataref_mode m_mode {dataref_mode::toggle};

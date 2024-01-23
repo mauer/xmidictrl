@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -31,10 +31,9 @@ namespace xmidictrl {
  * Constructor
  */
 midi_logger::midi_logger(bool in_enabled, int in_max_messages)
-    : m_enabled(in_enabled),
-      m_max_messages(in_max_messages)
-{
-}
+	: m_enabled(in_enabled)
+	, m_max_messages(in_max_messages)
+{}
 
 
 
@@ -48,10 +47,10 @@ midi_logger::midi_logger(bool in_enabled, int in_max_messages)
  */
 void midi_logger::clear()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    m_messages.clear();
+	m_messages.clear();
 }
 
 
@@ -60,10 +59,10 @@ void midi_logger::clear()
  */
 size_t midi_logger::count()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    return m_messages.size();
+	return m_messages.size();
 }
 
 
@@ -72,10 +71,10 @@ size_t midi_logger::count()
  */
 void midi_logger::enable()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
 
-    m_enabled = true;
+	m_enabled = true;
 }
 
 
@@ -84,10 +83,10 @@ void midi_logger::enable()
  */
 void midi_logger::disable()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
 
-    m_enabled = false;
+	m_enabled = false;
 }
 
 
@@ -98,12 +97,12 @@ void midi_logger::disable()
  */
 void midi_logger::set_max_messages(int in_max_messages)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
 
-    m_max_messages = in_max_messages;
+	m_max_messages = in_max_messages;
 
-    adjust_log_size();
+	adjust_log_size();
 }
 
 
@@ -112,10 +111,10 @@ void midi_logger::set_max_messages(int in_max_messages)
  */
 midi_message* midi_logger::message(int in_index)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
 
-    return m_messages.at(in_index).get();
+	return m_messages.at(in_index).get();
 }
 
 
@@ -124,15 +123,15 @@ midi_message* midi_logger::message(int in_index)
  */
 void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    if (!m_enabled)
-        return;
+	if (!m_enabled)
+		return;
 
-    adjust_log_size();
+	adjust_log_size();
 
-    m_messages.push_back(in_msg);
+	m_messages.push_back(in_msg);
 }
 
 
@@ -141,11 +140,10 @@ void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
  */
 void midi_logger::adjust_log_size()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    while (m_messages.size() >= m_max_messages)
-        m_messages.pop_front();
+	while (m_messages.size() >= m_max_messages) m_messages.pop_front();
 }
 
 } // Namespace xmidictrl

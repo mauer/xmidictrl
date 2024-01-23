@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -30,35 +30,35 @@ namespace xmidictrl {
  * Constructor
  */
 settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
-    : m_text_log(in_text_log),
-      m_settings_path(in_path)
+	: m_text_log(in_text_log)
+	, m_settings_path(in_path)
 {
-    if (toml_utils::load_file(m_text_log, get_settings_filename(), m_settings_file)) {
-        m_debug_mode = toml::find_or<bool>(m_settings_file, CFG_KEY_DEBUG_MODE, false);
-        m_log_midi = toml::find_or<bool>(m_settings_file, CFG_KEY_LOG_MIDI, true);
-        m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_ERRORS, true);
+	if (toml_utils::load_file(m_text_log, get_settings_filename(), m_settings_file)) {
+		m_debug_mode = toml::find_or<bool>(m_settings_file, CFG_KEY_DEBUG_MODE, false);
+		m_log_midi = toml::find_or<bool>(m_settings_file, CFG_KEY_LOG_MIDI, true);
+		m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_ERRORS, true);
 
-        m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
-        m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
+		m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
+		m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
 
-        m_max_text_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
-        m_max_midi_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_MIDI_MESSAGES, 150);
+		m_max_text_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
+		m_max_midi_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_MIDI_MESSAGES, 150);
 
-        m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_settings_file, CFG_KEY_NOTE_NAME, 0));
+		m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_settings_file, CFG_KEY_NOTE_NAME, 0));
 
-        m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_TEXT_SORT, 0));
-        m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_MIDI_SORT, 0));
+		m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_TEXT_SORT, 0));
+		m_default_midi_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_MIDI_SORT, 0));
 
-        m_use_common_profile = toml::find_or<bool>(m_settings_file, CFG_KEY_COMMON_PROFILE, true);
+		m_use_common_profile = toml::find_or<bool>(m_settings_file, CFG_KEY_COMMON_PROFILE, true);
 
-        m_info_disabled = toml::find_or<bool>(m_settings_file, CFG_KEY_INFO_DISABLED, false);
-        m_info_position = static_cast<window_position>(toml::find_or<int>(m_settings_file, CFG_KEY_INFO_POSITION, 1));
-        m_info_offset_x = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_X, 50);
-        m_info_offset_y = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_Y, 50);
-        m_info_seconds = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_SECONDS, 3);
-    } else {
-        m_text_log.warn(" --> Will use default settings");
-    }
+		m_info_disabled = toml::find_or<bool>(m_settings_file, CFG_KEY_INFO_DISABLED, false);
+		m_info_position = static_cast<window_position>(toml::find_or<int>(m_settings_file, CFG_KEY_INFO_POSITION, 1));
+		m_info_offset_x = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_X, 50);
+		m_info_offset_y = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_OFFSET_Y, 50);
+		m_info_seconds = toml::find_or<int>(m_settings_file, CFG_KEY_INFO_SECONDS, 3);
+	} else {
+		m_text_log.warn(" --> Will use default settings");
+	}
 }
 
 
@@ -73,8 +73,8 @@ settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
  */
 void settings::set_debug_mode(bool in_enabled)
 {
-    m_debug_mode = in_enabled;
-    m_text_log.set_debug_mode(in_enabled);
+	m_debug_mode = in_enabled;
+	m_text_log.set_debug_mode(in_enabled);
 }
 
 
@@ -83,7 +83,7 @@ void settings::set_debug_mode(bool in_enabled)
  */
 bool settings::debug_mode() const
 {
-    return m_debug_mode;
+	return m_debug_mode;
 }
 
 
@@ -92,7 +92,7 @@ bool settings::debug_mode() const
  */
 void settings::set_log_midi(bool in_enabled)
 {
-    m_log_midi = in_enabled;
+	m_log_midi = in_enabled;
 }
 
 
@@ -101,7 +101,7 @@ void settings::set_log_midi(bool in_enabled)
  */
 bool settings::log_midi() const
 {
-    return m_log_midi;
+	return m_log_midi;
 }
 
 
@@ -110,7 +110,7 @@ bool settings::log_midi() const
  */
 void settings::set_show_errors(const bool in_enabled)
 {
-    m_show_errors = in_enabled;
+	m_show_errors = in_enabled;
 }
 
 
@@ -119,7 +119,7 @@ void settings::set_show_errors(const bool in_enabled)
  */
 bool settings::show_errors() const
 {
-    return m_show_errors;
+	return m_show_errors;
 }
 
 
@@ -128,7 +128,7 @@ bool settings::show_errors() const
  */
 void settings::set_virtual_channel(const int in_channel)
 {
-    m_virtual_channel = in_channel;
+	m_virtual_channel = in_channel;
 }
 
 
@@ -137,7 +137,7 @@ void settings::set_virtual_channel(const int in_channel)
  */
 int settings::virtual_channel() const
 {
-    return m_virtual_channel;
+	return m_virtual_channel;
 }
 
 
@@ -146,7 +146,7 @@ int settings::virtual_channel() const
  */
 void settings::set_default_outbound_delay(const float in_delay)
 {
-    m_default_outbound_delay = in_delay;
+	m_default_outbound_delay = in_delay;
 }
 
 
@@ -155,7 +155,7 @@ void settings::set_default_outbound_delay(const float in_delay)
  */
 float settings::default_outbound_delay() const
 {
-    return m_default_outbound_delay;
+	return m_default_outbound_delay;
 }
 
 
@@ -164,8 +164,8 @@ float settings::default_outbound_delay() const
  */
 void settings::set_max_text_messages(int in_number)
 {
-    m_max_text_messages = in_number;
-    m_text_log.set_max_size(in_number);
+	m_max_text_messages = in_number;
+	m_text_log.set_max_size(in_number);
 }
 
 
@@ -174,7 +174,7 @@ void settings::set_max_text_messages(int in_number)
  */
 int settings::max_text_messages() const
 {
-    return m_max_text_messages;
+	return m_max_text_messages;
 }
 
 
@@ -183,7 +183,7 @@ int settings::max_text_messages() const
  */
 void settings::set_max_midi_messages(int in_number)
 {
-    m_max_midi_messages = in_number;
+	m_max_midi_messages = in_number;
 }
 
 
@@ -192,7 +192,7 @@ void settings::set_max_midi_messages(int in_number)
  */
 int settings::max_midi_messages() const
 {
-    return m_max_midi_messages;
+	return m_max_midi_messages;
 }
 
 
@@ -201,7 +201,7 @@ int settings::max_midi_messages() const
  */
 void settings::set_default_text_sort(sort_mode in_mode)
 {
-    m_default_text_sort = in_mode;
+	m_default_text_sort = in_mode;
 }
 
 
@@ -210,7 +210,7 @@ void settings::set_default_text_sort(sort_mode in_mode)
  */
 sort_mode settings::default_text_sort() const
 {
-    return m_default_text_sort;
+	return m_default_text_sort;
 }
 
 
@@ -219,7 +219,7 @@ sort_mode settings::default_text_sort() const
  */
 void settings::set_default_midi_sort(sort_mode in_mode)
 {
-    m_default_midi_sort = in_mode;
+	m_default_midi_sort = in_mode;
 }
 
 
@@ -228,7 +228,7 @@ void settings::set_default_midi_sort(sort_mode in_mode)
  */
 sort_mode settings::default_midi_sort() const
 {
-    return m_default_midi_sort;
+	return m_default_midi_sort;
 }
 
 
@@ -237,7 +237,7 @@ sort_mode settings::default_midi_sort() const
  */
 void settings::set_note_name(note_name_type in_type)
 {
-    m_note_name = in_type;
+	m_note_name = in_type;
 }
 
 
@@ -246,7 +246,7 @@ void settings::set_note_name(note_name_type in_type)
  */
 note_name_type settings::note_name() const
 {
-    return m_note_name;
+	return m_note_name;
 }
 
 
@@ -255,7 +255,7 @@ note_name_type settings::note_name() const
  */
 void settings::set_use_common_profile(bool in_enabled)
 {
-    m_use_common_profile = in_enabled;
+	m_use_common_profile = in_enabled;
 }
 
 
@@ -264,7 +264,7 @@ void settings::set_use_common_profile(bool in_enabled)
  */
 bool settings::use_common_profile() const
 {
-    return m_use_common_profile;
+	return m_use_common_profile;
 }
 
 
@@ -273,7 +273,7 @@ bool settings::use_common_profile() const
  */
 void settings::set_info_disabled(bool in_disabled)
 {
-    m_info_disabled = in_disabled;
+	m_info_disabled = in_disabled;
 }
 
 
@@ -282,7 +282,7 @@ void settings::set_info_disabled(bool in_disabled)
  */
 bool settings::info_disabled() const
 {
-    return m_info_disabled;
+	return m_info_disabled;
 }
 
 
@@ -291,7 +291,7 @@ bool settings::info_disabled() const
  */
 void settings::set_info_position(window_position in_position)
 {
-    m_info_position = in_position;
+	m_info_position = in_position;
 }
 
 
@@ -300,7 +300,7 @@ void settings::set_info_position(window_position in_position)
  */
 window_position settings::info_position() const
 {
-    return m_info_position;
+	return m_info_position;
 }
 
 
@@ -309,7 +309,7 @@ window_position settings::info_position() const
  */
 void settings::set_info_offset_x(int in_offset)
 {
-    m_info_offset_x = in_offset;
+	m_info_offset_x = in_offset;
 }
 
 
@@ -318,7 +318,7 @@ void settings::set_info_offset_x(int in_offset)
  */
 int settings::info_offset_x() const
 {
-    return m_info_offset_x;
+	return m_info_offset_x;
 }
 
 
@@ -327,7 +327,7 @@ int settings::info_offset_x() const
  */
 void settings::set_info_offset_y(int in_offset)
 {
-    m_info_offset_y = in_offset;
+	m_info_offset_y = in_offset;
 }
 
 
@@ -336,7 +336,7 @@ void settings::set_info_offset_y(int in_offset)
  */
 int settings::info_offset_y() const
 {
-    return m_info_offset_y;
+	return m_info_offset_y;
 }
 
 
@@ -345,7 +345,7 @@ int settings::info_offset_y() const
  */
 void settings::set_info_seconds(int in_seconds)
 {
-    m_info_seconds = in_seconds;
+	m_info_seconds = in_seconds;
 }
 
 
@@ -354,7 +354,7 @@ void settings::set_info_seconds(int in_seconds)
  */
 int settings::info_seconds() const
 {
-    return m_info_seconds;
+	return m_info_seconds;
 }
 
 
@@ -363,82 +363,43 @@ int settings::info_seconds() const
  */
 void settings::save_settings()
 {
-    m_settings_file[CFG_KEY_DEBUG_MODE] = m_debug_mode;
-    m_settings_file[CFG_KEY_LOG_MIDI] = m_log_midi;
-    m_settings_file[CFG_KEY_SHOW_ERRORS] = m_show_errors;
+	m_settings_file[CFG_KEY_DEBUG_MODE] = m_debug_mode;
+	m_settings_file[CFG_KEY_LOG_MIDI] = m_log_midi;
+	m_settings_file[CFG_KEY_SHOW_ERRORS] = m_show_errors;
 
-    m_settings_file[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
-    m_settings_file[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
+	m_settings_file[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
+	m_settings_file[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
 
-    m_settings_file[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
+	m_settings_file[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
 
-    m_settings_file[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
-    m_settings_file[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);
+	m_settings_file[CFG_KEY_DEFAULT_TEXT_SORT] = static_cast<int>(m_default_text_sort);
+	m_settings_file[CFG_KEY_DEFAULT_MIDI_SORT] = static_cast<int>(m_default_midi_sort);
 
-    m_settings_file[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
+	m_settings_file[CFG_KEY_COMMON_PROFILE] = m_use_common_profile;
 
-    m_settings_file[CFG_KEY_INFO_DISABLED] = m_info_disabled;
-    m_settings_file[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
-    m_settings_file[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
-    m_settings_file[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;
-    m_settings_file[CFG_KEY_INFO_SECONDS] = m_info_seconds;
+	m_settings_file[CFG_KEY_INFO_DISABLED] = m_info_disabled;
+	m_settings_file[CFG_KEY_INFO_POSITION] = static_cast<int>(m_info_position);
+	m_settings_file[CFG_KEY_INFO_OFFSET_X] = m_info_offset_x;
+	m_settings_file[CFG_KEY_INFO_OFFSET_Y] = m_info_offset_y;
+	m_settings_file[CFG_KEY_INFO_SECONDS] = m_info_seconds;
 
-    //IMGUI_API ImVec4        ColorConvertU32ToFloat4(ImU32 in);
-    //IMGUI_API ImU32         ColorConvertFloat4ToU32(const ImVec4& in);
+	std::ofstream stream;
+	std::string filename = get_settings_filename();
 
-    std::ofstream stream;
-    std::string filename = get_settings_filename();
+	if (filename.empty()) {
+		m_text_log.error("Could not determine file name for general settings");
+		return;
+	}
 
-    if (filename.empty()) {
-        m_text_log.error("Could not determine file name for general settings");
-        return;
-    }
+	stream.open(filename, std::ios_base::out | std::ios_base::trunc);
 
-    stream.open(filename, std::ios_base::out | std::ios_base::trunc);
+	if (!stream.is_open()) {
+		m_text_log.error("Could not save general settings file '" + filename + "'");
+		return;
+	}
 
-    if (!stream.is_open()) {
-        m_text_log.error("Could not save general settings file '" + filename + "'");
-        return;
-    }
-
-    stream << m_settings_file;
-    stream.close();
-}
-
-
-/**
- * Sets the text color of titles
- */
-void settings::set_title_color(ImVec4 in_color)
-{
-    m_title_color = in_color;
-}
-
-
-/**
- * Returns the text color of titles
- */
-ImVec4 settings::title_color() const
-{
-    return m_title_color;
-}
-
-
-/**
- * Sets the text color of values
- */
-void settings::set_value_color(ImVec4 in_color)
-{
-    m_value_color = in_color;
-}
-
-
-/**
- * Returns the text color of values
- */
-ImVec4 settings::value_color() const
-{
-    return m_value_color;
+	stream << m_settings_file;
+	stream.close();
 }
 
 
@@ -453,10 +414,9 @@ ImVec4 settings::value_color() const
  */
 std::string settings::get_settings_filename()
 {
-    std::string filename = m_settings_path.string() + std::string(XMIDICTRL_NAME) +
-                           std::string(SETTINGS_FILE_SUFFIX);
+	std::string filename = m_settings_path.string() + std::string(XMIDICTRL_NAME) + std::string(SETTINGS_FILE_SUFFIX);
 
-    return filename;
+	return filename;
 }
 
 } // Namespace xmidictrl

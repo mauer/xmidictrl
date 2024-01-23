@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2022 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -26,44 +26,43 @@ namespace xmidictrl {
 /**
  * Begin a X-Plane command
  */
-void command_tests::begin(text_logger &in_log, std::string_view in_cmd)
+void command_tests::begin(text_logger& in_log, std::string_view in_cmd)
 {
-    m_current_command = in_cmd;
+	m_current_command = in_cmd;
 }
 
 
 /**
  * End a X-Plane command
  */
-void command_tests::end(text_logger &in_log, std::string_view in_cmd)
+void command_tests::end(text_logger& in_log, std::string_view in_cmd)
 {
-    m_current_command.clear();
-    m_last_command = in_cmd;
+	m_current_command.clear();
+	m_last_command = in_cmd;
 }
 
 
 /**
  * Execute a X-Plane command
  */
-void command_tests::execute(text_logger &in_log, std::string_view in_cmd)
-{
-}
+void command_tests::execute(text_logger& in_log, std::string_view in_cmd)
+{}
 
 /**
  * Return the current command
  */
-std::string command_tests::current_command()
+std::string command_tests::current_command() const
 {
-    return m_current_command;
+	return m_current_command;
 }
 
 
 /**
  * Return the last executed command
  */
-std::string command_tests::last_command()
+std::string command_tests::last_command() const
 {
-    return m_last_command;
+	return m_last_command;
 }
 
 } // Namespace xmidictrl

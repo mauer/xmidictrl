@@ -253,7 +253,7 @@ void profile_window::create_tab_device(device& in_device)
         // Button for init
         if (m_current_map_page == map_page::init) {
             ImGui::PushID(1);
-            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+            ImGui::PushStyleColor(ImGuiCol_Text, value_color());
         }
 
         ImGui::SameLine();
@@ -268,7 +268,7 @@ void profile_window::create_tab_device(device& in_device)
         // Button for inbound
         if (m_current_map_page == map_page::inbound) {
             ImGui::PushID(1);
-            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+            ImGui::PushStyleColor(ImGuiCol_Text, value_color());
         }
 
         ImGui::SameLine();
@@ -283,7 +283,7 @@ void profile_window::create_tab_device(device& in_device)
         // Button for outbound
         if (m_current_map_page == map_page::outbound) {
             ImGui::PushID(1);
-            ImGui::PushStyleColor(ImGuiCol_Text, env().settings().value_color());
+            ImGui::PushStyleColor(ImGuiCol_Text, value_color());
         }
 
         ImGui::SameLine();

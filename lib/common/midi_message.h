@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -33,22 +33,24 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 // MIDI direction
-enum class midi_direction {
-    in,
-    out
+enum class midi_direction
+{
+	in,
+	out
 };
 
 
 // MIDI message type
-enum class midi_msg_type {
-    aftertouch,
-    channel_pressure,
-    control_change,
-    note_off,
-    note_on,
-    pitch_bend,
-    program_change,
-    none
+enum class midi_msg_type
+{
+	aftertouch,
+	channel_pressure,
+	control_change,
+	note_off,
+	note_on,
+	pitch_bend,
+	program_change,
+	none
 };
 
 
@@ -64,60 +66,60 @@ const char* const flat_note_names[] = {"C", "Db", "D", "Eb", "E", "F", "Gb", "G"
 
 class midi_message {
 public:
-    midi_message(text_logger& in_log, midi_direction in_direction);
+	midi_message(text_logger& in_log, midi_direction in_direction);
 
-    text_logger& log();
+	text_logger& log();
 
-    void clear();
+	void clear();
 
-    bool parse_message(std::vector<unsigned char>* in_msg);
-    void create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_value);
+	bool parse_message(std::vector<unsigned char>* in_msg);
+	void create_cc_message(unsigned char in_channel, unsigned char in_data, unsigned char in_value);
 
-    bool check();
+	bool check();
 
-    [[nodiscard]] unsigned int mapping_count() const;
-    std::string mapping_text();
-    void add_mapping_text(std::string_view in_map_text);
-    //void add_mapping(const std::shared_ptr<map>& in_map);
+	[[nodiscard]] unsigned int mapping_count() const;
 
-    void set_time(time_point in_time);
-    [[nodiscard]] std::string time() const;
+	std::string mapping_text() const;
+	void add_mapping_text(std::string_view in_map_text);
 
-    void set_port(unsigned int in_port);
-    [[nodiscard]] unsigned int port() const;
+	void set_time(time_point in_time);
+	[[nodiscard]] std::string time() const;
 
-    [[nodiscard]] midi_direction direction() const;
+	void set_port(unsigned int in_port);
+	[[nodiscard]] unsigned int port() const;
 
-    void set_status(unsigned char in_status);
-    [[nodiscard]] unsigned char status() const;
+	[[nodiscard]] midi_direction direction() const;
 
-    void set_data_1(unsigned char in_data_1);
-    [[nodiscard]] char data_1() const;
-    [[nodiscard]] std::string data_1_as_text(note_name_type in_type) const;
+	void set_status(unsigned char in_status);
+	[[nodiscard]] unsigned char status() const;
 
-    void set_data_2(unsigned char in_data_2);
-    [[nodiscard]] char data_2() const;
+	void set_data_1(unsigned char in_data_1);
+	[[nodiscard]] char data_1() const;
+	[[nodiscard]] std::string data_1_as_text(note_name_type in_type) const;
 
-    [[nodiscard]] char channel() const;
+	void set_data_2(unsigned char in_data_2);
+	[[nodiscard]] char data_2() const;
 
-    [[nodiscard]] midi_msg_type type() const;
-    [[nodiscard]] std::string type_as_text() const;
-    [[nodiscard]] std::string type_as_code() const;
+	[[nodiscard]] char channel() const;
+
+	[[nodiscard]] midi_msg_type type() const;
+	[[nodiscard]] std::string type_as_text() const;
+	[[nodiscard]] std::string type_as_code() const;
 
 private:
-    std::unique_ptr<text_logger> m_log;
+	std::unique_ptr<text_logger> m_log;
 
-    std::string m_time {};
-    unsigned int m_port {0};
+	std::string m_time {};
+	unsigned int m_port {0};
 
-    midi_direction m_direction {midi_direction::in};
+	midi_direction m_direction {midi_direction::in};
 
-    char m_status {MIDI_NONE};
-    char m_data_1 {MIDI_NONE};
-    char m_data_2 {MIDI_NONE};
+	char m_status {MIDI_NONE};
+	char m_data_1 {MIDI_NONE};
+	char m_data_2 {MIDI_NONE};
 
-    unsigned int m_mapping_count {0};
-    std::string m_mapping_text {};
+	unsigned int m_mapping_count {0};
+	std::string m_mapping_text {};
 };
 
 } // Namespace xmidictrl

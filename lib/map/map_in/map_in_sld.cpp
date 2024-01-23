@@ -125,7 +125,7 @@ bool map_in_sld::check(text_logger& in_log, const device_settings& in_dev_settin
         result = false;
     }
 
-    if (m_data_2_margin < 0 || m_data_2_margin > 25) {
+    if (m_data_2_margin > 25) {
         in_log.error(source_line());
         in_log.error(fmt::format(" --> Parameter '{}' has to be between 0 and 25", c_cfg_data_2_margin));
         result = false;
