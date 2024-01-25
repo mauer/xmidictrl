@@ -15,22 +15,28 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_DEVICE_LIST_H
-#define XMC_DEVICE_LIST_H
+#ifndef XMC_VIRTUAL_MIDI_DEVICE_H
+#define XMC_VIRTUAL_MIDI_DEVICE_H
 
 // Standard
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <map>
 #include <memory>
 #include <queue>
-#include <vector>
+#include <set>
+#include <string>
+#include <string_view>
+#include <text_logger.h>
+#include <thread>
 
 // XMidiCtrl
 #include "device.h"
-#include "device_settings.h"
-#include "environment.h"
-#include "midi_device.h"
+#include "map_in.h"
+#include "map_in_list.h"
 #include "midi_logger.h"
-#include "text_logger.h"
-#include "virtual_midi_device.h"
+#include "types.h"
 
 namespace xmidictrl {
 
@@ -38,41 +44,23 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class device_list {
-public:
-	explicit device_list(environment& in_env);
-	~device_list();
+class virtual_midi_device : public device {
+  public:
+	virtual_midi_device(text_logger& in_text_log,
+						midi_logger& in_midi_log,
+						environment& in_env,
+						std::unique_ptr<device_settings> in_settings);
+	~virtual_midi_device() override = default;
 
-	device* create_midi_device(text_logger& in_text_log,
-							   midi_logger& in_midi_log,
-							   std::unique_ptr<device_settings> in_settings);
+	// no copying or copy assignments are allowed
+	virtual_midi_device(virtual_midi_device const&) = delete;
+	virtual_midi_device& operator=(virtual_midi_device const&) = delete;
 
-	device* create_virtual_device(text_logger& in_text_log,
-								  midi_logger& in_midi_log,
-								  std::unique_ptr<device_settings> in_settings);
+	device_type type() override;
 
-	std::vector<std::unique_ptr<device>>::iterator begin();
-	std::vector<std::unique_ptr<device>>::iterator end();
-
-	bool open_connections();
-	void close_connections();
-
-	virtual_midi_device* find_virtual_device();
-
-	void update_sl_values(text_logger& in_log, environment& in_env);
-
-	void process_init_mappings();
-	void process_outbound_mappings();
-
-	void clear();
-	size_t size();
-
-private:
-	environment& m_env;
-
-	std::vector<std::unique_ptr<device>> m_device_list {};
+	void process_inbound_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_DEVICE_LIST_H
+#endif // XMC_VIRTUAL_MIDI_DEVICE_H

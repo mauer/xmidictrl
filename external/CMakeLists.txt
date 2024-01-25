@@ -52,7 +52,11 @@ if (WIN32)
 endif()
 
 add_subdirectory(rtmidi)
- 
+
+# Add HID Api
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory(hidapi)
+
 # Add the X-Plane SDK
 include(${CMAKE_CURRENT_LIST_DIR}/xpsdk.cmake)
 

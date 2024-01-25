@@ -20,6 +20,9 @@
 // Standard
 #include <mutex>
 
+// HID Api
+#include "hidapi.h"
+
 // XMidiCtrl
 #include "about_window.h"
 #include "conversions.h"
@@ -187,6 +190,9 @@ void plugin::enable()
 {
     m_plugin_log->info("Plugin enabled");
 
+	// enabled hid api
+	hid_init();
+
     // create all required menu entries
     m_menu->create_menu();
 
@@ -234,6 +240,9 @@ void plugin::disable()
 
     // close current profile
     close_profile();
+
+	// disable hid api
+	hid_exit();
 
     m_plugin_log->info("Plugin disabled");
 }

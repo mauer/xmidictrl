@@ -68,7 +68,7 @@ device* device_list::create_virtual_device(text_logger& in_text_log,
 										   midi_logger& in_midi_log,
 										   std::unique_ptr<device_settings> in_settings)
 {
-	auto dev = std::make_unique<virtual_device>(in_text_log, in_midi_log, m_env, std::move(in_settings));
+	auto dev = std::make_unique<virtual_midi_device>(in_text_log, in_midi_log, m_env, std::move(in_settings));
 	return m_device_list.emplace_back(std::move(dev)).get();
 }
 
@@ -129,11 +129,11 @@ void device_list::close_connections()
 /**
  * Find and return the virtual device (if available, otherwise a nullptr)
  */
-virtual_device* device_list::find_virtual_device()
+virtual_midi_device* device_list::find_virtual_device()
 {
 	for (auto const& device: m_device_list) {
 		if (device != nullptr && device->type() == device_type::virtual_device)
-			return &dynamic_cast<virtual_device&>(*device);
+			return &dynamic_cast<virtual_midi_device&>(*device);
 	}
 
 	return nullptr;

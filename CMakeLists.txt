@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2024 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 1.13 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
+project(XMidiCtrl VERSION 1.99 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
@@ -34,8 +34,6 @@ configure_file(
         "${PROJECT_SOURCE_DIR}/version.h.in"
         "${PROJECT_BINARY_DIR}/version.h"
 )
-
-#message("-- Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
 if (MSVC)
     add_definitions("/FI${PROJECT_BINARY_DIR}/version.h")

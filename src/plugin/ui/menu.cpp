@@ -37,7 +37,7 @@ void menu::create_menu()
 	m_menu_container = XPLMAppendMenuItem(XPLMFindPluginsMenu(), XMIDICTRL_NAME, nullptr, 0);
 	m_menu_id = XPLMCreateMenu(XMIDICTRL_NAME, XPLMFindPluginsMenu(), m_menu_container, event_handler, this);
 
-	XPLMAppendMenuItem(m_menu_id, "Show MIDI Devices", (void*) menu_show_devices_window, 0);
+	XPLMAppendMenuItem(m_menu_id, "Show Devices", (void*) menu_show_devices_window, 0);
 
 	XPLMAppendMenuSeparator(m_menu_id);
 

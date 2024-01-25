@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,52 +15,54 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_VIRTUAL_DEVICE_H
-#define XMC_VIRTUAL_DEVICE_H
+#include "hid.h"
 
-// Standard
-#include <atomic>
-#include <chrono>
-#include <condition_variable>
-#include <map>
-#include <memory>
-#include <text_logger.h>
-#include <set>
-#include <string>
-#include <string_view>
-#include <thread>
-#include <queue>
+// fmt
+#include "fmt/format.h"
 
-// XMidiCtrl
-#include "device.h"
-#include "map_in.h"
-#include "map_in_list.h"
-#include "midi_logger.h"
-#include "types.h"
+// HID Api
+#include "hidapi.h"
 
 namespace xmidictrl {
 
 //---------------------------------------------------------------------------------------------------------------------
-//   CLASS
+//   PUBLIC
 //---------------------------------------------------------------------------------------------------------------------
 
-class virtual_device : public device {
-public:
-    virtual_device(text_logger& in_text_log,
-                   midi_logger& in_midi_log,
-                   environment& in_env,
-                   std::unique_ptr<device_settings> in_settings);
-    ~virtual_device() override = default;
+/**
+ * Returns all list of all connected HID devices
+ * @return List of all HID devices with detailed information
+ */
+std::vector<std::unique_ptr<hid_device_data>> hid::read_devices()
+{
+	auto devices = std::vector<std::unique_ptr<hid_device_data>>();
+	struct hid_device_info* hid_devs;
 
-    // no copying or copy assignments are allowed
-    virtual_device(virtual_device const&) = delete;
-    virtual_device& operator=(virtual_device const&) = delete;
+	hid_devs = hid_enumerate(0x0, 0x0);
 
-    device_type type() override;
+	for (; hid_devs; hid_devs = hid_devs->next) {
+		if (hid_devs->interface_number == -1)
+			continue;
 
-    void process_inbound_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
-};
+		auto dev = std::make_unique<hid_device_data>();
+
+		// convert manufacturer string
+		auto ws = std::wstring(hid_devs->manufacturer_string);
+		dev->manufacturer_string = std::string(ws.begin(), ws.end());
+
+		// convert product string
+		ws = std::wstring(hid_devs->product_string);
+		dev->product_string = std::string(ws.begin(), ws.end());
+
+		dev->vendor_id = hid_devs->vendor_id;
+		dev->product_id = hid_devs->product_id;
+
+		devices.push_back(std::move(dev));
+	}
+
+	hid_free_enumeration(hid_devs);
+
+	return devices;
+}
 
 } // Namespace xmidictrl
-
-#endif // XMC_VIRTUAL_DEVICE_H

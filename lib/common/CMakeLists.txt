@@ -25,6 +25,7 @@ message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
 # Add sources
 set(COMMON_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/hid.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_param.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_param_in.cpp
@@ -40,5 +41,5 @@ set(COMMON_SRC
 add_library(${PROJECT_NAME} STATIC ${COMMON_SRC})
 add_library(xmidictrl::common ALIAS ${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only)
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only hidapi::hidapi)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

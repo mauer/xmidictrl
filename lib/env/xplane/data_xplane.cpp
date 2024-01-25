@@ -212,6 +212,8 @@ bool data_xplane::write(text_logger &in_log, std::string_view in_name, std::stri
 {
     const auto item = retrieve_data(in_name);
 
+	in_log.error("Marco");
+
     if (item == nullptr)
         return false;
 
@@ -364,7 +366,7 @@ data_item *data_xplane::retrieve_data(std::string_view in_name)
         dataref_name = dataref_name.substr(0, dataref_name.find('['));
     }
 
-    if (m_data_cache.contains(dataref_name)) {
+    if (!m_data_cache.contains(dataref_name)) {
         auto item = std::make_unique<data_item>();
 
         item->dataref = XPLMFindDataRef(dataref_name.c_str());

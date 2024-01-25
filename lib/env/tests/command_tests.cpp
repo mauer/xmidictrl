@@ -26,7 +26,7 @@ namespace xmidictrl {
 /**
  * Begin a X-Plane command
  */
-void command_tests::begin(text_logger& in_log, std::string_view in_cmd)
+void command_tests::begin(text_logger&, std::string_view in_cmd)
 {
 	m_current_command = in_cmd;
 }
@@ -35,7 +35,7 @@ void command_tests::begin(text_logger& in_log, std::string_view in_cmd)
 /**
  * End a X-Plane command
  */
-void command_tests::end(text_logger& in_log, std::string_view in_cmd)
+void command_tests::end(text_logger&, std::string_view in_cmd)
 {
 	m_current_command.clear();
 	m_last_command = in_cmd;
