@@ -12,3 +12,4 @@
  + Add design mode
  + Check Range mode for encoders
  + Check default encoder mode
+ + Add option to repeat commands while a button is held down
