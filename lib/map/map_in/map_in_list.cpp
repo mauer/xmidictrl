@@ -82,11 +82,7 @@ void map_in_list::create_mappings(text_logger& in_log,
 					break;
 
 				case slider:
-					if (!in_is_virtual)
-						mapping = std::make_shared<map_in_sld>(in_env);
-					else
-						in_log.error(log_prefix + "Mapping " + std::to_string(map_no)
-									 + " :: mapping type not supported for virtual devices");
+					mapping = std::make_shared<map_in_sld>(in_env);
 					break;
 
 				case none:

@@ -7,6 +7,8 @@
 + Updated FontAwesome to latest version 6.4.2
 + Moved parameter sl_dataref from profile to device, to allow a sl_dataref for each device
 + Added sublayer support for outbound messages
++ Enabled slider mappings for virtual devices
++ Renamed velocity to data_2 to be more aligned with the midi specification
 
 -----------------------------------------------------------------------------------------------------------------------
 
