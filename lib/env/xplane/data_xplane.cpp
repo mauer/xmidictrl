@@ -364,7 +364,7 @@ data_item *data_xplane::retrieve_data(std::string_view in_name)
         dataref_name = dataref_name.substr(0, dataref_name.find('['));
     }
 
-    if (m_data_cache.contains(dataref_name)) {
+    if (!m_data_cache.contains(dataref_name)) {
         auto item = std::make_unique<data_item>();
 
         item->dataref = XPLMFindDataRef(dataref_name.c_str());
