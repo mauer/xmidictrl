@@ -113,6 +113,8 @@ private:
 	float m_value_min {0.0f};
 	float m_value_max {0.0f};
 
+	bool m_value_wrap {false};
+
 	std::string m_command_up {};
 	std::string m_command_down {};
 
