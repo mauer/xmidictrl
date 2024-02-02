@@ -71,6 +71,7 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 | modifier_fast_down | Modifier which will be used when the knob is turned quite fast to the left  (relative mode, only)                 |
 | value_min          | Minimum value                                                                                                     |
 | value_max          | Maximum value                                                                                                     |
+| value_wrap         | Enables value wrapping between `value_min` (inclusive) and `value_max` (exclusive). (default is false)            |
 
 ### Examples
 
@@ -78,5 +79,8 @@ The modifiers are expected to be numbers. They can be integers, doubles or float
 { ch = 11, cc = 1, mode = "range", type = "enc", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02 }
 
 { ch = 11, cc = 4, mode = "relative", type = "enc", dataref = "ixeg/733/altimeter/altimeter_bug_pilot_ind", modifier_up = 0.02, modifier_down = -0.02, modifier_fast_up = 0.20, modifier_fast_down = -0.20 }
+
+{ ch = 11, cc = 5, type = "enc", dataref = "sim/cockpit/radios/nav1_obs_degm", modifier_up = 1, modifier_down = -1, value_min = 1, value_max = 361, value_wrap = true },
 ```
-*The examples above change the altimeter bug for the pilot in the IXEG 737-300.*
+*The first two examples above change the altimeter bug for the pilot in the IXEG 737-300.
+The third example demonstrates the use of `value_min`, `value_max` and `value_wrap` to archive a wrapping nav course.*
