@@ -19,21 +19,36 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(xmidictrl-env)
+project(xmidictrl-env-xplane)
 
 message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
+# Include fonts
+include_directories(${FONTS_INCLUDEDIR})
+
 # Add sources
-set(ENV_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
-        )
+set(ENV_SRC_XPLANE
+        ${CMAKE_CURRENT_LIST_DIR}/cmd_xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/data_xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/env_xplane.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xplane_window.cpp
+)
+
+# Apple deprecated OpenGL...yea, we know, keep quiet
+if (APPLE)
+    set_source_files_properties(
+            ${CMAKE_CURRENT_LIST_DIR}/ImgFontAtlas.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
+            PROPERTIES
+            COMPILE_OPTIONS "-Wno-deprecated-declarations")
+endif()
 
 # Build static library for X-Plane environment
 add_library(${PROJECT_NAME} STATIC)
 
-target_sources(${PROJECT_NAME} PUBLIC ${ENV_SRC})
-target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only imgui xpsdk xmidictrl-common)
+target_sources(${PROJECT_NAME} PUBLIC ${ENV_SRC_XPLANE})
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only imgui xpsdk xmidictrl-common xmidictrl-env)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

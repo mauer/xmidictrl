@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -17,10 +17,10 @@
 
 #include "device.h"
 
+// Standard
 #include <utility>
 
 // XMidiCtrl
-#include "conversions.h"
 #include "map_in_cmd.h"
 
 namespace xmidictrl {
@@ -33,12 +33,15 @@ namespace xmidictrl {
  * Constructor
  */
 device::device(text_logger& in_text_log,
-               midi_logger& in_midi_log,
-               environment& in_env,
-               std::unique_ptr<device_settings> in_settings)
-    : m_text_log(in_text_log), m_midi_log(in_midi_log), m_env(in_env), m_settings(std::move(in_settings))
+			   midi_logger& in_midi_log,
+			   environment& in_env,
+			   std::unique_ptr<device_settings> in_settings)
+	: m_text_log(in_text_log)
+	, m_midi_log(in_midi_log)
+	, m_env(in_env)
+	, m_settings(std::move(in_settings))
 {
-    m_map_in = std::make_unique<map_in_list>();
+	m_map_in = std::make_unique<map_in_list>();
 }
 
 
@@ -53,7 +56,7 @@ device::device(text_logger& in_text_log,
  */
 environment& device::env()
 {
-    return m_env;
+	return m_env;
 }
 
 
@@ -62,7 +65,7 @@ environment& device::env()
  */
 device_settings& device::settings()
 {
-    return *m_settings;
+	return *m_settings;
 }
 
 
@@ -71,7 +74,7 @@ device_settings& device::settings()
  */
 map_in_list& device::mapping_in()
 {
-    return *m_map_in;
+	return *m_map_in;
 }
 
 
@@ -80,7 +83,7 @@ map_in_list& device::mapping_in()
  */
 std::string device::sl_value() const
 {
-    return m_sl_value;
+	return m_sl_value;
 }
 
 
@@ -89,7 +92,7 @@ std::string device::sl_value() const
  */
 void device::set_sl_value(std::string_view in_sl_value)
 {
-    m_sl_value = in_sl_value;
+	m_sl_value = in_sl_value;
 }
 
 
@@ -104,7 +107,7 @@ void device::set_sl_value(std::string_view in_sl_value)
  */
 text_logger& device::text_log()
 {
-    return m_text_log;
+	return m_text_log;
 }
 
 
@@ -113,7 +116,7 @@ text_logger& device::text_log()
  */
 midi_logger& device::midi_log()
 {
-    return m_midi_log;
+	return m_midi_log;
 }
 
 } // Namespace xmidictrl

@@ -46,7 +46,7 @@ elseif (UNIX)
     message("Build unit tests for Linux Platform")
 endif ()
 
-target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-map-tests)
+target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-dev)
 
 include(${CMAKE_SOURCE_DIR}/external/doctest/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${PROJECT_NAME})

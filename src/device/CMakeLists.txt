@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2024 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,20 +15,22 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-
 # Set required CMake version
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-set(XMIDICTRL_LIB_MAP xmidictrl-map)
-project(${XMIDICTRL_LIB_MAP})
+set(XMIDICTRL_LIB_DEV xmidictrl-dev)
+project(${XMIDICTRL_LIB_DEV})
 
-message("-- Configuring build scripts for library ${XMIDICTRL_LIB_MAP}")
-
-message("---- Directory: src/map")
+message("-- Configuring build scripts for library ${XMIDICTRL_LIB_DEV}")
 
 # Add sources
-set(MAP_SRC
+set(DEV_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/conversions.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/device.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/device_list.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/midi_device.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/virtual_device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_cmd.cpp
@@ -48,18 +50,11 @@ set(MAP_SRC
         )
 
 # Build static library
-add_library(${XMIDICTRL_LIB_MAP} STATIC ${MAP_SRC})
-add_library(${XMIDICTRL_LIB_MAP}-tests STATIC ${MAP_SRC})
+add_library(${XMIDICTRL_LIB_DEV} STATIC ${DEV_SRC})
 
-target_link_libraries(${XMIDICTRL_LIB_MAP} PUBLIC toml11 fmt::fmt-header-only xmidictrl-common xmidictrl-env)
-target_link_libraries(${XMIDICTRL_LIB_MAP}-tests PUBLIC toml11 fmt::fmt-header-only xmidictrl-common xmidictrl-env-tests)
+target_link_libraries(${XMIDICTRL_LIB_DEV} PUBLIC toml11 fmt::fmt-header-only rtmidi xmidictrl-common xmidictrl-env)
 
-target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_init)
-target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_in)
-target_include_directories(${XMIDICTRL_LIB_MAP} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_out)
-
-target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_init)
-target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_in)
-target_include_directories(${XMIDICTRL_LIB_MAP}-tests PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_out)
+target_include_directories(${XMIDICTRL_LIB_DEV} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${XMIDICTRL_LIB_DEV} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_init)
+target_include_directories(${XMIDICTRL_LIB_DEV} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_in)
+target_include_directories(${XMIDICTRL_LIB_DEV} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/map_out)
