@@ -15,9 +15,19 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("-- Configuring build scripts for ${PROJECT_NAME}")
-
 set(CMAKE_CXX_STANDARD 20)
+
+# Include sub directories
+message("-- Configuring build scripts for library common")
+add_subdirectory(common)
+
+message("-- Configuring build scripts for library environment")
+add_subdirectory(env)
+
+message("-- Configuring build scripts for library mappings")
+add_subdirectory(map)
+
+message("-- Configuring build scripts for ${PROJECT_NAME}")
 
 # Include fonts
 include_directories(${FONTS_INCLUDEDIR})
@@ -28,7 +38,6 @@ include_directories(${IMGUI_INCLUDEDIR})
 # Build shared library
 add_library(${PROJECT_NAME} SHARED)
 
-# Include sub directories
 add_subdirectory(profile)
 
 include(${CMAKE_CURRENT_LIST_DIR}/ui/CMakeLists.txt)
