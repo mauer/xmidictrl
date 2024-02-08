@@ -121,6 +121,7 @@ const char* const CFG_KEY_VALUES_PUSH = "values_push";
 const char* const CFG_KEY_VALUES_PULL = "values_pull";
 const char* const CFG_KEY_VALUE_MIN = "value_min";
 const char* const CFG_KEY_VALUE_MAX = "value_max";
+const char* const CFG_KEY_VALUE_WRAP = "value_wrap";
 const char* const CFG_KEY_VALUE_ON = "value_on";
 const char* const CFG_KEY_VALUE_OFF = "value_off";
 const char* const CFG_KEY_VIRTUAL_CHANNEL = "virtual_channel";

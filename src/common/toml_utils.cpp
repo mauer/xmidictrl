@@ -123,6 +123,37 @@ bool toml_utils::is_array(text_logger& in_log, toml::value& in_data, std::string
 	return false;
 }
 
+/**
+ * Read a boolean value
+ */
+bool toml_utils::read_bool(text_logger& in_log, toml::value& in_data, std::string_view in_name, bool in_fallback)
+{
+	if (in_name.empty()) {
+		in_log.error("Internal error (toml_utils::read_bool --> name is empty)");
+		return in_fallback;
+	}
+
+	bool value = in_fallback;
+
+	try {
+		// read dataref
+		if (contains(in_log, in_data, in_name)) {
+			if (in_data[in_name.data()].is_boolean()) {
+				value = in_data[in_name.data()].as_boolean();
+				in_log.debug_param(in_data.location().line(), in_name, std::to_string(value));
+			} else {
+				in_log.error_line(in_data.location().line(), in_data.location().line_str());
+				in_log.error(" --> Parameter '" + std::string(in_name) + "' is not a boolean");
+			}
+		}
+	} catch (toml::type_error& error) {
+		in_log.error_line(in_data.location().line(), in_data.location().line_str());
+		in_log.error(" --> Error reading mapping");
+		in_log.error(error.what());
+	}
+
+	return value;
+}
 
 /**
  * Read the value of a string parameter

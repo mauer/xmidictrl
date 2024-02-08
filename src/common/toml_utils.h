@@ -40,6 +40,8 @@ public:
                          std::string_view in_name);
     static bool is_array(text_logger& in_log, toml::value& in_data, std::string_view in_name);
 
+	static bool read_bool(text_logger& in_log, toml::value& in_data, std::string_view in_name, bool in_fallback = false);
+
     static std::string read_string(text_logger& in_log, toml::value& in_data, std::string_view in_name);
 
     static std::set<std::string> read_str_set_array(text_logger& in_log,
