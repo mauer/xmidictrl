@@ -59,10 +59,11 @@ void inbound_worker::process()
 			continue;
 
 		// perform the action related to the mapping
-		if (!task->mapping->execute(std::make_unique<map_param_in>(task->sl_value, task->msg).get())) {
+		auto result = task->mapping->execute(std::make_unique<map_param_in>(task->sl_value, task->msg).get());
+
+		if (!result->completed)
 			// store in temp list
 			temp_list.push(task);
-		}
 
 		// delete entry from list
 		m_tasks.pop();

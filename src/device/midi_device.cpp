@@ -287,7 +287,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 					}
 
 					default:
-						text_log().warn("Invalid MIDI velocity '" + std::to_string(midi_msg->data_2())
+						text_log().warn("Invalid MIDI data 2 '" + std::to_string(midi_msg->data_2())
 										+ "' for a Push&Pull mapping");
 						break;
 				}
@@ -319,6 +319,8 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 				task->sl_value = sl_value();
 
 				env().worker().add_task(task);
+
+				text_log().debug("task added");
 			}
 		}
 	}
