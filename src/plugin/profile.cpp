@@ -456,6 +456,20 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 			}
 		}
 
+		// sl dataref
+		if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_SL_DATAREF))
+			settings->sl_dataref = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_SL_DATAREF);
+
+		if (!settings->sl_dataref.empty()) {
+			m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");
+
+			if (!m_env.drf().check(settings->sl_dataref)) {
+				m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Dataref '" + settings->sl_dataref
+									 + "' not found");
+				return {};
+			}
+		}
+
 		// the following parameters are necessary for MIDI devices only
 		if (!in_is_virtual) {
 			// device number
@@ -495,20 +509,6 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 			// mode outbound
 			settings->send_mode = device_settings::send_mode_from_code(
 				toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_OUT));
-
-			// load general settings for the profile
-			if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_SL_DATAREF))
-				settings->sl_dataref = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_SL_DATAREF);
-
-			if (!settings->sl_dataref.empty()) {
-				m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");
-
-				if (!m_env.drf().check(settings->sl_dataref)) {
-					m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Dataref '" + settings->sl_dataref
-										 + "' not found");
-					return {};
-				}
-			}
 
 			// default encoder mode
 			settings->default_enc_mode = map_in_enc::encoder_mode_from_code(
