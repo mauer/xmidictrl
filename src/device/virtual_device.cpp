@@ -126,6 +126,9 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
 
             task->mapping = mapping;
 
+			// set the current dataref value
+			task->sl_value = sl_value();
+
             env().worker().add_task(task);
         }
     }
