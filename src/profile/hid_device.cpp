@@ -15,7 +15,7 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "virtual_midi_device.h"
+#include "hid_device.h"
 
 // fmt
 #include "fmt/format.h"
@@ -34,14 +34,14 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-virtual_midi_device::virtual_midi_device(text_logger& in_text_log,
-										 midi_logger& in_midi_log,
+hid_device::hid_device(text_logger& in_text_log,
+										 hid_logger& in_hid_log,
 										 environment& in_env,
 										 std::unique_ptr<device_settings> in_settings)
 	: device(in_text_log, in_env, std::move(in_settings))
-	, m_midi_log(in_midi_log)
+	, m_hid_log(in_hid_log)
 {
-	in_text_log.info(fmt::format("Created new virtual MIDI device :: Name = '{}'", settings().name));
+	in_text_log.info(fmt::format("Created new HID device :: Name = '{}'", settings().name));
 }
 
 
@@ -54,20 +54,18 @@ virtual_midi_device::virtual_midi_device(text_logger& in_text_log,
 /**
  * Return the device type
  */
-device_type virtual_midi_device::type()
+device_type hid_device::type()
 {
-	return device_type::virtual_midi_device;
+	return device_type::hid_device;
 }
 
 
 /**
- * Process an inbound midi message
+ * Process an inbound hid event
  */
-void virtual_midi_device::process_inbound_message(unsigned char in_channel,
-												  unsigned char in_data,
-												  unsigned char in_velocity)
+void hid_device::process_inbound_event()
 {
-	// create a regular midi message
+	/*// create a regular midi message
 	std::shared_ptr<midi_message> midi_msg = std::make_shared<midi_message>(text_log(), midi_direction::in);
 	midi_msg->create_cc_message(in_channel, in_data, in_velocity);
 
@@ -131,7 +129,7 @@ void virtual_midi_device::process_inbound_message(unsigned char in_channel,
 
 			env().worker().add_task(task);
 		}
-	}
+	}*/
 }
 
 } // Namespace xmidictrl

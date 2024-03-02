@@ -44,7 +44,8 @@ midi_device::midi_device(text_logger& in_text_log,
 						 midi_logger& in_midi_log,
 						 environment& in_env,
 						 std::unique_ptr<device_settings> in_settings)
-	: device(in_text_log, in_midi_log, in_env, std::move(in_settings))
+	: device(in_text_log, in_env, std::move(in_settings))
+	, m_midi_log(in_midi_log)
 {
 	try {
 		// create mapping classes
@@ -250,7 +251,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 		midi_msg->set_port(settings().port_in);
 
 		// log MIDI in message
-		midi_log().add(midi_msg);
+		m_midi_log.add(midi_msg);
 		text_log().debug(
 			"Inbound message from device '" + settings().name + "' on port '" + std::to_string(settings().port_in)
 			+ "' :: " + "Status = '" + std::to_string(midi_msg->status()) + "', " + "Data 1 = '"
@@ -500,14 +501,14 @@ void midi_device::add_outbound_task(const std::unique_ptr<outbound_task>& in_tas
 	// add message for internal list, but only if the dataref value has been changed, otherwise the logging will
 	// increase very quickly
 	if (in_task->data_changed) {
-		midi_log().add(msg);
+		m_midi_log.add(msg);
 		text_log().debug("Outbound message for device '" + settings().name + "' on port '"
 						 + std::to_string(settings().port_out) + "' :: " + "Status = '" + std::to_string(msg->status())
 						 + "', " + "Data 1 = '" + std::to_string(msg->data_1()) + "', " + "Data 2 = '"
 						 + std::to_string(msg->data_2()) + "'");
 	}
 
-	std::lock_guard<std::mutex> lock(m_outbound_mutex);
+	std::scoped_lock lock(m_outbound_mutex);
 
 	m_outbound_msg.push(msg);
 	m_new_outbound_task.notify_one();

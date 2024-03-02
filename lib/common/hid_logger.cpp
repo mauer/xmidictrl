@@ -15,13 +15,10 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#include "device.h"
+#include "hid_logger.h"
 
-#include <utility>
-
-// XMidiCtrl
-#include "conversions.h"
-#include "map_in_cmd.h"
+// Standard
+#include <mutex>
 
 namespace xmidictrl {
 
@@ -32,13 +29,10 @@ namespace xmidictrl {
 /**
  * Constructor
  */
-device::device(text_logger& in_text_log, environment& in_env, std::unique_ptr<device_settings> in_settings)
-	: m_text_log(in_text_log)
-	, m_env(in_env)
-	, m_settings(std::move(in_settings))
-{
-	m_map_in = std::make_unique<map_in_list>();
-}
+hid_logger::hid_logger(bool in_enabled, int in_max_messages)
+	: m_enabled(in_enabled)
+	, m_max_messages(in_max_messages)
+{}
 
 
 
@@ -48,62 +42,108 @@ device::device(text_logger& in_text_log, environment& in_env, std::unique_ptr<de
 //---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the environment
+ * Clear all messages
  */
-environment& device::env()
+void hid_logger::clear()
 {
-	return m_env;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	m_events.clear();
 }
 
 
 /**
- * Return the device settings
+ * Return the number of messages
  */
-device_settings& device::settings()
+size_t hid_logger::count()
 {
-	return *m_settings;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	return m_events.size();
 }
 
 
 /**
- * Return the inbound mapping list
+ * Enable hid logging
  */
-map_in_list& device::mapping_in()
+void hid_logger::enable()
 {
-	return *m_map_in;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	m_enabled = true;
 }
 
 
 /**
- * Return the current sublayer dataref value
+ * Disable hid logging
  */
-std::string device::sl_value() const
+void hid_logger::disable()
 {
-	return m_sl_value;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	m_enabled = false;
 }
 
 
 /**
- * Set the sublayer dataref value
+ * Set the maximum number of hid events in the logger
+ *
+ * @param in_max_events max. number of events
  */
-void device::set_sl_value(std::string_view in_sl_value)
+void hid_logger::set_max_events(int in_max_events)
 {
-	m_sl_value = in_sl_value;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	m_max_events = in_max_events;
+
+	adjust_log_size();
 }
 
 
+/**
+ * Return a specific hid event
+ */
+hid_event* hid_logger::event(int in_index)
+{
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
 
+	return m_events.at(in_index).get();
+}
 
-//---------------------------------------------------------------------------------------------------------------------
-//   PROTECTED
-//---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Return the text logger
+ * Log a hid ev
  */
-text_logger& device::text_log()
+void hid_logger::add(const std::shared_ptr<hid_event>& in_evt)
 {
-	return m_text_log;
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	if (!m_enabled)
+		return;
+
+	adjust_log_size();
+
+	m_events.push_back(in_evt);
+}
+
+
+/**
+ * Adjust the log size depending on the current settings
+ */
+void hid_logger::adjust_log_size()
+{
+	std::mutex mutex;
+	std::scoped_lock lock(mutex);
+
+	while (m_events.size() >= m_max_events)
+		m_events.pop_front();
 }
 
 } // Namespace xmidictrl

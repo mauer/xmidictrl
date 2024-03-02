@@ -15,7 +15,7 @@ title   = "MY profile with a virtual device"
 version = "1.00"
 
 # Virtual device
-[virtual_device]
+[virtual_midi_device]
 name       = "Virtual device"
 mapping_in = [
   { ch = 16, cc = 1, type = "cmd", command = "sim/autopilot/fdir_toggle" },

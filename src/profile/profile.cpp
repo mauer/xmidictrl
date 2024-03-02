@@ -584,7 +584,7 @@ void profile::create_device_mappings(toml::value in_params, device& in_device, s
 		in_device.mapping_in().create_mappings(*m_profile_log,
 											   in_params[CFG_KEY_MAPPING_IN].as_array(),
 											   m_env,
-											   in_device.type() == device_type::virtual_device,
+											   in_device.type() == device_type::virtual_midi_device,
 											   in_device.settings(),
 											   in_inc_name,
 											   m_config);
@@ -611,7 +611,7 @@ void profile::create_device_mappings(toml::value in_params, device& in_device, s
  */
 std::string profile::get_log_prefix_from_device(device& in_device)
 {
-	if (in_device.type() == device_type::virtual_device) {
+	if (in_device.type() == device_type::virtual_midi_device) {
 		return get_log_prefix(true);
 	} else {
 		auto& midi_dev = dynamic_cast<midi_device&>(in_device);

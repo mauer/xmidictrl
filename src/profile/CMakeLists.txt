@@ -33,6 +33,7 @@ set(PROFILE_SRC
         ${CMAKE_CURRENT_LIST_DIR}/conversions.cpp
         ${CMAKE_CURRENT_LIST_DIR}/device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/device_list.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/hid_device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/profile.cpp
         ${CMAKE_CURRENT_LIST_DIR}/virtual_midi_device.cpp

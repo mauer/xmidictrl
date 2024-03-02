@@ -132,7 +132,7 @@ void device_list::close_connections()
 virtual_midi_device* device_list::find_virtual_device()
 {
 	for (auto const& device: m_device_list) {
-		if (device != nullptr && device->type() == device_type::virtual_device)
+		if (device != nullptr && device->type() == device_type::virtual_midi_device)
 			return &dynamic_cast<virtual_midi_device&>(*device);
 	}
 

@@ -35,7 +35,7 @@ namespace xmidictrl {
 void inbound_worker::add_task(const std::shared_ptr<inbound_task>& in_task)
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	m_tasks.push(in_task);
 }
@@ -47,7 +47,7 @@ void inbound_worker::add_task(const std::shared_ptr<inbound_task>& in_task)
 void inbound_worker::process()
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	std::queue<std::shared_ptr<inbound_task>> temp_list;
 

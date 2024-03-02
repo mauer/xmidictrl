@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_VIRTUAL_MIDI_DEVICE_H
-#define XMC_VIRTUAL_MIDI_DEVICE_H
+#ifndef XMC_HID_DEVICE_H
+#define XMC_HID_DEVICE_H
 
 // Standard
 #include <atomic>
@@ -33,9 +33,9 @@
 
 // XMidiCtrl
 #include "device.h"
+#include "hid_logger.h"
 #include "map_in.h"
 #include "map_in_list.h"
-#include "midi_logger.h"
 #include "types.h"
 
 namespace xmidictrl {
@@ -44,25 +44,25 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class virtual_midi_device : public device {
+class hid_device : public device {
 public:
-	virtual_midi_device(text_logger& in_text_log,
-						midi_logger& in_midi_log,
-						environment& in_env,
-						std::unique_ptr<device_settings> in_settings);
-	~virtual_midi_device() override = default;
+	hid_device(text_logger& in_text_log,
+			   hid_logger& in_hid_log,
+			   environment& in_env,
+			   std::unique_ptr<device_settings> in_settings);
+	~hid_device() override = default;
 
 	// no copying or copy assignments are allowed
-	virtual_midi_device(virtual_midi_device const&) = delete;
-	virtual_midi_device& operator=(virtual_midi_device const&) = delete;
+	hid_device(hid_device const&) = delete;
+	hid_device& operator=(hid_device const&) = delete;
 
 	device_type type() override;
 
-	void process_inbound_message(unsigned char in_channel, unsigned char in_data, unsigned char in_velocity);
+	void process_inbound_event();
 
 private:
 	// members
-	midi_logger& m_midi_log;
+	hid_logger& m_hid_log;
 };
 
 } // Namespace xmidictrl

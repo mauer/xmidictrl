@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -106,6 +106,10 @@ void map_in_enc::read_config(text_logger& in_log, toml::value& in_data, toml::va
             m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false);
             m_value_max_defined = true;
         }
+
+		// read value wrap
+		if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_WRAP))
+			m_value_wrap = toml_utils::read_bool(in_log, in_data, CFG_KEY_VALUE_WRAP);
     } else {
         in_log.debug_line(in_data.location().line(), "Use 'command' mode for encoder mapping");
         m_enc_map_type = encoder_map_type::command;
@@ -149,6 +153,7 @@ void map_in_enc::read_config(text_logger& in_log, toml::value& in_data, toml::va
     }
 }
 
+
 /**
  * Check the mapping
  */
@@ -184,6 +189,12 @@ bool map_in_enc::check(text_logger& in_log, const device_settings& in_dev_settin
                                          CFG_KEY_VALUE_MAX));
                 result = false;
             }
+
+			if (m_value_wrap && (!m_value_min_defined || !m_value_max_defined)) {
+				in_log.error(source_line());
+				in_log.error(" --> Wrapping requires both minimum and maximum values to be defined");
+				result = false;
+			}
             break;
 
         case command:
@@ -491,7 +502,11 @@ void map_in_enc::modify_up(midi_message& in_msg, bool in_fast)
 
             // change and check the value
             value = value + modifier;
-            value = check_value_min_max(value, modifier);
+			if (m_value_wrap)
+				// wrap the value in the interval [m_value_min, m_value_max)
+				value = fmod(value - m_value_min + m_value_max - m_value_min, m_value_max - m_value_min) + m_value_min;
+			else
+            	value = check_value_min_max(value, modifier);
 
             if (env().drf().write(in_msg.log(), m_dataref, value)) {
                 try {
@@ -544,7 +559,11 @@ void map_in_enc::modify_down(midi_message& in_msg, bool in_fast)
 
             // change and check the value
             value = value + modifier;
-            value = check_value_min_max(value, modifier);
+			if (m_value_wrap)
+				// wrap the value in the interval [m_value_min, m_value_max)
+				value = fmod(value - m_value_min + m_value_max - m_value_min, m_value_max - m_value_min) + m_value_min;
+			else
+            	value = check_value_min_max(value, modifier);
 
             if (env().drf().write(in_msg.log(), m_dataref, value)) {
                 try {

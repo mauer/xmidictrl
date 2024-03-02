@@ -100,7 +100,7 @@ void text_logger::set_log_info(bool in_mode)
 void text_logger::set_max_size(int in_size)
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     m_max_size = in_size;
 
@@ -115,7 +115,7 @@ void text_logger::set_max_size(int in_size)
 void text_logger::clear()
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     m_error_count = 0;
     m_warn_count = 0;
@@ -130,7 +130,7 @@ void text_logger::clear()
 size_t text_logger::count()
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     return m_messages.size();
 }
@@ -142,7 +142,7 @@ size_t text_logger::count()
 text_log_msg* text_logger::message(int in_index)
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     return m_messages.at(in_index).get();
 }
@@ -154,7 +154,7 @@ text_log_msg* text_logger::message(int in_index)
 std::string text_logger::messages_as_text()
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     if (m_messages.size() == 1)
         return {m_messages.at(0)->text};
@@ -179,7 +179,7 @@ std::string text_logger::messages_as_text()
 bool text_logger::has_errors() const
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     return (m_error_count > 0);
 }
@@ -191,7 +191,7 @@ bool text_logger::has_errors() const
 bool text_logger::has_warnings() const
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     return (m_warn_count > 0);
 }
@@ -334,7 +334,7 @@ void text_logger::create_message(log_level in_level, std::string_view in_text)
 void text_logger::add_message(log_level in_level, std::string_view in_text)
 {
     std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
     if (in_level == log_level::warn)
         m_warn_count++;

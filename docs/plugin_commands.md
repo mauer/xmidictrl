@@ -14,7 +14,7 @@ buttons or keyboard events.
 | xmidictrl/toggle_sublayer      | Toggle the dataref 'xmidictrl/sublayer' between 0 and 1 | 
 
 ## Custom MIDI Commands
-Those commands can be used together with a [virtual MIDI device](virtual_device.md).
+Those commands can be used together with a [virtual MIDI device](virtual_midi_device.md).
 
 | Command                             | Description                                                                |
 |-------------------------------------|----------------------------------------------------------------------------|

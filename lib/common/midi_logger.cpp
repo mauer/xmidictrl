@@ -47,7 +47,7 @@ midi_logger::midi_logger(bool in_enabled, int in_max_messages)
 void midi_logger::clear()
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	m_messages.clear();
 }
@@ -59,7 +59,7 @@ void midi_logger::clear()
 size_t midi_logger::count()
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	return m_messages.size();
 }
@@ -140,7 +140,7 @@ void midi_logger::add(const std::shared_ptr<midi_message>& in_msg)
 void midi_logger::adjust_log_size()
 {
 	std::mutex mutex;
-	std::lock_guard<std::mutex> lock(mutex);
+	std::scoped_lock lock(mutex);
 
 	while (m_messages.size() >= m_max_messages) m_messages.pop_front();
 }
