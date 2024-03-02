@@ -78,9 +78,6 @@ endif()
 # add external libraries
 add_subdirectory(external)
 
-# Add libraries
-add_subdirectory(lib)
-
 # Add plugin
 add_subdirectory(src)
 

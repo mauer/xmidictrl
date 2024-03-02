@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2024 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,15 +15,28 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-# Set compiler options
-set(CMAKE_CXX_STANDARD 20)
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
 
-# Add toml11 for reading and writing the config files
-message("-- Configuring build scripts for library common")
-add_subdirectory(common)
+# Set project details
+project(xmidictrl-env)
 
-message("-- Configuring build scripts for library environment")
-add_subdirectory(env)
+message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
-message("-- Configuring build scripts for library mapping")
-add_subdirectory(map)
+# Add sources
+set(ENV_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
+        )
+
+# Build static library for X-Plane environment
+add_library(${PROJECT_NAME} STATIC)
+
+target_sources(${PROJECT_NAME} PUBLIC ${ENV_SRC})
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only imgui xpsdk xmidictrl-common)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+add_subdirectory(tests)
+add_subdirectory(xplane)

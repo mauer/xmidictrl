@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2024 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -46,7 +46,7 @@ elseif (UNIX)
     message("Build unit tests for Linux Platform")
 endif ()
 
-target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-map-tests)
+target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-dev)
 
 include(${CMAKE_SOURCE_DIR}/external/doctest/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${PROJECT_NAME})

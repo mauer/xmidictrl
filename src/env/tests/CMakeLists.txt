@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 #   XMidiCtrl - MIDI Controller plugin for X-Plane
 #
-#   Copyright (c) 2021-2023 Marco Auer
+#   Copyright (c) 2021-2024 Marco Auer
 #
 #   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 #   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -15,17 +15,28 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-message("---- Directory: src/ui")
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
 
-# Set sources
-set(UI_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/ImGuiFontAtlas.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/imgui_window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/xplane_window.cpp
-        )
+# Set project details
+project(xmidictrl-env-tests)
 
-# Add sources to target
-target_sources(${PROJECT_NAME} PRIVATE ${UI_SRC})
+message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
-# Include current directory
-include_directories(${CMAKE_CURRENT_LIST_DIR})
+# Include fonts
+include_directories(${FONTS_INCLUDEDIR})
+
+# Add sources
+set(ENV_SRC_TESTS
+        ${CMAKE_CURRENT_LIST_DIR}/command_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/data_tests.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/env_tests.cpp
+)
+
+# Build static library for X-Plane environment
+add_library(${PROJECT_NAME} STATIC)
+
+target_sources(${PROJECT_NAME} PUBLIC ${ENV_SRC_TESTS})
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only imgui xpsdk xmidictrl-common xmidictrl-env)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})

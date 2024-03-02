@@ -17,6 +17,7 @@
 
 #include "midi_device.h"
 
+#include <mutex>
 #include <utility>
 
 // XMidiCtrl
