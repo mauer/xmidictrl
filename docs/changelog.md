@@ -3,7 +3,7 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
-##  VERSION 1.14
+##  VERSION 1.13
 + Updated FontAwesome to latest version 6.4.2
 + Moved parameter sl_dataref from profile to device, to allow a sl_dataref for each device
 + Added sublayer support for outbound messages

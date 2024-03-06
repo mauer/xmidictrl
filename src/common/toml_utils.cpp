@@ -73,17 +73,10 @@ bool toml_utils::contains(text_logger& in_log, toml::value& in_data, std::string
 	}
 
 	try {
-		if (in_data.contains(in_name.data())) {
+		if (in_data.contains(in_name.data()))
 			return true;
-		} else {
-			// TODO: Cleanup
-			//if (in_mandatory) {
-			//    in_log.error_line(in_data.location().line(), in_data.location().line_str());
-			//    in_log.error(" --> Parameter '" + std::string(in_name) + "' not found");
-			//}
-
+		else
 			return false;
-		}
 	} catch (toml::type_error& error) {
 		in_log.error_line(in_data.location().line(), in_data.location().line_str());
 		in_log.error(" --> Error reading mapping");

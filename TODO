@@ -1,15 +1,10 @@
- + Display mappings and devices in profile window
  + Allow selection of different ports when loading an aircraft
  + Label push/pull
  + Check all mapping texts, especially pnp
- + SubLayer for each device (done)
- + SubLayer for outbound devices (done)
- + Dataref-Array for SubLayer e.g. general array dataref for XMidiCtrl
+  + Dataref-Array for SubLayer e.g. general array dataref for XMidiCtrl
  + Add filter for log types in windows
- + Check für Sublayer Dataref if parameter SL is defined (done)
- + Controlling button LEDs using a bitwise and on a dataref such as for sim/cockpit/autopilot/autopilot_state which is a bitfield.
- + Remove reset
- + Add design mode
+  + Controlling button LEDs using a bitwise and on a dataref such as for sim/cockpit/autopilot/autopilot_state which is a bitfield.
+  + Add design mode
  + Check Range mode for encoders
  + Check default encoder mode
  + Add option to repeat commands while a button is held down
