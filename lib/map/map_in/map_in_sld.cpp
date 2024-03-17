@@ -176,32 +176,34 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
         if (param_in->msg().data_2() <= m_data_2_min + m_data_2_margin) {
 			param_in->msg().log().debug(" --> Execute command '" + m_command_down + "'");
 
-            if (m_command_down != m_command_prev)
+            if (m_command_down != m_command_down_prev)
                 env().cmd().execute(param_in->msg().log(), m_command_down);
 
-            m_command_prev = m_command_down;
+            m_command_down_prev = m_command_down;
 
         } else if (param_in->msg().data_2() >= m_data_2_max - m_data_2_margin) {
 			param_in->msg().log().debug(" --> Execute command '" + m_command_up + "'");
 
-            if (m_command_up != m_command_prev)
+            if (m_command_up != m_command_up_prev)
                 env().cmd().execute(param_in->msg().log(), m_command_up);
 
-            m_command_prev = m_command_up;
+            m_command_up_prev = m_command_up;
 
         } else if (param_in->msg().data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
 				   param_in->msg().data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
 				param_in->msg().log().debug(" --> Execute command '" + m_command_middle + "'");
 
-                if (m_command_middle != m_command_prev)
+                if (m_command_middle != m_command_middle_prev)
                     env().cmd().execute(param_in->msg().log(), m_command_middle);
 
-                m_command_prev = m_command_middle;
+                m_command_middle_prev = m_command_middle;
             }
         } else {
-            // clear previous command
-            m_command_prev.clear();
+            // clear previous commands
+            m_command_up_prev.clear();
+			m_command_middle_prev.clear();
+			m_command_down_prev.clear();
         }
     }
 
