@@ -174,30 +174,37 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
     } else {
         // command mode
         if (param_in->msg().data_2() <= m_data_2_min + m_data_2_margin) {
-			param_in->msg().log().debug(" --> Execute command '" + m_command_down + "'");
+			if (m_command_down != m_command_down_prev) {
+				param_in->msg().log().debug(" --> Execute command '" + m_command_down + "'");
 
-            if (m_command_down != m_command_down_prev)
-                env().cmd().execute(param_in->msg().log(), m_command_down);
+				env().cmd().execute(param_in->msg().log(), m_command_down);
+				m_command_down_prev = m_command_down;
 
-            m_command_down_prev = m_command_down;
-
+				m_command_middle_prev.clear();
+				m_command_up_prev.clear();
+			}
         } else if (param_in->msg().data_2() >= m_data_2_max - m_data_2_margin) {
-			param_in->msg().log().debug(" --> Execute command '" + m_command_up + "'");
+            if (m_command_up != m_command_up_prev) {
+				param_in->msg().log().debug(" --> Execute command '" + m_command_up + "'");
 
-            if (m_command_up != m_command_up_prev)
-                env().cmd().execute(param_in->msg().log(), m_command_up);
+				env().cmd().execute(param_in->msg().log(), m_command_up);
+				m_command_up_prev = m_command_up;
 
-            m_command_up_prev = m_command_up;
-
+				m_command_middle_prev.clear();
+				m_command_down_prev.clear();
+			}
         } else if (param_in->msg().data_2() >= (m_data_2_max - m_data_2_min) / 2 - m_data_2_margin &&
 				   param_in->msg().data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
-				param_in->msg().log().debug(" --> Execute command '" + m_command_middle + "'");
+                if (m_command_middle != m_command_middle_prev) {
+					param_in->msg().log().debug(" --> Execute command '" + m_command_middle + "'");
 
-                if (m_command_middle != m_command_middle_prev)
-                    env().cmd().execute(param_in->msg().log(), m_command_middle);
+					env().cmd().execute(param_in->msg().log(), m_command_middle);
+					m_command_middle_prev = m_command_middle;
 
-                m_command_middle_prev = m_command_middle;
+					m_command_down_prev.clear();
+					m_command_up_prev.clear();
+				}
             }
         } else {
             // clear previous commands
