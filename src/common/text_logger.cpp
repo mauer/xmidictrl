@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -37,10 +37,10 @@ namespace xmidictrl {
  * Constructor
  */
 text_logger::text_logger(text_logger* in_parent)
-    : m_parent(in_parent)
+	: m_parent(in_parent)
 {
-    if (in_parent != nullptr)
-        set_debug_mode(in_parent->debug_mode());
+	if (in_parent != nullptr)
+		set_debug_mode(in_parent->debug_mode());
 }
 
 
@@ -55,15 +55,15 @@ text_logger::text_logger(text_logger* in_parent)
  */
 void text_logger::enable_file_logging(const std::filesystem::path& in_path)
 {
-    if (!in_path.empty()) {
-        std::string filename = in_path.string() + XMIDICTRL_NAME + LOGFILE_SUFFIX;
+	if (!in_path.empty()) {
+		std::string filename = in_path.string() + XMIDICTRL_NAME + LOGFILE_SUFFIX;
 
-        m_file_stream.open(filename, std::ios_base::out | std::ios_base::trunc);
-        if (!m_file_stream.is_open())
-            error(fmt::format("Failed to open log file '{}'", filename));
-    } else {
-        error("Cannot open log file as the give file path is empty");
-    }
+		m_file_stream.open(filename, std::ios_base::out | std::ios_base::trunc);
+		if (!m_file_stream.is_open())
+			error(fmt::format("Failed to open log file '{}'", filename));
+	} else {
+		error("Cannot open log file as the give file path is empty");
+	}
 }
 
 
@@ -72,7 +72,7 @@ void text_logger::enable_file_logging(const std::filesystem::path& in_path)
  */
 void text_logger::set_debug_mode(bool in_mode)
 {
-    m_debug_mode = in_mode;
+	m_debug_mode = in_mode;
 }
 
 
@@ -81,7 +81,7 @@ void text_logger::set_debug_mode(bool in_mode)
  */
 bool text_logger::debug_mode() const
 {
-    return m_debug_mode;
+	return m_debug_mode;
 }
 
 
@@ -90,22 +90,7 @@ bool text_logger::debug_mode() const
  */
 void text_logger::set_log_info(bool in_mode)
 {
-    m_log_info = in_mode;
-}
-
-
-/**
- * Set the max message size
- */
-void text_logger::set_max_size(int in_size)
-{
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-
-    m_max_size = in_size;
-
-    while (m_messages.size() > m_max_size)
-        m_messages.pop_front();
+	m_log_info = in_mode;
 }
 
 
@@ -114,13 +99,13 @@ void text_logger::set_max_size(int in_size)
  */
 void text_logger::clear()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    m_error_count = 0;
-    m_warn_count = 0;
+	m_error_count = 0;
+	m_warn_count = 0;
 
-    m_messages.clear();
+	m_messages.clear();
 }
 
 
@@ -129,22 +114,22 @@ void text_logger::clear()
  */
 size_t text_logger::count()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    return m_messages.size();
+	return m_messages.size();
 }
 
 
 /**
  * Return a specific text message
  */
-text_log_msg* text_logger::message(int in_index)
+text_log_msg* text_logger::message(size_t in_index)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    return m_messages.at(in_index).get();
+	return m_messages.at(in_index).get();
 }
 
 
@@ -153,23 +138,23 @@ text_log_msg* text_logger::message(int in_index)
  */
 std::string text_logger::messages_as_text()
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    if (m_messages.size() == 1)
-        return {m_messages.at(0)->text};
+	if (m_messages.size() == 1)
+		return {m_messages.at(0)->text};
 
-    std::string text;
-    for (auto& msg: m_messages) {
-        if (text.empty()) {
-            text = msg->text;
-        } else {
-            text.append("\n");
-            text.append(msg->text);
-        }
-    }
+	std::string text;
+	for (auto& msg: m_messages) {
+		if (text.empty()) {
+			text = msg->text;
+		} else {
+			text.append("\n");
+			text.append(msg->text);
+		}
+	}
 
-    return text;
+	return text;
 }
 
 
@@ -178,10 +163,10 @@ std::string text_logger::messages_as_text()
  */
 bool text_logger::has_errors() const
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    return (m_error_count > 0);
+	return (m_error_count > 0);
 }
 
 
@@ -190,10 +175,10 @@ bool text_logger::has_errors() const
  */
 bool text_logger::has_warnings() const
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    return (m_warn_count > 0);
+	return (m_warn_count > 0);
 }
 
 
@@ -202,10 +187,10 @@ bool text_logger::has_warnings() const
  */
 void text_logger::debug(std::string_view in_text)
 {
-    create_message(log_level::debug, in_text);
+	create_message(log_level::debug, in_text);
 
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::debug, in_text);
+	if (m_parent != nullptr)
+		m_parent->create_message(log_level::debug, in_text);
 }
 
 
@@ -214,7 +199,7 @@ void text_logger::debug(std::string_view in_text)
  */
 void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    debug(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
+	debug(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
 }
 
 
@@ -223,7 +208,7 @@ void text_logger::debug_line(std::uint_least32_t in_line, std::string_view in_te
  */
 void text_logger::debug_param(std::uint_least32_t in_line, std::string_view in_param, std::string_view in_value)
 {
-    debug_line(in_line, fmt::format("Parameter '{}' = '{}'", in_param, in_value));
+	debug_line(in_line, fmt::format("Parameter '{}' = '{}'", in_param, in_value));
 }
 
 
@@ -232,10 +217,10 @@ void text_logger::debug_param(std::uint_least32_t in_line, std::string_view in_p
  */
 void text_logger::info(std::string_view in_text)
 {
-    create_message(log_level::info, in_text);
+	create_message(log_level::info, in_text);
 
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::info, in_text);
+	if (m_parent != nullptr)
+		m_parent->create_message(log_level::info, in_text);
 }
 
 
@@ -244,10 +229,10 @@ void text_logger::info(std::string_view in_text)
  */
 void text_logger::warn(std::string_view in_text)
 {
-    create_message(log_level::warn, in_text);
+	create_message(log_level::warn, in_text);
 
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::warn, in_text);
+	if (m_parent != nullptr)
+		m_parent->create_message(log_level::warn, in_text);
 }
 
 
@@ -256,7 +241,7 @@ void text_logger::warn(std::string_view in_text)
  */
 void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    warn(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
+	warn(fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text)));
 }
 
 
@@ -265,10 +250,10 @@ void text_logger::warn_line(std::uint_least32_t in_line, std::string_view in_tex
  */
 void text_logger::error(std::string_view in_text)
 {
-    create_message(log_level::error, in_text);
+	create_message(log_level::error, in_text);
 
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::error, in_text);
+	if (m_parent != nullptr)
+		m_parent->create_message(log_level::error, in_text);
 }
 
 
@@ -277,12 +262,12 @@ void text_logger::error(std::string_view in_text)
  */
 void text_logger::error_line(std::uint_least32_t in_line, std::string_view in_text)
 {
-    std::string debug_text = fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text));
+	std::string debug_text = fmt::format(" --> Line {} :: {}", in_line, utils::trim(in_text));
 
-    create_message(log_level::error, debug_text);
+	create_message(log_level::error, debug_text);
 
-    if (m_parent != nullptr)
-        m_parent->create_message(log_level::error, debug_text);
+	if (m_parent != nullptr)
+		m_parent->create_message(log_level::error, debug_text);
 }
 
 
@@ -297,23 +282,23 @@ void text_logger::error_line(std::uint_least32_t in_line, std::string_view in_te
  */
 bool text_logger::check_log_level(const log_level in_level) const
 {
-    switch (in_level) {
-        case log_level::error:
-        case log_level::warn:
-            return true;
+	switch (in_level) {
+		case log_level::error:
+		case log_level::warn:
+			return true;
 
-        case log_level::info:
-            if (m_log_info || m_debug_mode)
-                return true;
-            break;
+		case log_level::info:
+			if (m_log_info || m_debug_mode)
+				return true;
+			break;
 
-        case log_level::debug:
-            if (m_debug_mode)
-                return true;
-            break;
-    }
+		case log_level::debug:
+			if (m_debug_mode)
+				return true;
+			break;
+	}
 
-    return false;
+	return false;
 }
 
 
@@ -322,9 +307,9 @@ bool text_logger::check_log_level(const log_level in_level) const
  */
 void text_logger::create_message(log_level in_level, std::string_view in_text)
 {
-    if (check_log_level(in_level))
-        // add message to internal list and write to file stream
-        add_message(in_level, in_text);
+	if (check_log_level(in_level))
+		// add message to internal list and write to file stream
+		add_message(in_level, in_text);
 }
 
 
@@ -333,68 +318,63 @@ void text_logger::create_message(log_level in_level, std::string_view in_text)
  */
 void text_logger::add_message(log_level in_level, std::string_view in_text)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
+	std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
 
-    if (in_level == log_level::warn)
-        m_warn_count++;
+	if (in_level == log_level::warn)
+		m_warn_count++;
 
-    if (in_level == log_level::error)
-        m_error_count++;
+	if (in_level == log_level::error)
+		m_error_count++;
 
-    // get current date time stamp
-    time_t t = std::time(nullptr);
+	// get current date time stamp
+	time_t t = std::time(nullptr);
 
 #ifdef _MSC_VER
-    std::tm time_info {};
-    localtime_s(&time_info, &t);
+	std::tm time_info {};
+	localtime_s(&time_info, &t);
 #else
-    std::tm time_info = *std::localtime(&t);
-    //struct std::tm* time_info = localtime(&t);
+	std::tm time_info = *std::localtime(&t);
+	//struct std::tm* time_info = localtime(&t);
 #endif
 
-    // format into a string
-    char datetime_str[32];
-    std::strftime(&datetime_str[0], sizeof(datetime_str), "%Y-%m-%d %H:%M:%S", &time_info);
+	// format into a string
+	char datetime_str[32];
+	std::strftime(&datetime_str[0], sizeof(datetime_str), "%Y-%m-%d %H:%M:%S", &time_info);
 
-    // add message to internal list
-    std::shared_ptr<text_log_msg> msg = std::make_shared<text_log_msg>();
-    msg->time = datetime_str;
-    msg->level = in_level;
-    msg->text = in_text;
+	// add message to internal list
+	std::shared_ptr<text_log_msg> msg = std::make_shared<text_log_msg>();
+	msg->time = datetime_str;
+	msg->level = in_level;
+	msg->text = in_text;
 
-    if (m_debug_mode) {
-        while (m_messages.size() >= m_max_size)
-            m_messages.pop_front();
-    }
+	m_messages.push_back(msg);
 
-    m_messages.push_back(msg);
+	// write message to file stream
+	if (m_file_stream.is_open()) {
+		m_file_stream << msg->time;
 
-    // write message to file stream
-    if (m_file_stream.is_open()) {
-        m_file_stream << msg->time;
+		switch (msg->level) {
+			case log_level::error:
+				m_file_stream << "   [ERROR]   ";
+				break;
 
-        switch (msg->level) {
-            case log_level::error:
-                m_file_stream << "   [ERROR]   ";
-                break;
+			case log_level::warn:
+				m_file_stream << "   [WARN]    ";
+				break;
 
-            case log_level::warn:
-                m_file_stream << "   [WARN]    ";
-                break;
+			case log_level::info:
+				m_file_stream << "   [INFO]    ";
+				break;
 
-            case log_level::info:
-                m_file_stream << "   [INFO]    ";
-                break;
+			case log_level::debug:
+				m_file_stream << "   [DEBUG]   ";
+				break;
+		}
 
-            case log_level::debug:
-                m_file_stream << "   [DEBUG]   ";
-                break;
-        }
-
-        m_file_stream << msg->text;
-        m_file_stream << std::endl;
-    }
+		m_file_stream << msg->text;
+		m_file_stream << std::endl;
+	}
 }
 
 } // Namespace xmidictrl

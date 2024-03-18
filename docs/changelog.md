@@ -9,6 +9,7 @@
 + Added sublayer support for outbound messages
 + Enabled slider mappings for virtual devices
 + Renamed velocity to data_2 to be more aligned with the midi specification
++ Added paging to logging windows for better performance, remove max log setting
 
 -----------------------------------------------------------------------------------------------------------------------
 

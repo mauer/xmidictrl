@@ -40,11 +40,16 @@ protected:
 	void create_widgets() override;
 
 private:
-	void add_log_row(text_log_msg* in_msg);
+	// constants
+	static constexpr unsigned int c_no_msg_page {500};
 
+	// members
 	sort_mode m_log_sort_mode {sort_mode::ascending};
+	unsigned int m_page {0};
 
 	ImGuiTableColumnFlags m_log_msg_flags;
+
+	void add_log_row(size_t in_no, text_log_msg* in_msg);
 };
 
 } // Namespace xmidictrl

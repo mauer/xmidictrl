@@ -41,9 +41,6 @@ settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
 		m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
 		m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
 
-		m_max_text_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_TEXT_MESSAGES, 1500);
-		m_max_midi_messages = toml::find_or<int>(m_settings_file, CFG_KEY_MAX_MIDI_MESSAGES, 150);
-
 		m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_settings_file, CFG_KEY_NOTE_NAME, 0));
 
 		m_default_text_sort = static_cast<sort_mode>(toml::find_or<int>(m_settings_file, CFG_KEY_DEFAULT_TEXT_SORT, 0));
@@ -156,43 +153,6 @@ void settings::set_default_outbound_delay(const float in_delay)
 float settings::default_outbound_delay() const
 {
 	return m_default_outbound_delay;
-}
-
-
-/**
- * Sets the max number of text messages to be logged
- */
-void settings::set_max_text_messages(int in_number)
-{
-	m_max_text_messages = in_number;
-	m_text_log.set_max_size(in_number);
-}
-
-
-/**
- * Return the max number of text messages to be logged
- */
-int settings::max_text_messages() const
-{
-	return m_max_text_messages;
-}
-
-
-/**
- * Sets the max number of midi messages to be logged
- */
-void settings::set_max_midi_messages(int in_number)
-{
-	m_max_midi_messages = in_number;
-}
-
-
-/**
- * Return the max number of midi messages to be logged
- */
-int settings::max_midi_messages() const
-{
-	return m_max_midi_messages;
 }
 
 
@@ -366,9 +326,6 @@ void settings::save_settings()
 	m_settings_file[CFG_KEY_DEBUG_MODE] = m_debug_mode;
 	m_settings_file[CFG_KEY_LOG_MIDI] = m_log_midi;
 	m_settings_file[CFG_KEY_SHOW_ERRORS] = m_show_errors;
-
-	m_settings_file[CFG_KEY_MAX_TEXT_MESSAGES] = m_max_text_messages;
-	m_settings_file[CFG_KEY_MAX_MIDI_MESSAGES] = m_max_midi_messages;
 
 	m_settings_file[CFG_KEY_NOTE_NAME] = static_cast<int>(m_note_name);
 

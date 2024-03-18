@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -20,6 +20,9 @@
 // Font Awesome
 #include <IconsFontAwesome6.h>
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "midi_message.h"
 #include "plugin.h"
@@ -34,7 +37,8 @@ namespace xmidictrl {
  * Constructor
  */
 midi_watcher::midi_watcher(text_logger& in_text_log, midi_logger& in_midi_log, environment& in_env)
-	: imgui_window(in_text_log, in_env, 1400, 700), m_midi_log(in_midi_log)
+	: imgui_window(in_text_log, in_env, 1400, 700)
+	, m_midi_log(in_midi_log)
 {
 	set_title(std::string(XMIDICTRL_NAME) + " - MIDI Watcher");
 
@@ -77,9 +81,46 @@ void midi_watcher::create_widgets()
 
 	ImGui::NewLine();
 	ImGui::TextColored(title_color(), "%s", "MESSAGES");
+
+	ImGui::SameLine(150);
+
+	if (ImGui::Button(UI_SPACER_2 ICON_FA_ARROW_LEFT UI_SPACER_2)) {
+		if (m_page > 0)
+			m_page--;
+	}
+
+	ImGui::SameLine();
+
+	size_t start = 0;
+	size_t end = 0;
+
+	if (m_midi_sort_mode == sort_mode::ascending) {
+		start = m_page * c_no_msg_page;
+		end = (m_page + 1) * c_no_msg_page;
+
+		if (end > m_midi_log.count())
+			end = m_midi_log.count();
+	} else if (m_midi_log.count() > 0) {
+		start = (m_page + 1) * c_no_msg_page;
+		end = m_page * c_no_msg_page;
+
+		if (start > m_midi_log.count() - 1)
+			start = m_midi_log.count() - 1;
+	}
+
+	size_t no_pages = (m_midi_log.count() + c_no_msg_page - 1) / c_no_msg_page;
+	ImGui::Text("%s", fmt::format("{} / {}", m_page + 1, no_pages).c_str());
+
+	ImGui::SameLine();
+
+	if (ImGui::Button(UI_SPACER_2 ICON_FA_ARROW_RIGHT UI_SPACER_2)) {
+		if ((m_page + 1) * c_no_msg_page < m_midi_log.count())
+			m_page++;
+	}
+
 	ImGui::Separator();
 
-	ImGui::BeginChild("TEXT_TABLE");
+	ImGui::BeginChild("MIDI_LOG_TABLE");
 
 	if (ImGui::BeginTable("tableMidiMessages",
 						  10,
@@ -110,15 +151,11 @@ void midi_watcher::create_widgets()
 		}
 
 		if (m_midi_sort_mode == sort_mode::ascending) {
-			for (size_t i = 0; i < m_midi_log.count(); i++) {
-				auto msg = m_midi_log.message(static_cast<int>(i));
-				add_midi_row(msg);
-			}
+			for (size_t i = start; i < end; i++)
+				add_midi_row(m_midi_log.message(i));
 		} else if (m_midi_log.count() > 0) {
-			for (size_t i = m_midi_log.count() - 1; i > 0; i--) {
-				auto msg = m_midi_log.message(static_cast<int>(i));
-				add_midi_row(msg);
-			}
+			for (size_t i = start; i > end; i--)
+				add_midi_row(m_midi_log.message(i));
 		}
 	}
 

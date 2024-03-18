@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -96,8 +96,6 @@ const char* const CFG_KEY_LOG_MIDI = "log_midi";
 const char* const CFG_KEY_MAPPING_IN = "mapping_in";
 const char* const CFG_KEY_MAPPING_INIT = "mapping_init";
 const char* const CFG_KEY_MAPPING_OUT = "mapping_out";
-const char* const CFG_KEY_MAX_MIDI_MESSAGES = "max_midi_messages";
-const char* const CFG_KEY_MAX_TEXT_MESSAGES = "max_text_messages";
 const char* const CFG_KEY_MODE = "mode";
 const char* const CFG_KEY_MODE_NOTE = "mode_note";
 const char* const CFG_KEY_MODE_OUT = "mode_out";

@@ -53,7 +53,6 @@ plugin::plugin()
     if (m_env->create_preference_folders(*m_plugin_log)) {
         m_plugin_log->enable_file_logging(m_env->preferences_path());
         m_plugin_log->set_debug_mode(m_env->settings().debug_mode());
-        m_plugin_log->set_max_size(m_env->settings().max_text_messages());
     } else {
         m_plugin_log->info("Cannot create preference folder for " XMIDICTRL_FULL_NAME);
         XPLMDebugString(std::string_view("Cannot create preference folder for " XMIDICTRL_FULL_NAME).data());
@@ -66,7 +65,7 @@ plugin::plugin()
     m_menu = std::make_unique<menu>();
 
     // create the midi log
-    m_midi_log = std::make_unique<midi_logger>(m_env->settings().log_midi(), m_env->settings().max_midi_messages());
+    m_midi_log = std::make_unique<midi_logger>(m_env->settings().log_midi());
 
     // create the aircraft profile
     m_profile = std::make_unique<profile>(*m_plugin_log, *m_midi_log, *m_env);

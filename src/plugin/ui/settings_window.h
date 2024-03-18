@@ -49,9 +49,6 @@ private:
 	int m_virtual_channel;
 	float m_default_outbound_delay;
 
-	int m_max_text_messages;
-	int m_max_midi_messages;
-
 	int m_note_name;
 
 	int m_default_text_sort;

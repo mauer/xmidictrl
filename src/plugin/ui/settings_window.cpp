@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -48,9 +48,6 @@ settings_window::settings_window(text_logger& in_log, environment& in_env)
 
 	m_virtual_channel = env().settings().virtual_channel();
 	m_default_outbound_delay = env().settings().default_outbound_delay();
-
-	m_max_text_messages = env().settings().max_text_messages();
-	m_max_midi_messages = env().settings().max_midi_messages();
 
 	m_note_name = static_cast<int>(env().settings().note_name());
 
@@ -267,20 +264,6 @@ void settings_window::create_tab_logging()
 		ImGui::Checkbox("Debug Mode", &m_debug_mode);
 		ImGui::NewLine();
 
-		ImGui::TextUnformatted("Limit for messages:");
-		ImGui::SameLine(250);
-		ImGui::PushItemWidth(150);
-		if (ImGui::InputInt(" Messages##text", &m_max_text_messages, 50, 100)) {
-			if (m_max_text_messages < 1)
-				m_max_text_messages = 1;
-			else if (m_max_text_messages > 5000)
-				m_max_text_messages = 5000;
-		}
-
-		ImGui::SameLine(600);
-		if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reset to default  ##text"))
-			m_max_text_messages = 1500;
-
 		ImGui::TextUnformatted("Default sort mode:");
 		ImGui::SameLine(250);
 		ImGui::RadioButton("Ascending##text", &m_default_text_sort, 0);
@@ -296,22 +279,6 @@ void settings_window::create_tab_logging()
 
 		ImGui::Checkbox("Log MIDI messages", &m_log_midi);
 		ImGui::NewLine();
-
-		if (m_log_midi) {
-			ImGui::TextUnformatted("Limit for messages:");
-			ImGui::SameLine(250);
-			ImGui::PushItemWidth(150);
-			if (ImGui::InputInt(" Messages##midi", &m_max_midi_messages, 50, 100)) {
-				if (m_max_midi_messages < 1)
-					m_max_midi_messages = 1;
-				else if (m_max_midi_messages > 5000)
-					m_max_midi_messages = 5000;
-			}
-		}
-
-		ImGui::SameLine(600);
-		if (ImGui::Button("  " ICON_FA_ROTATE_RIGHT "  Reset to default  ##midi"))
-			m_max_midi_messages = 150;
 
 		ImGui::TextUnformatted("Default sort mode:");
 		ImGui::SameLine(250);
@@ -413,9 +380,6 @@ void settings_window::save_settings()
 
 	env().settings().set_virtual_channel(m_virtual_channel);
 	env().settings().set_default_outbound_delay(m_default_outbound_delay);
-
-	env().settings().set_max_text_messages(m_max_text_messages);
-	env().settings().set_max_midi_messages(m_max_midi_messages);
 
 	env().settings().set_note_name(static_cast<note_name_type>(m_note_name));
 
