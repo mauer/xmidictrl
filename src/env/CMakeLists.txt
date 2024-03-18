@@ -15,38 +15,28 @@
 #   If not, see <https://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------------------------------------------------
 
-# Don't build unit tests on macOS
-if (APPLE)
-    return()
-endif ()
+# Set required CMake version
+cmake_minimum_required(VERSION 3.16)
 
-project(xmidictrl-tests)
-message("-- Configuring build scripts for ${PROJECT_NAME} Unit Tests")
+# Set project details
+project(xmidictrl-env)
 
-set(CMAKE_CXX_STANDARD 20)
-
-# Include the ImGui files
-include_directories(${IMGUI_INCLUDEDIR})
+message("-- Configuring build scripts for library ${PROJECT_NAME}")
 
 # Add sources
-set(TEST_SRC
-        ${CMAKE_CURRENT_LIST_DIR}/main.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/test_helper.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/test_map_in_cmd.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/test_map_in_enc.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/test_map_in_sld.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/test_midi_message.cpp
+set(ENV_SRC
+        ${CMAKE_CURRENT_LIST_DIR}/environment.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/inbound_worker.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/settings.cpp
         )
 
-add_executable(${PROJECT_NAME} ${TEST_SRC})
+# Build static library for X-Plane environment
+add_library(${PROJECT_NAME} STATIC)
 
-if (WIN32)
-    message("Build unit tests for Windows Platform")
-elseif (UNIX)
-    message("Build unit tests for Linux Platform")
-endif ()
+target_sources(${PROJECT_NAME} PUBLIC ${ENV_SRC})
+target_link_libraries(${PROJECT_NAME} PUBLIC toml11 fmt::fmt-header-only imgui xpsdk xmidictrl-common)
 
-target_link_libraries(${PROJECT_NAME} toml11 fmt::fmt-header-only rtmidi imgui doctest xmidictrl-common xmidictrl-env-tests xmidictrl-dev)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-include(${CMAKE_SOURCE_DIR}/external/doctest/scripts/cmake/doctest.cmake)
-doctest_discover_tests(${PROJECT_NAME})
+add_subdirectory(tests)
+add_subdirectory(xplane)

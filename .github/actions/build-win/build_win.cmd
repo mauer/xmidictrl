@@ -20,7 +20,8 @@ PUSHD "%MY_BUILD_DIR%"
 IF %ERRORLEVEL% NEQ 0 EXIT /B %ERRORLEVEL%
 
 REM Create Makefile from CMakeLists.txt, using NMake output because NMake happens to be available
-CMAKE -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" -DCMAKE_MAKE_PROGRAM="nmake.exe" -DCMAKE_TOOLCHAIN_FILE="..\docker\Toolchain-msvc-x86-64.cmake" ..
+REM CMAKE -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" -DCMAKE_MAKE_PROGRAM="nmake.exe" -DCMAKE_TOOLCHAIN_FILE="..\docker\Toolchain-msvc-x86-64.cmake" ..
+CMAKE -G "NMake Makefiles" -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" -DCMAKE_MAKE_PROGRAM="nmake.exe" ..
 IF %ERRORLEVEL% NEQ 0 EXIT /B %ERRORLEVEL%
 
 REM Perform the actual build

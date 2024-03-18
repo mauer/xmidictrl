@@ -30,7 +30,7 @@
 
 * **MIDI Devices**
   * [Behringer X-Touch Mini](behringer_xtouch_mini.md)
-  * [Virtual Device](virtual_device.md)
+  * [Virtual Device](virtual_midi_device.md)
   
 * **Advanced Options**
   * [Aircraft Profiles](profile.md)

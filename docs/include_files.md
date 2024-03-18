@@ -99,7 +99,7 @@ port_out     = 1
 It is also possible to add several includes for a device:
 
 ```
-[virtual_device]
+[virtual_midi_device]
 name       = "Virtual device"
 include    = ["camera_airliner", "general_settings"]
 mapping_in = [
