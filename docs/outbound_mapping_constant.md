@@ -5,18 +5,18 @@ functions, such as LEDs.
 
 ## Required Parameters
 
-| Parameter | Description                                                                  |
-|-----------|------------------------------------------------------------------------------|
-| velocity  | Defines the velocity to be sent to the MIDI device (Value between 0 and 127) |
+| Parameter | Description                                                                |
+|-----------|----------------------------------------------------------------------------|
+| data_2    | Defines the data_2 to be sent to the MIDI device (Value between 0 and 127) |
 
 ## Examples
 
 ```
-{ ch = 11, cc = 1, type = "con", velocity = 0 }
+{ ch = 11, cc = 1, type = "con", data_2 = 0 }
 ```
-*Will send a MIDI message for Channel 11 and Control Change 1 with a Velocity of 0*
+*Will send a MIDI message for Channel 11 and Control Change 1 with a data 2 of 0*
 
 ```
-{ ch = 11, cc = 1, type = "con", velocity = 127 }
+{ ch = 11, cc = 1, type = "con", data_2 = 127 }
 ```
-*Will send a MIDI message for Channel 11 and Control Change 1 with a Velocity of 127*
+*Will send a MIDI message for Channel 11 and Control Change 1 with a data 2 of 127*

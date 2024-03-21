@@ -37,7 +37,7 @@ The following parameter are required for each mapping.
 |-----------|----------------------------------------------------------------------------------------------------|
 | ch        | MIDI Channel (Default Value = 11)                                                                  |
 | value     | Specifies the value for the outbound message. Required for all message types, except Note messages |
-| velocity  | Note message only! Specifies the velocity for the outbound message                                 |
+| data_2    | Note message only! Specifies the data 2 for the outbound message                                   |
 
 One of the following parameters is required, depending on the MIDI message type.
 

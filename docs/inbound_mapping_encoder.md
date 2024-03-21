@@ -7,7 +7,7 @@ dataref will be used.
 
 ## Encoder Mode
 
-The plugin supports two encoder modes: *relative* and *range*. If your MIDI device sends a velocity between 0 and 127
+The plugin supports two encoder modes: *relative* and *range*. If your MIDI device sends a data 2 between 0 and 127
 when encoders are turned you have to select *range*. Relative mode is the preferred settings as it sends different 
 values in relation to the speed the encoder was turned. However, not all MIDI devices support this mode.
 

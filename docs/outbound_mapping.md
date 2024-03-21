@@ -66,9 +66,9 @@ A mapping must contains exactly one of the following variables.
 
 The following mapping types are supported:
 
-| Mapping Type |   Name    | Description and usage                                            |
-|:------------:|:---------:|------------------------------------------------------------------|
-|     drf      | Dataref   | Reads the dataref value and sends a MIDI message if necessary    |
-|     con      | Constant  | Sends a constant velocity to the MIDI device                     |
-|     sld      | Slider    | Sends a veloctiy based on a dataref to control motorized sliders | 
+| Mapping Type |   Name    | Description and usage                                          |
+|:------------:|:---------:|----------------------------------------------------------------|
+|     drf      | Dataref   | Reads the dataref value and sends a MIDI message if necessary  |
+|     con      | Constant  | Sends a constant data 2 to the MIDI device                     |
+|     sld      | Slider    | Sends a data 2 based on a dataref to control motorized sliders | 
 

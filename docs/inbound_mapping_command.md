@@ -14,10 +14,10 @@ returns to the map screen.
 
 ## Optional Parameters
 
-| Parameter    | Description                               |
-|--------------|-------------------------------------------|
-| velocity_on  | Velocity for button pressed (Default 127) |
-| velocity_off | Velocity for button released (Default 0)  |
+| Parameter  | Description                             |
+|------------|-----------------------------------------|
+| data_2_on  | Data 2 for button pressed (Default 127) |
+| data-2_off | Data 2 for button released (Default 0)  |
 
 ## Examples
 
@@ -27,6 +27,6 @@ returns to the map screen.
 *Flips between active and standby frequency for COM1 when Channel is 11 and Control Change is equal to 67.*
 
 ```
-{ ch = 11, cc = 67, type = "cmd", command = "sim/radios/com1_standy_flip", velocity_on = 1, velocity_off = 0  }
+{ ch = 11, cc = 67, type = "cmd", command = "sim/radios/com1_standy_flip", data_2_on = 1, data_2_off = 0  }
 ```
-*Same as above, but the used velocities will be 1 for button pressed and 0 for released.*
+*Same as above, but the used data 2 will be 1 for button pressed and 0 for released.*

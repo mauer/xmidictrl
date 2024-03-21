@@ -5,23 +5,23 @@ mapping. This can be useful if there are caution lights etc. for pilot and copil
 
 ## Required Parameters
 
-| Parameter | Description                                                                                     |
-|-----------|-------------------------------------------------------------------------------------------------|
-| dataref   | Defines the dataref which should be checked (or multiple datarefs)                              |
-| value_on  | As soon as the dataref will be set to this value, a MIDI message with velocity 127 will be send |
-| value_off | As soon as the dataref will be set to this value, a MIDI message with velocity 0 will be send   |
+| Parameter | Description                                                                                      |
+|-----------|--------------------------------------------------------------------------------------------------|
+| dataref   | Defines the dataref which should be checked (or multiple datarefs)                               |
+| value_on  | As soon as the dataref will be set to this value, a MIDI message with data 2 of 127 will be send |
+| value_off | As soon as the dataref will be set to this value, a MIDI message with data 2 of 0 will be send   |
 
 **Note:**
 It's not required to define *value_on* and *value_off*. However, at least one of them has to be defined.
 
 ## Optional Parameters
 
-| Parameter    | Description                                                 |
-|--------------|-------------------------------------------------------------|
-| velocity_on  | Velocity which will be sent for an on message (Default 127) |
-| velocity_off | Velocity which will be sent for an off message (Default 0)  |
-| send_on      | Can be set to 'one' or 'all' (Default 'one')                |
-| send_off     | Can be set to 'one' or 'all' (Default 'all')                |
+| Parameter  | Description                                               |
+|------------|-----------------------------------------------------------|
+| data_2_on  | Data 2 which will be sent for an on message (Default 127) |
+| data_2_off | Data 2 which will be sent for an off message (Default 0)  |
+| send_on    | Can be set to 'one' or 'all' (Default 'one')              |
+| send_off   | Can be set to 'one' or 'all' (Default 'all')              |
 
 ### Parameters send_on / send_off
 
@@ -39,17 +39,17 @@ have to be to the value_on/value_off before the message is being sent.
 ```
 { ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_on = "1" }
 ```
-*Will send a MIDI message with velocity 127 for Channel 11 and Control Change 50 if the datarefs value is equal to 1,
-otherwise velocity 0 will be used.*
+*Will send a MIDI message with data 2 of 127 for Channel 11 and Control Change 50 if the datarefs value is equal to 1,
+otherwise data 2 of 0 will be used.*
 
 ```
 { ch = 11, cc = 50, type = "drf", dataref = "sim/autopilot/heading_mode", value_off = "0" }
 ```
-*Will send a MIDI message with velocity 0 for Channel 11 and Control Change 50 if the datarefs value is equal to 0,
-otherwise velocity 127 will be used.*
+*Will send a MIDI message with data 2 of 0 for Channel 11 and Control Change 50 if the datarefs value is equal to 0,
+otherwise data 2 of 127 will be used.*
 
 ```
 { ch = 11, cc = 50, type = "drf", dataref = ["sim/pilot/caution_light", "sim/copilot/caution_light"], value_on = "1" }
 ```
-*Will send a MIDI message with velocity 127 for Channel 11 and Control Change 50 if on of the two datarefs has a value equal to 1.
-A MIDI message with velocity 0 will be sent when both datarefs are not equal 1 anymore.*
+*Will send a MIDI message with data 2 of 127 for Channel 11 and Control Change 50 if on of the two datarefs has a value equal to 1.
+A MIDI message with data 2 of 0 will be sent when both datarefs are not equal 1 anymore.*

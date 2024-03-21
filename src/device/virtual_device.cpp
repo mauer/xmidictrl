@@ -107,7 +107,7 @@ void virtual_device::process_inbound_message(unsigned char in_channel, unsigned 
                 }
 
                 default:
-                    text_log().warn("Invalid MIDI velocity '" + std::to_string(midi_msg->data_2())
+                    text_log().warn("Invalid MIDI data 2 '" + std::to_string(midi_msg->data_2())
                                     + "' for a Push&Pull mapping");
                     break;
             }
