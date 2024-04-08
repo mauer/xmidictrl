@@ -81,6 +81,10 @@ public:
 	void save_settings();
 
 private:
+	// constants
+	static constexpr std::string_view c_cfg_default_outbound_delay {"default_outbound_delay"};
+
+	// members
 	std::string get_settings_filename();
 
 	text_logger& m_text_log;

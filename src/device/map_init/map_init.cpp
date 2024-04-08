@@ -113,7 +113,7 @@ bool map_init::check(text_logger& in_log, const device_settings& in_dev_settings
 /**
  * Create a MIDI outbound task
  */
-std::unique_ptr<map_result> map_init::execute(map_param* in_param)
+std::unique_ptr<map_result> map_init::execute(map_param*)
 {
 	auto result = std::make_unique<map_result>();
 	result->data_changed = true;

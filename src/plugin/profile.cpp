@@ -89,7 +89,7 @@ bool profile::load()
 		return true;
 	}
 
-	m_profile_log->info("Aircraft Profile '" + filename + "' found");
+	m_profile_log->info(fmt::format("Aircraft Profile '{}' found", filename));
 
 	// load the profile and create all devices with their mappings
 	m_config = toml::value();
@@ -121,7 +121,7 @@ void profile::close()
 	clear();
 
 	if (!m_filename.empty())
-		m_profile_log->debug("File '" + m_filename + "' closed");
+		m_profile_log->debug(fmt::format("File '{}' closed", m_filename));
 
 	m_config = toml::value();
 	m_filename.clear();
@@ -281,35 +281,35 @@ std::string profile::find_profile()
 	// check if there is a profile in the aircraft directory
 	auto filename = get_filename_aircraft_path(filename_prefix::none);
 
-	m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+	m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 	if (std::filesystem::exists(filename))
 		return filename;
 
 	// check if there is a profile in the aircraft directory including the ICAO
 	filename = get_filename_aircraft_path(filename_prefix::icao);
 
-	m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+	m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 	if (std::filesystem::exists(filename))
 		return filename;
 
 	// check if there is a profile in the aircraft directory including the acf name
 	filename = get_filename_aircraft_path(filename_prefix::acf_name);
 
-	m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+	m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 	if (std::filesystem::exists(filename))
 		return filename;
 
 	// check if there is a profile in the profile directory including the ICAO
 	filename = get_filename_profiles_path(filename_prefix::icao);
 
-	m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+	m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 	if (std::filesystem::exists(filename))
 		return filename;
 
 	// check if there is a profile in the profile directory including the acf name
 	filename = get_filename_profiles_path(filename_prefix::acf_name);
 
-	m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+	m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 	if (std::filesystem::exists(filename))
 		return filename;
 
@@ -317,7 +317,7 @@ std::string profile::find_profile()
 	if (m_env.settings().use_common_profile()) {
 		filename = get_filename_profiles_path(filename_prefix::none);
 
-		m_profile_log->debug(" --> Search for aircraft profile '" + filename + "'");
+		m_profile_log->debug(fmt::format(" --> Search for aircraft profile '{}'", filename));
 		if (std::filesystem::exists(filename))
 			return filename;
 	}
@@ -344,9 +344,9 @@ void profile::create_device_list()
 
 	try {
 		// get all MIDI devices from the profile
-		auto profile_dev = toml::find<std::vector<toml::table>>(m_config, CFG_KEY_DEVICE);
+		auto profile_dev = toml::find<std::vector<toml::table>>(m_config, c_cfg_device.data());
 
-		m_profile_log->info(std::to_string(profile_dev.size()) + " MIDI device(s) found in aircraft profile");
+		m_profile_log->info(fmt::format("{} MIDI device(s) found in aircraft profile", profile_dev.size()));
 
 		// parse every device
 		for (size_t dev_no = 0; dev_no < profile_dev.size(); dev_no++)
@@ -366,7 +366,7 @@ void profile::create_virtual_device()
 {
 	// do we have a virtual device?
 	try {
-		auto params = toml::find(m_config, CFG_KEY_VIRTUAL_DEVICE);
+		auto params = toml::find(m_config, c_cfg_virtual_device.data());
 		m_profile_log->info("Virtual device found in aircraft profile");
 
 		create_device(params, true);
@@ -436,12 +436,12 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 
 	try {
 		// name
-		settings->name = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_NAME);
+		settings->name = toml_utils::read_string(*m_profile_log, in_params, c_cfg_name);
 
 		if (settings->name.empty()) {
 			settings->name = "<undefined>";
-			m_profile_log->warn(get_log_prefix(in_is_virtual, in_dev_no) + "Parameter '" + std::string(CFG_KEY_NAME)
-								+ "' is missing");
+			m_profile_log->warn(
+				fmt::format(+"{} Parameter '{}' is missing", get_log_prefix(in_is_virtual, in_dev_no), c_cfg_name));
 		}
 
 		// include files
@@ -457,8 +457,8 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 		}
 
 		// sl dataref
-		if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_SL_DATAREF))
-			settings->sl_dataref = toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_SL_DATAREF);
+		if (toml_utils::contains(*m_profile_log, in_params, c_cfg_sl_dataref))
+			settings->sl_dataref = toml_utils::read_string(*m_profile_log, in_params, c_cfg_sl_dataref);
 
 		if (!settings->sl_dataref.empty()) {
 			m_profile_log->info(get_log_prefix(in_is_virtual, in_dev_no) + " Sublayer mode activated");
@@ -476,39 +476,41 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 			settings->device_no = static_cast<int>(in_dev_no);
 
 			// port in
-			settings->port_in = toml_utils::read_int(*m_profile_log, in_params, CFG_KEY_PORT_IN);
+			settings->port_in = toml_utils::read_int(*m_profile_log, in_params, c_cfg_port_in);
 
 			if (settings->port_in < 0) {
-				m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Invalid inbound port '"
-									 + std::to_string(settings->port_in) + "'");
+				m_profile_log->error(fmt::format(+"{} Invalid inbound port '{}'",
+												 get_log_prefix(in_is_virtual, in_dev_no),
+												 settings->port_in));
 				return {};
 			}
 
 			// port out
-			settings->port_out = toml_utils::read_int(*m_profile_log, in_params, CFG_KEY_PORT_OUT);
+			settings->port_out = toml_utils::read_int(*m_profile_log, in_params, c_cfg_port_out);
 
 			if (settings->port_out < 0) {
-				m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Invalid outbound port '"
-									 + std::to_string(settings->port_out) + "'");
+				m_profile_log->error(fmt::format(+"{} Invalid outbound port '{}'",
+												 get_log_prefix(in_is_virtual, in_dev_no),
+												 settings->port_out));
 				return {};
 			}
 
 			// mode note
 			settings->note_mode = device_settings::note_mode_from_code(
-				toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_NOTE));
+				toml_utils::read_string(*m_profile_log, in_params, c_cfg_mode_note));
 
 			// outbound delay
-			if (toml_utils::contains(*m_profile_log, in_params, CFG_KEY_OUTBOUND_DELAY))
+			if (toml_utils::contains(*m_profile_log, in_params, c_cfg_outbound_delay))
 				settings->outbound_delay = toml_utils::read_float(*m_profile_log,
 																  in_params,
-																  CFG_KEY_OUTBOUND_DELAY,
+																  c_cfg_outbound_delay,
 																  m_env.settings().default_outbound_delay());
 			else
 				settings->outbound_delay = m_env.settings().default_outbound_delay();
 
 			// mode outbound
 			settings->send_mode = device_settings::send_mode_from_code(
-				toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_MODE_OUT));
+				toml_utils::read_string(*m_profile_log, in_params, c_cfg_mode_out));
 
 			// default encoder mode
 			settings->default_enc_mode = map_in_enc::encoder_mode_from_code(
@@ -535,13 +537,13 @@ void profile::add_mappings_from_include(bool in_is_virtual, device& in_device)
 		if (in_is_virtual)
 			m_profile_log->debug("Virtual device :: No includes found");
 		else
-			m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no) + " :: No includes found");
+			m_profile_log->debug(fmt::format("Device {} :: No includes found", in_device.settings().device_no));
 		return;
 	}
 
 	for (auto& inc_name: in_device.settings().include) {
-		m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no)
-							 + " :: Add mappings from include file '" + inc_name + "'");
+		m_profile_log->debug(
+			fmt::format("Device {} :: Add mappings from include file '{}'", in_device.settings().device_no, inc_name));
 
 		if (inc_name.empty())
 			continue;
@@ -557,8 +559,9 @@ void profile::add_mappings_from_include(bool in_is_virtual, device& in_device)
 		// let's read all the mappings
 		create_device_mappings(inc_file, in_device, inc_name);
 
-		m_profile_log->debug("Device " + std::to_string(in_device.settings().device_no)
-							 + " :: Finished adding mappings from include file '" + inc_name + "'");
+		m_profile_log->debug(fmt::format("Device {} :: Finished adding mappings from include file '{}'",
+										 in_device.settings().device_no,
+										 inc_name));
 	}
 }
 
@@ -569,39 +572,39 @@ void profile::add_mappings_from_include(bool in_is_virtual, device& in_device)
 void profile::create_device_mappings(toml::value in_params, device& in_device, std::string_view in_inc_name)
 {
 	// create init mappings
-	if (in_device.type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_INIT)) {
+	if (in_device.type() == device_type::midi_device && in_params.contains(c_cfg_mapping_init.data())) {
 		auto& midi_dev = dynamic_cast<midi_device&>(in_device);
 		midi_dev.mapping_init().create_mappings(*m_profile_log,
-												in_params[CFG_KEY_MAPPING_INIT].as_array(),
+												in_params[c_cfg_mapping_init.data()].as_array(),
 												midi_dev.settings(),
 												in_inc_name);
 	} else {
-		m_profile_log->info(get_log_prefix_from_device(in_device) + "No init mappings found");
+		m_profile_log->info(fmt::format("{} No init mappings found", get_log_prefix_from_device(in_device)));
 	}
 
 	// create inbound mappings
-	if (in_params.contains(CFG_KEY_MAPPING_IN))
+	if (in_params.contains(c_cfg_mapping_in.data()))
 		in_device.mapping_in().create_mappings(*m_profile_log,
-											   in_params[CFG_KEY_MAPPING_IN].as_array(),
+											   in_params[c_cfg_mapping_in.data()].as_array(),
 											   m_env,
 											   in_device.type() == device_type::virtual_device,
 											   in_device.settings(),
 											   in_inc_name,
 											   m_config);
 	else
-		m_profile_log->info(get_log_prefix_from_device(in_device) + "No inbound mappings found");
+		m_profile_log->info(fmt::format("{} No inbound mappings found", get_log_prefix_from_device(in_device)));
 
 
 	// create outbound mappings
-	if (in_device.type() == device_type::midi_device && in_params.contains(CFG_KEY_MAPPING_OUT)) {
+	if (in_device.type() == device_type::midi_device && in_params.contains(c_cfg_mapping_out.data())) {
 		auto& midi_dev = dynamic_cast<midi_device&>(in_device);
 		midi_dev.mapping_out().create_mappings(*m_profile_log,
-											   in_params[CFG_KEY_MAPPING_OUT].as_array(),
+											   in_params[c_cfg_mapping_out.data()].as_array(),
 											   m_env,
 											   midi_dev.settings(),
 											   in_inc_name);
 	} else {
-		m_profile_log->info(get_log_prefix_from_device(in_device) + "No outbound mappings found");
+		m_profile_log->info(fmt::format("{} No outbound mappings found", get_log_prefix_from_device(in_device)));
 	}
 }
 

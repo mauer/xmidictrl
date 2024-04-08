@@ -98,23 +98,21 @@ bool map_in_sld::check(text_logger& in_log, const device_settings& in_dev_settin
         // dataref mode
         if (!env().drf().check(m_dataref)) {
             in_log.error(source_line());
-            in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
+            in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref));
             result = false;
         }
 
         // value min/max
         if (m_value_min == m_value_max) {
             in_log.error(source_line());
-            in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '"
-                         + std::string(CFG_KEY_VALUE_MAX) + "'");
+            in_log.error(fmt::format(" --> Parameter '{}' is equal to parameter '{}", c_cfg_value_min, c_cfg_value_max));
             result = false;
         }
     } else {
         // command mode
         if (m_command_up.empty() && m_command_down.empty()) {
             in_log.error(source_line());
-            in_log.error(" --> Parameters '" + std::string(CFG_KEY_COMMAND_UP) + "' and '"
-                         + std::string(CFG_KEY_COMMAND_DOWN) + "' are not defined");
+            in_log.error(fmt::format(" --> Parameters '{}' and '{}' are not defined", c_cfg_command_up, c_cfg_command_down));
             result = false;
         }
     }
@@ -161,13 +159,13 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
         else
             value = ((m_value_max - m_value_min) * (static_cast<float>(param_in->msg().data_2()) / 127.0f)) + m_value_min;
 
-		param_in->msg().log().debug(" --> Set dataref '" + m_dataref + "' to value '" + std::to_string(value) + "'");
+		param_in->msg().log().debug(fmt::format(" --> Set dataref '{}' to value '{}'", m_dataref, std::to_string(value)));
 
         if (env().drf().write(param_in->msg().log(), m_dataref, value)) {
             try {
                 display_label(param_in->msg().log(), std::to_string(value));
             } catch (std::bad_alloc& ex) {
-				param_in->msg().log().error("Error converting float '" + std::to_string(value) + "' value to string");
+				param_in->msg().log().error(fmt::format("Error converting float '{}' value to string", std::to_string(value)));
 				param_in->msg().log().error(ex.what());
             }
         }
@@ -175,7 +173,7 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
         // command mode
         if (param_in->msg().data_2() <= m_data_2_min + m_data_2_margin) {
 			if (m_command_down != m_command_down_prev) {
-				param_in->msg().log().debug(" --> Execute command '" + m_command_down + "'");
+				param_in->msg().log().debug(fmt::format(" --> Execute command '{}'", m_command_down));
 
 				env().cmd().execute(param_in->msg().log(), m_command_down);
 				m_command_down_prev = m_command_down;
@@ -185,7 +183,7 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
 			}
         } else if (param_in->msg().data_2() >= m_data_2_max - m_data_2_margin) {
             if (m_command_up != m_command_up_prev) {
-				param_in->msg().log().debug(" --> Execute command '" + m_command_up + "'");
+				param_in->msg().log().debug(fmt::format(" --> Execute command '{}'", m_command_up));
 
 				env().cmd().execute(param_in->msg().log(), m_command_up);
 				m_command_up_prev = m_command_up;
@@ -197,7 +195,7 @@ std::unique_ptr<map_result> map_in_sld::execute(map_param* in_param)
 				   param_in->msg().data_2() <= (m_data_2_max - m_data_2_min) / 2 + m_data_2_margin) {
             if (!m_command_middle.empty()) {
                 if (m_command_middle != m_command_middle_prev) {
-					param_in->msg().log().debug(" --> Execute command '" + m_command_middle + "'");
+					param_in->msg().log().debug(fmt::format(" --> Execute command '{}'", m_command_middle));
 
 					env().cmd().execute(param_in->msg().log(), m_command_middle);
 					m_command_middle_prev = m_command_middle;

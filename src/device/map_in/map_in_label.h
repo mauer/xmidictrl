@@ -47,13 +47,17 @@ protected:
     void display_label(text_logger& in_log, std::string_view in_value);
 
 private:
-    void read_label(text_logger& in_log, toml::value& in_data, toml::value& in_config);
-
     // constants
     static constexpr std::string_view c_cfg_label {"label"};
+	static constexpr std::string_view c_cfg_text {"text"};
+	static constexpr std::string_view c_cfg_value {"value"};
+	static constexpr std::string_view c_cfg_values {"values"};
 
     // members
     std::unique_ptr<label> m_label {nullptr};
+
+	// functions
+	void read_label(text_logger& in_log, toml::value& in_data, toml::value& in_config);
 };
 
 } // Namespace xmiditrl

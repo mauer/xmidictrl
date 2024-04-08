@@ -100,9 +100,24 @@ private:
 
 	// constants
 	static constexpr std::string_view c_cfg_default_encoder_mode {"default_encoder_mode"};
+
+	static constexpr std::string_view c_cfg_device {"device"};
 	static constexpr std::string_view c_cfg_include {"include"};
+
+	static constexpr std::string_view c_cfg_mapping_in {"mapping_in"};
+	static constexpr std::string_view c_cfg_mapping_init {"mapping_init"};
+	static constexpr std::string_view c_cfg_mapping_out {"mapping_out"};
+
+	static constexpr std::string_view c_cfg_mode_note {"mode_note"};
+	static constexpr std::string_view c_cfg_mode_out {"mode_out"};
+	static constexpr std::string_view c_cfg_name {"name"};
+	static constexpr std::string_view c_cfg_outbound_delay {"outbound_delay"};
+	static constexpr std::string_view c_cfg_port_in {"port_in"};
+	static constexpr std::string_view c_cfg_port_out {"port_out"};
+	static constexpr std::string_view c_cfg_sl_dataref {"sl_dataref"};
 	static constexpr std::string_view c_cfg_title {"title"};
 	static constexpr std::string_view c_cfg_version {"version"};
+	static constexpr std::string_view c_cfg_virtual_device {"virtual_device"};
 
 	// members
 	toml::value m_config {};

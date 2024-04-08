@@ -70,6 +70,12 @@ private:
     static constexpr std::string_view c_cfg_command_push {"command_push"};
     static constexpr std::string_view c_cfg_command_pull {"command_pull"};
 
+	static constexpr std::string_view c_cfg_dataref_push {"dataref_push"};
+	static constexpr std::string_view c_cfg_dataref_pull {"dataref_pull"};
+
+	static constexpr std::string_view c_cfg_values_push {"values_push"};
+	static constexpr std::string_view c_cfg_values_pull {"values_pull"};
+
     // enumerations
     enum class command_type {
         none,

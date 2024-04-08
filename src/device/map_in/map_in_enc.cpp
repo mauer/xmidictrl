@@ -62,73 +62,73 @@ void map_in_enc::read_config(text_logger& in_log, toml::value& in_data, toml::va
     map_in_label::read_config(in_log, in_data, in_config);
 
     // read the mode
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_MODE))
-        m_enc_mode = encoder_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
+    if (toml_utils::contains(in_log, in_data, c_cfg_mode))
+        m_enc_mode = encoder_mode_from_code(toml_utils::read_string(in_log, in_data, c_cfg_mode));
 
     // read the delay (if defined)
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DELAY))
-        m_delay = toml_utils::read_int(in_log, in_data, CFG_KEY_DELAY);
+    if (toml_utils::contains(in_log, in_data, c_cfg_delay))
+        m_delay = toml_utils::read_int(in_log, in_data, c_cfg_delay);
 
     // check if dataref was defined
-    if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
+    if (toml_utils::contains(in_log, in_data, c_cfg_dataref)) {
         in_log.debug_line(in_data.location().line(), "Use 'dataref' mode for encoder mapping");
         m_enc_map_type = encoder_map_type::dataref;
 
         // read dataref
-        m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
+        m_dataref = toml_utils::read_string(in_log, in_data, c_cfg_dataref);
 
         // read modifier up
-        m_modifier_up = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_UP);
+        m_modifier_up = toml_utils::read_float(in_log, in_data, c_cfg_modifier_up);
 
         // read modifier down
-        m_modifier_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_DOWN);
+        m_modifier_down = toml_utils::read_float(in_log, in_data, c_cfg_modifier_down);
 
         // read modifier fast up
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP))
-            m_modifier_fast_up = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_UP);
+        if (toml_utils::contains(in_log, in_data, c_cfg_modifier_fast_up))
+            m_modifier_fast_up = toml_utils::read_float(in_log, in_data, c_cfg_modifier_fast_up);
         else
             m_modifier_fast_up = m_modifier_up;
 
         // read modifier fast down
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN))
-            m_modifier_fast_down = toml_utils::read_float(in_log, in_data, CFG_KEY_MODIFIER_FAST_DOWN);
+        if (toml_utils::contains(in_log, in_data, c_cfg_modifier_fast_down))
+            m_modifier_fast_down = toml_utils::read_float(in_log, in_data, c_cfg_modifier_fast_down);
         else
             m_modifier_fast_down = m_modifier_down;
 
         // read value min
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN)) {
-            m_value_min = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false);
+        if (toml_utils::contains(in_log, in_data, c_cfg_value_min)) {
+            m_value_min = toml_utils::read_float(in_log, in_data, c_cfg_value_min, false);
             m_value_min_defined = true;
         }
 
         // read value max
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX)) {
-            m_value_max = toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false);
+        if (toml_utils::contains(in_log, in_data, c_cfg_value_max)) {
+            m_value_max = toml_utils::read_float(in_log, in_data, c_cfg_value_max, false);
             m_value_max_defined = true;
         }
 
 		// read value wrap
-		if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_WRAP))
-			m_value_wrap = toml_utils::read_bool(in_log, in_data, CFG_KEY_VALUE_WRAP);
+		if (toml_utils::contains(in_log, in_data, c_cfg_value_wrap))
+			m_value_wrap = toml_utils::read_bool(in_log, in_data, c_cfg_value_wrap);
     } else {
         in_log.debug_line(in_data.location().line(), "Use 'command' mode for encoder mapping");
         m_enc_map_type = encoder_map_type::command;
 
         // read command up
-        m_command_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_UP);
+        m_command_up = toml_utils::read_string(in_log, in_data, c_cfg_command_up);
 
         // read command down
-        m_command_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_DOWN);
+        m_command_down = toml_utils::read_string(in_log, in_data, c_cfg_command_down);
 
         // read fast command up
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_UP))
-            m_command_fast_up = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_UP);
+        if (toml_utils::contains(in_log, in_data, c_cfg_command_fast_up))
+            m_command_fast_up = toml_utils::read_string(in_log, in_data, c_cfg_command_fast_up);
         else
             m_command_fast_up = m_command_up;
 
         // read fast command down
-        if (toml_utils::contains(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN))
-            m_command_fast_down = toml_utils::read_string(in_log, in_data, CFG_KEY_COMMAND_FAST_DOWN);
+        if (toml_utils::contains(in_log, in_data, c_cfg_command_fast_down))
+            m_command_fast_down = toml_utils::read_string(in_log, in_data, c_cfg_command_fast_down);
         else
             m_command_fast_down = m_command_down;
     }
@@ -184,8 +184,8 @@ bool map_in_enc::check(text_logger& in_log, const device_settings& in_dev_settin
             if (m_value_min_defined && m_value_max_defined && m_value_min >= m_value_max) {
                 in_log.error(source_line());
                 in_log.error(fmt::format(" --> Parameter '{}' needs to be less than Parameter '{}'",
-                                         CFG_KEY_VALUE_MIN,
-                                         CFG_KEY_VALUE_MAX));
+                                         c_cfg_value_min,
+                                         c_cfg_value_max));
                 result = false;
             }
 

@@ -56,8 +56,12 @@ protected:
 	std::string build_mapping_text(bool in_short) override;
 
 private:
-	// functions
-	dataref_mode dataref_mode_from_code(std::string_view in_mode) const;
+	// constants
+	static constexpr std::string_view c_cfg_dataref {"dataref"};
+	static constexpr std::string_view c_cfg_mode {"mode"};
+	static constexpr std::string_view c_cfg_values {"values"};
+	static constexpr std::string_view c_cfg_value_on {"value_on"};
+	static constexpr std::string_view c_cfg_value_off {"value_off"};
 
 	// members
 	dataref_mode m_mode {dataref_mode::toggle};
@@ -65,6 +69,9 @@ private:
 	std::string m_dataref {};
 
 	std::vector<std::string> m_values {};
+
+	// functions
+	[[nodiscard]] dataref_mode dataref_mode_from_code(std::string_view in_mode) const;
 };
 
 } // Namespace xmidictrl

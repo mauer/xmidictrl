@@ -119,31 +119,31 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 	read_common_config(in_log, in_data);
 
 	// read dataref
-	if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF)) {
+	if (toml_utils::contains(in_log, in_data, c_cfg_dataref)) {
 		// check if single value or array
-		if (in_data[CFG_KEY_DATAREF].is_array())
-			set_dataref(toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_DATAREF));
+		if (in_data[c_cfg_dataref.data()].is_array())
+			set_dataref(toml_utils::read_str_vector_array(in_log, in_data, c_cfg_dataref));
 		else
-			set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
+			set_dataref(toml_utils::read_string(in_log, in_data, c_cfg_dataref));
 	}
 
 	// read values on
-	if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_ON)) {
-		m_values_on = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_ON);
+	if (toml_utils::is_array(in_log, in_data, c_cfg_value_on)) {
+		m_values_on = toml_utils::read_str_set_array(in_log, in_data, c_cfg_value_on);
 	} else {
 		m_values_on.clear();
-		std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
+		std::string value = toml_utils::read_string(in_log, in_data, c_cfg_value_on);
 
 		if (!value.empty())
 			m_values_on.insert(value);
 	}
 
 	// read values off
-	if (toml_utils::is_array(in_log, in_data, CFG_KEY_VALUE_OFF)) {
-		m_values_off = toml_utils::read_str_set_array(in_log, in_data, CFG_KEY_VALUE_OFF);
+	if (toml_utils::is_array(in_log, in_data, c_cfg_value_off)) {
+		m_values_off = toml_utils::read_str_set_array(in_log, in_data, c_cfg_value_off);
 	} else {
 		m_values_off.clear();
-		std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
+		std::string value = toml_utils::read_string(in_log, in_data, c_cfg_value_off);
 
 		if (!value.empty())
 			m_values_off.insert(value);
@@ -183,21 +183,20 @@ bool map_out_drf::check(text_logger& in_log, const device_settings& in_dev_setti
 
 	if (m_datarefs.empty()) {
 		in_log.error(source_line());
-		in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is not defined");
+		in_log.error(fmt::format(" --> Parameter '{}' is not defined", c_cfg_dataref));
 		result = false;
 	}
 
 	if (m_values_on.empty() && m_values_off.empty()) {
 		in_log.error(source_line());
-		in_log.error(" --> Parameters '" + std::string(CFG_KEY_VALUE_ON) + "' and '" + std::string(CFG_KEY_VALUE_OFF)
-					 + "' are not defined");
+		in_log.error(fmt::format(" --> Parameters '{}' and '{}' are not defined", c_cfg_value_on, c_cfg_value_off));
 		result = false;
 	}
 
 	for (const auto& dataref: m_datarefs) {
 		if (!env().drf().check(dataref)) {
 			in_log.error(source_line());
-			in_log.error(" --> Dataref '" + std::string(dataref) + "' not found");
+			in_log.error(fmt::format(" --> Dataref '{}' not found", dataref));
 			result = false;
 		}
 	}

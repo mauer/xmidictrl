@@ -39,7 +39,7 @@ settings::settings(text_logger& in_text_log, std::filesystem::path in_path)
 		m_show_errors = toml::find_or<bool>(m_settings_file, CFG_KEY_SHOW_ERRORS, true);
 
 		m_virtual_channel = toml::find_or<int>(m_settings_file, CFG_KEY_VIRTUAL_CHANNEL, 16);
-		m_default_outbound_delay = toml::find_or<float>(m_settings_file, CFG_KEY_DEFAULT_OUTBOUND_DELAY, 0.5f);
+		m_default_outbound_delay = toml::find_or<float>(m_settings_file, c_cfg_default_outbound_delay.data(), 0.5f);
 
 		m_note_name = static_cast<note_name_type>(toml::find_or<int>(m_settings_file, CFG_KEY_NOTE_NAME, 0));
 

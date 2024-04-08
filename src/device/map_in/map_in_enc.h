@@ -59,11 +59,35 @@ protected:
 
 private:
 	// constants
+
+	static constexpr std::string_view c_cfg_command_down {"command_down"};
+	static constexpr std::string_view c_cfg_command_fast_down {"command_fast_down"};
+
+	static constexpr std::string_view c_cfg_command_up {"command_up"};
+	static constexpr std::string_view c_cfg_command_fast_up {"command_fast_up"};
+
+	static constexpr std::string_view c_cfg_dataref {"dataref"};
+
 	static constexpr std::string_view c_cfg_data_2_up {"data_2_up"};
 	static constexpr std::string_view c_cfg_data_2_down {"data_2_down"};
 
 	static constexpr std::string_view c_cfg_data_2_min {"data_2_min"};
 	static constexpr std::string_view c_cfg_data_2_max {"data_2_max"};
+
+	static constexpr std::string_view c_cfg_delay {"delay"};
+
+	static constexpr std::string_view c_cfg_mode {"mode"};
+
+	static constexpr std::string_view c_cfg_modifier_down {"modifier_down"};
+	static constexpr std::string_view c_cfg_modifier_fast_down {"modifier_fast_down"};
+
+	static constexpr std::string_view c_cfg_modifier_up {"modifier_up"};
+	static constexpr std::string_view c_cfg_modifier_fast_up {"modifier_fest_up"};
+
+	static constexpr std::string_view c_cfg_value_min {"value_min"};
+	static constexpr std::string_view c_cfg_value_max {"value_max"};
+
+	static constexpr std::string_view c_cfg_value_wrap {"value_wrap"};
 
 	// enumerations
 	enum class encoder_map_type

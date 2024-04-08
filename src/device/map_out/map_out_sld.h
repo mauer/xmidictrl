@@ -65,8 +65,13 @@ protected:
 
 private:
 	// constants
+	static constexpr std::string_view c_cfg_dataref {"dataref"};
+
 	static constexpr std::string_view c_cfg_data_2_max {"data_2_max"};
 	static constexpr std::string_view c_cfg_data_2_min {"data_2_min"};
+
+	static constexpr std::string_view c_cfg_value_min {"value_min"};
+	static constexpr std::string_view c_cfg_value_max {"value_max"};
 
 	// members
 	std::string m_dataref {};

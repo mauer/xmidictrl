@@ -106,6 +106,8 @@ private:
 	static constexpr std::string_view c_cfg_ch {"ch"};
 	static constexpr std::string_view c_cfg_cc {"cc"};
 	static constexpr std::string_view c_cfg_note {"note"};
+	static constexpr std::string_view c_cfg_pitch {"pitch"};
+	static constexpr std::string_view c_cfg_program_change {"prg"};
 	static constexpr std::string_view c_cfg_sl {"sl"};
 
 	unsigned int m_no {0};

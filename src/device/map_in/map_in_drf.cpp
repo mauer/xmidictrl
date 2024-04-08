@@ -61,24 +61,24 @@ void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::va
 	map_in_label::read_config(in_log, in_data, in_config);
 
 	// read mode
-	m_mode = dataref_mode_from_code(toml_utils::read_string(in_log, in_data, CFG_KEY_MODE));
+	m_mode = dataref_mode_from_code(toml_utils::read_string(in_log, in_data, c_cfg_mode));
 
 	// read dataref
-	m_dataref = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF);
+	m_dataref = toml_utils::read_string(in_log, in_data, c_cfg_dataref);
 
 	// check if a values array has been defined
-	m_values = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES);
+	m_values = toml_utils::read_str_vector_array(in_log, in_data, c_cfg_values);
 
 	if (m_values.empty()) {
 		// read value on
-		std::string value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_ON);
+		std::string value = toml_utils::read_string(in_log, in_data, c_cfg_value_on);
 
 		if (!value.empty())
 			m_values.push_back(value);
 
 		// read value off
-		if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_OFF))
-			value = toml_utils::read_string(in_log, in_data, CFG_KEY_VALUE_OFF);
+		if (toml_utils::contains(in_log, in_data, c_cfg_value_off))
+			value = toml_utils::read_string(in_log, in_data, c_cfg_value_off);
 
 		if (!value.empty())
 			m_values.push_back(value);
@@ -98,13 +98,13 @@ bool map_in_drf::check(text_logger& in_log, const device_settings& in_dev_settin
 
 	if (m_dataref.empty()) {
 		in_log.error(source_line());
-		in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is empty");
+		in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_dataref));
 		result = false;
 	}
 
 	if (!env().drf().check(m_dataref)) {
 		in_log.error(source_line());
-		in_log.error(" --> Dataref '" + m_dataref + "' not found");
+		in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref));
 		result = false;
 	}
 
@@ -116,8 +116,7 @@ bool map_in_drf::check(text_logger& in_log, const device_settings& in_dev_settin
 
 	if (m_mode == dataref_mode::momentary && m_values.size() != 2) {
 		in_log.error(source_line());
-		in_log.error(" --> When parameter '" + std::string(CFG_KEY_MODE)
-					 + "' is 'momentary', two values (on/off) are expected");
+		in_log.error(fmt::format(" --> When parameter '{}' is 'momentary', two values (on/off) are expected", c_cfg_mode));
 		result = false;
 	}
 
@@ -235,7 +234,8 @@ std::string map_in_drf::build_mapping_text(bool in_short)
 
 	map_str.append("Values = [");
 
-	for (const auto& value: m_values) map_str.append(" '" + value + "', ");
+	for (const auto& value: m_values)
+		map_str.append(" '" + value + "', ");
 
 	map_str.append("]" + sep_str);
 

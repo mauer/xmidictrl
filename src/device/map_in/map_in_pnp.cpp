@@ -17,6 +17,9 @@
 
 #include "map_in_pnp.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "toml_utils.h"
 
@@ -80,19 +83,19 @@ void map_in_pnp::read_config(text_logger& in_log, toml::value& in_data, toml::va
 	in_log.debug_line(in_data.location().line(), "Read settings for type 'pnp'");
 	map_in::read_config(in_log, in_data, in_config);
 
-	if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PUSH)) {
+	if (toml_utils::contains(in_log, in_data, c_cfg_dataref_push)) {
 		// read dataref push
-		m_dataref_push = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PUSH);
-		m_values_push = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PUSH);
+		m_dataref_push = toml_utils::read_string(in_log, in_data, c_cfg_dataref_push);
+		m_values_push = toml_utils::read_str_vector_array(in_log, in_data, c_cfg_values_push);
 	} else {
 		// read command push
 		m_command_push = toml_utils::read_string(in_log, in_data, c_cfg_command_push);
 	}
 
-	if (toml_utils::contains(in_log, in_data, CFG_KEY_DATAREF_PULL)) {
+	if (toml_utils::contains(in_log, in_data, c_cfg_dataref_pull)) {
 		// read dataref pull
-		m_dataref_pull = toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF_PULL);
-		m_values_pull = toml_utils::read_str_vector_array(in_log, in_data, CFG_KEY_VALUES_PULL);
+		m_dataref_pull = toml_utils::read_string(in_log, in_data, c_cfg_dataref_pull);
+		m_values_pull = toml_utils::read_str_vector_array(in_log, in_data, c_cfg_values_pull);
 	} else {
 		// read command pull
 		m_command_pull = toml_utils::read_string(in_log, in_data, c_cfg_command_pull);
@@ -114,19 +117,19 @@ bool map_in_pnp::check(text_logger& in_log, const device_settings& in_dev_settin
 	if (!m_dataref_pull.empty()) {
 		if (!env().drf().check(m_dataref_pull)) {
 			in_log.error(source_line());
-			in_log.error(" --> Dataref '" + std::string(m_dataref_pull) + "' not found");
+			in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref_pull));
 			result = false;
 		}
 
 		if (m_values_pull.empty()) {
 			in_log.error(source_line());
-			in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUES_PULL) + "' is not defined");
+			in_log.error(fmt::format(" --> Parameter '{}' is not defined", c_cfg_values_pull));
 			result = false;
 		}
 	} else {
 		if (m_command_pull.empty()) {
 			in_log.error(source_line());
-			in_log.error(" --> Parameter '" + std::string(c_cfg_command_pull) + "' is empty");
+			in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_command_pull));
 			result = false;
 		}
 	}
@@ -135,19 +138,19 @@ bool map_in_pnp::check(text_logger& in_log, const device_settings& in_dev_settin
 	if (!m_dataref_push.empty()) {
 		if (!env().drf().check(m_dataref_push)) {
 			in_log.error(source_line());
-			in_log.error(" --> Dataref '" + std::string(m_dataref_push) + "' not found");
+			in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref_push));
 			result = false;
 		}
 
 		if (m_values_push.empty()) {
 			in_log.error(source_line());
-			in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUES_PUSH) + "' is not defined");
+			in_log.error(fmt::format(" --> Parameter '{}' is not defined", c_cfg_values_push));
 			result = false;
 		}
 	} else {
 		if (m_command_push.empty()) {
 			in_log.error(source_line());
-			in_log.error(" --> Parameter '" + std::string(c_cfg_command_push) + "' is empty");
+			in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_command_push));
 			result = false;
 		}
 	}
@@ -183,14 +186,14 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 			switch (m_command_type) {
 				case command_type::push:
 					if (!m_command_push.empty()) {
-						param_in->msg().log().debug(" --> End push command '" + m_command_push + "'");
+						param_in->msg().log().debug(fmt::format(" --> End push command '{}'", m_command_push));
 						env().cmd().end(param_in->msg().log(), m_command_push);
 					}
 					break;
 
 				case command_type::pull:
 					if (!m_command_pull.empty()) {
-						param_in->msg().log().debug(" --> End pull command '" + m_command_pull + "'");
+						param_in->msg().log().debug(fmt::format(" --> End pull command '{}'", m_command_pull));
 						env().cmd().end(param_in->msg().log(), m_command_pull);
 					}
 					break;
@@ -226,7 +229,7 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 		if (!m_dataref_pull.empty()) {
 			toggle_dataref(param_in->msg().log(), m_dataref_pull, m_values_pull);
 		} else if (!m_command_pull.empty()) {
-			param_in->msg().log().debug(" --> Begin pull command '" + m_command_pull + "'");
+			param_in->msg().log().debug(fmt::format(" --> Begin pull command '{}'", m_command_pull));
 			m_command_type = command_type::pull;
 			env().cmd().begin(param_in->msg().log(), m_command_pull);
 
@@ -238,7 +241,7 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 		if (!m_dataref_push.empty()) {
 			toggle_dataref(param_in->msg().log(), m_dataref_push, m_values_push);
 		} else if (!m_command_push.empty()) {
-			param_in->msg().log().debug(" --> Begin push command '" + m_command_push + "'");
+			param_in->msg().log().debug(fmt::format(" --> Begin push command '{}'", m_command_push));
 			m_command_type = command_type::push;
 			env().cmd().begin(param_in->msg().log(), m_command_push);
 

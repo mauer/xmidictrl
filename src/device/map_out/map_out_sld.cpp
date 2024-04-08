@@ -17,6 +17,9 @@
 
 #include "map_out_sld.h"
 
+// fmt
+#include "fmt/format.h"
+
 // XMidiCtrl
 #include "toml_utils.h"
 
@@ -119,15 +122,15 @@ void map_out_sld::read_config(text_logger& in_log, toml::value& in_data)
 	read_common_config(in_log, in_data);
 
 	// read dataref
-	set_dataref(toml_utils::read_string(in_log, in_data, CFG_KEY_DATAREF));
+	set_dataref(toml_utils::read_string(in_log, in_data, c_cfg_dataref));
 
 	// read value min
-	if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MIN))
-		set_value_min(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MIN, false));
+	if (toml_utils::contains(in_log, in_data, c_cfg_value_min))
+		set_value_min(toml_utils::read_float(in_log, in_data, c_cfg_value_min, false));
 
 	// read value max
-	if (toml_utils::contains(in_log, in_data, CFG_KEY_VALUE_MAX))
-		set_value_max(toml_utils::read_float(in_log, in_data, CFG_KEY_VALUE_MAX, false));
+	if (toml_utils::contains(in_log, in_data, c_cfg_value_max))
+		set_value_max(toml_utils::read_float(in_log, in_data, c_cfg_value_max, false));
 
 	// read data 2 min
 	if (toml_utils::contains(in_log, in_data, c_cfg_data_2_min))
@@ -151,20 +154,19 @@ bool map_out_sld::check(text_logger& in_log, const device_settings& in_dev_setti
 
 	if (m_dataref.empty()) {
 		in_log.error(source_line());
-		in_log.error(" --> Parameter '" + std::string(CFG_KEY_DATAREF) + "' is not defined");
+		in_log.error(fmt::format(" --> Parameter '{}' is not defined", c_cfg_dataref));
 		result = false;
 	}
 
 	if (!env().drf().check(m_dataref)) {
 		in_log.error(source_line());
-		in_log.error(" --> Dataref '" + std::string(m_dataref) + "' not found");
+		in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref));
 		result = false;
 	}
 
 	if (m_value_min == m_value_max) {
 		in_log.error(source_line());
-		in_log.error(" --> Parameter '" + std::string(CFG_KEY_VALUE_MIN) + "' is equal to parameter '"
-					 + std::string(CFG_KEY_VALUE_MAX) + "'");
+		in_log.error(fmt::format(" --> Parameter '{}' is equal to parameter '{}'", c_cfg_value_min, c_cfg_value_max));
 		result = false;
 	}
 

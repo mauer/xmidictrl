@@ -274,19 +274,19 @@ void map::read_data_1(text_logger& in_log, toml::value& in_data)
 			m_data_1_type = map_data_1_type::note;
 
 			in_log.debug_param(in_data.location().line(), c_cfg_note, std::to_string(m_data_1));
-		} else if (in_data.contains(CFG_KEY_PITCH_BEND)) {
+		} else if (in_data.contains(c_cfg_pitch.data())) {
 			m_data_1 = 0; // fixed value for pitch bend messages
 			m_data_1_type = map_data_1_type::pitch_bend;
 
 			in_log.debug_line(in_data.location().line(),
 							  fmt::format("Parameter '{}' = '{}' (fixed value for pitch bend)",
-										  CFG_KEY_PITCH_BEND,
+										  c_cfg_pitch,
 										  std::to_string(m_data_1)));
-		} else if (in_data.contains(CFG_KEY_PROGRAM_CHANGE)) {
-			m_data_1 = static_cast<char>(in_data[CFG_KEY_PROGRAM_CHANGE].as_integer());
+		} else if (in_data.contains(c_cfg_program_change.data())) {
+			m_data_1 = static_cast<char>(in_data[c_cfg_program_change.data()].as_integer());
 			m_data_1_type = map_data_1_type::program_change;
 
-			in_log.debug_param(in_data.location().line(), CFG_KEY_PROGRAM_CHANGE, std::to_string(m_data_1));
+			in_log.debug_param(in_data.location().line(), c_cfg_program_change, std::to_string(m_data_1));
 		} else {
 			in_log.error_line(in_data.location().line(), "Parameter for MIDI type is missing");
 		}
