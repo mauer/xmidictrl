@@ -512,7 +512,7 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 
 			// default encoder mode
 			settings->default_enc_mode = map_in_enc::encoder_mode_from_code(
-				toml_utils::read_string(*m_profile_log, in_params, CFG_KEY_ENCODER_MODE));
+				toml_utils::read_string(*m_profile_log, in_params, c_cfg_default_encoder_mode));
 		}
 	} catch (const std::out_of_range& error) {
 		m_profile_log->error(get_log_prefix(in_is_virtual, in_dev_no) + "Error reading profile");

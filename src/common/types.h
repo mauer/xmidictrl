@@ -91,7 +91,6 @@ const char* const CFG_KEY_DEFAULT_OUTBOUND_DELAY = "default_outbound_delay";
 const char* const CFG_KEY_DEFAULT_TEXT_SORT = "default_text_sort";
 const char* const CFG_KEY_DELAY = "delay";
 const char* const CFG_KEY_DEVICE = "device";
-const char* const CFG_KEY_ENCODER_MODE = "encoder_mode";
 const char* const CFG_KEY_LOG_MIDI = "log_midi";
 const char* const CFG_KEY_MAPPING_IN = "mapping_in";
 const char* const CFG_KEY_MAPPING_INIT = "mapping_init";

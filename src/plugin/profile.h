@@ -99,9 +99,9 @@ private:
 	static std::string get_log_prefix(bool in_is_virtual, size_t in_dev_no = 0);
 
 	// constants
+	static constexpr std::string_view c_cfg_default_encoder_mode {"default_encoder_mode"};
 	static constexpr std::string_view c_cfg_include {"include"};
 	static constexpr std::string_view c_cfg_title {"title"};
-	static constexpr std::string_view c_cfg_type {"type"};
 	static constexpr std::string_view c_cfg_version {"version"};
 
 	// members
