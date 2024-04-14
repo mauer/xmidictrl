@@ -19,11 +19,12 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Set project details
-project(XMidiCtrl VERSION 1.13 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
+project(XMidiCtrl VERSION 1.14 DESCRIPTION "MIDI Controller Plugin for X-Plane 11/12")
+set(XMIDICTRL_BETA_LABEL .beta-1)
 set(PROJECT_SIGNATURE mauer.xmidictrl)
 
 message("-----------------------------------------------")
-message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}")
+message("-- Configure ${PROJECT_NAME} ${PROJECT_VERSION}${XMIDICTRL_BETA_LABEL}")
 message("-----------------------------------------------")
 
 include(CTest)

@@ -3,6 +3,12 @@
 
 -----------------------------------------------------------------------------------------------------------------------
 
+##  VERSION 1.14
++ Fixed parameter default_encoder_mode, as there was a spelling mistake
++ Internal refactoring
+
+-----------------------------------------------------------------------------------------------------------------------
+
 ##  VERSION 1.13
 + Updated FontAwesome to latest version 6.4.2
 + Moved parameter sl_dataref from profile to device, to allow a sl_dataref for each device
