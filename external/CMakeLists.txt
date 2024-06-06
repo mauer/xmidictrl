@@ -54,7 +54,7 @@ endif()
 add_subdirectory(rtmidi)
 
 # Add HID Api
-#set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(hidapi)
 
 # Add the X-Plane SDK
