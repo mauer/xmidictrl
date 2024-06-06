@@ -44,7 +44,7 @@ TEST_CASE("Test Inbound Mapping for sliders with commands")
     )"_toml;
 
     auto map = new map_in_sld(*env);
-	auto dev_settings = std::make_unique<device_settings>();
+	auto dev_settings = std::make_unique<midi_device_settings>();
     map->read_config(*log, cfg, cfg);
 
     auto msg = new midi_message(*log, midi_direction::in);

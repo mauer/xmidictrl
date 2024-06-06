@@ -34,7 +34,7 @@ TEST_CASE("Test Inbound Mapping for commands with default data 2")
 	auto log = std::make_unique<text_logger>();
 	auto env = std::make_unique<env_tests>(*log);
 
-    auto* dev_settings = new device_settings();
+    auto* dev_settings = new midi_device_settings();
 
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
@@ -73,7 +73,7 @@ TEST_CASE("Test Inbound Mapping for commands with sublayer")
 	auto log = std::make_unique<text_logger>();
 	auto env = std::make_unique<env_tests>(*log);
 
-    auto* dev_settings = new device_settings();
+    auto* dev_settings = new midi_device_settings();
 	dev_settings->sl_dataref = "xmidictrl/sublayer";
 
     using namespace toml::literals::toml_literals;
@@ -126,7 +126,7 @@ TEST_CASE("Test Inbound Mapping for commands with custom data 2")
     auto log = std::make_unique<text_logger>();
     auto env = std::make_unique<env_tests>(*log);
 
-    auto dev_settings = std::make_unique<device_settings>();
+    auto dev_settings = std::make_unique<midi_device_settings>();
 
     using namespace toml::literals::toml_literals;
     toml::value cfg = u8R"(
