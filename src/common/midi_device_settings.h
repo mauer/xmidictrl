@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_DEVICE_SETTINGS_H
-#define XMC_DEVICE_SETTINGS_H
+#ifndef XMC_MIDI_DEVICE_SETTINGS_H
+#define XMC_MIDI_DEVICE_SETTINGS_H
 
 // Standard
 #include <set>
@@ -63,8 +63,8 @@ enum class outbound_send_mode
 //   STRUCT
 //---------------------------------------------------------------------------------------------------------------------
 
-// All possible device settings
-struct device_settings {
+// All possible settings for MIDI devices
+struct midi_device_settings {
 	std::string name;
 
 	int device_no {-1};
@@ -104,4 +104,4 @@ struct device_settings {
 
 } // Namespace xmidictrl
 
-#endif // XMC_DEVICE_SETTINGS_H
+#endif // XMC_MIDI_DEVICE_SETTINGS_H

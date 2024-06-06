@@ -25,9 +25,9 @@
 #include "fmt/format.h"
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "map_in_enc.h"
 #include "midi_device.h"
+#include "midi_device_settings.h"
 #include "midi_logger.h"
 #include "toml_utils.h"
 #include "types.h"
@@ -418,9 +418,9 @@ void profile::create_device(const toml::value& in_params, bool in_is_virtual, si
 /**
  * Read the device parameters
  */
-std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_params,
-																 bool in_is_virtual,
-																 size_t in_dev_no)
+std::unique_ptr<midi_device_settings> profile::create_device_settings(toml::value in_params,
+																	  bool in_is_virtual,
+																	  size_t in_dev_no)
 {
 	std::string dev_name {};
 
@@ -432,7 +432,7 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 	m_profile_log->debug(fmt::format("Read settings for {}", dev_name));
 
 	// read all the required parameters
-	auto settings = std::make_unique<device_settings>();
+	auto settings = std::make_unique<midi_device_settings>();
 
 	try {
 		// name
@@ -496,7 +496,7 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 			}
 
 			// mode note
-			settings->note_mode = device_settings::note_mode_from_code(
+			settings->note_mode = midi_device_settings::note_mode_from_code(
 				toml_utils::read_string(*m_profile_log, in_params, c_cfg_mode_note));
 
 			// outbound delay
@@ -509,7 +509,7 @@ std::unique_ptr<device_settings> profile::create_device_settings(toml::value in_
 				settings->outbound_delay = m_env.settings().default_outbound_delay();
 
 			// mode outbound
-			settings->send_mode = device_settings::send_mode_from_code(
+			settings->send_mode = midi_device_settings::send_mode_from_code(
 				toml_utils::read_string(*m_profile_log, in_params, c_cfg_mode_out));
 
 			// default encoder mode

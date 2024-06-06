@@ -22,10 +22,10 @@
 #include <memory>
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "environment.h"
 #include "map.h"
 #include "map_param_out.h"
+#include "midi_device_settings.h"
 #include "outbound_task.h"
 #include "types.h"
 

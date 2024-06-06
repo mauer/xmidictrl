@@ -35,7 +35,7 @@ namespace xmidictrl {
 device::device(text_logger& in_text_log,
 			   midi_logger& in_midi_log,
 			   environment& in_env,
-			   std::unique_ptr<device_settings> in_settings)
+			   std::unique_ptr<midi_device_settings> in_settings)
 	: m_text_log(in_text_log)
 	, m_midi_log(in_midi_log)
 	, m_env(in_env)
@@ -63,7 +63,7 @@ environment& device::env()
 /**
  * Return the device settings
  */
-device_settings& device::settings()
+midi_device_settings& device::settings()
 {
 	return *m_settings;
 }

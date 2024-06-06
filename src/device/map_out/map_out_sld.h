@@ -53,7 +53,7 @@ public:
 	void set_data_2_max(int in_data_2_max);
 
 	void read_config(text_logger& in_log, toml::value& in_data) override;
-	bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
+	bool check(text_logger& in_log, const midi_device_settings& in_dev_settings) override;
 
 	std::unique_ptr<map_result> execute(map_param* in_param) override;
 

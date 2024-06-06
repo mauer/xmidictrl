@@ -152,7 +152,7 @@ std::string map::get_key()
 /**
  * Check the mapping
  */
-bool map::check(text_logger& in_log, const device_settings& in_dev_settings)
+bool map::check(text_logger& in_log, const midi_device_settings& in_dev_settings)
 {
 	// check if a sublayer was defined
 	if (!m_sl.empty() && in_dev_settings.sl_dataref.empty()) {

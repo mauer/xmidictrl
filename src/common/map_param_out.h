@@ -22,8 +22,8 @@
 #include <string>
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "map_param.h"
+#include "midi_device_settings.h"
 #include "text_logger.h"
 #include "types.h"
 

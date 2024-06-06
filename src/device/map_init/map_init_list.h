@@ -23,8 +23,8 @@
 #include <map>
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "map_init.h"
+#include "midi_device_settings.h"
 
 namespace xmidictrl {
 
@@ -48,7 +48,7 @@ public:
 
     void create_mappings(text_logger& in_log,
                          toml::array in_profile,
-                         const device_settings& in_dev_settings,
+                         const midi_device_settings& in_dev_settings,
                          std::string_view in_inc_name);
 
     map_init_itr begin();

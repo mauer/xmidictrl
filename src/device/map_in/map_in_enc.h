@@ -26,8 +26,8 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "map_in_label.h"
+#include "midi_device_settings.h"
 #include "midi_message.h"
 #include "text_logger.h"
 
@@ -45,7 +45,7 @@ public:
 	map_in_type type() override;
 
 	void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
-	bool check(text_logger& in_log, const device_settings& in_dev_settings) override;
+	bool check(text_logger& in_log, const midi_device_settings& in_dev_settings) override;
 
 	std::unique_ptr<map_result> execute(map_param* in_param) override;
 

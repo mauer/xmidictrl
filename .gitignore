@@ -1,8 +1,4 @@
-cmake-build-lin/
-cmake-build-mac/
-cmake-build-win/
-cmake-build-debug/
-cmake-build-release/
+cmake-build*/
 .idea/
 .vscode/
 package/

@@ -32,10 +32,10 @@
 #include <thread>
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "environment.h"
 #include "map_in.h"
 #include "map_in_list.h"
+#include "midi_device_settings.h"
 #include "midi_logger.h"
 #include "types.h"
 
@@ -60,7 +60,7 @@ public:
     device(text_logger& in_text_log,
            midi_logger& in_midi_log,
            environment& in_env,
-           std::unique_ptr<device_settings> in_settings);
+           std::unique_ptr<midi_device_settings> in_settings);
     virtual ~device() = default;
 
     // no copying or copy assignments are allowed
@@ -71,7 +71,7 @@ public:
 
     environment& env();
 
-    device_settings& settings();
+    midi_device_settings& settings();
     map_in_list& mapping_in();
 
     [[nodiscard]] std::string sl_value() const;
@@ -89,7 +89,7 @@ private:
 
     std::string m_sl_value;
 
-    std::unique_ptr<device_settings> m_settings;
+    std::unique_ptr<midi_device_settings> m_settings;
     std::unique_ptr<map_in_list> m_map_in;
 };
 

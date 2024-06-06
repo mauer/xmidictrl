@@ -43,7 +43,7 @@ namespace xmidictrl {
 midi_device::midi_device(text_logger& in_text_log,
 						 midi_logger& in_midi_log,
 						 environment& in_env,
-						 std::unique_ptr<device_settings> in_settings)
+						 std::unique_ptr<midi_device_settings> in_settings)
 	: device(in_text_log, in_midi_log, in_env, std::move(in_settings))
 {
 	try {

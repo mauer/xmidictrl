@@ -25,9 +25,9 @@
 #include "toml.hpp"
 
 // XMidiCtrl
-#include "device_settings.h"
 #include "map_param.h"
 #include "map_result.h"
+#include "midi_device_settings.h"
 #include "midi_message.h"
 #include "text_logger.h"
 #include "types.h"
@@ -80,7 +80,7 @@ public:
 
 	std::string get_key();
 
-	virtual bool check(text_logger& in_log, const device_settings& in_dev_settings);
+	virtual bool check(text_logger& in_log, const midi_device_settings& in_dev_settings);
 
 	static std::string build_map_key(unsigned char in_ch, std::string_view in_type_code, unsigned char in_data);
 

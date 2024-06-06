@@ -34,7 +34,7 @@ namespace xmidictrl {
 void map_out_list::create_mappings(text_logger& in_log,
                                    toml::array in_profile,
                                    environment& in_env,
-                                   const device_settings& in_dev_settings,
+                                   const midi_device_settings& in_dev_settings,
                                    std::string_view in_inc_name)
 {
     auto log_prefix = "Device " + std::to_string(in_dev_settings.device_no) + " :: ";

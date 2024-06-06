@@ -25,9 +25,9 @@
 
 // XMidiCtrl
 #include "device.h"
-#include "device_settings.h"
 #include "environment.h"
 #include "midi_device.h"
+#include "midi_device_settings.h"
 #include "midi_logger.h"
 #include "text_logger.h"
 #include "virtual_device.h"
@@ -45,11 +45,11 @@ public:
 
 	device* create_midi_device(text_logger& in_text_log,
 							   midi_logger& in_midi_log,
-							   std::unique_ptr<device_settings> in_settings);
+							   std::unique_ptr<midi_device_settings> in_settings);
 
 	device* create_virtual_device(text_logger& in_text_log,
 								  midi_logger& in_midi_log,
-								  std::unique_ptr<device_settings> in_settings);
+								  std::unique_ptr<midi_device_settings> in_settings);
 
 	std::vector<std::unique_ptr<device>>::iterator begin();
 	std::vector<std::unique_ptr<device>>::iterator end();

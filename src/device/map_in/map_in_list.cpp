@@ -37,7 +37,7 @@ void map_in_list::create_mappings(text_logger& in_log,
 								  toml::array in_profile,
 								  environment& in_env,
 								  bool in_is_virtual,
-								  const device_settings& in_dev_settings,
+								  const midi_device_settings& in_dev_settings,
 								  std::string_view in_inc_name,
 								  toml::value& in_config)
 {

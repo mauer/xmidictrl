@@ -54,7 +54,7 @@ device_list::~device_list()
  */
 device* device_list::create_midi_device(text_logger& in_text_log,
 										midi_logger& in_midi_log,
-										std::unique_ptr<device_settings> in_settings)
+										std::unique_ptr<midi_device_settings> in_settings)
 {
 	auto dev = std::make_unique<midi_device>(in_text_log, in_midi_log, m_env, std::move(in_settings));
 	return m_device_list.emplace_back(std::move(dev)).get();
@@ -66,7 +66,7 @@ device* device_list::create_midi_device(text_logger& in_text_log,
  */
 device* device_list::create_virtual_device(text_logger& in_text_log,
 										   midi_logger& in_midi_log,
-										   std::unique_ptr<device_settings> in_settings)
+										   std::unique_ptr<midi_device_settings> in_settings)
 {
 	auto dev = std::make_unique<virtual_device>(in_text_log, in_midi_log, m_env, std::move(in_settings));
 	return m_device_list.emplace_back(std::move(dev)).get();

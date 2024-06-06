@@ -174,7 +174,7 @@ void map_out_drf::read_config(text_logger& in_log, toml::value& in_data)
 /**
  * Check the mapping
  */
-bool map_out_drf::check(text_logger& in_log, const device_settings& in_dev_settings)
+bool map_out_drf::check(text_logger& in_log, const midi_device_settings& in_dev_settings)
 {
 	bool result = true;
 
