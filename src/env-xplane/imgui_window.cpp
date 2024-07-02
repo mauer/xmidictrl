@@ -33,6 +33,9 @@
 #include "IconsFontAwesome6.h"
 #include "fa-solid-900.inc"
 
+#include "IconsFontAwesome6Brands.h"
+#include "fa-brands-400.inc"
+
 // X-Plane SDK
 #include <XPLMGraphics.h>
 
@@ -97,6 +100,19 @@ imgui_window::imgui_window(text_logger& in_log,
                                                     &config,
                                                     icon_ranges.Data))
             in_log.warn("Error loading 'Font Awesome' for Dear ImGui");
+
+		// Brands
+		static ImVector<ImWchar> icon_ranges_brands;
+		ImFontGlyphRangesBuilder builder_brands;
+		builder_brands.AddText(ICON_FA_USB);
+		builder_brands.BuildRanges(&icon_ranges_brands);
+
+		if (!s_font->AddFontFromMemoryCompressedTTF(fa_brands_400_compressed_data,
+													fa_brands_400_compressed_size,
+													IMGUI_FONT_SIZE,
+													&config,
+													icon_ranges_brands.Data))
+			in_log.warn("Error loading 'Font Awesome Brands' for Dear ImGui");
     }
 
     // check if a font atlas was supplied

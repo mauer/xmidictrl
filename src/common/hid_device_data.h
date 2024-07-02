@@ -15,45 +15,30 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_DEVICES_WINDOW_H
-#define XMC_DEVICES_WINDOW_H
+#ifndef XMC_HID_DEVICE_DATA_H
+#define XMC_HID_DEVICE_DATA_H
 
 // Standard
-#include <memory>
-#include <map>
-
-// RtMidi
-#include "RtMidi.h"
-
-// XMidiCtrl
-#include "hid_device_data.h"
-#include "environment.h"
-#include "imgui_window.h"
+#include <string>
 
 namespace xmidictrl {
 
-class devices_window : public imgui_window {
-public:
-    devices_window(text_logger& in_log, environment& in_env);
-    ~devices_window() override = default;
+//---------------------------------------------------------------------------------------------------------------------
+//   TYPES
+//---------------------------------------------------------------------------------------------------------------------
 
-protected:
-    void create_widgets() override;
+struct hid_device_data {
+	std::string manufacturer_string;
+	std::string product_string;
 
-private:
-	// functions
-	std::map<std::string, std::unique_ptr<hid_device_data>> read_hid_devices();
+	unsigned short vendor_id;
+	unsigned short product_id;
 
-	void create_tab_midi();
-	void create_tab_hid();
+	wchar_t* serial_no;
 
-	// members
-	std::unique_ptr<RtMidiIn> m_midi_in {nullptr};
-    std::unique_ptr<RtMidiOut> m_midi_out {nullptr};
-
-	std::map<std::string, std::unique_ptr<hid_device_data>> m_hid_devices {};
+	int usb_interface_no;
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_DEVICES_WINDOW_H
+#endif // HID_DEVICE_DATA_H

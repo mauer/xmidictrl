@@ -34,6 +34,7 @@ set(COMMON_SRC
         ${CMAKE_CURRENT_LIST_DIR}/text_logger.cpp
         ${CMAKE_CURRENT_LIST_DIR}/toml_utils.cpp
         ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
+        hid_device_data.h
 )
 
 # Build static library
