@@ -16,8 +16,8 @@ returns to the map screen.
 
 | Parameter  | Description                             |
 |------------|-----------------------------------------|
-| data_2_on  | Data 2 for button pressed (Default 127) |
-| data-2_off | Data 2 for button released (Default 0)  |
+| data_2_on  | Data 2 when button value equal or higher (Default 127) |
+| data_2_off | Data 2 when button value equal or less (Default 0)  |
 
 ## Examples
 
