@@ -140,10 +140,10 @@ std::unique_ptr<map_result> map_in_cmd::execute(map_param* in_param)
 	if (!check_sublayer(param_in->sl_value()))
 		return result;
 
-	if (param_in->msg().data_2() == m_data_2_on) {
+	if (param_in->msg().data_2() >= m_data_2_on) {
 		param_in->msg().log().debug(fmt::format(" --> Begin execution of command '{}'", m_command));
 		env().cmd().begin(param_in->msg().log(), m_command);
-	} else if (param_in->msg().data_2() == m_data_2_off) {
+	} else if (param_in->msg().data_2() <= m_data_2_off) {
 		param_in->msg().log().debug(fmt::format(" --> End execution of command '{}'", m_command));
 		env().cmd().end(param_in->msg().log(), m_command);
 	} else {
