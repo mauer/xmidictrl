@@ -98,7 +98,7 @@ map_param_in* map_in::get_param_in(map_param* in_param) {
 /**
  * Toggle dataref between values
  */
-std::string map_in::toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values)
+std::string map_in::toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values, bool in_wrap)
 {
     std::string new_value {};
 
@@ -106,24 +106,27 @@ std::string map_in::toggle_dataref(text_logger& in_log, std::string_view in_data
         new_value = env().drf().toggle(in_log, in_dataref, in_values[0], in_values[1]);
     } else {
         // get current value
-        std::string value;
-        env().drf().read(in_log, in_dataref, value);
+        std::string cur_value;
+        env().drf().read(in_log, in_dataref, cur_value);
 
         // search for the value in the values list
-        auto it = std::find(in_values.begin(), in_values.end(), value);
+        auto it = std::find(in_values.begin(), in_values.end(), cur_value);
 
         if (it != in_values.end()) {
             auto idx = std::distance(in_values.begin(), it);
 
             if (idx < static_cast<int>(in_values.size()) - 1)
                 idx++;
-            else
+            else if (in_wrap)
                 idx = 0;
 
             new_value = in_values[idx];
         } else {
-            // value not found, let's take the first one of the list
-            new_value = in_values[0];
+            // we are at the end if the list or did not find the value
+			if (in_wrap)
+            	new_value = in_values[0];
+			else
+				new_value = cur_value;
         }
 
         in_log.debug(fmt::format(" --> Change dataref '{}' to value '{}'", in_dataref, new_value));

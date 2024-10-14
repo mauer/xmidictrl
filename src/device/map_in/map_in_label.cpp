@@ -78,9 +78,10 @@ std::string map_in_label::map_text_label()
  */
 std::string map_in_label::toggle_dataref(text_logger& in_log,
 										 std::string_view in_dataref,
-										 std::vector<std::string>& in_values)
+										 std::vector<std::string>& in_values,
+										 bool in_wrap)
 {
-	auto new_value = map_in::toggle_dataref(in_log, in_dataref, in_values);
+	auto new_value = map_in::toggle_dataref(in_log, in_dataref, in_values, in_wrap);
 	display_label(in_log, new_value);
 
 	return new_value;

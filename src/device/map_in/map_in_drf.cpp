@@ -83,6 +83,9 @@ void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::va
 		if (!value.empty())
 			m_values.push_back(value);
 	}
+
+	// check if we should wrap values
+	m_values_wrap = toml_utils::read_bool(in_log, in_data, c_cfg_values_wrap, true);
 }
 
 
@@ -156,7 +159,7 @@ std::unique_ptr<map_result> map_in_drf::execute(map_param* in_param)
 		env().drf().write(param_in->msg().log(), m_dataref, value);
 		display_label(param_in->msg().log(), value);
 	} else {
-		toggle_dataref(param_in->msg().log(), m_dataref, m_values);
+		toggle_dataref(param_in->msg().log(), m_dataref, m_values, m_values_wrap);
 	}
 
 	return result;

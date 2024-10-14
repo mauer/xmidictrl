@@ -23,9 +23,10 @@ Toggles a given Dataref between two or more values. This is very useful when no 
 
 ## Optional Paramaters
 
-| Parameter | Description                                                                                       |
-|-----------|---------------------------------------------------------------------------------------------------|
-| mode      | Defines how the dataref should be changed. Possible values are `toggle` (default) and `momentary` |
+| Parameter   | Description                                                                                             |
+|-------------|---------------------------------------------------------------------------------------------------------|
+| mode        | Defines how the dataref should be changed. Possible values are `toggle` (default) and `momentary`       |
+| values_wrap | Enable wrapping of values (e.g. if the end of the values list is reached, the first value will be taken | 
 
 ### Dataref Mode
 By default, the values for a Dataref are toggled (`mode = "toggle"`). That means, if you define two values pressing a button on your MIDI

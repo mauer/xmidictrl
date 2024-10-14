@@ -62,6 +62,7 @@ private:
 	static constexpr std::string_view c_cfg_values {"values"};
 	static constexpr std::string_view c_cfg_value_on {"value_on"};
 	static constexpr std::string_view c_cfg_value_off {"value_off"};
+	static constexpr std::string_view c_cfg_values_wrap { "values_wrap" };
 
 	// members
 	dataref_mode m_mode {dataref_mode::toggle};
@@ -69,6 +70,7 @@ private:
 	std::string m_dataref {};
 
 	std::vector<std::string> m_values {};
+	bool m_values_wrap {true};
 
 	// functions
 	[[nodiscard]] dataref_mode dataref_mode_from_code(std::string_view in_mode) const;

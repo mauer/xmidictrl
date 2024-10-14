@@ -33,33 +33,36 @@ namespace xmidictrl {
 
 class map_in_label : public map_in {
 public:
-    explicit map_in_label(environment& in_env);
-    ~map_in_label() override = default;
+	explicit map_in_label(environment& in_env);
+	~map_in_label() override = default;
 
-    void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
+	void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config) override;
 
-    std::string map_text_label() override;
+	std::string map_text_label() override;
 
 protected:
-    std::string toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values) override;
+	std::string toggle_dataref(text_logger& in_log,
+							   std::string_view in_dataref,
+							   std::vector<std::string>& in_values,
+							   bool in_wrap) override;
 
-    void display_label(text_logger& in_log, float in_value);
-    void display_label(text_logger& in_log, std::string_view in_value);
+	void display_label(text_logger& in_log, float in_value);
+	void display_label(text_logger& in_log, std::string_view in_value);
 
 private:
-    // constants
-    static constexpr std::string_view c_cfg_label {"label"};
+	// constants
+	static constexpr std::string_view c_cfg_label {"label"};
 	static constexpr std::string_view c_cfg_text {"text"};
 	static constexpr std::string_view c_cfg_value {"value"};
 	static constexpr std::string_view c_cfg_values {"values"};
 
-    // members
-    std::unique_ptr<label> m_label {nullptr};
+	// members
+	std::unique_ptr<label> m_label {nullptr};
 
 	// functions
 	void read_label(text_logger& in_log, toml::value& in_data, toml::value& in_config);
 };
 
-} // Namespace xmiditrl
+} // namespace xmidictrl
 
 #endif // XMC_MAP_IN_LABEL_H

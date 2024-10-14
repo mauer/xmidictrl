@@ -227,7 +227,7 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 
 	if (elapsed_seconds.count() > 0.5f || m_time_released.load() == time_point::min()) {
 		if (!m_dataref_pull.empty()) {
-			toggle_dataref(param_in->msg().log(), m_dataref_pull, m_values_pull);
+			toggle_dataref(param_in->msg().log(), m_dataref_pull, m_values_pull, true);
 		} else if (!m_command_pull.empty()) {
 			param_in->msg().log().debug(fmt::format(" --> Begin pull command '{}'", m_command_pull));
 			m_command_type = command_type::pull;
@@ -239,7 +239,7 @@ std::unique_ptr<map_result> map_in_pnp::execute(map_param* in_param)
 		}
 	} else {
 		if (!m_dataref_push.empty()) {
-			toggle_dataref(param_in->msg().log(), m_dataref_push, m_values_push);
+			toggle_dataref(param_in->msg().log(), m_dataref_push, m_values_push, true);
 		} else if (!m_command_push.empty()) {
 			param_in->msg().log().debug(fmt::format(" --> Begin push command '{}'", m_command_push));
 			m_command_type = command_type::push;

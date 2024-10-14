@@ -36,13 +36,14 @@ namespace xmidictrl {
 //---------------------------------------------------------------------------------------------------------------------
 
 // Inbound mapping types
-enum class map_in_type {
-    none,
-    command,
-    dataref,
-    encoder,
-    push_pull,
-    slider
+enum class map_in_type
+{
+	none,
+	command,
+	dataref,
+	encoder,
+	push_pull,
+	slider
 };
 
 
@@ -54,29 +55,32 @@ enum class map_in_type {
 
 class map_in : public map {
 public:
-    explicit map_in(environment& in_env);
-    ~map_in() override = default;
+	explicit map_in(environment& in_env);
+	~map_in() override = default;
 
-    virtual map_in_type type();
+	virtual map_in_type type();
 
-    virtual void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config);
+	virtual void read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config);
 
-    virtual std::string map_text_label() = 0;
-    virtual std::string map_text_cmd_drf() = 0;
-    virtual std::string map_text_parameter() = 0;
+	virtual std::string map_text_label() = 0;
+	virtual std::string map_text_cmd_drf() = 0;
+	virtual std::string map_text_parameter() = 0;
 
 protected:
-    environment& env();
+	environment& env();
 
 	map_param_in* get_param_in(map_param* in_param);
 
-    virtual std::string toggle_dataref(text_logger& in_log, std::string_view in_dataref, std::vector<std::string>& in_values);
+	virtual std::string toggle_dataref(text_logger& in_log,
+									   std::string_view in_dataref,
+									   std::vector<std::string>& in_values,
+									   bool in_wrap);
 
 private:
-    // members
-    environment& m_env;
+	// members
+	environment& m_env;
 };
 
-} // Namespace xmiditrl
+} // namespace xmidictrl
 
 #endif // XMC_MAP_IN_H

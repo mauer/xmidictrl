@@ -7,6 +7,7 @@
 + Fixed parameter default_encoder_mode, as there was a spelling mistake
 + Internal refactoring
 + Added HIDAPI as external library and started preparations for HID support
++ Added new parameter values_wrap to enable/disable value wrapping
 
 -----------------------------------------------------------------------------------------------------------------------
 
