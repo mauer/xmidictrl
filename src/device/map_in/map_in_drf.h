@@ -27,7 +27,8 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "map_in_label.h"
+#include "label.h"
+#include "map_in.h"
 #include "midi_message.h"
 #include "text_logger.h"
 
@@ -37,7 +38,7 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class map_in_drf : public map_in_label {
+class map_in_drf : public map_in {
 public:
 	explicit map_in_drf(environment& in_env);
 	~map_in_drf() override = default;
@@ -49,6 +50,7 @@ public:
 
 	std::unique_ptr<map_result> execute(map_param* in_param) override;
 
+	std::string map_text_label() override;
 	std::string map_text_cmd_drf() override;
 	std::string map_text_parameter() override;
 
@@ -71,6 +73,8 @@ private:
 
 	std::vector<std::string> m_values {};
 	bool m_values_wrap {true};
+
+	std::unique_ptr<label> m_label;
 
 	// functions
 	[[nodiscard]] dataref_mode dataref_mode_from_code(std::string_view in_mode) const;

@@ -33,7 +33,7 @@ namespace xmidictrl {
  * Constructor
  */
 map_in_cbv::map_in_cbv(environment& in_env)
-	: map_in_label(in_env)
+	: map_in(in_env)
 {}
 
 
@@ -58,7 +58,7 @@ map_in_type map_in_cbv::type()
 void map_in_cbv::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
 	in_log.debug(" --> Line " + std::to_string(in_data.location().line()) + " :: Read settings for type 'cbv'");
-	map_in_label::read_config(in_log, in_data, in_config);
+	map_in::read_config(in_log, in_data, in_config);
 
 	// read dataref
 	m_dataref = toml_utils::read_string(in_log, in_data, c_cfg_dataref);
@@ -138,6 +138,15 @@ std::unique_ptr<map_result> map_in_cbv::execute(map_param* in_param)
 
 
 /**
+ * Return the label id
+ */
+std::string map_in_cbv::map_text_label()
+{
+	return {};
+}
+
+
+/**
  * Return mapped datarefs
  */
 std::string map_in_cbv::map_text_cmd_drf()
@@ -162,7 +171,7 @@ std::string map_in_cbv::map_text_parameter()
 		if (!val_str.empty())
 			val_str.append(", ");
 
-		//val_str.append(fmt::format("'{}'", value));
+		val_str.append(fmt::format("Value = '{}' --> Command = '{}''", value.first, value.second));
 	}
 
 	map_str.append(val_str);

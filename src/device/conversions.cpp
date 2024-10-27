@@ -66,6 +66,8 @@ std::string conversions::map_in_type_to_str(map_in_type in_type)
             return "Encoder";
         case map_in_type::push_pull:
             return "Push&Pull";
+		case map_in_type::short_and_long:
+			return "Short & long";
         case map_in_type::slider:
             return "Slider";
         case map_in_type::none:

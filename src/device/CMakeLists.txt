@@ -31,24 +31,26 @@ set(DEV_SRC
         ${CMAKE_CURRENT_LIST_DIR}/device_list.cpp
         ${CMAKE_CURRENT_LIST_DIR}/midi_device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/virtual_device.cpp
+
         ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init_list.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/map_in/label.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_cbv.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_cmd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_drf.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_enc.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_label.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_list.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_pnp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_snl.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_sld.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init_list.cpp
+
         ${CMAKE_CURRENT_LIST_DIR}/map_out/map_out.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_out/map_out_con.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_out/map_out_drf.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_out/map_out_list.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_out/map_out_sld.cpp
-        )
+)
 
 # Build static library
 add_library(${XMIDICTRL_LIB_DEV} STATIC ${DEV_SRC})

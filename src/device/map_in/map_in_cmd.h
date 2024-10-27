@@ -27,8 +27,8 @@
 
 // XMidiCtrl
 #include "environment.h"
-#include "map.h"
-#include "map_in_label.h"
+#include "label.h"
+#include "map_in.h"
 #include "midi_message.h"
 #include "text_logger.h"
 
@@ -38,7 +38,7 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class map_in_cmd : public map_in_label {
+class map_in_cmd : public map_in {
 public:
 	explicit map_in_cmd(environment& in_env);
 	~map_in_cmd() override = default;
@@ -53,6 +53,7 @@ public:
 
 	std::unique_ptr<map_result> execute(map_param* in_param) override;
 
+	std::string map_text_label() override;
 	std::string map_text_cmd_drf() override;
 	std::string map_text_parameter() override;
 

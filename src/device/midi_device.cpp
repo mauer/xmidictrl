@@ -24,7 +24,7 @@
 #include "inbound_task.h"
 #include "map.h"
 #include "map_in_cmd.h"
-#include "map_in_pnp.h"
+#include "map_in_snl.h"
 
 // Make sure min is not defined as a macro otherwise time_point::min() will not compile
 #if defined(_MSC_VER) && defined(min)
@@ -272,7 +272,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 			if (mapping->type() == map_in_type::push_pull) {
 				switch (midi_msg->data_2()) {
 					case MIDI_DATA_2_MAX: {
-						std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
+						std::shared_ptr<map_in_snl> pnp = std::static_pointer_cast<map_in_snl>(mapping);
 						pnp->set_time_received();
 						add_task = true;
 						break;
@@ -281,7 +281,7 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 					case MIDI_DATA_2_MIN: {
 						// no additional task is required, it's already in the event queue waiting for the
 						// release time point
-						std::shared_ptr<map_in_pnp> pnp = std::static_pointer_cast<map_in_pnp>(mapping);
+						std::shared_ptr<map_in_snl> pnp = std::static_pointer_cast<map_in_snl>(mapping);
 						pnp->set_time_released();
 						break;
 					}

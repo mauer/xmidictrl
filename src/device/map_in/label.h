@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //   XMidiCtrl - MIDI Controller plugin for X-Plane
 //
-//   Copyright (c) 2021-2023 Marco Auer
+//   Copyright (c) 2021-2024 Marco Auer
 //
 //   XMidiCtrl is free software: you can redistribute it and/or modify it under the terms of the
 //   GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -23,15 +23,51 @@
 #include <memory>
 #include <string>
 
+// XMidiCtrl
+#include "environment.h"
+
 namespace xmidictrl {
 
-struct label {
-    std::string id {};
-    std::string text {};
+//---------------------------------------------------------------------------------------------------------------------
+//   CLASS
+//---------------------------------------------------------------------------------------------------------------------
 
-    std::map<std::string, std::string> values {};
+class label {
+public:
+	// constants
+	static constexpr std::string_view c_cfg_label {"label"};
+
+	explicit label(environment& in_env);
+	~label() = default;
+
+	void read_config(text_logger& in_log,
+					 toml::value& in_data,
+					 toml::value& in_config,
+					 std::string_view in_dataref = {},
+					 std::string_view in_cfg_label = c_cfg_label);
+	bool check(text_logger& in_log, std::string_view in_source_line);
+
+	void display_label(text_logger& in_log);
+
+	std::string id() const;
+
+private:
+	// constants
+	static constexpr std::string_view c_cfg_dataref {"dataref"};
+	static constexpr std::string_view c_cfg_text {"text"};
+	static constexpr std::string_view c_cfg_value {"value"};
+	static constexpr std::string_view c_cfg_values {"values"};
+
+	// members
+	environment& m_env;
+
+	std::string m_id {};
+	std::string m_dataref {};
+	std::string m_text {};
+
+	std::map<std::string, std::string> m_values {};
 };
 
-} // Namespace xmiditrl
+} // Namespace xmidictrl
 
 #endif // XMC_LABEL_H

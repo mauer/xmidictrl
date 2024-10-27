@@ -12,7 +12,7 @@ The following parameter is required for each mapping.
 | Parameter | Description                            |
 |-----------|----------------------------------------|
 | ch        | MIDI Channel (Default Value = 11)      |
- | type      | Specifies the mapping type (see below) |  
+| type      | Specifies the mapping type (see below) |  
 
 One of the following parameters is required, depending on the MIDI message type.
 
@@ -33,13 +33,14 @@ One of the following parameters is required, depending on the MIDI message type.
 
 The following mapping types are supported: 
 
-| Mapping Type |   Name    | Description and usage                                                            |
-|:------------:|:---------:|----------------------------------------------------------------------------------|
-|     cmd      |  Command  | Executes a X-Plane command                                                       |
-|     pnp      | Push&pull | Simulates a Push & pull button, which can execute two different commands         |   
-|     drf      |  Dataref  | Toggles a given Dataref between two values                                       |
-|     enc      |  Encoder  | Executes different commands for up/down or modifies a given dataref              |
-|     sld      |  Slider   | Executes up to three different commands, depending on the location of the slider |
+| Mapping Type |     Name     | Description and usage                                                                                                 |
+|:------------:|:------------:|-----------------------------------------------------------------------------------------------------------------------|
+|     cmd      |   Command    | Executes a X-Plane command                                                                                            |
+|     pnp      | Push & pull  | *Obsolete: use Short & Long instead!*<br><br>Simulates a Push & pull button, which can execute two different commands |
+|     snl      | Short & long | Allows to define different datarefs and/or commands for short and long button presses                                 |
+|     drf      |   Dataref    | Toggles a given Dataref between two values                                                                            |
+|     enc      |   Encoder    | Executes different commands for up/down or modifies a given dataref                                                   |
+|     sld      |    Slider    | Executes up to three different commands, depending on the location of the slider                                      |
 
 ## Multi-Map
 

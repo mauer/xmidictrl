@@ -33,8 +33,11 @@ namespace xmidictrl {
  * Constructor
  */
 map_in_drf::map_in_drf(environment& in_env)
-	: map_in_label(in_env)
-{}
+	: map_in(in_env)
+{
+	// create label object
+	m_label = std::make_unique<label>(in_env);
+}
 
 
 
@@ -58,7 +61,7 @@ map_in_type map_in_drf::type()
 void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
 	in_log.debug(" --> Line " + std::to_string(in_data.location().line()) + " :: Read settings for type 'drf'");
-	map_in_label::read_config(in_log, in_data, in_config);
+	map_in::read_config(in_log, in_data, in_config);
 
 	// read mode
 	m_mode = dataref_mode_from_code(toml_utils::read_string(in_log, in_data, c_cfg_mode));
@@ -86,6 +89,9 @@ void map_in_drf::read_config(text_logger& in_log, toml::value& in_data, toml::va
 
 	// check if we should wrap values
 	m_values_wrap = toml_utils::read_bool(in_log, in_data, c_cfg_values_wrap, true);
+
+	// check if there is a label defined
+	m_label->read_config(in_log, in_data, in_config, m_dataref);
 }
 
 
@@ -103,9 +109,7 @@ bool map_in_drf::check(text_logger& in_log, const midi_device_settings& in_dev_s
 		in_log.error(source_line());
 		in_log.error(fmt::format(" --> Parameter '{}' is empty", c_cfg_dataref));
 		result = false;
-	}
-
-	if (!env().drf().check(m_dataref)) {
+	} else if (!env().drf().check(m_dataref)) {
 		in_log.error(source_line());
 		in_log.error(fmt::format(" --> Dataref '{}' not found", m_dataref));
 		result = false;
@@ -122,6 +126,10 @@ bool map_in_drf::check(text_logger& in_log, const midi_device_settings& in_dev_s
 		in_log.error(fmt::format(" --> When parameter '{}' is 'momentary', two values (on/off) are expected", c_cfg_mode));
 		result = false;
 	}
+
+	// check label
+	if (!m_label->check(in_log, source_line()))
+		result = false;
 
 	return result;
 }
@@ -157,12 +165,22 @@ std::unique_ptr<map_result> map_in_drf::execute(map_param* in_param)
 		param_in->msg().log().debug(" --> Change dataref '" + m_dataref + "' to value '" + value + "'");
 
 		env().drf().write(param_in->msg().log(), m_dataref, value);
-		display_label(param_in->msg().log(), value);
 	} else {
 		toggle_dataref(param_in->msg().log(), m_dataref, m_values, m_values_wrap);
 	}
 
+	m_label->display_label(param_in->msg().log());
+
 	return result;
+}
+
+
+/**
+ * Return the label id
+ */
+std::string map_in_drf::map_text_label()
+{
+	return m_label->id();
 }
 
 

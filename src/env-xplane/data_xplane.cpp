@@ -31,6 +31,9 @@ namespace xmidictrl {
  */
 bool data_xplane::check(std::string_view in_name)
 {
+	if (in_name.empty())
+		return false;
+
     const auto item = retrieve_data(in_name);
 
     if (item == nullptr)

@@ -31,7 +31,6 @@ class utils {
 public:
     static bool create_directory(text_logger& in_log, const std::filesystem::path& in_path);
 
-    // TODO: Move to cpp file
     static std::string ltrim(std::string_view in_str) {
         return std::regex_replace(in_str.data(), std::regex("^\\s+"), std::string());
     }

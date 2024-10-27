@@ -76,8 +76,10 @@ void midi_watcher::create_widgets()
 
 	ImGui::SameLine(ImGui::GetWindowWidth() - 190);
 
-	if (ImGui::Button(UI_SPACER_2 ICON_FA_TRASH_CAN UI_SPACER_2 "Clear Messages" UI_SPACER_2))
+	if (ImGui::Button(UI_SPACER_2 ICON_FA_TRASH_CAN UI_SPACER_2 "Clear Messages" UI_SPACER_2)) {
 		m_midi_log.clear();
+		m_page = 0;
+	}
 
 	ImGui::NewLine();
 	ImGui::TextColored(title_color(), "%s", "MESSAGES");
@@ -109,6 +111,8 @@ void midi_watcher::create_widgets()
 	}
 
 	size_t no_pages = (m_midi_log.count() + c_no_msg_page - 1) / c_no_msg_page;
+	no_pages = no_pages == 0 ? 1 : no_pages;
+
 	ImGui::Text("%s", fmt::format("{} / {}", m_page + 1, no_pages).c_str());
 
 	ImGui::SameLine();

@@ -33,7 +33,7 @@ namespace xmidictrl {
  * Constructor
  */
 map_in_cmd::map_in_cmd(environment& in_env)
-	: map_in_label(in_env)
+	: map_in(in_env)
 {}
 
 
@@ -76,7 +76,7 @@ unsigned char map_in_cmd::data_2_off() const
 void map_in_cmd::read_config(text_logger& in_log, toml::value& in_data, toml::value& in_config)
 {
 	in_log.debug_line(in_data.location().line(), "Read settings for type 'cmd'");
-	map_in_label::read_config(in_log, in_data, in_config);
+	map_in::read_config(in_log, in_data, in_config);
 
 	// read the command
 	m_command = toml_utils::read_string(in_log, in_data, c_cfg_command);
@@ -152,6 +152,15 @@ std::unique_ptr<map_result> map_in_cmd::execute(map_param* in_param)
 	}
 
 	return result;
+}
+
+
+/**
+ * Return the label id
+ */
+ std::string map_in_cmd::map_text_label()
+{
+	return {};
 }
 
 

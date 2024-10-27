@@ -392,8 +392,6 @@ void imgui_window::show_window()
             } else {
                 glBindTexture(GL_TEXTURE_2D, (GLuint) (intptr_t) pcmd->TextureId);
 
-                // Scissors work in viewport space - must translate the coordinates from ImGui -> Boxels, then Boxels -> Native.
-                //FIXME: it must be possible to apply the scale+transform manually to the projection matrix so we don't need to doublestep.
                 int boxel_top, boxel_left, boxel_right, boxel_bottom;
                 translate_imgui_to_boxel(pcmd->ClipRect.x, pcmd->ClipRect.y, boxel_left, boxel_top);
                 translate_imgui_to_boxel(pcmd->ClipRect.z, pcmd->ClipRect.w, boxel_right, boxel_bottom);

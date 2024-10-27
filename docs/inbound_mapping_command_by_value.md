@@ -2,15 +2,15 @@
 
 ## Description
 
-Executes an X-Plane command when a button is pressed. The command will be executed as long as the button is being
-pressed down. This behaviour is useful to map the CLR button of the G530, as pressing the button for a longer time
-returns to the map screen.
+Executes an X-Plane command based on the current value of a specified dataref. The command will be executed as long as 
+the button is being pressed down. This behaviour is useful to map the CLR button of the G530, as pressing the button 
+for a longer time returns to the map screen.
 
 ## Required Parameters
 
-| Parameter | Description                                |
-|-----------|--------------------------------------------|
-| command   | Defines the X-Plane command to be executed |
+| Parameter | Description                                                             |
+|-----------|-------------------------------------------------------------------------|
+| dataref   | Defines dataref in X-Plane which should be used for the command mapping |
 
 ## Optional Parameters
 

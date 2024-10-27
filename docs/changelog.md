@@ -8,6 +8,9 @@
 + Internal refactoring
 + Added HIDAPI as external library and started preparations for HID support
 + Added new parameter values_wrap to enable/disable value wrapping
++ The command mapping will now be executed as soon as "Data 2" is equal or higher than the specified *data_2_on* 
+parameter. This allows the use of pad controllers like the Akai LPD8. Many thanks to GitHub user *delgod* for 
+contributing this feature.
 
 -----------------------------------------------------------------------------------------------------------------------
 

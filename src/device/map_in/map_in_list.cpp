@@ -22,8 +22,8 @@
 #include "map_in_cmd.h"
 #include "map_in_drf.h"
 #include "map_in_enc.h"
-#include "map_in_pnp.h"
 #include "map_in_sld.h"
+#include "map_in_snl.h"
 
 namespace xmidictrl {
 
@@ -75,7 +75,11 @@ void map_in_list::create_mappings(text_logger& in_log,
 					break;
 
 				case push_pull:
-					mapping = std::make_shared<map_in_pnp>(in_env);
+					mapping = std::make_shared<map_in_snl>(in_env, true);
+					break;
+
+				case short_and_long:
+					mapping = std::make_shared<map_in_snl>(in_env, false);
 					break;
 
 				case encoder:
@@ -222,6 +226,8 @@ map_in_type map_in_list::translate_map_type(std::string_view in_type_str) const
 		type = dataref;
 	else if (in_type_str == CFG_MAPTYPE_PUSH_PULL)
 		type = push_pull;
+	else if (in_type_str == CFG_MAPTYPE_SHORT_AND_LONG)
+		type = short_and_long;
 	else if (in_type_str == CFG_MAPTYPE_ENCODER)
 		type = encoder;
 

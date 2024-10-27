@@ -44,6 +44,7 @@ enum class map_in_type
 	dataref,
 	encoder,
 	push_pull,
+	short_and_long,
 	slider
 };
 

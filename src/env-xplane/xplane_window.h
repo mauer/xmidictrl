@@ -53,6 +53,12 @@
 #include "text_logger.h"
 #include "types.h"
 
+// Spacer 2
+#define UI_SPACER_2 "  "
+
+// Spacer 3
+#define UI_SPACER_3 "   "
+
 namespace xmidictrl {
 
 class xplane_window {

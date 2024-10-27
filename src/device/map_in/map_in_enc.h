@@ -26,7 +26,8 @@
 #include <toml.hpp>
 
 // XMidiCtrl
-#include "map_in_label.h"
+#include "label.h"
+#include "map_in.h"
 #include "midi_device_settings.h"
 #include "midi_message.h"
 #include "text_logger.h"
@@ -37,7 +38,7 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class map_in_enc : public map_in_label {
+class map_in_enc : public map_in {
 public:
 	explicit map_in_enc(environment& in_env, encoder_mode in_default_enc_mode);
 	~map_in_enc() override = default;
@@ -49,6 +50,7 @@ public:
 
 	std::unique_ptr<map_result> execute(map_param* in_param) override;
 
+	std::string map_text_label() override;
 	std::string map_text_cmd_drf() override;
 	std::string map_text_parameter() override;
 
@@ -144,6 +146,8 @@ private:
 
 	std::string m_command_fast_up {};
 	std::string m_command_fast_down {};
+
+	std::unique_ptr<label> m_label;
 };
 
 } // Namespace xmidictrl

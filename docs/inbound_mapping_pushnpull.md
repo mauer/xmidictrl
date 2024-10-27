@@ -1,4 +1,6 @@
-# Inbound Mapping Type: Push&pull
+# Inbound Mapping Type: Push & pull
+
+*Obsolete: use [Short & Long](inbound_mapping_short_and_long.md) instead!*
 
 ## Description
 

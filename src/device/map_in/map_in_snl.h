@@ -15,8 +15,8 @@
 //   If not, see <https://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------------------------------------------------
 
-#ifndef XMC_MAP_IN_PNP_H
-#define XMC_MAP_IN_PNP_H
+#ifndef XMC_MAP_IN_SNL_H
+#define XMC_MAP_IN_SNL_H
 
 // Standard
 #include <atomic>
@@ -43,10 +43,10 @@ namespace xmidictrl {
 //   CLASS
 //---------------------------------------------------------------------------------------------------------------------
 
-class map_in_pnp : public map_in {
+class map_in_snl : public map_in {
 public:
-    explicit map_in_pnp(environment& in_env);
-    ~map_in_pnp() override = default;
+    explicit map_in_snl(environment& in_env, bool in_legacy_mode);
+    ~map_in_snl() override = default;
 
     map_in_type type() override;
 
@@ -76,14 +76,28 @@ private:
 	static constexpr std::string_view c_cfg_values_push {"values_push"};
 	static constexpr std::string_view c_cfg_values_pull {"values_pull"};
 
+	static constexpr std::string_view c_cfg_command_short {"command_short"};
+	static constexpr std::string_view c_cfg_command_long {"command_long"};
+
+	static constexpr std::string_view c_cfg_dataref_short {"dataref_short"};
+	static constexpr std::string_view c_cfg_dataref_long {"dataref_long"};
+
+	static constexpr std::string_view c_cfg_values_short {"values_short"};
+	static constexpr std::string_view c_cfg_values_long {"values_long"};
+
+	static constexpr std::string_view c_cfg_label_short {"label_short"};
+	static constexpr std::string_view c_cfg_label_long {"label_long"};
+
     // enumerations
     enum class command_type {
         none,
-        push,
-        pull
+        cmd_short,
+        cmd_long
     };
 
     void reset();
+
+	bool m_legacy_mode;
 
     command_type m_command_type {command_type::none};
     time_point m_time_command {time_point::min()};
@@ -91,16 +105,19 @@ private:
     std::atomic<time_point> m_time_received {time_point::min()};
     std::atomic<time_point> m_time_released {time_point::min()};
 
-    std::string m_dataref_push {};
-    std::string m_dataref_pull {};
+    std::string m_dataref_short {};
+    std::string m_dataref_long {};
 
-    std::vector<std::string> m_values_push {};
-    std::vector<std::string> m_values_pull {};
+    std::vector<std::string> m_values_short {};
+    std::vector<std::string> m_values_long {};
 
-    std::string m_command_push {};
-    std::string m_command_pull {};
+    std::string m_command_short {};
+    std::string m_command_long {};
+
+	std::unique_ptr<label> m_label_short;
+	std::unique_ptr<label> m_label_long;
 };
 
 } // Namespace xmidictrl
 
-#endif // XMC_MAP_IN_PNP_H
+#endif // XMC_MAP_IN_SNL_H

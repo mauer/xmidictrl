@@ -29,12 +29,6 @@ namespace xmidictrl {
 //   CONSTANTS
 //---------------------------------------------------------------------------------------------------------------------
 
-// Spacer 2
-#define UI_SPACER_2 "  "
-
-// Spacer 3
-#define UI_SPACER_3 "   "
-
 // MIDI unsigned int none
 const char MIDI_NONE(-1);
 
@@ -98,6 +92,7 @@ const char* const CFG_MAPTYPE_CONSTANT = "con";
 const char* const CFG_MAPTYPE_DATAREF = "drf";
 const char* const CFG_MAPTYPE_ENCODER = "enc";
 const char* const CFG_MAPTYPE_PUSH_PULL = "pnp";
+const char* const CFG_MAPTYPE_SHORT_AND_LONG = "snl";
 const char* const CFG_MAPTYPE_SLIDER = "sld";
 
 
