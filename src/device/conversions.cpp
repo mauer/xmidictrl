@@ -58,6 +58,8 @@ std::string conversions::map_in_type_to_str(map_in_type in_type)
     switch (in_type) {
         case map_in_type::command:
             return "Command";
+		case map_in_type::command_by_value:
+			return "Command by value";
         case map_in_type::dataref:
             return "Dataref";
         case map_in_type::encoder:
