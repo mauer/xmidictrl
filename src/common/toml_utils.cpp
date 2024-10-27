@@ -227,7 +227,7 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
 	std::vector<std::string> list;
 
 	try {
-		// read dataref array
+		// read array
 		if (contains(in_log, in_data, in_name) && (in_data[in_name.data()].is_array())) {
 			for (int i = 0; i < in_data[in_name.data()].size(); i++) {
 				std::string value = in_data[in_name.data()][i].as_string();
@@ -236,6 +236,48 @@ std::vector<std::string> toml_utils::read_str_vector_array(text_logger& in_log,
 
 				if (!value.empty())
 					list.push_back(value);
+			}
+		}
+	} catch (toml::type_error& error) {
+		in_log.error_line(in_data.location().line(), in_data.location().line_str());
+		in_log.error(" --> Error reading mapping");
+		in_log.error(error.what());
+	}
+
+	return list;
+}
+
+
+/**
+ * Read the values of a key/value array and return as map
+ */
+std::map<std::string, std::string> toml_utils::read_str_map_array(text_logger& in_log,
+																  toml::value& in_data,
+																  std::string_view in_name,
+																  std::string_view in_key_name,
+																  std::string_view in_value_name)
+{
+	if (in_name.empty()) {
+		in_log.error("Internal error (toml_utils::read_str_map_array --> name is empty)");
+		return {};
+	}
+
+	std::map<std::string, std::string> list;
+
+	try {
+		// read array
+		if (contains(in_log, in_data, in_name) && (in_data[in_name.data()].is_array())) {
+			for (int i = 0; i < in_data[in_name.data()].size(); i++) {
+				auto pairs = in_data[in_name.data()][i];
+
+				//for (const auto& pair: pairs) {
+					std::string key = toml_utils::read_string(in_log, pairs, in_key_name);
+					std::string value = toml_utils::read_string(in_log, pairs, in_value_name);
+
+					if (!value.empty())
+						list.try_emplace(key, value);
+				//}
+				//in_log.debug_param(in_data.location().line(), in_name, value);
 			}
 		}
 	} catch (toml::type_error& error) {

@@ -33,6 +33,7 @@ set(DEV_SRC
         ${CMAKE_CURRENT_LIST_DIR}/virtual_device.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_init/map_init.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_cbv.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_cmd.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_drf.cpp
         ${CMAKE_CURRENT_LIST_DIR}/map_in/map_in_enc.cpp

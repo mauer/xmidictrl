@@ -33,36 +33,43 @@ namespace xmidictrl {
 
 class toml_utils {
 public:
-    static bool load_file(text_logger& in_log, std::string_view in_filename, toml::value& out_config);
+	static bool load_file(text_logger& in_log, std::string_view in_filename, toml::value& out_config);
 
-    static bool contains(text_logger& in_log,
-                         toml::value& in_data,
-                         std::string_view in_name);
-    static bool is_array(text_logger& in_log, toml::value& in_data, std::string_view in_name);
+	static bool contains(text_logger& in_log, toml::value& in_data, std::string_view in_name);
+	static bool is_array(text_logger& in_log, toml::value& in_data, std::string_view in_name);
 
-	static bool read_bool(text_logger& in_log, toml::value& in_data, std::string_view in_name, bool in_fallback = false);
+	static bool read_bool(text_logger& in_log,
+						  toml::value& in_data,
+						  std::string_view in_name,
+						  bool in_fallback = false);
 
-    static std::string read_string(text_logger& in_log, toml::value& in_data, std::string_view in_name);
+	static std::string read_string(text_logger& in_log, toml::value& in_data, std::string_view in_name);
 
-    static std::set<std::string> read_str_set_array(text_logger& in_log,
-                                                    toml::value& in_data,
-                                                    std::string_view in_name);
+	static std::set<std::string> read_str_set_array(text_logger& in_log,
+													toml::value& in_data,
+													std::string_view in_name);
 
-    static std::vector<std::string> read_str_vector_array(text_logger& in_log,
-                                                          toml::value& in_data,
-                                                          std::string_view in_name);
+	static std::vector<std::string> read_str_vector_array(text_logger& in_log,
+														  toml::value& in_data,
+														  std::string_view in_name);
 
-    static char read_midi_value(text_logger& in_log,
-                                toml::value& in_data,
-                                std::string_view in_name,
-                                char in_fallback = MIDI_NONE);
+	static std::map<std::string, std::string> read_str_map_array(text_logger& in_log,
+																 toml::value& in_data,
+																 std::string_view in_name,
+																 std::string_view in_key_name,
+																 std::string_view in_value_name);
 
-    static int read_int(text_logger& in_log, toml::value& in_data, std::string_view in_name, int in_fallback = 0);
+	static char read_midi_value(text_logger& in_log,
+								toml::value& in_data,
+								std::string_view in_name,
+								char in_fallback = MIDI_NONE);
 
-    static float read_float(text_logger& in_log,
-                            toml::value& in_data,
-                            std::string_view in_name,
-                            float in_fallback = 0.0f);
+	static int read_int(text_logger& in_log, toml::value& in_data, std::string_view in_name, int in_fallback = 0);
+
+	static float read_float(text_logger& in_log,
+							toml::value& in_data,
+							std::string_view in_name,
+							float in_fallback = 0.0f);
 };
 
 } // Namespace xmidictrl

@@ -18,6 +18,7 @@
 #include "map_in_list.h"
 
 // XMidiCtrl
+#include "map_in_cbv.h"
 #include "map_in_cmd.h"
 #include "map_in_drf.h"
 #include "map_in_enc.h"
@@ -63,6 +64,10 @@ void map_in_list::create_mappings(text_logger& in_log,
 
 				case command:
 					mapping = std::make_shared<map_in_cmd>(in_env);
+					break;
+
+				case command_by_value:
+					mapping = std::make_shared<map_in_cbv>(in_env);
 					break;
 
 				case dataref:
@@ -209,6 +214,8 @@ map_in_type map_in_list::translate_map_type(std::string_view in_type_str) const
 
 	if (in_type_str == CFG_MAPTYPE_COMMAND)
 		type = command;
+	else if (in_type_str == CFG_MAPTYPE_COMMAND_BY_VALUE)
+		type = command_by_value;
 	else if (in_type_str == CFG_MAPTYPE_SLIDER)
 		type = slider;
 	else if (in_type_str == CFG_MAPTYPE_DATAREF)

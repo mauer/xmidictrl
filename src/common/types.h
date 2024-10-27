@@ -93,6 +93,7 @@ const char* const CFG_KEY_INFO_SECONDS = "info_seconds";
 
 // Mapping Types as strings
 const char* const CFG_MAPTYPE_COMMAND = "cmd";
+const char* const CFG_MAPTYPE_COMMAND_BY_VALUE = "cbv";
 const char* const CFG_MAPTYPE_CONSTANT = "con";
 const char* const CFG_MAPTYPE_DATAREF = "drf";
 const char* const CFG_MAPTYPE_ENCODER = "enc";

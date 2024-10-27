@@ -19,6 +19,7 @@
   * [Init Mappings](init_mapping.md)
   * [Inbound Mappings](inbound_mapping.md)
       * [Commands](inbound_mapping_command.md)
+      * [Command by value](inbound_mapping_command_by_value.md)
       * [Datarefs](inbound_mapping_dataref.md)
       * [Encoders](inbound_mapping_encoder.md)
       * [Push&Pull](inbound_mapping_pushnpull.md)

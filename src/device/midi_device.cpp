@@ -319,8 +319,6 @@ void midi_device::process_inbound_message(std::vector<unsigned char>* in_message
 				task->sl_value = sl_value();
 
 				env().worker().add_task(task);
-
-				text_log().debug("task added");
 			}
 		}
 	}
