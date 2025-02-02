@@ -270,14 +270,11 @@ std::map<std::string, std::string> toml_utils::read_str_map_array(text_logger& i
 			for (int i = 0; i < in_data[in_name.data()].size(); i++) {
 				auto pairs = in_data[in_name.data()][i];
 
-				//for (const auto& pair: pairs) {
-					std::string key = toml_utils::read_string(in_log, pairs, in_key_name);
-					std::string value = toml_utils::read_string(in_log, pairs, in_value_name);
+				auto key = toml_utils::read_string(in_log, pairs, in_key_name);
+				auto value = toml_utils::read_string(in_log, pairs, in_value_name);
 
-					if (!value.empty())
-						list.try_emplace(key, value);
-				//}
-				//in_log.debug_param(in_data.location().line(), in_name, value);
+				if (!value.empty())
+					list.try_emplace(key, value);
 			}
 		}
 	} catch (toml::type_error& error) {

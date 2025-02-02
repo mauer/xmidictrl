@@ -98,9 +98,6 @@ void label::read_config(text_logger& in_log,
 				std::string value_text = toml_utils::read_string(in_log, value, c_cfg_text);
 				m_values.try_emplace(value_id, value_text);
 			}
-		} else {
-			//in_log.error_line(in_data.location().line(), "Error reading mapping");
-			//in_log.error(fmt::format(" --> Parameter '{}' not found", c_cfg_values));
 		}
 	} catch (toml::type_error& error) {
 		in_log.error_line(in_data.location().line(), "Error reading mapping");

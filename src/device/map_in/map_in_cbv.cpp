@@ -206,8 +206,8 @@ std::string map_in_cbv::build_mapping_text(bool in_short)
 
 	map_str.append("Values = [");
 
-	//for (const auto& value: m_values)
-	//	map_str.append(" '" + value + "', ");
+	for (const auto& value: m_values)
+		map_str.append(fmt::format("value = '{}'  cmd = '{}', ", value.first, value.second));
 
 	map_str.append("]" + sep_str);
 

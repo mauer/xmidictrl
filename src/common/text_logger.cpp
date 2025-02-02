@@ -335,7 +335,6 @@ void text_logger::add_message(log_level in_level, std::string_view in_text)
 	localtime_s(&time_info, &t);
 #else
 	std::tm time_info = *std::localtime(&t);
-	//struct std::tm* time_info = localtime(&t);
 #endif
 
 	// format into a string

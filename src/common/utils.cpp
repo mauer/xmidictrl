@@ -54,8 +54,6 @@ bool utils::create_directory(text_logger& in_log, const std::filesystem::path& i
  */
 std::string utils::time_to_string(time_point in_time)
 {
-	// TODO
-	//{:%d-%m-%Y %H:%M:%OS} fmt::format
     std::time_t t = std::chrono::system_clock::to_time_t(in_time);
 
 #ifdef _MSC_VER
