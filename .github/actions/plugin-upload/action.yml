@@ -1,5 +1,5 @@
 name: Plugin upload
-description: Organizes the plugin file in the correct structure and uploads it as an artifact
+description: Organizes the plugin files in the correct structure and uploads it as an artifact
 author: mauer
 
 inputs:
@@ -25,6 +25,6 @@ runs:
     - name: Upload the plugin
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.pluginName }}
+        name: ${{ inputs.pluginName }}-${{ env.platform }}
         path: deploy-${{ inputs.pluginName }}/*
         if-no-files-found: error
