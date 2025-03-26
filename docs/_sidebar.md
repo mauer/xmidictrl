@@ -36,8 +36,10 @@
 * **Advanced Options**
   * [Aircraft Profiles](profile.md)
   * [Dataref Arrays](dataref_arrays.md)
-  * [Sublayers](sublayers.md)
+  * [Labels](labels.md)
   * [Include Files](include_files.md)
+  * [Sublayers](sublayers.md)
+
 
 * [Changelog](changelog.md)
 
