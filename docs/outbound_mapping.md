@@ -39,6 +39,7 @@ One of the following parameters is required, depending on the MIDI message type.
 |-----------|-------------------|--------------------------|
 | cc        | Control Change    | Control Change No Number |
 | note      | Note On / Off     | Note Number              |
+| note_on   | Note On           | Note Number (Explicit)   |
 | pitch     | Pitch Bend        | Pitch Bend Number        |
 | prg       | Program Change    | Program Change Number    |
 
@@ -59,6 +60,7 @@ A mapping must contains exactly one of the following variables.
 |----------|--------------------------|
 | cc       | Control Change No Number |
 | note     | Note On/Off Number       |
+| note_on  | Note On Number           |
 | pitch    | Pitch Bend Number        |
 | prg      | Program Change Number    |
 

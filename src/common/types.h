@@ -60,6 +60,7 @@ const char* const INCLUDES_DIRECTORY_NAME = "Includes";
 // Keys for mappings and MIDI message types
 const char* const KEY_CONTROL_CHANGE = "CC";
 const char* const KEY_NOTE = "NOTE";
+const char* const KEY_NOTE_ON = "NOTE_ON";
 const char* const KEY_PITCH_BEND = "PITCH";
 const char* const KEY_PROGRAM_CHANGE = "PRG";
 
