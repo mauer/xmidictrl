@@ -130,6 +130,10 @@ std::unique_ptr<map_result> map_init::execute(map_param*)
 				result->type = midi_msg_type::note_off;
             break;
 
+    	case map_data_1_type::note_on:
+    		result->type = midi_msg_type::note_on;
+    		break;
+
         case map_data_1_type::pitch_bend:
 			result->type = midi_msg_type::pitch_bend;
             break;

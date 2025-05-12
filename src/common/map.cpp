@@ -269,6 +269,11 @@ void map::read_data_1(text_logger& in_log, toml::value& in_data)
 			m_data_1_type = map_data_1_type::control_change;
 
 			in_log.debug_param(in_data.location().line(), c_cfg_cc, std::to_string(m_data_1));
+		} else if (in_data.contains(c_cfg_note_on.data())) {
+			m_data_1 = static_cast<char>(in_data[c_cfg_note_on.data()].as_integer());
+			m_data_1_type = map_data_1_type::note_on;
+
+			in_log.debug_param(in_data.location().line(), c_cfg_note_on, std::to_string(m_data_1));
 		} else if (in_data.contains(c_cfg_note.data())) {
 			m_data_1 = static_cast<char>(in_data[c_cfg_note.data()].as_integer());
 			m_data_1_type = map_data_1_type::note;
@@ -339,6 +344,10 @@ std::string map::data_1_type_as_string() const
 
 		case note:
 			str = KEY_NOTE;
+			break;
+
+		case note_on:
+			str = KEY_NOTE_ON;
 			break;
 
 		case pitch_bend:
